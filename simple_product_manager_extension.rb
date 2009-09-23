@@ -4,7 +4,7 @@ require 'json_fields'
 PRODUCT_ATTACHMENT_SIZES={:thumbnail => '75x75>', :product => '250x250>'}
 		
 class SimpleProductManagerExtension < Radiant::Extension
-	version "0.5.1"
+	version "0.5.2"
 	description "Manages Products and Product Categories for use across the site."
 	url "http://github.com/jstirk/radiant-simple-product-manager/tree/master"
 	
@@ -22,9 +22,6 @@ class SimpleProductManagerExtension < Radiant::Extension
 	def activate
 		admin.tabs.add "Products", "/admin/products", :after => "Layouts", :visibility => [:all]
 		Page.send :include, SimpleProductManagerTag
-
-		# Enable our JSON-backed fields
-		ActiveRecord::Base.send :include, JsonFields
 
 		# If our RadiantConfig settings are blank, set them up now
 		Radiant::Config['simple_product_manager.product_fields'] ||= ''
