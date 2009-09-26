@@ -5,6 +5,8 @@ class Category < ActiveRecord::Base
 
 	validates_presence_of :title
 
+	before_save :reconcile_sequence_numbers
+
 	def to_s
 		o=[]
 		o << self.parent.to_s unless self.parent.nil?
@@ -91,5 +93,31 @@ class Category < ActiveRecord::Base
 			options[:conditions]="parent_id IS NULL"
 		end
 		self.find(:all, options)
+	end
+
+private
+	def reconcile_sequence_numbers
+		if self.sequence.nil? then
+			# Assign a new sequence number
+			self.sequence=Category.maximum(:sequence, :conditions => { :parent_id => self.parent_id }).to_i + 1
+		else
+			if Category.find(:first, :conditions => { :sequence => self.sequence, :parent_id => self.parent_id }) then
+				# We need to reorder the sequences ahead of us
+				conditions=[]
+				if self.parent_id.nil? then
+					conditions[0]='parent_id IS NULL'
+				else
+					conditions[0]='parent_id = ?'
+					conditions << self.parent_id
+				end
+				conditions[0] << ' AND sequence >= ?'
+				conditions << self.sequence
+
+				conflicts=Category.find(:all, :conditions => conditions, :order => 'sequence ASC')
+				conflicts.each_with_index do |c, idx|
+					Category.update_all("sequence=#{self.sequence + idx + 1}","id=#{c.id}")
+				end
+			end
+		end
 	end
 end

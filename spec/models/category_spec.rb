@@ -2,6 +2,7 @@ require File.dirname(__FILE__) + '/../spec_helper'
 
 describe Category do
 	before(:each) do
+		Category.destroy_all
 		@category = Category.new(:title => 'Test')
 	end
 

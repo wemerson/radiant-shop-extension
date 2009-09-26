@@ -2,6 +2,9 @@ require File.dirname(__FILE__) + '/../spec_helper'
 
 describe Product do
 	before(:each) do
+		Category.destroy_all
+		Product.destroy_all
+
 		c=Category.create!(:title => 'My Little Test Category')
 		c2=Category.create!(:title => 'Another Test Category')
 		@product = Product.new(:title => 'Test', :category => c)

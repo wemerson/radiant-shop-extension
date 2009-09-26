@@ -29,7 +29,7 @@ module SimpleProductManagerTag
 	desc "Iterate over all products in the system, optionally sorted by the field specified by 'order', or constrained by 'where'."
 	tag 'products:each' do |tag|
 		attr = tag.attr.symbolize_keys
-		order=attr[:order] || 'title ASC'
+		order=attr[:order] || 'sequence ASC'
 		where=attr[:where]
 		result = []
 		if tag.locals.category || tag.locals.subcategory then
@@ -184,7 +184,7 @@ module SimpleProductManagerTag
 If specified, 'parent' can be either the ID of the parent Category, or it's title."
 	tag 'categories:each' do |tag|
 		attr = tag.attr.symbolize_keys
-		order=attr[:order] || 'title ASC'
+		order=attr[:order] || 'sequence ASC'
 		where=attr[:where]
 
 		# If tag is specified, we look for a single tag for
@@ -288,7 +288,7 @@ If specified, 'parent' can be either the ID of the parent Category, or it's titl
 	desc "Iterate over all subcategories for the current category, optionally sorted by the field specified by 'order', or constrained by 'where' or 'tag'."
 	tag 'subcategories:each' do |tag|
 		attr = tag.attr.symbolize_keys
-		order=attr[:order] || 'title ASC'
+		order=attr[:order] || 'sequence ASC'
 		where=attr[:where]
 
 		# If tag is specified, we look for a single tag for

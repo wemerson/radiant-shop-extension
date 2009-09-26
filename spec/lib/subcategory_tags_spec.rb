@@ -16,7 +16,7 @@ describe 'SimpleCategoryManager' do
 		end
 		
 		it "should order by sequence by default" do
-			pages(:home).should render("<r:category:find where='id=#{@c1.id}'><r:subcategories:each><r:subcategory:title /></r:subcategories:each></r:category:find>").as('Another CategorySubcategory')
+			pages(:home).should render("<r:category:find where='id=#{@c1.id}'><r:subcategories:each><r:subcategory:title /></r:subcategories:each></r:category:find>").as('SubcategoryAnother Category')
 		end
 
 		it "should order OK by title" do

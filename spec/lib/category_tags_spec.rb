@@ -38,7 +38,7 @@ describe 'SimpleProductManager' do
 		end
 
 		it "should restrict OK by tags" do
-			pages(:home).should render('<r:categories:each tag="Gluten Free"><r:category:title /><br /></r:categories:each>').as('Pastries<br />Salads<br />')
+			pages(:home).should render('<r:categories:each tag="Gluten Free"><r:category:title /><br /></r:categories:each>').as('Salads<br />Pastries<br />')
 		end
 
 		it "should restrict OK by tags with ordering" do
