@@ -5,8 +5,8 @@ describe 'SimpleCategoryManager' do
 
 	before do
 		@c1=Category.create(:title => 'Test Category')
-		c2=Category.create(:title => 'Another Category', :parent_id => @c1.id, :sequence => 10)
 		c2=Category.create(:title => 'Subcategory', :parent_id => @c1.id, :sequence => 5)
+		c2=Category.create(:title => 'Another Category', :parent_id => @c1.id, :sequence => 10)
 	end
 
 

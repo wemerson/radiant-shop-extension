@@ -8,7 +8,8 @@
       <tr>
         <th class="category">Category</th>
         <th class="tags">Tags</th>
-        <th class="modify">Modify</th>
+        <th class="move" style="width: 65px;">Move</th>
+        <th class="modify" style="width: 65px;">Remove</th>
       </tr>
     </thead>
 
@@ -31,27 +32,24 @@
     <thead>
       <tr>
         <th class="product">Product</th>
-        <th class="category">Category</th>
         <th class="price">Price</th>
-        <th class="modify">Modify</th>
+        <th class="move" style="width: 65px;">Move</th>
+        <th class="modify" style="width: 65px;">Remove</th>
       </tr>
     </thead>
 
     <tbody>
-      <% Product.find(:all).each do |product| %>
-        <tr class="node level-1">
-          <td class="product">
-            <%# image('products/product') %>
-            <%= link_to product.title, edit_admin_product_url(product) %>
-          </td>
-          <td class="category">
-            <%= link_to product.category.to_s, edit_admin_category_url(product.category) %>
-          </td>
-          <td class="price"><%= number_to_currency(product.price) unless product.price.nil? %></td>
-          <td class="remove">
-            <%= link_to image('remove', :alt => 'Remove product'), remove_admin_product_url(product) %>
-          </td>
-        </tr>
+			<% last_category_id = nil -%>
+      <% Product.find(:all, :include => :category, :order => 'categories.parent_id ASC, categories.id ASC, categories.sequence ASC, products.sequence ASC').each do |product| %>
+				<% if product.category_id != last_category_id then -%>
+				<tr class="node level-1">
+					<th colspan="4">
+						<%= link_to product.category.to_s, edit_admin_category_url(product.category) %>
+					</th>
+				</tr>
+				<% end -%>
+				<% last_category_id = product.category_id -%>
+				<%= render :partial => 'product_row', :locals => { :product => product } %>
       <% end %>
     </tbody>
 

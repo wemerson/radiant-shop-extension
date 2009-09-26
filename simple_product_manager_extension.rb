@@ -14,6 +14,8 @@ class SimpleProductManagerExtension < Radiant::Extension
 			admin.resources :categories, :member => { :remove => :get }
 			admin.product_image 'products/upload_image/:product_id', :controller => 'products', :action => 'upload_image', :method => :post
 			admin.delete_product_image 'products/delete_image/:id', :controller => 'products', :action => 'delete_image', :method => :delete
+			admin.move_product 'products/move/:id/:d', :controller => 'products', :action => 'move', :method => :get
+			admin.move_category 'categories/move/:id/:d', :controller => 'categories', :action => 'move', :method => :get
 		end
 		map.connect 'products/:id', :controller => 'categories', :action => 'show', :id => /\d+(-[A-Za-z\-]+)?/
 		map.connect 'products/:category_id/:id', :controller => 'products', :action => 'show'

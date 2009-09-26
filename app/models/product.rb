@@ -6,6 +6,7 @@ class Product < ActiveRecord::Base
 	validates_numericality_of :price, :greater_than => 0.00, :allow_nil => true
 
 	before_save :reconcile_sequence_numbers
+	after_save :resequence_all
 
 	def to_param
 		"#{self.id}-#{self.title.gsub(/[^A-Za-z\-]/,'-').gsub(/-+/,'-')}"
@@ -28,7 +29,8 @@ class Product < ActiveRecord::Base
 private
 	def reconcile_sequence_numbers
 		if self.sequence.nil? then
-			# Assign a new sequence number
+			# Reorder everything and assign a new sequence number
+			resequence_all(self)
 			self.sequence=Product.maximum(:sequence, :conditions => { :category_id => self.category_id }).to_i + 1
 		else
 			if Product.find(:first, :conditions => { :sequence => self.sequence, :category_id => self.category_id }) then
@@ -50,4 +52,13 @@ private
 			end
 		end
 	end
+
+	def resequence_all(prod=nil)
+		prod=self if prod.nil?
+		Product.find(:all, :conditions => { :category_id => prod.category_id }, :order => 'sequence ASC').each_with_index do |p, idx|
+			Product.update_all("sequence=#{idx+1}", "id=#{p.id}") unless p.sequence == (idx+1)
+		end
+		true
+	end
+
 end

@@ -4,6 +4,9 @@
             <%= link_to category.title, edit_admin_category_url(category) %>
           </td>
           <td class="tags"><%= category.tag_names %></td>
+					<td class="move">
+						<%= category_move_links(category) %>
+					</td>
           <td class="remove">
             <%= link_to image('remove', :alt => 'Remove Category'), remove_admin_category_url(category) %>
           </td>

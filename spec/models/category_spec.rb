@@ -119,14 +119,16 @@ describe Category do
 			@c1.reload; @c3.reload
 			c4=@category.clone
 			c4.title='Delta'
-			c4.sequence=2
 			c4.save
 			@c1.reload; @c3.reload; @s1.reload
 			@c1.sequence.should == 1
-			@c3.sequence.should == 3
+			@c3.sequence.should == 2
+			c4.sequence.should == 3
 			# Sequence should not be messed with for separate parent_ids
 			@s1.sequence.should == 1
 		end
+
+
 	end
 
 	describe "instance" do

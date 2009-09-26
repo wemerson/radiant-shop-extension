@@ -75,14 +75,13 @@ describe Product do
 
 		it "should regenerate to fill gaps on next creation" do
 			@p2.destroy
-			@p1.reload; @p3.reload
 			p4=@product.clone
 			p4.title='Delta'
-			p4.sequence=2
 			p4.save
 			@p1.reload; @p3.reload; @sp1.reload
 			@p1.sequence.should == 1
-			@p3.sequence.should == 3
+			@p3.sequence.should == 2
+			p4.sequence.should == 3
 			# Sequence should not be messed with for separate category_ids
 			@sp1.sequence.should == 1
 		end
