@@ -199,7 +199,7 @@ NOTE: This example assumes no subcategories
 
 == History
 
-== Version 0.6 (26 Sep 2009)
+=== Version 0.6 (26 Sep 2009)
 * Products and Categories can be arbitrarily ordered by the admin
 
 === Version 0.5.2 (22 Sep 2009)
