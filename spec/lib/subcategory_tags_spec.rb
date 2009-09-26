@@ -5,8 +5,8 @@ describe 'SimpleCategoryManager' do
 
 	before do
 		@c1=Category.create(:title => 'Test Category')
-		c2=Category.create(:title => 'Another Category', :parent_id => @c1.id)
-		c2=Category.create(:title => 'Subcategory', :parent_id => @c1.id)
+		c2=Category.create(:title => 'Another Category', :parent_id => @c1.id, :sequence => 10)
+		c2=Category.create(:title => 'Subcategory', :parent_id => @c1.id, :sequence => 5)
 	end
 
 
@@ -15,6 +15,10 @@ describe 'SimpleCategoryManager' do
 			pages(:home).should render("<r:category:find where='id=#{@c1.id}'><r:subcategories:each>.</r:subcategories:each></r:category:find>").as('..')
 		end
 		
+		it "should order by sequence by default" do
+			pages(:home).should render("<r:category:find where='id=#{@c1.id}'><r:subcategories:each><r:subcategory:title /></r:subcategories:each></r:category:find>").as('Another CategorySubcategory')
+		end
+
 		it "should order OK by title" do
 			pages(:home).should render("<r:category:find where='id=#{@c1.id}'><r:subcategories:each order=\"title DESC\"><r:subcategory:title />,</r:subcategories:each></r:category:find>").as('Subcategory,Another Category,')
 		end

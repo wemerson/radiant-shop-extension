@@ -68,6 +68,66 @@ describe Category do
 		Category.find_all_top_level.size.should == 1
 	end
 
+	describe "sequencing" do
+		before do
+			@c1=@category.clone
+			@c1.title='Alpha'
+			@c2=@category.clone
+			@c2.title='Bravo'
+			@c3=@category.clone
+			@c3.title='Charlie'
+			@c1.save; @c2.save; @c3.save
+			@s1=@category.clone
+			@s1.parent_id=@c1.id
+			@s1.save
+		end
+
+		it "should assign sequences by default" do
+			@c1.sequence.should == 1
+			@c2.sequence.should == 2
+			@c3.sequence.should == 3
+			# Sequence is scoped to parent_id
+			@s1.sequence.should == 1
+		end
+
+		it "should resolve conflicting sequences" do
+			c4=@category.clone
+			c4.title='Delta'
+			c4.sequence=2
+			c4.save
+			@c1.reload; @c2.reload; @c3.reload; @s1.reload
+			@c1.sequence.should == 1
+			c4.sequence.should == 2
+			@c2.sequence.should == 3
+			@c3.sequence.should == 4
+			# Sequence should not be messed with for separate parent_ids
+			@s1.sequence.should == 1
+		end
+
+		it "should not regenerate on deletion" do
+			@c2.destroy
+			@c1.reload; @c3.reload; @s1.reload
+			@c1.sequence.should == 1
+			@c3.sequence.should == 3
+			# Sequence should not be messed with for separate parent_ids
+			@s1.sequence.should == 1
+		end
+
+		it "should regenerate to fill gaps on next creation" do
+			@c2.destroy
+			@c1.reload; @c3.reload
+			c4=@category.clone
+			c4.title='Delta'
+			c4.sequence=2
+			c4.save
+			@c1.reload; @c3.reload; @s1.reload
+			@c1.sequence.should == 1
+			@c3.sequence.should == 3
+			# Sequence should not be messed with for separate parent_ids
+			@s1.sequence.should == 1
+		end
+	end
+
 	describe "instance" do
 		before do
 			@category.save

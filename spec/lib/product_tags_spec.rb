@@ -16,6 +16,13 @@ describe 'SimpleProductManager' do
 			pages(:home).should render('<r:products:each>.</r:products:each>').as('.......')
 		end
 		
+		it "should order by sequence by default" do
+			Product.find(:all).each do |p|
+				p.update_attribute(:sequence, Kernel::rand(1000))
+			end
+			pages(:home).should render('<r:products:each><r:product:title /></r:products:each>').as(Product.find(:all, :order => 'sequence').collect { |x| x.title }.join(''))
+		end
+
 		it "should order OK by title" do
 			pages(:home).should render('<r:products:each order="title ASC"><r:product:title />,</r:products:each>').as('Caesar Salad,Croissant,Green Salad,Jam Tart,Multigrain,White,Wholemeal,')
 		end

@@ -22,6 +22,13 @@ describe 'SimpleProductManager' do
 			pages(:home).should render('<r:categories:each>.</r:categories:each>').as('...')
 		end
 		
+		it "should order by sequence by default" do
+			Category.find_by_title('Bread').update_attribute(:sequence, 5)
+			Category.find_by_title('Salads').update_attribute(:sequence, 10)
+			Category.find_by_title('Pastries').update_attribute(:sequence, 20)
+			pages(:home).should render('<r:categories:each><r:category:title />,</r:categories:each>').as('Bread,Salads,Pastries,')
+		end
+
 		it "should order OK by title" do
 			pages(:home).should render('<r:categories:each order="title DESC"><r:category:title />,</r:categories:each>').as('Salads,Pastries,Bread,')
 		end
