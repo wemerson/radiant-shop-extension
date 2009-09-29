@@ -128,6 +128,10 @@ describe 'SimpleProductManager' do
 			p=Product.find_by_title('Croissant')
 			pages(:home).should render("<r:products:each order=\"title ASC\"><r:product:if id=\"#{p.id}\"><r:product:title /></r:product:if></r:products:each>").as('Croissant')
 		end
+		it "should match by condition" do
+			p=Product.find_by_title('Croissant')
+			pages(:home).should render("<r:products:each order=\"title ASC\"><r:product:if match=\"price > 1000.0\"><r:product:title /></r:product:if></r:products:each>").as('Croissant')
+		end
 		it "should match within find" do
 			p=Product.find_by_title('Croissant')
 			pages(:home).should render("<r:product:find id=\"#{p.id}\"><r:product:if id=\"#{p.id}\"><r:product:title /></r:product:if></r:product:find>").as('Croissant')
@@ -145,6 +149,10 @@ describe 'SimpleProductManager' do
 		it "should match by id" do
 			p=Product.find_by_title('Croissant')
 			pages(:home).should render("<r:products:each order=\"title ASC\"><r:product:unless id=\"#{p.id}\"><r:product:title /></r:product:unless></r:products:each>").as('Caesar SaladGreen SaladJam TartMultigrainWhiteWholemeal')
+		end
+		it "should match by condition" do
+			p=Product.find_by_title('Croissant')
+			pages(:home).should render("<r:products:each order=\"title ASC\"><r:product:unless match=\"price > 1000.0\"><r:product:title /></r:product:unless></r:products:each>").as('Caesar SaladGreen SaladJam TartMultigrainWhiteWholemeal')
 		end
 		it "should restrict content when no match within find" do
 			p=Product.find_by_title('Croissant')
