@@ -112,4 +112,40 @@ describe 'SimpleProductManager' do
 			pages(:home).should render("<r:category:find where=\"id='#{@c.id}'\">-<r:category:field name=\"different_name\" />-</r:category:find>").as("--")
 		end
 	end
+
+	describe "<r:category:if>" do
+		it "should match by title" do
+			pages(:home).should render('<r:categories:each order="title ASC"><r:category:if title="Pastries"><r:category:title /></r:category:if></r:categories:each>').as('Pastries')
+		end
+		it "should match by id" do
+			p=Category.find_by_title('Pastries')
+			pages(:home).should render("<r:categories:each order=\"title ASC\"><r:category:if id=\"#{p.id}\"><r:category:title /></r:category:if></r:categories:each>").as('Pastries')
+		end
+		it "should match within find" do
+			p=Category.find_by_title('Pastries')
+			pages(:home).should render("<r:category:find id=\"#{p.id}\"><r:category:if id=\"#{p.id}\"><r:category:title /></r:category:if></r:category:find>").as('Pastries')
+		end
+		it "should suppress content when no match within find" do
+			p=Category.find_by_title('Pastries')
+			pages(:home).should render("<r:category:find id=\"#{p.id}\">-<r:category:if title=\"Something Different\"><r:category:title /></r:category:if>-</r:category:find>").as('--')
+		end
+	end
+
+	describe "<r:category:unless>" do
+		it "should match by title" do
+			pages(:home).should render('<r:categories:each order="title ASC"><r:category:unless title="Pastries"><r:category:title /></r:category:if></r:categories:each>').as('SaladsBread')
+		end
+		it "should match by id" do
+			p=Category.find_by_title('Pastries')
+			pages(:home).should render("<r:categories:each order=\"title ASC\"><r:category:unless id=\"#{p.id}\"><r:category:title /></r:category:unless></r:categories:each>").as('SaladsBread')
+		end
+		it "should restrict content when no match within find" do
+			p=Category.find_by_title('Pastries')
+			pages(:home).should render("<r:category:find id=\"#{p.id}\">-<r:category:unless id=\"#{p.id}\"><r:category:title /></r:category:unless>-</r:category:find>").as('--')
+		end
+		it "should match within find" do
+			p=Category.find_by_title('Pastries')
+			pages(:home).should render("<r:category:find id=\"#{p.id}\">-<r:category:unless title=\"Something Different\"><r:category:title /></r:category:unless>-</r:category:find>").as('-Pastries-')
+		end
+	end
 end

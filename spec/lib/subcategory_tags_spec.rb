@@ -56,4 +56,17 @@ describe 'SimpleCategoryManager' do
 		it "should return nothing on missing data"
 	end
 
+	describe "<r:subcategory:if>" do
+		it "should match by title"
+		it "should match by id"
+		it "should match within find"
+		it "should suppress content when no match within find"
+	end
+
+	describe "<r:subcategory:unless>" do
+		it "should match by title"
+		it "should match by id"
+		it "should restrict content when no match within find"
+		it "should match within find"
+	end
 end
