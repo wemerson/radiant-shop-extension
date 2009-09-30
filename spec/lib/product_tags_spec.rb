@@ -134,17 +134,17 @@ describe 'SimpleProductManager' do
 		end
 		it "should match within find" do
 			p=Product.find_by_title('Croissant')
-			pages(:home).should render("<r:product:find id=\"#{p.id}\"><r:product:if id=\"#{p.id}\"><r:product:title /></r:product:if></r:product:find>").as('Croissant')
+			pages(:home).should render("<r:product:find where=\"id=#{p.id}\"><r:product:if id=\"#{p.id}\"><r:product:title /></r:product:if></r:product:find>").as('Croissant')
 		end
 		it "should suppress content when no match within find" do
 			p=Product.find_by_title('Croissant')
-			pages(:home).should render("<r:product:find id=\"#{p.id}\">-<r:product:if title=\"Something Different\"><r:product:title /></r:product:if>-</r:product:find>").as('--')
+			pages(:home).should render("<r:product:find where=\"id=#{p.id}\">-<r:product:if title=\"Something Different\"><r:product:title /></r:product:if>-</r:product:find>").as('--')
 		end
 	end
 
 	describe "<r:product:unless>" do
 		it "should match by title" do
-			pages(:home).should render('<r:products:each order="title ASC"><r:product:unless title="Croissant"><r:product:title /></r:product:if></r:products:each>').as('Caesar SaladGreen SaladJam TartMultigrainWhiteWholemeal')
+			pages(:home).should render('<r:products:each order="title ASC"><r:product:unless title="Croissant"><r:product:title /></r:product:unless></r:products:each>').as('Caesar SaladGreen SaladJam TartMultigrainWhiteWholemeal')
 		end
 		it "should match by id" do
 			p=Product.find_by_title('Croissant')
@@ -156,11 +156,11 @@ describe 'SimpleProductManager' do
 		end
 		it "should restrict content when no match within find" do
 			p=Product.find_by_title('Croissant')
-			pages(:home).should render("<r:product:find id=\"#{p.id}\">-<r:product:unless id=\"#{p.id}\"><r:product:title /></r:product:unless>-</r:product:find>").as('--')
+			pages(:home).should render("<r:product:find where=\"id=#{p.id}\">-<r:product:unless id=\"#{p.id}\"><r:product:title /></r:product:unless>-</r:product:find>").as('--')
 		end
 		it "should match within find" do
 			p=Product.find_by_title('Croissant')
-			pages(:home).should render("<r:product:find id=\"#{p.id}\">-<r:product:unless title=\"Something Different\"><r:product:title /></r:product:unless>-</r:product:find>").as('-Croissant-')
+			pages(:home).should render("<r:product:find where=\"id=#{p.id}\">-<r:product:unless title=\"Something Different\"><r:product:title /></r:product:unless>-</r:product:find>").as('-Croissant-')
 		end
 	end
 end

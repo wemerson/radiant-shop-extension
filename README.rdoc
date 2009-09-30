@@ -196,8 +196,12 @@ NOTE: This example assumes no subcategories
 == TODO
 * Deperately need some integration tests
 * <r:product:url> and <r:category:url> tags
+* Tag definitions need some major cleanup work
 
 == History
+
+=== PENDING
+* Added tags <r:product:if> <r:product:unless> and same for <r:category>
 
 === Version 0.6 (26 Sep 2009)
 * Products and Categories can be arbitrarily ordered by the admin

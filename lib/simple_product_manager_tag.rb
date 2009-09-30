@@ -20,8 +20,6 @@ module SimpleProductManagerTag
 		product=Product.find(:first, :conditions => where)
 		if product then
 			tag.locals.product = product
-			#tag.locals.product_internal_url=attr[:internal_url] unless attr[:internal_url].blank?
-			#tag.locals.category_internal_url=attr[:internal_url].gsub(/\/[A-Za-z0-9\-]+$/, '') unless attr[:internal_url].blank?
 		end
 		tag.expand
 	end
@@ -46,6 +44,49 @@ module SimpleProductManagerTag
 			result << tag.expand
 		end
 		result
+	end
+
+	tag 'product:if' do |tag|
+		attr = tag.attr.symbolize_keys
+		if process_product_if(tag.locals.product, attr) then
+			tag.expand
+		else
+			""
+		end
+	end
+
+	tag 'product:unless' do |tag|
+		attr = tag.attr.symbolize_keys
+		if !process_product_if(tag.locals.product, attr) then
+			tag.expand
+		else
+			""
+		end
+	end
+
+	def process_product_if(product, attr)
+		conditions=[[]]
+		if attr[:id] then
+			# Shortcircuit here
+			if product.id != attr[:id].to_i then
+				# It doesn't match, so we can abort early
+				return false
+			end
+		end
+
+		# We always match against the current ID
+		conditions[0] << 'id=?'
+		conditions << product.id
+
+		if attr[:title] then
+			conditions[0] << 'title=?'
+			conditions << attr[:title].to_s
+		end
+		if attr[:match] then
+			conditions[0] << attr[:match]
+		end
+		conditions[0]=conditions[0].join(' AND ')
+		return (Product.count(:conditions => conditions) == 1)
 	end
 
 	desc "Renders the ID of the current product loaded by <r:product> or <r:products:each>"
@@ -216,6 +257,57 @@ If specified, 'parent' can be either the ID of the parent Category, or it's titl
 			result << tag.expand
 		end
 		result
+	end
+
+	tag 'category:if' do |tag|
+		attr = tag.attr.symbolize_keys
+		if process_category_if(tag.locals.category, attr) then
+			tag.expand
+		else
+			""
+		end
+	end
+
+	tag 'category:unless' do |tag|
+		attr = tag.attr.symbolize_keys
+		if !process_category_if(tag.locals.category, attr) then
+			tag.expand
+		else
+			""
+		end
+	end
+
+	def process_category_if(category, attr)
+		conditions=[[]]
+		if attr[:id] then
+			# Shortcircuit here
+			if category.id != attr[:id].to_i then
+				# It doesn't match, so we can abort early
+				return false
+			end
+		end
+
+		# We always match against the current ID
+		# and the same parent ID
+		conditions[0] << 'id=?'
+		conditions << category.id
+
+		if category.parent_id.nil? then
+			conditions[0] << 'parent_id IS NULL'
+		else
+			conditions[0] << 'parent_id=?'
+			conditions << category.parent_id
+		end
+
+		if attr[:title] then
+			conditions[0] << 'title=?'
+			conditions << attr[:title].to_s
+		end
+		if attr[:match] then
+			conditions[0] << attr[:match]
+		end
+		conditions[0]=conditions[0].join(' AND ')
+		return (Category.count(:conditions => conditions) == 1)
 	end
 
 	desc "Renders the ID of the current category loaded by <r:category> or <r:categories:each>"
