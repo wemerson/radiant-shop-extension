@@ -171,4 +171,27 @@ describe 'SimpleProductManager' do
 			@page.should render("<r:categories:each order=\"title ASC\"><r:category:unless_self><r:title /></r:category:unless_self></r:categories:each>").as(Category.find(:all, :conditions => [ 'id != ? AND parent_id IS NULL', @category.id], :order => 'title ASC').collect { |c| c.title }.join(''))
 		end
 	end
+
+	describe "<r:category:if_ancestor_or_self>" do
+		before do
+			@category=Category.find_by_title('Wholemeal Breads')
+			@page=RailsPage.new(:class_name => "RailsPage", :slug => @category.url)
+		end
+		it "should expand on the relevant page" do
+			# Sometimes there is a trailing slash from the page.url. Remove it before we check.
+			@page.url.gsub(/\/$/,'').should == @category.url
+			@page.should render("<r:categories:each order=\"title ASC\"><r:category:if_ancestor_or_self><r:title /></r:category:if_ancestor_or_self></r:categories:each>").as("Bread")
+		end
+	end
+	describe "<r:category:unless_ancestor_or_self>" do
+		before do
+			@category=Category.find_by_title('Wholemeal Breads')
+			@page=RailsPage.new(:class_name => "RailsPage", :slug => @category.url)
+		end
+		it "should expand on the relevant page" do
+			# Sometimes there is a trailing slash from the page.url. Remove it before we check.
+			@page.url.gsub(/\/$/,'').should == @category.url
+			@page.should render("<r:categories:each order=\"title ASC\"><r:category:unless_ancestor_or_self><r:title /></r:category:unless_ancestor_or_self></r:categories:each>").as('PastriesSalads')
+		end
+	end
 end
