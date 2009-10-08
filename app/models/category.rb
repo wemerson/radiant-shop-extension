@@ -81,6 +81,18 @@ class Category < ActiveRecord::Base
 		end
 	end
 
+	def ancestors
+		if parent
+			return parent.ancestors + [parent]
+		else
+			return []
+		end
+	end
+
+	def is_ancestor_or_self_of?(other_category)
+		(other_category.ancestors + [other_category]).include?(self)
+	end
+
 	def self.find_all_except(c, options={})
 		options[:order] ||= 'sequence ASC'
 		options[:conditions]=[ 'id != ?', c.id ] unless (c.blank? || c.new_record? )

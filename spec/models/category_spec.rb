@@ -127,8 +127,6 @@ describe Category do
 			# Sequence should not be messed with for separate parent_ids
 			@s1.sequence.should == 1
 		end
-
-
 	end
 
 	describe "instance" do
@@ -142,6 +140,30 @@ describe Category do
 
 		it "should generate a valid url" do
 			@category.url.should == "/products/#{@category.to_param}"
+		end
+
+		describe "ancestor methods" do
+			before do
+				@c1=Category.create!(:title => "Grandparent")
+				@c2=Category.create!(:title => "Parent", :parent => @c1)
+				@c3=Category.create!(:title => "Child", :parent => @c2)
+			end
+
+			it "should return ancestors" do
+				@c1.ancestors.should == []
+				@c2.ancestors.collect { |x| x.id }.should == [ @c1.id ]
+				@c3.ancestors.collect { |x| x.id }.should == [ @c1.id, @c2.id ]
+			end
+
+			it "should respond to ancestor_or_self?" do
+				@c1.is_ancestor_or_self_of?(@c1).should == true
+				@c1.is_ancestor_or_self_of?(@c2).should == true
+				@c1.is_ancestor_or_self_of?(@c3).should == true
+				@c2.is_ancestor_or_self_of?(@c3).should == true
+				@category.is_ancestor_or_self_of?(@c1).should == false
+				@c3.is_ancestor_or_self_of?(@c2).should == false
+				@c3.is_ancestor_or_self_of?(@c1).should == false
+			end
 		end
 	end
 	
@@ -176,5 +198,4 @@ describe Category do
 			c2.product_layout.should == 'CustomProductLayout'
 		end
 	end
-
 end
