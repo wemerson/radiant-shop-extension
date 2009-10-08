@@ -148,4 +148,27 @@ describe 'SimpleProductManager' do
 			pages(:home).should render("<r:category:find where=\"id=#{p.id}\">-<r:category:unless title=\"Something Different\"><r:category:title /></r:category:unless>-</r:category:find>").as('-Pastries-')
 		end
 	end
+
+	describe "<r:category:if_self>" do
+		before do
+			@category=Category.find(:first)
+			@page=RailsPage.new(:class_name => "RailsPage", :slug => @category.url)
+		end
+		it "should expand on the relevant page" do
+			# Sometimes there is a trailing slash from the page.url. Remove it before we check.
+			@page.url.gsub(/\/$/,'').should == @category.url
+			@page.should render("<r:categories:each><r:category:if_self><r:title /></r:category:if_self></r:categories:each>").as(@category.title)
+		end
+	end
+	describe "<r:category:unless_self>" do
+		before do
+			@category=Category.find(:first)
+			@page=RailsPage.new(:class_name => "RailsPage", :slug => @category.url)
+		end
+		it "should expand on the relevant page" do
+			# Sometimes there is a trailing slash from the page.url. Remove it before we check.
+			@page.url.gsub(/\/$/,'').should == @category.url
+			@page.should render("<r:categories:each order=\"title ASC\"><r:category:unless_self><r:title /></r:category:unless_self></r:categories:each>").as(Category.find(:all, :conditions => [ 'id != ? AND parent_id IS NULL', @category.id], :order => 'title ASC').collect { |c| c.title }.join(''))
+		end
+	end
 end

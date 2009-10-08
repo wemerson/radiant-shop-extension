@@ -163,4 +163,28 @@ describe 'SimpleProductManager' do
 			pages(:home).should render("<r:product:find where=\"id=#{p.id}\">-<r:product:unless title=\"Something Different\"><r:product:title /></r:product:unless>-</r:product:find>").as('-Croissant-')
 		end
 	end
+
+	describe "<r:product:if_self>" do
+		before do
+			@product=Product.find(:first)
+			@page=RailsPage.new(:class_name => "RailsPage", :slug => @product.url)
+		end
+		it "should expand on the relevant page" do
+			# Sometimes there is a trailing slash from the page.url. Remove it before we check.
+			@page.url.gsub(/\/$/,'').should == @product.url
+			@page.should render("<r:products:each><r:product:if_self><r:title /></r:product:if_self></r:products:each>").as(@product.title)
+		end
+	end
+
+	describe "<r:product:unless_self>" do
+		before do
+			@product=Product.find(:first)
+			@page=RailsPage.new(:class_name => "RailsPage", :slug => @product.url)
+		end
+		it "should expand on the relevant page" do
+			# Sometimes there is a trailing slash from the page.url. Remove it before we check.
+			@page.url.gsub(/\/$/,'').should == @product.url
+			@page.should render("<r:products:each order=\"title ASC\"><r:product:unless_self><r:title /></r:product:unless_self></r:products:each>").as(Product.find(:all, :conditions => [ 'id != ?', @product.id], :order => 'title ASC').collect { |c| c.title }.join(''))
+		end
+	end
 end

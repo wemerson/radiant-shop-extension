@@ -89,6 +89,16 @@ module SimpleProductManagerTag
 		return (Product.count(:conditions => conditions) == 1)
 	end
 
+	tag 'product:if_self' do |tag|
+		# Strip the trailing slash from the Radiant URL as it may sometimes be present
+		tag.expand if tag.locals.product.url == tag.locals.page.url.gsub(/\/$/,'')
+	end
+
+	tag 'product:unless_self' do |tag|
+		# Strip the trailing slash from the Radiant URL as it may sometimes be present
+		tag.expand if tag.locals.product.url != tag.locals.page.url.gsub(/\/$/,'')
+	end
+
 	desc "Renders the ID of the current product loaded by <r:product> or <r:products:each>"
 	tag 'product:id' do |tag|
 		product = tag.locals.product
@@ -308,6 +318,16 @@ If specified, 'parent' can be either the ID of the parent Category, or it's titl
 		end
 		conditions[0]=conditions[0].join(' AND ')
 		return (Category.count(:conditions => conditions) == 1)
+	end
+
+	tag 'category:if_self' do |tag|
+		# Strip the trailing slash from the Radiant URL as it may sometimes be present
+		tag.expand if tag.locals.category.url == tag.locals.page.url.gsub(/\/$/,'')
+	end
+
+	tag 'category:unless_self' do |tag|
+		# Strip the trailing slash from the Radiant URL as it may sometimes be present
+		tag.expand if tag.locals.category.url != tag.locals.page.url.gsub(/\/$/,'')
 	end
 
 	desc "Renders the ID of the current category loaded by <r:category> or <r:categories:each>"
