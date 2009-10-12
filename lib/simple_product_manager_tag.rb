@@ -20,6 +20,7 @@ module SimpleProductManagerTag
 		product=Product.find(:first, :conditions => where)
 		if product then
 			tag.locals.product = product
+			tag.locals.current_category = product.category if attr[:page]
 		end
 		tag.expand
 	end
@@ -224,7 +225,7 @@ module SimpleProductManagerTag
 		category=Category.find(:first, :conditions => where)
 		if category then
 			tag.locals.category = category
-			#tag.locals.category_internal_url=attr[:internal_url] unless attr[:internal_url].blank?
+			tag.locals.current_category = category if attr[:page]
 			tag.expand
 		else
 			"<b>Can't find Category</b>"
@@ -328,6 +329,14 @@ If specified, 'parent' can be either the ID of the parent Category, or it's titl
 	tag 'category:unless_self' do |tag|
 		# Strip the trailing slash from the Radiant URL as it may sometimes be present
 		tag.expand if tag.locals.category.url != tag.locals.page.url.gsub(/\/$/,'')
+	end
+
+	tag 'category:if_ancestor_or_self' do |tag|
+		tag.expand if !tag.locals.current_category.nil? && tag.locals.category.is_ancestor_or_self_of?(tag.locals.current_category)
+	end
+	
+	tag 'category:unless_ancestor_or_self' do |tag|
+		tag.expand if tag.locals.current_category.nil? || !tag.locals.category.is_ancestor_or_self_of?(tag.locals.current_category)
 	end
 
 	desc "Renders the ID of the current category loaded by <r:category> or <r:categories:each>"

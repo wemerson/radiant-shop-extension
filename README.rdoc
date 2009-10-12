@@ -57,6 +57,8 @@ The categories and products are exposed to the site using the following tags:
   <r:category:unless [id=""] [title=""] [where=""]> ... </r:category:unless>
   <r:category:if_self> ... </r:category:if_self>
   <r:category:unless_self> ... </r:category:unless_self>
+  <r:category:if_ancestor_or_self> ... </r:category:if_ancestor_or_self>
+  <r:category:unless_ancestor_or_self> ... </r:category:unless_ancestor_or_self>
   <r:category:id />
   <r:category:title />
   <r:category:description />
@@ -209,7 +211,9 @@ NOTE: This example assumes no subcategories
 == History
 
 === PENDING
-* Added if_self and unless_self for product and categories, courtesy of code provided by Yves-Eric Martin
+* Courtesy of code provided by Yves-Eric Martin :
+** Added if_self and unless_self for product and categories
+** Added category:if_ancestor_or_self and :unless_ancestor_or_self
 
 === Version 0.7 (30 Sep 2009)
 * Added tags <r:product:if> <r:product:unless> and same for <r:category>

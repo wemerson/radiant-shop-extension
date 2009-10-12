@@ -172,26 +172,31 @@ describe 'SimpleProductManager' do
 		end
 	end
 
-	describe "<r:category:if_ancestor_or_self>" do
+	describe '' do
 		before do
 			@category=Category.find_by_title('Wholemeal Breads')
-			@page=RailsPage.new(:class_name => "RailsPage", :slug => @category.url)
+			@product=@category.products.first || @category.products.create!(:title => 'Test Product')
 		end
-		it "should expand on the relevant page" do
-			# Sometimes there is a trailing slash from the page.url. Remove it before we check.
-			@page.url.gsub(/\/$/,'').should == @category.url
-			@page.should render("<r:categories:each order=\"title ASC\"><r:category:if_ancestor_or_self><r:title /></r:category:if_ancestor_or_self></r:categories:each>").as("Bread")
+
+		describe "<r:category:if_ancestor_or_self>" do
+			it "should expand on the relevant category page" do
+				# The <...:find page="true"> syntax is what our views use to load up the current category
+				pages(:home).should render("<r:category:find where=\"id=#{@category.id}\" page=\"true\"><r:categories:each order=\"title ASC\"><r:category:if_ancestor_or_self><r:title /></r:category:if_ancestor_or_self></r:categories:each></r:category:find>").as("Bread")
+			end
+			it "should expand on the relevant product page" do
+				# The <...:find page="true"> syntax is what our views use to load up the current category
+				pages(:home).should render("<r:product:find where=\"id=#{@product.id}\" page=\"true\"><r:categories:each order=\"title ASC\"><r:category:if_ancestor_or_self><r:title /></r:category:if_ancestor_or_self></r:categories:each></r:product:find>").as("Bread")
+			end
 		end
-	end
-	describe "<r:category:unless_ancestor_or_self>" do
-		before do
-			@category=Category.find_by_title('Wholemeal Breads')
-			@page=RailsPage.new(:class_name => "RailsPage", :slug => @category.url)
-		end
-		it "should expand on the relevant page" do
-			# Sometimes there is a trailing slash from the page.url. Remove it before we check.
-			@page.url.gsub(/\/$/,'').should == @category.url
-			@page.should render("<r:categories:each order=\"title ASC\"><r:category:unless_ancestor_or_self><r:title /></r:category:unless_ancestor_or_self></r:categories:each>").as('PastriesSalads')
+		describe "<r:category:unless_ancestor_or_self>" do
+			it "should expand on the relevant category page" do
+				# The <...:find page="true"> syntax is what our views use to load up the current category
+				pages(:home).should render("<r:category:find where=\"id=#{@category.id}\" page=\"true\"><r:categories:each order=\"title ASC\"><r:category:unless_ancestor_or_self><r:title /></r:category:unless_ancestor_or_self></r:categories:each></r:category:find>").as('PastriesSalads')
+			end
+			it "should expand on the relevant product page" do
+				# The <...:find page="true"> syntax is what our views use to load up the current category
+				pages(:home).should render("<r:product:find where=\"id=#{@product.id}\" page=\"true\"><r:categories:each order=\"title ASC\"><r:category:unless_ancestor_or_self><r:title /></r:category:unless_ancestor_or_self></r:categories:each></r:product:find>").as('PastriesSalads')
+			end
 		end
 	end
 end
