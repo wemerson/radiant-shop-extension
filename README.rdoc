@@ -212,8 +212,8 @@ NOTE: This example assumes no subcategories
 
 === Version 0.8 (13 Oct 2009)
 * Courtesy of code provided by Yves-Eric Martin :
-** Added if_self and unless_self for product and categories
-** Added category:if_ancestor_or_self and :unless_ancestor_or_self
+* Added if_self and unless_self for product and categories
+* Added category:if_ancestor_or_self and :unless_ancestor_or_self
 
 === Version 0.7 (30 Sep 2009)
 * Added tags <r:product:if> <r:product:unless> and same for <r:category>
