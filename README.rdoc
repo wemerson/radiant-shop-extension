@@ -210,7 +210,7 @@ NOTE: This example assumes no subcategories
 
 == History
 
-=== PENDING
+=== Version 0.8 (13 Oct 2009)
 * Courtesy of code provided by Yves-Eric Martin :
 ** Added if_self and unless_self for product and categories
 ** Added category:if_ancestor_or_self and :unless_ancestor_or_self
