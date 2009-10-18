@@ -16,6 +16,9 @@ class ProductImage < ActiveRecord::Base
 
 	before_save :set_product_id_from_parent
 
+	before_save :reconcile_sequence_numbers
+	after_save :resequence_all
+
 	def tag_names
 		return '' if self.tags.blank?
 		a=self.tags
@@ -70,6 +73,40 @@ private
 		if !self.parent.blank? then
 			self.product_id=self.parent.product_id
 		end
+	end
+
+	def reconcile_sequence_numbers
+		if self.sequence.nil? then
+			# Reorder everything and assign a new sequence number
+			resequence_all(self)
+			self.sequence=ProductImage.maximum(:sequence, :conditions => { :product_id => self.product_id }).to_i + 1
+		else
+			if ProductImage.find(:first, :conditions => { :sequence => self.sequence, :product_id => self.product_id }) then
+				# We need to reorder the sequences ahead of us
+				conditions=[]
+				if self.product_id.nil? then
+					conditions[0]='product_id IS NULL'
+				else
+					conditions[0]='product_id = ?'
+					conditions << self.product_id
+				end
+				conditions[0] << ' AND sequence >= ?'
+				conditions << self.sequence
+
+				conflicts=ProductImage.find(:all, :conditions => conditions, :order => 'sequence ASC')
+				conflicts.each_with_index do |c, idx|
+					ProductImage.update_all("sequence=#{self.sequence + idx + 1}","id=#{c.id}")
+				end
+			end
+		end
+	end
+
+	def resequence_all(prod=nil)
+		prod=self if prod.nil?
+		ProductImage.find(:all, :conditions => { :product_id => prod.product_id }, :order => 'sequence ASC').each_with_index do |p, idx|
+			ProductImage.update_all("sequence=#{idx+1}", "id=#{p.id}") unless p.sequence == (idx+1)
+		end
+		true
 	end
 
 end
