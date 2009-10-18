@@ -8,12 +8,16 @@ describe 'SimpleProductManager' do
 		before do
 			@p=Product.create(:title => 'Test', :category => Category.find(:first))
 			@p.product_images.create!(:description => 'Foo', :filename => "foo.jpg", :content_type => 'images/jpeg', :size => 100, :tag_names => 'foo,bar')
-			@p.product_images.create!(:description => 'Bar', :filename => "bar.jpg", :content_type => 'images/jpeg', :size => 100, :tag_names => 'bar,bletch')
 			@p.product_images.create!(:description => 'Bletch', :filename => "bletch.jpg", :content_type => 'images/jpeg', :size => 100, :tag_names => 'bletch')
+			@p.product_images.create!(:description => 'Bar', :filename => "bar.jpg", :content_type => 'images/jpeg', :size => 100, :tag_names => 'bar,bletch')
 		end
 
 		it "should itterate over all the images for this product" do
 			pages(:home).should render("<r:product:find where='id=#{@p.id}'><r:product:images:each>.</r:product:images:each></r:product:find>").as('...')
+		end
+
+		it "should itterate over all the images for this product in sequence order" do
+			pages(:home).should render("<r:product:find where='id=#{@p.id}'><r:product:images:each><r:image:description /></r:product:images:each></r:product:find>").as('FooBletchBar')
 		end
 
 		it "should itterate over all the images for this product in order" do
@@ -30,7 +34,7 @@ describe 'SimpleProductManager' do
 
 		%w( description filename url tag ).each do |field|
 			it "should expose images to <r:product:image:#{field}>" do
-				pages(:home).should render("<r:product:find where='id=#{@p.id}'><r:product:images:each><r:product:image:#{field} /></r:product:images:each></r:product:find>").as(@p.product_images.find(:all, :order => 'filename ASC').collect { |i| i.send(field.to_sym) }.join(''))
+				pages(:home).should render("<r:product:find where='id=#{@p.id}'><r:product:images:each><r:product:image:#{field} /></r:product:images:each></r:product:find>").as(@p.product_images.find(:all, :order => 'sequence ASC').collect { |i| i.send(field.to_sym) }.join(''))
 			end
 		end
 	end

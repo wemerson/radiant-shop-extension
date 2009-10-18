@@ -177,7 +177,7 @@ module SimpleProductManagerTag
 		end
 
 		result=[]
-		order=attr[:order] || 'filename ASC'
+		order=attr[:order] || 'sequence ASC'
 		product.product_images.find(:all, :conditions => where, :limit => attr[:limit], :order => order).each do |pi|
 			tag.locals.product_image=pi
 			result << tag.expand
