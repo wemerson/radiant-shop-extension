@@ -103,7 +103,7 @@ private
 
 	def resequence_all(prod=nil)
 		prod=self if prod.nil?
-		ProductImage.find(:all, :conditions => { :product_id => prod.product_id }, :order => 'sequence ASC').each_with_index do |p, idx|
+		ProductImage.find(:all, :conditions => { :product_id => prod.product_id, :parent_id => nil }, :order => 'sequence ASC').each_with_index do |p, idx|
 			ProductImage.update_all("sequence=#{idx+1}", "id=#{p.id}") unless p.sequence == (idx+1)
 		end
 		true

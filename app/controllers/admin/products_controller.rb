@@ -31,4 +31,19 @@ class Admin::ProductsController < Admin::ResourceController
 		end
 		redirect_to :controller => 'admin/products', :action => 'index'
 	end
+
+	def move_image
+		@product_image=ProductImage.find(params[:id])
+		case params[:d]
+			when 'up'
+				@product_image.update_attribute(:sequence, @product_image.sequence.to_i - 1 )
+			when 'down'
+				@product_image.update_attribute(:sequence, @product_image.sequence.to_i + 1 )
+			when 'top'
+				@product_image.update_attribute(:sequence, 1 )
+			when 'bottom'
+				@product_image.update_attribute(:sequence, nil)
+		end
+		redirect_to :controller => 'admin/products', :action => 'edit', :id => @product_image.product, :anchor => :images
+	end
 end
