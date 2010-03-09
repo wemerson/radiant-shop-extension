@@ -1,0 +1,4 @@
+%h1= @shop_category.title
+
+- form_for [:shop, @shop_category], :url => admin_shop_category_path(@shop_category.id), :html => {:method => :put, 'data-onsubmit_status'=>'Saving Category&#8230;'} do |fields|
+  = render :partial => 'fields', :object => fields

@@ -1,0 +1,4 @@
+%h1= @shop_product.title
+
+- form_for [:shop, @shop_product], :url => admin_shop_product_path(@shop_product.id), :html => {:method => :put, 'data-onsubmit_status'=>'Saving Product&#8230;'} do |fields|
+  = render :partial => 'fields', :object => fields

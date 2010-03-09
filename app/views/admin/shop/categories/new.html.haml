@@ -1,0 +1,4 @@
+%h1 New Category
+
+- form_for [:shop, @shop_category], :url => admin_shop_categories_url, :html => {:method => :post, 'data-onsubmit_status'=>'Creating Category&#8230;'} do |fields|
+  = render :partial => 'fields', :object => fields

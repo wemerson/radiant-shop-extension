@@ -1,0 +1,33 @@
+.form-area
+  #category_form_area
+    %p.title
+      %label{ :for => "category_title" }
+        Title
+      = fields.text_field :title, :class => 'textbox', :maxlength => 255
+    #extended_metadata{meta_visible(:meta)}
+      %table.fieldset
+        %tr
+          %th.label Tags
+          %td.field= fields.text_field :tag_names, :class => 'textbox', :maxlength => 255
+        %tr
+          %th.label Parent
+          %td.field= collection_select(:shop_category, :parent_id, ShopCategory.all, :id, :title, {:prompt => "Select..."})
+        %tr
+          %th.label Layout
+          %td.field= collection_select(:shop_category, :custom_layout, Layout.all, :name, :name, {:prompt => "inherit"})
+        %tr
+          %th.label Products
+          %td.field= collection_select(:shop_category, :custom_product_layout, Layout.all, :name, :name, {:prompt => "inherit"})
+          
+    %p.more_or_less
+      %a{:href=>'#extended_metadata',:class => "rounded_bottom_right rounded_bottom_left #{(meta_errors? ? 'more' : 'less')}"}= meta_label
+
+    %p.description.row.title
+      %label{ :for => "category_description" }
+        Description
+      = fields.text_area :description, :class => 'textarea', :maxlength => 255
+%p.buttons
+  = save_model_button(@shop_category, {:label => "#{model.new_record? ? 'Create Category' : 'Save Changes'}"})
+  = save_model_and_continue_editing_button(@shop_category)
+  or
+  = link_to "Cancel", {:action => :index}

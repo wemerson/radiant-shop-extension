@@ -1,0 +1,39 @@
+require_dependency 'application_controller'
+
+require 'ostruct'
+
+class ShopExtension < Radiant::Extension
+	version "0.0.1"
+	description "Core extension for the Radiant shop"
+	url "http://github.com/squaretalent/radiant-shop-extension"
+	
+	define_routes do |map|
+	  #allows us to pass category to a product
+	  map.new_admin_shop_product 'admin/shop/products/new/:category', :controller => 'admin/shop/products', :action => 'new'
+		map.namespace :admin, :member => {:remove => :get} do |admin|
+		  admin.namespace :shop, :member => {:remove => :get} do |shop|
+		    shop.resources :categories, :as => 'products/categories'
+        shop.resources :products
+	    end
+		end
+		map.namespace 'shop' do |shop|
+		  shop.connect 'category/:name', :controller => 'categories', :action => 'show', :name => /([\w\_]+)\z?/
+		  shop.connect 'product/:name', :controller => 'products', :action => 'show', :name => /([\w\_]+)\z?/
+	  end
+	end
+	
+	extension_config do |config|
+    config.gem 'will_paginate', :version => '~> 2.3.11', :source => 'http://gemcutter.org'
+  end
+	
+	def activate
+		tab 'Content' do
+      add_item 'Products', '/admin/shop/products', :after => 'Pages'
+    end
+
+		# If our RadiantConfig settings are blank, set them up now
+		Radiant::Config['shop.product_layout'] ||= 'Product'
+		Radiant::Config['shop.category_layout'] ||= 'Category'
+	end
+	
+end

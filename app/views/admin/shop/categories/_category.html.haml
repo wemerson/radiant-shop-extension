@@ -1,0 +1,15 @@
+- level=1 if level.blank?
+%tr.category{ :id => "category_#{category.id.to_s}", :class => "node level-#{level}" }
+  %td.title
+    = link_to category.title, edit_admin_shop_category_path(category.id)
+  %td.description
+    = category.description
+  %td.add
+    = link_to 'new product', new_admin_shop_product_path(category.id)
+  %td.remove
+    = link_to image('remove', :alt => 'Remove File'), remove_admin_shop_category_path(category.id)
+- unless category.products.empty?
+  %tr.products
+    %td{:colspan => "4"}
+      %table{:style => "width: 50%"}
+        = render :partial => 'product', :collection => category.products

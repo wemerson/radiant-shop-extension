@@ -1,0 +1,13 @@
+%table.index
+  %thead
+    %tr
+      %th.title Category
+      %th.description Description
+      %th.modify{ :colspan =>'2' } Modify
+  %tbody
+    - unless @shop_categories.empty?
+      = render :partial => '/admin/shop/categories/category', :collection => @shop_categories
+    - else
+      %tr
+        %td.note{ :colspan => '4' } 
+          No Categories
