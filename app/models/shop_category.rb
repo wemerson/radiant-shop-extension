@@ -5,6 +5,8 @@ class ShopCategory < ActiveRecord::Base
 
 	validates_presence_of :title
 	validates_uniqueness_of :title
+	validates_presence_of :handle
+  validates_uniqueness_of :handle
 
 	before_save :reconcile_sequence_numbers
 	after_save :resequence_all

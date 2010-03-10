@@ -4,6 +4,10 @@ class ShopProduct < ActiveRecord::Base
 	
 	validates_presence_of :title
 	validates_uniqueness_of :title
+	validates_presence_of :sku
+  validates_uniqueness_of :sku
+	validates_presence_of :handle
+  validates_uniqueness_of :handle
 	validates_numericality_of :price, :greater_than => 0.00, :allow_nil => true
 
 	before_save :reconcile_sequence_numbers

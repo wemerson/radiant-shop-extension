@@ -1,2 +1,4 @@
-class ShopCustomer < ActiveRecord::Base
+class ShopCustomer < Reader
+  has_many :orders
+  
 end
