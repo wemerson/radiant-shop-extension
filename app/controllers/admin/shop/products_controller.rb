@@ -8,7 +8,7 @@ class Admin::Shop::ProductsController < Admin::ResourceController
   #----------------------------------------------------------------------------  
   def index
 	  @shop_categories = ShopCategory.search(params[:csearch], params[:cfilter], params[:cpage])
-    @shop_products = ShopProduct.search(params[:psearch], params[:pfilter], params[:ppage])
+    @shop_products = ShopProduct.all
     attr_hash = {
       :include => {:category => {:only => [:title]} },
       :only => [:id, :created_at, :updated_at, :description, :price, :title]
