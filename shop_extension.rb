@@ -14,6 +14,7 @@ class ShopExtension < Radiant::Extension
 		  admin.namespace :shop, :member => {:remove => :get} do |shop|
 		    shop.resources :categories, :as => 'products/categories'
         shop.resources :products
+        shop.resources :customers
 	    end
 		end
 		map.namespace 'shop' do |shop|
@@ -27,8 +28,10 @@ class ShopExtension < Radiant::Extension
   end
 	
 	def activate
-		tab 'Content' do
-      add_item 'Products', '/admin/shop/products', :after => 'Pages'
+		tab 'Shop' do
+      add_item 'Products', '/admin/shop/products'
+      add_item 'Customers', '/admin/shop/customers', :after => 'Products'
+      add_item 'Orders', '/admin/shop/orders', :after => 'Customers'
     end
     
     Page.class_eval { include ShopTags }
