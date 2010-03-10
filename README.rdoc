@@ -1,4 +1,8 @@
-= Simple Product Manager
+= Radiant Shop
+
+Heavily under construction, this will be the core for the radiant shop extensions
+
+=<strike>Simple Product Manager</strike>
 
 A RadiantCMS extension providing a mechanism to handle products and
 categories that can then be used across the rest of the RadiantCMS site.

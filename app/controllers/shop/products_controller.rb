@@ -3,9 +3,8 @@ class Shop::ProductsController < ApplicationController
   no_login_required
 
 	def show
-		@product=ShopProduct.find_by_name(params[:name].gsub('_', ' '), :include => :category)
-		@title = @product.title
-		
-		@radiant_layout=@product.layout
+	  @shop_product=ShopProduct.find(:first, {:conditions => ['LOWER(title) = ?', params[:title].downcase.gsub('_', ' ')], :include => :category})
+		@title = @shop_product.title
+		@radiant_layout=@shop_product.layout
 	end
 end

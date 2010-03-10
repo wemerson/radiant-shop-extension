@@ -3,9 +3,9 @@ class Shop::CategoriesController < ApplicationController
   no_login_required
   
 	def show
-		@category=ShopCategory.find_by_name(params[:name].gsub('_', ' '))
-		@title = @category.title
+		@shop_category=ShopCategory.find(:first, :conditions => ['LOWER(title) = ?', params[:title].downcase.gsub('_', ' ')])
+		@title = @shop_category.title
 
-		@radiant_layout=@category.layout
+		@radiant_layout=@shop_category.layout
 	end
 end
