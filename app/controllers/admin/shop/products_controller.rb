@@ -6,7 +6,7 @@ class Admin::Shop::ProductsController < Admin::ResourceController
   # GET /shop/products.xml                                               
   # GET /shop/products.json                                       AJAX and HTML
   #----------------------------------------------------------------------------  
-	def index
+  def index
 	  @shop_categories = ShopCategory.search(params[:search], params[:filter], params[:page])
     attr_hash = {
       :include => {:category => {:only => [:title]} },
@@ -37,13 +37,6 @@ class Admin::Shop::ProductsController < Admin::ResourceController
       format.xml { render :xml => @shop_product.to_xml(attr_hash) }
       format.json { render :json => @shop_product.to_json(attr_hash) }
     end
-  end
-
-  # GET /shop/products/new/1                                               HTML
-  #----------------------------------------------------------------------------   
-  def new
-    @shop_product = ShopProduct.new
-    @shop_product.category = ShopCategory.find(params[:category])
   end
 
   # POST /shop/products
@@ -109,22 +102,5 @@ class Admin::Shop::ProductsController < Admin::ResourceController
       format.json  { render :json => {:message => "Product deleted successfully."}, :status => 200 }
     end
   end   
-
-  # DELETE /shop/products/categories/1
-  # DELETE /shop/products/categories/1.xml                                               
-  # DELETE /shop/products/categories/1.json                                    AJAX and HTML
-  #---------------------------------------------------------------------------- 
-  def destroy
-    # Need to rewrite this method to check for errors and return xml or json.
-    # For some reason the answer isn't obvious to me.
-    @shop_category = ShopCategory.find(params[:id])
-    @shop_category.destroy if @shop_category
-    respond_to do |format|
-      flash[:notice] = "Category deleted successfully."
-      format.html { redirect_to admin_shop_products_path }
-      format.xml  { render :xml => {:message => "Category deleted successfully."}, :status => 200 }
-      format.json  { render :json => {:message => "Category deleted successfully."}, :status => 200 }
-    end
-  end 
   
 end

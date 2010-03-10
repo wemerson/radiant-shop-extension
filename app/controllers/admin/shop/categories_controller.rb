@@ -6,7 +6,7 @@ class Admin::Shop::CategoriesController < Admin::ResourceController
   # GET /shop/products/categories.xml                                               
   # GET /shop/products/categories.json                          AJAX and HTML
   #----------------------------------------------------------------------------  	
-	def index
+  def index
 	  @shop_categories = ShopCategory.search(params[:search], params[:filter], params[:page])
     attr_hash =  {
       :include => :products,
@@ -77,6 +77,23 @@ class Admin::Shop::CategoriesController < Admin::ResourceController
         format.xml { render :xml => @shop_category.errors.to_xml, :status => 422 }
         format.json { render :json => @shop_category.errors.to_json, :status => 422 }
       end
+    end
+  end
+
+  # DELETE /shop/products/categories/1
+  # DELETE /shop/products/categories/1.xml                                               
+  # DELETE /shop/products/categories/1.json                                    AJAX and HTML
+  #---------------------------------------------------------------------------- 
+  def destroy
+    # Need to rewrite this method to check for errors and return xml or json.
+    # For some reason the answer isn't obvious to me.
+    @shop_category = ShopCategory.find(params[:id])
+    @shop_category.destroy if @shop_category
+    respond_to do |format|
+      flash[:notice] = "Category deleted successfully."
+      format.html { redirect_to admin_shop_products_path }
+      format.xml  { render :xml => {:message => "Category deleted successfully."}, :status => 200 }
+      format.json  { render :json => {:message => "Category deleted successfully."}, :status => 200 }
     end
   end 
   
