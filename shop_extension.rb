@@ -15,6 +15,7 @@ class ShopExtension < Radiant::Extension
 		    shop.resources :categories, :as => 'products/categories'
         shop.resources :products
         shop.resources :customers
+        shop.resources :orders
 	    end
 		end
 		map.namespace 'shop' do |shop|
