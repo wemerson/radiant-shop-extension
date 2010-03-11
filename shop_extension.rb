@@ -26,7 +26,7 @@ class ShopExtension < Radiant::Extension
 	
 	extension_config do |config|
     config.gem 'will_paginate', :version => '~> 2.3.11', :source => 'http://gemcutter.org'
-    config.extension 'reader'
+    config.extension 'login_candy'
   end
 	
 	def activate
