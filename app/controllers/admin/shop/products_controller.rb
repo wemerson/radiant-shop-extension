@@ -8,7 +8,7 @@ class Admin::Shop::ProductsController < Admin::ResourceController
   #----------------------------------------------------------------------------  
   def index
 	  @shop_categories = ShopCategory.search(params[:csearch], params[:cfilter], params[:cpage])
-    @shop_products = ShopProduct.all
+    @shop_products = ShopProduct.search(params[:psearch], params[:pfilter], params[:ppage])
     attr_hash = {
       :include => {:category => {:only => [:title]} },
       :only => [:id, :created_at, :updated_at, :description, :price, :title]
@@ -58,8 +58,8 @@ class Admin::Shop::ProductsController < Admin::ResourceController
       respond_to do |format|
         flash[:error] = "Unable to create new product."
         format.html { }
-        format.xml { render :xml => @shop_product.errors.to_xml, :status => :unprocessable_entity }
-        format.json { render :json => @shop_product.errors.to_json, :status => :unprocessable_entity }
+        format.xml { render :xml => @shop_product.errors.to_xml, :status => 422 }
+        format.json { render :json => @shop_product.errors.to_json, :status => 422 }
       end
     end
   end
