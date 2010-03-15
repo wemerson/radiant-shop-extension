@@ -10,8 +10,8 @@ class Admin::Shop::ProductsController < Admin::ResourceController
     @shop_categories = ShopCategory.search(params[:csearch], params[:cfilter], params[:cpage])
     @shop_products = ShopProduct.search(params[:psearch], params[:pfilter], params[:ppage])
     attr_hash = {
-      :include => {:category => {:only => [:title]} },
-      :only => [:id, :created_at, :updated_at, :description, :price, :title]
+      :include => {:category => {:only => [:id, :title]} },
+      :only => [:id, :sku, :handle, :created_at, :updated_at, :price, :title]
     }
     respond_to do |format|
       format.html { render }
@@ -30,8 +30,8 @@ class Admin::Shop::ProductsController < Admin::ResourceController
   #----------------------------------------------------------------------------  
   def show
     @shop_product = ShopProduct.find(params[:id])
-    attr_hash =  {  :include => {:category => {:only => [:title]}},
-                    :only => [:id, :created_at, :updated_at, :description, :price, :title] 
+    attr_hash =  {  :include => {:category => {:only => [:id, :title]}},
+                    :only => [:id, :sku, :handle, :created_at, :updated_at, :description, :price, :title] 
     }
     respond_to do |format|
       format.html {}

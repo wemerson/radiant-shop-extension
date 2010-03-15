@@ -46,7 +46,7 @@ class ShopProduct < ActiveRecord::Base
       end
 
       options = { :conditions => @conditions,
-                  :order => 'created_at DESC',
+                  :order => 'position DESC',
                   :page => page,
                   :per_page => 10 }
 

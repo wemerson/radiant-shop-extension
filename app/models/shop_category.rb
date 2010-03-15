@@ -59,13 +59,13 @@ class ShopCategory < ActiveRecord::Base
   end
 
   def self.find_all_except(c, options={})
-    options[:order] ||= 'sequence ASC'
+    options[:order] ||= 'position DESC'
     options[:conditions]=[ 'id != ?', c.id ] unless (c.blank? || c.new_record? )
     self.find(:all, options)
   end
 
   def self.find_all_top_level(options={})
-    options[:order] ||= 'position ASC'
+    options[:order] ||= 'position DESC'
     if options[:conditions]
       options[:conditions]=[options[:conditions]] if !options[:conditions].is_a?(Array)
       options[:conditions][0]="(#{options[:conditions][0]}) AND parent_id IS NULL"
@@ -90,7 +90,7 @@ class ShopCategory < ActiveRecord::Base
       end
 
       options = { :conditions => @conditions,
-                  :order => 'created_at DESC',
+                  :order => 'position DESC',
                   :page => page,
                   :per_page => 10 }
 
