@@ -1,6 +1,7 @@
 require_dependency 'application_controller'
 
 require 'ostruct'
+require 'acts_as_list'
 
 class ShopExtension < Radiant::Extension
   version "0.7"

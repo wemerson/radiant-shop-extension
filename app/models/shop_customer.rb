@@ -1,5 +1,5 @@
 class ShopCustomer < User
-  has_many :orders, :class_name => 'ShopOrder'
+  has_many :orders, :class_name => 'ShopOrder', :order => 'position'
 
   def first_name
     self.name.split(" ")[0]

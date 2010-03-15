@@ -10,7 +10,7 @@ class Admin::Shop::CategoriesController < Admin::ResourceController
 	  @shop_categories = ShopCategory.search(params[:search], params[:filter], params[:page])
     attr_hash =  {
       :include => :products,
-      :only => [:id, :created_at, :updated_at, :description, :price, :title, :tags] 
+      :only => [:id, :handle, :created_at, :updated_at, :description, :price, :title, :tags] 
     }
     respond_to do |format|
       format.html { redirect_to admin_shop_products_path }
@@ -25,7 +25,7 @@ class Admin::Shop::CategoriesController < Admin::ResourceController
   #----------------------------------------------------------------------------  
   def show
     @shop_category = ShopCategory.find(params[:id])
-    attr_hash =  { :only => [:id, :created_at, :updated_at, :description, :tags, :title] }
+    attr_hash =  { :only => [:id, :handle, :created_at, :updated_at, :description, :tags, :title] }
     respond_to do |format|
       format.html {}
       format.xml { render :xml => @shop_category.to_xml(attr_hash) }
