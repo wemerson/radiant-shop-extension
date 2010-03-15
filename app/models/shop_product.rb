@@ -1,9 +1,10 @@
 class ShopProduct < ActiveRecord::Base
   belongs_to :category, :class_name => 'ShopCategory'
+  acts_as_list :scope => :category
   has_and_belongs_to_many :orders, :class_name => 'ShopOrder'
 
   has_many :images, :through => :product_images, :order => 'product_images.position ASC', :uniq => :true
-	
+  
   validates_presence_of :title
   validates_uniqueness_of :title 
   validates_presence_of :sku

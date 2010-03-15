@@ -1,19 +1,19 @@
 class Admin::Shop::ProductsController < Admin::ResourceController
-	model_class ShopProduct
-	helper :shop
+  model_class ShopProduct
+  helper :shop
 
   # GET /shop/products
   # GET /shop/products.xml                                               
   # GET /shop/products.json                                       AJAX and HTML
   #----------------------------------------------------------------------------  
   def index
-	  @shop_categories = ShopCategory.search(params[:csearch], params[:cfilter], params[:cpage])
+    @shop_categories = ShopCategory.search(params[:csearch], params[:cfilter], params[:cpage])
     @shop_products = ShopProduct.search(params[:psearch], params[:pfilter], params[:ppage])
     attr_hash = {
       :include => {:category => {:only => [:title]} },
       :only => [:id, :created_at, :updated_at, :description, :price, :title]
     }
-	  respond_to do |format|
+    respond_to do |format|
       format.html { render }
       format.js {
         render :partial => 'products_table', :categories => @shop_categories, :layout => false
