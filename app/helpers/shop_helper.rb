@@ -24,4 +24,5 @@ module ShopHelper
 		o << link_to(image('shop/move_to_top', :alt => '>|'), admin_move_category_url(category, :d => :top))
 		o
 	end
+
 end

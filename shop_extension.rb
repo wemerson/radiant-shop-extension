@@ -15,7 +15,7 @@ class ShopExtension < Radiant::Extension
         shop.resources :categories, :as => 'products/categories'
         shop.resources :products
         shop.resources :customers
-        shop.resources :orders
+        shop.resources :orders, :active_scaffold => true
       end
     end
     map.namespace 'shop' do |shop|

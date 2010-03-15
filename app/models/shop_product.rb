@@ -1,5 +1,5 @@
 class ShopProduct < ActiveRecord::Base
-  belongs_to :category, :class_name => 'ShopCategory'
+  has_and_belongs_to_many :categories, :class_name => 'ShopCategory'
   has_and_belongs_to_many :orders, :class_name => 'ShopOrder'
 
   has_many :images, :through => :product_images, :order => 'product_images.position ASC', :uniq => :true
