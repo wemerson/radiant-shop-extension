@@ -33,6 +33,29 @@ class ShopProduct < ActiveRecord::Base
     end
   end
 
+  class << self
+    def search(search, filter, page)
+      unless search.blank?
+
+        search_cond_sql = []
+        search_cond_sql << 'LOWER(title) LIKE (:term)'
+        search_cond_sql << 'LOWER(description) LIKE (:term)'
+        cond_sql = search_cond_sql.join(" OR ")
+
+        @conditions = [cond_sql, {:term => "%#{search.downcase}%" }]
+      else
+        @conditions = []
+      end
+
+      options = { :conditions => @conditions,
+                  :order => 'created_at DESC',
+                  :page => page,
+                  :per_page => 10 }
+
+      ShopProduct.paginate(:all, options)
+    end
+  end
+
 private
   def reconcile_sequence_numbers
     if self.sequence.nil? then
