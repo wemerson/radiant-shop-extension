@@ -1,13 +1,13 @@
 class Admin::Shop::CategoriesController < Admin::ResourceController
-	model_class ShopCategory
-	helper :shop
+  model_class ShopCategory
+  helper :shop
 
   # GET /shop/products/categories
-  # GET /shop/products/categories.xml                                               
-  # GET /shop/products/categories.json                          AJAX and HTML
-  #----------------------------------------------------------------------------  	
+  # GET /shop/products/categories.xml
+  # GET /shop/products/categories.json                            AJAX and HTML
+  #----------------------------------------------------------------------------
   def index
-	  @shop_categories = ShopCategory.search(params[:search], params[:filter], params[:page])
+    @shop_categories = ShopCategory.search(params[:search], params[:filter], params[:page])
     attr_hash =  {
       :include => :products,
       :only => [:id, :handle, :created_at, :updated_at, :description, :price, :title, :tags] 
@@ -20,9 +20,9 @@ class Admin::Shop::CategoriesController < Admin::ResourceController
   end
 
   # GET /shop/products/categories/1
-  # GET /shop/products/categories/1.xml                                               
+  # GET /shop/products/categories/1.xml
   # GET /shop/products/categories/1.json                          AJAX and HTML
-  #----------------------------------------------------------------------------  
+  #----------------------------------------------------------------------------
   def show
     @shop_category = ShopCategory.find(params[:id])
     attr_hash =  { :only => [:id, :handle, :created_at, :updated_at, :description, :tags, :title] }
@@ -34,12 +34,12 @@ class Admin::Shop::CategoriesController < Admin::ResourceController
   end
 
   # POST /shop/products/categories
-  # POST /shop/products/categories.xml                                               
+  # POST /shop/products/categories.xml
   # POST /shop/products/categories.json                           AJAX and HTML
-  #----------------------------------------------------------------------------  
-  def create                                     
+  #----------------------------------------------------------------------------
+  def create
     @shop_category = ShopCategory.new(params[:shop_category])
-    
+
     if @shop_category.save!
       respond_to do |format|
         flash[:notice] = "Category created successfully."
@@ -58,10 +58,10 @@ class Admin::Shop::CategoriesController < Admin::ResourceController
   end
 
   # PUT /shop/products/categories/1
-  # PUT /shop/products/categories/1.xml                                               
+  # PUT /shop/products/categories/1.xml
   # PUT /shop/products/categories/1.json                          AJAX and HTML
-  #---------------------------------------------------------------------------- 
-  def update                                     
+  #----------------------------------------------------------------------------
+  def update
     @shop_category = ShopCategory.find(params[:id])
     if @shop_category.update_attributes!(params[:shop_category])
       respond_to do |format|
@@ -81,9 +81,9 @@ class Admin::Shop::CategoriesController < Admin::ResourceController
   end
 
   # DELETE /shop/products/categories/1
-  # DELETE /shop/products/categories/1.xml                                               
-  # DELETE /shop/products/categories/1.json                                    AJAX and HTML
-  #---------------------------------------------------------------------------- 
+  # DELETE /shop/products/categories/1.xml
+  # DELETE /shop/products/categories/1.json                       AJAX and HTML
+  #----------------------------------------------------------------------------
   def destroy
     # Need to rewrite this method to check for errors and return xml or json.
     # For some reason the answer isn't obvious to me.

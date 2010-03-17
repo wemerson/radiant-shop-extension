@@ -3,9 +3,9 @@ class Admin::Shop::ProductsController < Admin::ResourceController
   helper :shop
 
   # GET /shop/products
-  # GET /shop/products.xml                                               
+  # GET /shop/products.xml
   # GET /shop/products.json                                       AJAX and HTML
-  #----------------------------------------------------------------------------  
+  #----------------------------------------------------------------------------
   def index
     @shop_categories = ShopCategory.search(params[:csearch], params[:cfilter], params[:cpage])
     @shop_products = ShopProduct.search(params[:psearch], params[:pfilter], params[:ppage])
@@ -25,9 +25,9 @@ class Admin::Shop::ProductsController < Admin::ResourceController
 
 
   # GET /shop/products/1
-  # GET /shop/products/1.xml                                               
+  # GET /shop/products/1.xml
   # GET /shop/products/1.json                                     AJAX and HTML
-  #----------------------------------------------------------------------------  
+  #----------------------------------------------------------------------------
   def show
     @shop_product = ShopProduct.find(params[:id])
     attr_hash =  {  :include => {:category => {:only => [:id, :title]}},
@@ -41,10 +41,10 @@ class Admin::Shop::ProductsController < Admin::ResourceController
   end
 
   # POST /shop/products
-  # POST /shop/products.xml                                               
+  # POST /shop/products.xml
   # POST /shop/products.json                                      AJAX and HTML
-  #----------------------------------------------------------------------------  
-  def create                                     
+  #----------------------------------------------------------------------------
+  def create
     @shop_product = ShopProduct.new(params[:shop_product])
     
     if @shop_product.save!
@@ -65,10 +65,10 @@ class Admin::Shop::ProductsController < Admin::ResourceController
   end
 
   # PUT /shop/products/1
-  # PUT /shop/products/1.xml                                               
-  # PUT /shop/products/1.json                                    AJAX and HTML
-  #---------------------------------------------------------------------------- 
-  def update                                     
+  # PUT /shop/products/1.xml
+  # PUT /shop/products/1.json                                     AJAX and HTML
+  #----------------------------------------------------------------------------
+  def update
     @shop_product = ShopProduct.find(params[:id])
     if @shop_product.update_attributes!(params[:shop_product])
       respond_to do |format|
@@ -88,9 +88,9 @@ class Admin::Shop::ProductsController < Admin::ResourceController
   end   
 
   # DELETE /shop/products/1
-  # DELETE /shop/products/1.xml                                               
-  # DELETE /shop/products/1.json                                    AJAX and HTML
-  #---------------------------------------------------------------------------- 
+  # DELETE /shop/products/1.xml
+  # DELETE /shop/products/1.json                                  AJAX and HTML
+  #----------------------------------------------------------------------------
   def destroy
     # Need to rewrite this method to check for errors and return xml or json.
     # For some reason the answer isn't obvious to me.

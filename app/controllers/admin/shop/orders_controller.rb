@@ -2,13 +2,13 @@ class Admin::Shop::OrdersController < Admin::ResourceController
   model_class ShopOrder
 
   # GET /shop/orders
-  # GET /shop/orders.xml                                               
-  # GET /shop/orders.json                                         AJAX and HTML
-  #----------------------------------------------------------------------------  
+  # GET /shop/orders.xml
+  # GET /shop/orders.json                                          AJAX and HTML
+  #-----------------------------------------------------------------------------
   def index
-	  @shop_orders = ShopOrder.search(params[:search], params[:filter], params[:page])
+    @shop_orders = ShopOrder.search(params[:search], params[:filter], params[:page])
     attr_hash = {}
-	  respond_to do |format|
+    respond_to do |format|
       format.html { render }
       format.xml { render :xml => @shop_orders.to_xml(attr_hash) }
       format.json { render :json => @shop_orders.to_json(attr_hash) }
@@ -17,9 +17,9 @@ class Admin::Shop::OrdersController < Admin::ResourceController
 
 
   # GET /shop/orders/1
-  # GET /shop/orders/1.xml                                               
-  # GET /shop/orders/1.json                                       AJAX and HTML
-  #----------------------------------------------------------------------------  
+  # GET /shop/orders/1.xml
+  # GET /shop/orders/1.json                                        AJAX and HTML
+  #-----------------------------------------------------------------------------
   def show
     @shop_order = ShopOrder.find(params[:id])
     respond_to do |format|
@@ -30,9 +30,9 @@ class Admin::Shop::OrdersController < Admin::ResourceController
   end
 
   # POST /shop/orders
-  # POST /shop/orders.xml                                               
-  # POST /shop/orders.json                                      AJAX and HTML
-  #----------------------------------------------------------------------------  
+  # POST /shop/orders.xml
+  # POST /shop/orders.json                                         AJAX and HTML
+  #-----------------------------------------------------------------------------
   def create                                     
     @shop_order = ShopOrder.new(params[:shop_order])
     
@@ -54,10 +54,10 @@ class Admin::Shop::OrdersController < Admin::ResourceController
   end
 
   # PUT /shop/orders/1
-  # PUT /shop/orders/1.xml                                               
-  # PUT /shop/orders/1.json                                    AJAX and HTML
-  #---------------------------------------------------------------------------- 
-  def update                                     
+  # PUT /shop/orders/1.xml
+  # PUT /shop/orders/1.json                                        AJAX and HTML
+  #-----------------------------------------------------------------------------
+  def update
     @shop_order = ShopOrder.find(params[:id])
     if @shop_order.update_attributes!(params[:shop_order])
       respond_to do |format|
@@ -77,9 +77,9 @@ class Admin::Shop::OrdersController < Admin::ResourceController
   end   
 
   # DELETE /shop/orders/1
-  # DELETE /shop/orders/1.xml                                               
-  # DELETE /shop/orders/1.json                                    AJAX and HTML
-  #---------------------------------------------------------------------------- 
+  # DELETE /shop/orders/1.xml
+  # DELETE /shop/orders/1.json                                     AJAX and HTML
+  #-----------------------------------------------------------------------------
   def destroy
     # Need to rewrite this method to check for errors and return xml or json.
     # For some reason the answer isn't obvious to me.
