@@ -1,6 +1,5 @@
 class Admin::Shop::CustomersController < Admin::ResourceController
   model_class ShopCustomer
-
   
   # GET /shop/customers
   # GET /shop/customers.xml                                               

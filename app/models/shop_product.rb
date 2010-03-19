@@ -1,9 +1,16 @@
 class ShopProduct < ActiveRecord::Base
   belongs_to :category, :class_name => 'ShopCategory'
   acts_as_list :scope => :category
+<<<<<<< HEAD:app/models/shop_product.rb
   has_and_belongs_to_many :orders, :class_name => 'ShopOrder', :join_table => 'orders_products'
 
   has_many :images, :through => :product_images, :order => 'product_images.position ASC', :uniq => :true
+=======
+  has_and_belongs_to_many :orders, :class_name => 'ShopOrder'
+  
+  has_many :product_attachments, :class_name => 'ShopProductAttachment', :foreign_key => 'product_id'
+  has_many :images, :through => :product_attachments, :order => 'shop_product_attachments.position ASC', :uniq => :true
+>>>>>>> 059456542bb3c79889b7c004cc6fdd33b7ebb4a3:app/models/shop_product.rb
   
   validates_presence_of :title
   validates_uniqueness_of :title 
