@@ -20,5 +20,5 @@ Add Order
     - @shop_orders.each do |order|
       %p
         = order.balance
-        = order.customer.name
+        = order.customer.name if order.customer
         = link_to "Add Order", "", :style => "color: blue;"

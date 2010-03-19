@@ -1,6 +1,10 @@
 class Admin::Shop::CategoriesController < Admin::ResourceController
   model_class ShopCategory
   helper :shop
+  only_allow_access_to :index, :show, :new, :create, :edit, :update, :remove, :destroy,
+      :when => [:admin, :designer],
+      :denied_url => :back,
+      :denied_message => "You don't have permission to access this page."
 
   # GET /shop/products/categories
   # GET /shop/products/categories.xml

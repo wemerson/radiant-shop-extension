@@ -8,7 +8,7 @@
       %table.fieldset
         %tr
           %th.label Tags
-          %td.field= fields.text_field :tag_names, :class => 'textbox', :maxlength => 255
+          %td.field= #fields.text_field :tag_names, :class => 'textbox', :maxlength => 255
         %tr
           %th.label Parent
           %td.field= collection_select(:shop_category, :parent_id, ShopCategory.all, :id, :title, {:prompt => "Select..."})

@@ -1,5 +1,9 @@
 class Admin::Shop::OrdersController < Admin::ResourceController
   model_class ShopOrder
+  only_allow_access_to :index, :show, :new, :create, :edit, :update, :remove, :destroy,
+      :when => [:admin, :designer],
+      :denied_url => :back,
+      :denied_message => "You don't have permission to access this page."
 
   # GET /shop/orders
   # GET /shop/orders.xml

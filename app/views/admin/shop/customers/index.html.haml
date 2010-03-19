@@ -33,3 +33,4 @@ Add Customer
       %p
         = customer.name
         = link_to "Add Order", "", :style => "color: blue;"
+        = link_to "Delete Customer", "/admin/shop/customers/#{customer.id}", :confirm => "Are you sure?", :method => :delete, :style => "color: blue;"
