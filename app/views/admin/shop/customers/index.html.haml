@@ -1,0 +1,35 @@
+Add Customer
+- form_for [:admin, @shop_customer] do |f|
+  %p
+    = f.label :name, 'Name:'
+    = f.text_field :name
+  %p
+    = f.label :email, 'Email:'
+    = f.text_field :email
+  %p
+    = f.label :login, 'Login:'
+    = f.text_field :login
+  %p
+    = f.label :password, "Password"
+    = f.password_field "password", :value => "", :size => 15, :maxlength => 40
+  %p
+    = f.label :password_confirmation, "Confirm Password"
+    = f.password_field "password_confirmation", :value => "", :size => 15, :maxlength => 40
+  %p
+    = f.label :reference, 'Reference:'
+    = f.text_field :reference
+  %p
+    = f.label :Organization, 'Organization:'
+    = f.text_field :organization
+  %p
+    = f.submit "Save"
+    
+
+- if @shop_customers.empty?
+  %p There are no customers.
+- else
+  %form
+    - @shop_customers.each do |customer|
+      %p
+        = customer.name
+        = link_to "Add Order", "", :style => "color: blue;"

@@ -1,6 +1,7 @@
 class ShopOrder < ActiveRecord::Base
-  has_many :products, :class_name => 'ShopProduct'
+  has_many :payments, :class_name => 'ShopPayment'
   belongs_to :customer, :class_name => 'ShopCustomer'
+  has_and_belongs_to_many :products, :class_name => 'ShopProduct', :join_table => 'orders_products'
 
 	validates_associated :products, :customer
 

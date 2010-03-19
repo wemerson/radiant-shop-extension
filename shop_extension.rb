@@ -1,7 +1,6 @@
 require_dependency 'application_controller'
 
 require 'ostruct'
-require 'acts_as_list'
 
 class ShopExtension < Radiant::Extension
   version "0.7"
@@ -16,7 +15,7 @@ class ShopExtension < Radiant::Extension
         shop.resources :categories, :as => 'products/categories'
         shop.resources :products
         shop.resources :customers
-        shop.resources :orders, :active_scaffold => true
+        shop.resources :orders
       end
     end
     map.namespace 'shop' do |shop|
