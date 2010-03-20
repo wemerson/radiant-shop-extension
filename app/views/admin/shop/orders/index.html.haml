@@ -9,6 +9,18 @@ Add Order
   %p
     = f.label :email, 'Status:'
     = f.text_field :status
+
+  %p
+    - f.fields_for :line_items do |li_f|
+      = li_f.label :product
+      = li_f.select :product_id, ShopProduct.all.collect {|p| [p.title, p.id]}
+      = li_f.label :quantity
+      = li_f.text_field :quantity
+
+      - unless li_f.object.new_record?
+        <%= li_f.check_box '_delete'
+        <%= li_f.label '_delete', 'Remove'
+
   %p
     = f.submit "Save"
     
@@ -21,4 +33,4 @@ Add Order
       %p
         = order.balance
         = order.customer.name if order.customer
-        = link_to "Add Order", "", :style => "color: blue;"
+        = link_to "Delete Order", "/admin/shop/orders/#{order.id}", :confirm => "Are you sure?", :method => :delete, :style => "color: blue;"

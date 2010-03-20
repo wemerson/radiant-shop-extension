@@ -12,13 +12,22 @@ class Admin::Shop::OrdersController < Admin::ResourceController
   def index
 	  @shop_orders = ShopOrder.search(params[:search], params[:filter], params[:page])
     @shop_order = ShopOrder.new
+    @shop_order.line_items.build
     attr_hash = {
+      :methods => [:sub_total],
       :include => {
         :customer => {:only => [:id, :name, :email, :organization]},
-        :products => {:only => [:id, :sku, :description, :handle, :created_at, :updated_at, :price, :title]}
+        :line_items => {
+          :methods => [:total],
+          :include => {
+            :product => {:only => [:id, :sku, :description, :handle, :price, :title]},
+          },
+          :only => [:id, :quantity]
+        }
       },
       :only => [:id, :balance, :status, :created_at, :updated_at]
     }
+
 	  respond_to do |format|
       format.html { }
       format.xml { render :xml => @shop_orders.to_xml(attr_hash) }
@@ -34,9 +43,16 @@ class Admin::Shop::OrdersController < Admin::ResourceController
   def show
     @shop_order = ShopOrder.find(params[:id])
     attr_hash = {
+      :methods => [:sub_total],
       :include => {
-        :customer => {:only => [:id, :name, :email, :organization]}, 
-        :products => {:only => [:id, :sku, :description, :handle, :created_at, :updated_at, :price, :title]}
+        :customer => {:only => [:id, :name, :email, :organization]},
+        :line_items => {
+          :methods => [:total],
+          :include => {
+            :product => {:only => [:id, :sku, :description, :handle, :price, :title]},
+          },
+          :only => [:id, :quantity]
+        }
       },
       :only => [:id, :balance, :status, :created_at, :updated_at]
     }

@@ -1,11 +1,23 @@
 class ShopOrder < ActiveRecord::Base
-  has_many :payments, :class_name => 'ShopPayment'
+  has_many :payments, :class_name => 'ShopPayment', :dependent => :destroy
+  has_many :line_items, :class_name => 'ShopLineItem', :dependent => :destroy, :foreign_key => 'order_id'
   belongs_to :customer, :class_name => 'ShopCustomer'
-  has_and_belongs_to_many :products, :class_name => 'ShopProduct', :join_table => 'orders_products'
+  #has_and_belongs_to_many :products, :class_name => 'ShopProduct', :join_table => 'orders_products'
 
-	validates_associated :products, :customer
+  accepts_nested_attributes_for :line_items, :allow_destroy => true, :reject_if => :all_blank
+
+	validates_associated :customer
+
+  def sub_total
+    sub_total = 0
+    self.line_items.each do |item|
+      sub_total += item.total
+    end
+    sub_total
+  end
 
   class << self
+
     def search(search, filter, page)
       unless search.blank?
 
