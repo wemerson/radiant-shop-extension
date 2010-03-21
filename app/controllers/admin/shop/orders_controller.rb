@@ -14,7 +14,7 @@ class Admin::Shop::OrdersController < Admin::ResourceController
     @shop_order = ShopOrder.new
     @shop_order.line_items.build
     attr_hash = {
-      :methods => [:sub_total],
+      :methods => [:sub_total, :balance],
       :include => {
         :customer => {
           :include => {
@@ -48,7 +48,7 @@ class Admin::Shop::OrdersController < Admin::ResourceController
   def show
     @shop_order = ShopOrder.find(params[:id])
     attr_hash = {
-      :methods => [:sub_total],
+      :methods => [:sub_total, :balance],
       :include => {
         :customer => {
           :include => {
