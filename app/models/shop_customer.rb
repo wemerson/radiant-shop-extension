@@ -1,5 +1,6 @@
 class ShopCustomer < User
-  has_many :orders, :class_name => 'ShopOrder', :foreign_key => :customer_id #, :order => 'position'
+  has_many :orders, :class_name => 'ShopOrder', :foreign_key => :customer_id
+  has_many :addresses, :class_name => 'ShopAddress', :foreign_key => :customer_id
 
   accepts_nested_attributes_for :orders, :allow_destroy => true
 

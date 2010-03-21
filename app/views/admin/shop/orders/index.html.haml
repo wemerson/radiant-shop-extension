@@ -4,9 +4,6 @@ Add Order
     = f.label :customer, 'Customer:'
     = f.select :customer_id, ShopCustomer.scoped_by_access('front').all.collect {|c| [c.name, c.id]}
   %p
-    = f.label :name, 'Balance:'
-    = f.text_field :balance
-  %p
     = f.label :email, 'Status:'
     = f.text_field :status
 

@@ -3,8 +3,6 @@ class ShopProduct < ActiveRecord::Base
   acts_as_list :scope => :category
 
   has_many :line_items, :class_name => 'ShopLineItem', :foreign_key => 'product_id'
-
-  #has_and_belongs_to_many :orders, :class_name => 'ShopOrder', :join_table => 'orders_products' 
   has_many :product_attachments, :class_name => 'ShopProductAttachment', :foreign_key => 'product_id'
   has_many :images, :through => :product_attachments, :order => 'shop_product_attachments.position ASC', :uniq => :true
   

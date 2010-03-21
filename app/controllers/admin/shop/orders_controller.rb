@@ -16,7 +16,12 @@ class Admin::Shop::OrdersController < Admin::ResourceController
     attr_hash = {
       :methods => [:sub_total],
       :include => {
-        :customer => {:only => [:id, :name, :email, :organization]},
+        :customer => {
+          :include => {
+            :addresses => {:only => [ :street, :city, :state, :zip, :country, :unit, :atype ]}        
+          },
+          :only => [:id, :name, :email, :organization]
+        },
         :line_items => {
           :methods => [:total],
           :include => {
@@ -25,7 +30,7 @@ class Admin::Shop::OrdersController < Admin::ResourceController
           :only => [:id, :quantity]
         }
       },
-      :only => [:id, :balance, :status, :created_at, :updated_at]
+      :only => [:id, :status, :created_at, :updated_at]
     }
 
 	  respond_to do |format|
@@ -45,7 +50,12 @@ class Admin::Shop::OrdersController < Admin::ResourceController
     attr_hash = {
       :methods => [:sub_total],
       :include => {
-        :customer => {:only => [:id, :name, :email, :organization]},
+        :customer => {
+          :include => {
+            :addresses => {:only => [ :street, :city, :state, :zip, :country, :unit, :atype ]}        
+          },
+          :only => [:id, :name, :email, :organization]
+        },
         :line_items => {
           :methods => [:total],
           :include => {
@@ -54,7 +64,7 @@ class Admin::Shop::OrdersController < Admin::ResourceController
           :only => [:id, :quantity]
         }
       },
-      :only => [:id, :balance, :status, :created_at, :updated_at]
+      :only => [:id, :status, :created_at, :updated_at]
     }
     respond_to do |format|
       format.html {}

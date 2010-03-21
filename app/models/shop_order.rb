@@ -2,7 +2,6 @@ class ShopOrder < ActiveRecord::Base
   has_many :payments, :class_name => 'ShopPayment', :dependent => :destroy
   has_many :line_items, :class_name => 'ShopLineItem', :dependent => :destroy, :foreign_key => 'order_id'
   belongs_to :customer, :class_name => 'ShopCustomer'
-  #has_and_belongs_to_many :products, :class_name => 'ShopProduct', :join_table => 'orders_products'
 
   accepts_nested_attributes_for :line_items, :allow_destroy => true, :reject_if => :all_blank
 
