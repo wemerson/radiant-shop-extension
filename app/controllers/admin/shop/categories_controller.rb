@@ -29,7 +29,7 @@ class Admin::Shop::CategoriesController < Admin::ResourceController
   #----------------------------------------------------------------------------
   def show
     @shop_category = ShopCategory.find(params[:id])
-    attr_hash =  { :only => [:id, :handle, :created_at, :updated_at, :description, :tags, :title] }
+    attr_hash =  { :only => [:id, :handle, :created_at, :updated_at, :description, :tags, :title, :price] }
     respond_to do |format|
       format.html {}
       format.xml { render :xml => @shop_category.to_xml(attr_hash) }

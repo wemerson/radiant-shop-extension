@@ -1,5 +1,4 @@
 require_dependency 'application_controller'
-
 require 'ostruct'
 
 class ShopExtension < Radiant::Extension
@@ -19,8 +18,8 @@ class ShopExtension < Radiant::Extension
       end
     end
     map.namespace 'shop' do |shop|
-      shop.connect 'category/:title', :controller => 'categories', :action => 'show', :name => /([\w\_]+)\z?/
-      shop.connect 'product/:title', :controller => 'products', :action => 'show', :name => /([\w\_]+)\z?/
+      shop.connect 'category/:handle', :controller => 'categories', :action => 'show', :name => /([\w\_]+)\z?/
+      shop.connect 'product/:handle', :controller => 'products', :action => 'show', :name => /([\w\_]+)\z?/
     end
   end
   
