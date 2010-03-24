@@ -1,6 +1,10 @@
 class Admin::Shop::ProductsController < Admin::ResourceController
   model_class ShopProduct
   helper :shop
+  only_allow_access_to :index, :show, :new, :create, :edit, :update, :remove, :destroy,
+      :when => [:admin, :designer],
+      :denied_url => :back,
+      :denied_message => "You don't have permission to access this page."
 
   # GET /shop/products
   # GET /shop/products.js
@@ -12,7 +16,7 @@ class Admin::Shop::ProductsController < Admin::ResourceController
     @shop_products = ShopProduct.search(params[:psearch], params[:pfilter], params[:ppage])
     attr_hash = {
       :include => {:category => {:only => [:id, :title]} },
-      :only => [:id, :sku, :handle, :created_at, :updated_at, :price, :title]
+      :only => [:id, :sku, :handle, :description, :created_at, :updated_at, :price, :title]
     }
     respond_to do |format|
       format.html { render }

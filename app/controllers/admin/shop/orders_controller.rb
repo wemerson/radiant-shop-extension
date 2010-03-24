@@ -1,15 +1,40 @@
 class Admin::Shop::OrdersController < Admin::ResourceController
   model_class ShopOrder
+  only_allow_access_to :index, :show, :new, :create, :edit, :update, :remove, :destroy,
+      :when => [:admin, :designer],
+      :denied_url => :back,
+      :denied_message => "You don't have permission to access this page."
 
   # GET /shop/orders
   # GET /shop/orders.xml
   # GET /shop/orders.json                                          AJAX and HTML
   #-----------------------------------------------------------------------------
   def index
-    @shop_orders = ShopOrder.search(params[:search], params[:filter], params[:page])
-    attr_hash = {}
-    respond_to do |format|
-      format.html { render }
+	  @shop_orders = ShopOrder.search(params[:search], params[:filter], params[:page])
+    @shop_order = ShopOrder.new
+    @shop_order.line_items.build
+    attr_hash = {
+      :methods => [:sub_total, :balance],
+      :include => {
+        :customer => {
+          :include => {
+            :addresses => {:only => [ :street, :city, :state, :zip, :country, :unit, :atype ]}        
+          },
+          :only => [:id, :name, :email, :organization]
+        },
+        :line_items => {
+          :methods => [:total],
+          :include => {
+            :product => {:only => [:id, :sku, :description, :handle, :price, :title]},
+          },
+          :only => [:id, :quantity]
+        }
+      },
+      :only => [:id, :status, :created_at, :updated_at]
+    }
+
+	  respond_to do |format|
+      format.html { }
       format.xml { render :xml => @shop_orders.to_xml(attr_hash) }
       format.json { render :json => @shop_orders.to_json(attr_hash) }
     end
@@ -22,10 +47,29 @@ class Admin::Shop::OrdersController < Admin::ResourceController
   #-----------------------------------------------------------------------------
   def show
     @shop_order = ShopOrder.find(params[:id])
+    attr_hash = {
+      :methods => [:sub_total, :balance],
+      :include => {
+        :customer => {
+          :include => {
+            :addresses => {:only => [ :street, :city, :state, :zip, :country, :unit, :atype ]}        
+          },
+          :only => [:id, :name, :email, :organization]
+        },
+        :line_items => {
+          :methods => [:total],
+          :include => {
+            :product => {:only => [:id, :sku, :description, :handle, :price, :title]},
+          },
+          :only => [:id, :quantity]
+        }
+      },
+      :only => [:id, :status, :created_at, :updated_at]
+    }
     respond_to do |format|
       format.html {}
-      format.xml { render :xml => @shop_order.to_xml }
-      format.json { render :json => @shop_order.to_json }
+      format.xml { render :xml => @shop_order.to_xml(attr_hash) }
+      format.json { render :json => @shop_order.to_json(attr_hash) }
     end
   end
 
