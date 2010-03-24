@@ -10,9 +10,9 @@ class ShopExtension < Radiant::Extension
   
   define_routes do |map|
     #allows us to pass category to a product
-    map.new_admin_shop_product 'admin/shop/products/new/:category', :controller => 'admin/shop/products', :action => 'new'
     map.namespace :admin, :member => {:remove => :get} do |admin|
       admin.namespace :shop, :member => {:remove => :get} do |shop|
+        shop.connect 'products/categories/:id/products.:format', :controller => 'categories', :action => 'products', :conditions => { :method => :get }
         shop.resources :categories, :as => 'products/categories'
         shop.resources :products
         shop.resources :customers
@@ -27,7 +27,6 @@ class ShopExtension < Radiant::Extension
   
   extension_config do |config|
     config.gem 'will_paginate', :version => '~> 2.3.11', :source => 'http://gemcutter.org'
-    config.extension 'login_candy'
   end
   
   def activate

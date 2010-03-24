@@ -7,7 +7,7 @@ class Admin::Shop::ProductsController < Admin::ResourceController
   # GET /shop/products.json                                       AJAX and HTML
   #----------------------------------------------------------------------------
   def index
-    @shop_categories = ShopCategory.search(params[:csearch], params[:cfilter], params[:cpage])
+    @shop_categories = ShopCategory.search(params[:psearch], params[:pfilter], params[:ppage])
     @shop_products = ShopProduct.search(params[:psearch], params[:pfilter], params[:ppage])
     attr_hash = {
       :include => {:category => {:only => [:id, :title]} },
@@ -15,9 +15,7 @@ class Admin::Shop::ProductsController < Admin::ResourceController
     }
     respond_to do |format|
       format.html { render }
-      format.js {
-        render :partial => 'products_table', :categories => @shop_categories, :layout => false
-      }
+      format.js { render :partial => '/admin/shop/products/product', :collection => @shop_products }
       format.xml { render :xml => @shop_products.to_xml(attr_hash) }
       format.json { render :json => @shop_products.to_json(attr_hash) }
     end
@@ -34,7 +32,8 @@ class Admin::Shop::ProductsController < Admin::ResourceController
                     :only => [:id, :sku, :handle, :created_at, :updated_at, :description, :price, :title] 
     }
     respond_to do |format|
-      format.html {}
+      format.html { render }
+      format.js { render :partial => '/admin/shop/products/product', :locals => { :product => @shop_product } }
       format.xml { render :xml => @shop_product.to_xml(attr_hash) }
       format.json { render :json => @shop_product.to_json(attr_hash) }
     end
@@ -51,6 +50,7 @@ class Admin::Shop::ProductsController < Admin::ResourceController
       respond_to do |format|
         flash[:notice] = "Product created successfully."
         format.html { redirect_to admin_shop_products_path }
+        format.js { redirect_to "/admin/shop/products/#{@shop_product.id}.js" }
         format.xml { redirect_to "/admin/shop/products/#{@shop_product.id}.xml" }
         format.json { redirect_to "/admin/shop/products/#{@shop_product.id}.json" }
       end
@@ -58,6 +58,7 @@ class Admin::Shop::ProductsController < Admin::ResourceController
       respond_to do |format|
         flash[:error] = "Unable to create new product."
         format.html { }
+        format.js { render :text => @shop_product.errors.to_s, :status => 422 }
         format.xml { render :xml => @shop_product.errors.to_xml, :status => 422 }
         format.json { render :json => @shop_product.errors.to_json, :status => 422 }
       end
@@ -74,6 +75,7 @@ class Admin::Shop::ProductsController < Admin::ResourceController
       respond_to do |format|
         flash[:notice] = "Product updated successfully."
         format.html { redirect_to admin_shop_products_path }
+        format.js { redirect_to "/admin/shop/products/#{@shop_product.id}.js" }
         format.xml { redirect_to "/admin/shop/products/#{@shop_product.id}.xml" }
         format.json { redirect_to "/admin/shop/products/#{@shop_product.id}.json" }
       end
@@ -81,6 +83,7 @@ class Admin::Shop::ProductsController < Admin::ResourceController
       respond_to do |format|
         flash[:error] = "Unable to update new product."
         format.html { }
+        format.js { render :text => @shop_product.errors.to_s, :status => 422 }
         format.xml { render :xml => @shop_product.errors.to_xml, :status => 422 }
         format.json { render :json => @shop_product.errors.to_json, :status => 422 }
       end
@@ -99,6 +102,7 @@ class Admin::Shop::ProductsController < Admin::ResourceController
     respond_to do |format|
       flash[:notice] = "Product deleted successfully."
       format.html { redirect_to admin_shop_products_path }
+      format.js  { render :text => {:message => "Product deleted successfully."}, :status => 200 }
       format.xml  { render :xml => {:message => "Product deleted successfully."}, :status => 200 }
       format.json  { render :json => {:message => "Product deleted successfully."}, :status => 200 }
     end

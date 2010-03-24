@@ -14,20 +14,44 @@ class Admin::Shop::CategoriesController < Admin::ResourceController
     }
     respond_to do |format|
       format.html { redirect_to admin_shop_products_path }
+      format.js { render :partial => '/admin/shop/categories/category', :collection => @shop_categories }
       format.json { render :json => @shop_categories.to_json(attr_hash) }
       format.xml { render :xml => @shop_categories.to_xml(attr_hash) }
     end
   end
+  
+  # GET /shop/products/categories/1/products
+  # GET /shop/products/categories/1/products.js
+  # GET /shop/products/categories/1/products.xml
+  # GET /shop/products/categories/1/products.json                 AJAX and HTML
+  #----------------------------------------------------------------------------
+  def products
+    @shop_category = ShopCategory.find(params[:id])
+    attr_hash = {
+      :only => [:id, :handle, :created_at, :updated_at, :description, :title]
+    }
+    respond_to do |format|
+      format.html { }
+      format.js { render :partial => '/admin/shop/products/product', :collection => @shop_category.products }
+      format.xml { render :xml => @shop_category.products.to_xml(attr_hash) }
+      format.json { render :json => @shop_category.products.to_json(attr_hash) }
+    end
+  end
 
   # GET /shop/products/categories/1
+  # GET /shop/products/categories/1.js
   # GET /shop/products/categories/1.xml
   # GET /shop/products/categories/1.json                          AJAX and HTML
   #----------------------------------------------------------------------------
   def show
     @shop_category = ShopCategory.find(params[:id])
-    attr_hash =  { :only => [:id, :handle, :created_at, :updated_at, :description, :tags, :title] }
+    attr_hash =  { 
+      :include => :products,
+      :only => [:id, :handle, :created_at, :updated_at, :description, :tags, :title] 
+    }
     respond_to do |format|
       format.html {}
+      format.js { render :partial => '/admin/shop/categories/category', :locals => { :category => @shop_category } }
       format.xml { render :xml => @shop_category.to_xml(attr_hash) }
       format.json { render :json => @shop_category.to_json(attr_hash) }
     end
@@ -43,7 +67,8 @@ class Admin::Shop::CategoriesController < Admin::ResourceController
     if @shop_category.save!
       respond_to do |format|
         flash[:notice] = "Category created successfully."
-        format.html { redirect_to admin_shop_products_path }
+        format.html { redirect_to admin_shop_categories_path }
+        format.js { redirect_to "/admin/shop/products/categories/#{@shop_category.id}.js" }
         format.xml { redirect_to "/admin/shop/products/categories/#{@shop_category.id}.xml" }
         format.json { redirect_to "/admin/shop/products/categories/#{@shop_category.id}.json" }
       end
@@ -51,6 +76,7 @@ class Admin::Shop::CategoriesController < Admin::ResourceController
       respond_to do |format|
         flash[:error] = "Unable to create new product."
         format.html { }
+        format.js { render :text => @shop_category.errors.to_s, :status => :unprocessable_entity }
         format.xml { render :xml => @shop_category.errors.to_xml, :status => :unprocessable_entity }
         format.json { render :json => @shop_category.errors.to_json, :status => :unprocessable_entity }
       end
@@ -67,6 +93,7 @@ class Admin::Shop::CategoriesController < Admin::ResourceController
       respond_to do |format|
         flash[:notice] = "Category updated successfully."
         format.html { redirect_to admin_shop_products_path }
+        format.js { redirect_to "/admin/shop/products/categories/#{@shop_category.id}.js" }
         format.xml { redirect_to "/admin/shop/products/categories/#{@shop_category.id}.xml" }
         format.json { redirect_to "/admin/shop/products/categories/#{@shop_category.id}.json" }
       end
@@ -74,6 +101,7 @@ class Admin::Shop::CategoriesController < Admin::ResourceController
       respond_to do |format|
         flash[:error] = "Unable to update new category."
         format.html { }
+        format.js { render :text => @shop_category.errors.to_s, :status => 422 }
         format.xml { render :xml => @shop_category.errors.to_xml, :status => 422 }
         format.json { render :json => @shop_category.errors.to_json, :status => 422 }
       end
@@ -92,6 +120,7 @@ class Admin::Shop::CategoriesController < Admin::ResourceController
     respond_to do |format|
       flash[:notice] = "Category deleted successfully."
       format.html { redirect_to admin_shop_products_path }
+      format.js  { render :html => {:message => "Category deleted successfully."}, :status => 200 }
       format.xml  { render :xml => {:message => "Category deleted successfully."}, :status => 200 }
       format.json  { render :json => {:message => "Category deleted successfully."}, :status => 200 }
     end

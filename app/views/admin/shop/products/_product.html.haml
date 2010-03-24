@@ -1,7 +1,0 @@
-%tr.product
-  %td.title
-    = link_to product.title, edit_admin_shop_product_url(product.id)
-  %td.price
-    = number_to_currency(product.price) unless product.price.nil?
-  %td.remove
-    = link_to(image('remove', :alt => 'Remove product'), remove_admin_shop_product_url(product.id))
