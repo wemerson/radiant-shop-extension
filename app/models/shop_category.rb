@@ -11,7 +11,9 @@ class ShopCategory < ActiveRecord::Base
   
   validates_uniqueness_of :title
   validates_uniqueness_of :handle
-
+  
+  before_validation :set_handle
+  before_validation :filter_handle
 
   def to_s
     o=[]
@@ -96,6 +98,16 @@ class ShopCategory < ActiveRecord::Base
 
       ShopCategory.paginate(:all, options)
     end
+  end
+  
+private
+  
+  def filter_handle
+    self.handle = self.handle.downcase.gsub(/[^-a-z0-9~\s\.:;+=_]/, '').strip.gsub(/[\s\.:;=+]+/, '-')
+  end
+
+  def set_handle
+    self.handle = self.title if self.handle.nil?
   end
 
 end

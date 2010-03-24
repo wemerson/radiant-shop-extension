@@ -3,6 +3,7 @@ class Admin::Shop::ProductsController < Admin::ResourceController
   helper :shop
 
   # GET /shop/products
+  # GET /shop/products.js
   # GET /shop/products.xml
   # GET /shop/products.json                                       AJAX and HTML
   #----------------------------------------------------------------------------
@@ -23,6 +24,7 @@ class Admin::Shop::ProductsController < Admin::ResourceController
 
 
   # GET /shop/products/1
+  # GET /shop/products/1.js
   # GET /shop/products/1.xml
   # GET /shop/products/1.json                                     AJAX and HTML
   #----------------------------------------------------------------------------
@@ -40,6 +42,7 @@ class Admin::Shop::ProductsController < Admin::ResourceController
   end
 
   # POST /shop/products
+  # POST /shop/products.js
   # POST /shop/products.xml
   # POST /shop/products.json                                      AJAX and HTML
   #----------------------------------------------------------------------------
@@ -48,16 +51,20 @@ class Admin::Shop::ProductsController < Admin::ResourceController
     
     if @shop_product.save!
       respond_to do |format|
-        flash[:notice] = "Product created successfully."
-        format.html { redirect_to admin_shop_products_path }
-        format.js { redirect_to "/admin/shop/products/#{@shop_product.id}.js" }
+        format.html { 
+          flash[:notice] = "Product created successfully."
+          redirect_to admin_shop_products_path 
+        }
+        format.js { render :partial => '/admin/shop/products/product', :locals => { :product => @shop_product } }
         format.xml { redirect_to "/admin/shop/products/#{@shop_product.id}.xml" }
         format.json { redirect_to "/admin/shop/products/#{@shop_product.id}.json" }
       end
     else
       respond_to do |format|
-        flash[:error] = "Unable to create new product."
-        format.html { }
+        format.html { 
+          flash[:error] = "Unable to create new product."
+          render
+        }
         format.js { render :text => @shop_product.errors.to_s, :status => 422 }
         format.xml { render :xml => @shop_product.errors.to_xml, :status => 422 }
         format.json { render :json => @shop_product.errors.to_json, :status => 422 }
@@ -66,6 +73,7 @@ class Admin::Shop::ProductsController < Admin::ResourceController
   end
 
   # PUT /shop/products/1
+  # PUT /shop/products/1.js
   # PUT /shop/products/1.xml
   # PUT /shop/products/1.json                                     AJAX and HTML
   #----------------------------------------------------------------------------
@@ -73,16 +81,20 @@ class Admin::Shop::ProductsController < Admin::ResourceController
     @shop_product = ShopProduct.find(params[:id])
     if @shop_product.update_attributes!(params[:shop_product])
       respond_to do |format|
-        flash[:notice] = "Product updated successfully."
-        format.html { redirect_to admin_shop_products_path }
-        format.js { redirect_to "/admin/shop/products/#{@shop_product.id}.js" }
+        format.html { 
+          flash[:notice] = "Product updated successfully."
+          redirect_to admin_shop_products_path
+        }
+        format.js { render :partial => '/admin/shop/products/product', :locals => { :product => @shop_product } }
         format.xml { redirect_to "/admin/shop/products/#{@shop_product.id}.xml" }
         format.json { redirect_to "/admin/shop/products/#{@shop_product.id}.json" }
       end
     else
       respond_to do |format|
-        flash[:error] = "Unable to update new product."
-        format.html { }
+        format.html {
+          flash[:error] = "Unable to update new product."
+          render
+        }
         format.js { render :text => @shop_product.errors.to_s, :status => 422 }
         format.xml { render :xml => @shop_product.errors.to_xml, :status => 422 }
         format.json { render :json => @shop_product.errors.to_json, :status => 422 }
@@ -91,6 +103,7 @@ class Admin::Shop::ProductsController < Admin::ResourceController
   end   
 
   # DELETE /shop/products/1
+  # DELETE /shop/products/1.js
   # DELETE /shop/products/1.xml
   # DELETE /shop/products/1.json                                  AJAX and HTML
   #----------------------------------------------------------------------------
@@ -99,12 +112,14 @@ class Admin::Shop::ProductsController < Admin::ResourceController
     # For some reason the answer isn't obvious to me.
     @shop_product = ShopProduct.find(params[:id])
     @shop_product.destroy if @shop_product
-    respond_to do |format|
-      flash[:notice] = "Product deleted successfully."
-      format.html { redirect_to admin_shop_products_path }
-      format.js  { render :text => {:message => "Product deleted successfully."}, :status => 200 }
-      format.xml  { render :xml => {:message => "Product deleted successfully."}, :status => 200 }
-      format.json  { render :json => {:message => "Product deleted successfully."}, :status => 200 }
+    respond_to do |format|      
+      format.html { 
+        flash[:notice] = "Product deleted successfully."
+        redirect_to admin_shop_products_path 
+      }
+      format.js { render :text => {:message => "Product deleted successfully."}, :status => 200 }
+      format.xml { render :xml => {:message => "Product deleted successfully."}, :status => 200 }
+      format.json { render :json => {:message => "Product deleted successfully."}, :status => 200 }
     end
   end   
   

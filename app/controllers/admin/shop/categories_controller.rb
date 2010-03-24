@@ -3,6 +3,7 @@ class Admin::Shop::CategoriesController < Admin::ResourceController
   helper :shop
 
   # GET /shop/products/categories
+  # GET /shop/products/categories.js
   # GET /shop/products/categories.xml
   # GET /shop/products/categories.json                            AJAX and HTML
   #----------------------------------------------------------------------------
@@ -31,7 +32,7 @@ class Admin::Shop::CategoriesController < Admin::ResourceController
       :only => [:id, :handle, :created_at, :updated_at, :description, :title]
     }
     respond_to do |format|
-      format.html { }
+      format.html { render }
       format.js { render :partial => '/admin/shop/products/product', :collection => @shop_category.products }
       format.xml { render :xml => @shop_category.products.to_xml(attr_hash) }
       format.json { render :json => @shop_category.products.to_json(attr_hash) }
@@ -50,7 +51,7 @@ class Admin::Shop::CategoriesController < Admin::ResourceController
       :only => [:id, :handle, :created_at, :updated_at, :description, :tags, :title] 
     }
     respond_to do |format|
-      format.html {}
+      format.html { render }
       format.js { render :partial => '/admin/shop/categories/category', :locals => { :category => @shop_category } }
       format.xml { render :xml => @shop_category.to_xml(attr_hash) }
       format.json { render :json => @shop_category.to_json(attr_hash) }
@@ -58,25 +59,30 @@ class Admin::Shop::CategoriesController < Admin::ResourceController
   end
 
   # POST /shop/products/categories
+  # POST /shop/products/categories.js
   # POST /shop/products/categories.xml
   # POST /shop/products/categories.json                           AJAX and HTML
   #----------------------------------------------------------------------------
   def create
     @shop_category = ShopCategory.new(params[:shop_category])
 
-    if @shop_category.save!
+    if @shop_category.save
       respond_to do |format|
-        flash[:notice] = "Category created successfully."
-        format.html { redirect_to admin_shop_categories_path }
-        format.js { redirect_to "/admin/shop/products/categories/#{@shop_category.id}.js" }
+        format.html { 
+          flash[:notice] = "Category created successfully."
+          redirect_to admin_shop_categories_path 
+        }
+        format.js { render :partial => '/admin/shop/categories/category', :locals => { :category => @shop_category } }
         format.xml { redirect_to "/admin/shop/products/categories/#{@shop_category.id}.xml" }
         format.json { redirect_to "/admin/shop/products/categories/#{@shop_category.id}.json" }
       end
     else
       respond_to do |format|
-        flash[:error] = "Unable to create new product."
-        format.html { }
-        format.js { render :text => @shop_category.errors.to_s, :status => :unprocessable_entity }
+        format.html { 
+          flash[:error] = "Unable to create new product."
+          render
+        }
+        format.js { render :text => @shop_category.errors.to_json, :status => :unprocessable_entity }
         format.xml { render :xml => @shop_category.errors.to_xml, :status => :unprocessable_entity }
         format.json { render :json => @shop_category.errors.to_json, :status => :unprocessable_entity }
       end
@@ -84,23 +90,29 @@ class Admin::Shop::CategoriesController < Admin::ResourceController
   end
 
   # PUT /shop/products/categories/1
+  # PUT /shop/products/categories/1.js
   # PUT /shop/products/categories/1.xml
   # PUT /shop/products/categories/1.json                          AJAX and HTML
   #----------------------------------------------------------------------------
   def update
     @shop_category = ShopCategory.find(params[:id])
+    
     if @shop_category.update_attributes!(params[:shop_category])
       respond_to do |format|
-        flash[:notice] = "Category updated successfully."
-        format.html { redirect_to admin_shop_products_path }
-        format.js { redirect_to "/admin/shop/products/categories/#{@shop_category.id}.js" }
+        format.html { 
+          flash[:notice] = "Category updated successfully."
+          redirect_to admin_shop_products_path 
+        }
+        format.js { render :partial => '/admin/shop/categories/category', :locals => { :category => @shop_category } }
         format.xml { redirect_to "/admin/shop/products/categories/#{@shop_category.id}.xml" }
         format.json { redirect_to "/admin/shop/products/categories/#{@shop_category.id}.json" }
       end
     else
       respond_to do |format|
-        flash[:error] = "Unable to update new category."
-        format.html { }
+        format.html { 
+          flash[:error] = "Unable to update new category."
+          render
+        }
         format.js { render :text => @shop_category.errors.to_s, :status => 422 }
         format.xml { render :xml => @shop_category.errors.to_xml, :status => 422 }
         format.json { render :json => @shop_category.errors.to_json, :status => 422 }
@@ -109,6 +121,7 @@ class Admin::Shop::CategoriesController < Admin::ResourceController
   end
 
   # DELETE /shop/products/categories/1
+  # DELETE /shop/products/categories/1.js
   # DELETE /shop/products/categories/1.xml
   # DELETE /shop/products/categories/1.json                       AJAX and HTML
   #----------------------------------------------------------------------------
@@ -118,8 +131,10 @@ class Admin::Shop::CategoriesController < Admin::ResourceController
     @shop_category = ShopCategory.find(params[:id])
     @shop_category.destroy if @shop_category
     respond_to do |format|
-      flash[:notice] = "Category deleted successfully."
-      format.html { redirect_to admin_shop_products_path }
+      format.html {
+        flash[:notice] = "Category deleted successfully."
+        redirect_to admin_shop_products_path
+      }
       format.js  { render :html => {:message => "Category deleted successfully."}, :status => 200 }
       format.xml  { render :xml => {:message => "Category deleted successfully."}, :status => 200 }
       format.json  { render :json => {:message => "Category deleted successfully."}, :status => 200 }
