@@ -78,7 +78,7 @@ class ShopCategory < ActiveRecord::Base
   end
   
   class << self
-    def search(search, filter, page)
+    def search(search)
       unless search.blank?
 
         search_cond_sql = []
@@ -92,11 +92,10 @@ class ShopCategory < ActiveRecord::Base
       end
 
       options = { :conditions => @conditions,
-                  :order => 'position DESC',
-                  :page => page,
-                  :per_page => 10 }
+                  :order => 'position DESC'
+                }
 
-      ShopCategory.paginate(:all, options)
+      ShopCategory.find(:all, options)
     end
   end
   

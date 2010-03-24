@@ -12,8 +12,8 @@ class Admin::Shop::ProductsController < Admin::ResourceController
   # GET /shop/products.json                                       AJAX and HTML
   #----------------------------------------------------------------------------
   def index
-    @shop_categories = ShopCategory.search(params[:psearch], params[:pfilter], params[:ppage])
-    @shop_products = ShopProduct.search(params[:psearch], params[:pfilter], params[:ppage])
+    @shop_categories = ShopCategory.search(params[:psearch])
+    @shop_products = ShopProduct.search(params[:psearch])
     attr_hash = {
       :include => {:category => {:only => [:id, :title]} },
       :only => [:id, :sku, :handle, :description, :created_at, :updated_at, :price, :title]

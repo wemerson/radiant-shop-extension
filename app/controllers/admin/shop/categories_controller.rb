@@ -12,7 +12,7 @@ class Admin::Shop::CategoriesController < Admin::ResourceController
   # GET /shop/products/categories.json                            AJAX and HTML
   #----------------------------------------------------------------------------
   def index
-    @shop_categories = ShopCategory.search(params[:search], params[:filter], params[:page])
+    @shop_categories = ShopCategory.search(params[:search])
     attr_hash =  {
       :include => :products,
       :only => [:id, :handle, :created_at, :updated_at, :description, :price, :title, :tags] 
