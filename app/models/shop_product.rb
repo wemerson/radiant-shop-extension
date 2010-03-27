@@ -13,7 +13,11 @@ class ShopProduct < ActiveRecord::Base
   validates_uniqueness_of :sku
   validates_presence_of :handle
   validates_uniqueness_of :handle
-  validates_numericality_of :price, :greater_than => 0.00, :allow_nil => true
+  validates_numericality_of :price, :greater_than => 0.00, :allow_nil => true, :precisions => 2
+  validates_presence_of :category
+  
+  before_validation :set_handle_and_sku
+  before_validation :filter_handle_and_sku
 
   def to_param
     self.title.downcase.gsub(/[^A-Za-z\-]/,'_').gsub(/-+/,'_')
@@ -52,7 +56,20 @@ class ShopProduct < ActiveRecord::Base
                 }
 
       ShopProduct.find(:all, options)
+      
     end
+  end
+
+private
+
+  def filter_handle_and_sku
+    self.handle = self.handle.downcase.gsub(/[^-a-z0-9~\s\.:;+=_]/, '').strip.gsub(/[\s\.:;=+]+/, '-')
+    self.sku = self.sku.downcase.gsub(/[^-a-z0-9~\s\.:;+=_]/, '').strip.gsub(/[\s\.:;=+]+/, '-')
+  end
+
+  def set_handle_and_sku
+    self.handle = self.title if self.handle.empty?
+    self.sku = self.title if self.sku.empty?
   end
 
 end

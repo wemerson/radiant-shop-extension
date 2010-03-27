@@ -6,10 +6,10 @@ class Admin::Shop::ProductsController < Admin::ResourceController
       :denied_url => :back,
       :denied_message => "You don't have permission to access this page."
 
-  # GET /shop/products
-  # GET /shop/products.js
-  # GET /shop/products.xml
-  # GET /shop/products.json                                       AJAX and HTML
+  # GET /admin/shop/products
+  # GET /admin/shop/products.js
+  # GET /admin/shop/products.xml
+  # GET /admin/shop/products.json                                 AJAX and HTML
   #----------------------------------------------------------------------------
   def index
     @shop_categories = ShopCategory.search(params[:psearch])
@@ -20,17 +20,17 @@ class Admin::Shop::ProductsController < Admin::ResourceController
     }
     respond_to do |format|
       format.html { render }
-      format.js { render :partial => '/admin/shop/products/product', :collection => @shop_products }
+      format.js { render :partial => '/admin/shop/products/excerpt', :collection => @shop_products }
       format.xml { render :xml => @shop_products.to_xml(attr_hash) }
       format.json { render :json => @shop_products.to_json(attr_hash) }
     end
   end
 
 
-  # GET /shop/products/1
-  # GET /shop/products/1.js
-  # GET /shop/products/1.xml
-  # GET /shop/products/1.json                                     AJAX and HTML
+  # GET /admin/shop/products/1
+  # GET /admin/shop/products/1.js
+  # GET /admin/shop/products/1.xml
+  # GET /admin/shop/products/1.json                               AJAX and HTML
   #----------------------------------------------------------------------------
   def show
     @shop_product = ShopProduct.find(params[:id])
@@ -45,21 +45,21 @@ class Admin::Shop::ProductsController < Admin::ResourceController
     end
   end
 
-  # POST /shop/products
-  # POST /shop/products.js
-  # POST /shop/products.xml
-  # POST /shop/products.json                                      AJAX and HTML
+  # POST /admin/shop/products
+  # POST /admin/shop/products.js
+  # POST /admin/shop/products.xml
+  # POST /admin/shop/products.json                                AJAX and HTML
   #----------------------------------------------------------------------------
   def create
     @shop_product = ShopProduct.new(params[:shop_product])
     
-    if @shop_product.save!
+    if @shop_product.save
       respond_to do |format|
         format.html { 
           flash[:notice] = "Product created successfully."
           redirect_to admin_shop_products_path 
         }
-        format.js { render :partial => '/admin/shop/products/product', :locals => { :product => @shop_product } }
+        format.js { render :partial => '/admin/shop/products/excerpt', :locals => { :excerpt => @shop_product } }
         format.xml { redirect_to "/admin/shop/products/#{@shop_product.id}.xml" }
         format.json { redirect_to "/admin/shop/products/#{@shop_product.id}.json" }
       end
@@ -69,17 +69,17 @@ class Admin::Shop::ProductsController < Admin::ResourceController
           flash[:error] = "Unable to create new product."
           render
         }
-        format.js { render :text => @shop_product.errors.to_s, :status => 422 }
-        format.xml { render :xml => @shop_product.errors.to_xml, :status => 422 }
-        format.json { render :json => @shop_product.errors.to_json, :status => 422 }
+        format.js { render :text => @shop_product.errors.to_json, :status => :unprocessable_entity }
+        format.xml { render :xml => @shop_product.errors.to_xml, :status => :unprocessable_entity }
+        format.json { render :json => @shop_product.errors.to_json, :status => :unprocessable_entity }
       end
     end
   end
 
-  # PUT /shop/products/1
-  # PUT /shop/products/1.js
-  # PUT /shop/products/1.xml
-  # PUT /shop/products/1.json                                     AJAX and HTML
+  # PUT /admin/shop/products/1
+  # PUT /admin/shop/products/1.js
+  # PUT /admin/shop/products/1.xml
+  # PUT /admin/shop/products/1.json                               AJAX and HTML
   #----------------------------------------------------------------------------
   def update
     @shop_product = ShopProduct.find(params[:id])
@@ -89,7 +89,7 @@ class Admin::Shop::ProductsController < Admin::ResourceController
           flash[:notice] = "Product updated successfully."
           redirect_to admin_shop_products_path
         }
-        format.js { render :partial => '/admin/shop/products/product', :locals => { :product => @shop_product } }
+        format.js { render :partial => '/admin/shop/products/excerpt', :locals => { :excerpt => @shop_product } }
         format.xml { redirect_to "/admin/shop/products/#{@shop_product.id}.xml" }
         format.json { redirect_to "/admin/shop/products/#{@shop_product.id}.json" }
       end
@@ -106,10 +106,10 @@ class Admin::Shop::ProductsController < Admin::ResourceController
     end
   end   
 
-  # DELETE /shop/products/1
-  # DELETE /shop/products/1.js
-  # DELETE /shop/products/1.xml
-  # DELETE /shop/products/1.json                                  AJAX and HTML
+  # DELETE /admin/shop/products/1
+  # DELETE /admin/shop/products/1.js
+  # DELETE /admin/shop/products/1.xml
+  # DELETE /admin/shop/products/1.json                            AJAX and HTML
   #----------------------------------------------------------------------------
   def destroy
     # Need to rewrite this method to check for errors and return xml or json.
@@ -121,7 +121,7 @@ class Admin::Shop::ProductsController < Admin::ResourceController
         flash[:notice] = "Product deleted successfully."
         redirect_to admin_shop_products_path 
       }
-      format.js { render :text => {:message => "Product deleted successfully."}, :status => 200 }
+      format.js { render :text => "Product deleted successfully.", :status => 200 }
       format.xml { render :xml => {:message => "Product deleted successfully."}, :status => 200 }
       format.json { render :json => {:message => "Product deleted successfully."}, :status => 200 }
     end

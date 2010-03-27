@@ -27,13 +27,7 @@ class ShopExtension < Radiant::Extension
     config.gem 'will_paginate', :version => '~> 2.3.11', :source => 'http://gemcutter.org'
   end
   
-  def activate
-    tab 'Shop' do
-      add_item 'Products', '/admin/shop/products'
-      add_item 'Customers', '/admin/shop/customers', :after => 'Products'
-      add_item 'Orders', '/admin/shop/orders', :after => 'Customers'
-    end
-    
+  def activate  
     Page.class_eval { include ShopTags }
 
     # If our RadiantConfig settings are blank, set them up now

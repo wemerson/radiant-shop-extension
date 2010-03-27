@@ -106,7 +106,7 @@ private
   end
 
   def set_handle
-    self.handle = self.title if self.handle.nil?
+    self.handle = self.title if self.handle.nil? or self.handle.empty?
   end
 
 end
