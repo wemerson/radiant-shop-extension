@@ -1,4 +1,5 @@
 require_dependency 'application_controller'
+require_dependency "#{File.expand_path(File.dirname(__FILE__))}/lib/page_extensions_for_shop_category"
 require 'ostruct'
 
 class ShopExtension < Radiant::Extension
