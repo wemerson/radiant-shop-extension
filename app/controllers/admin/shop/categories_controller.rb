@@ -1,10 +1,6 @@
 class Admin::Shop::CategoriesController < Admin::ResourceController
   model_class ShopCategory
   helper :shop
-  only_allow_access_to :index, :show, :new, :create, :edit, :update, :remove, :destroy,
-      :when => [:admin, :designer],
-      :denied_url => :back,
-      :denied_message => "You don't have permission to access this page."
 
   # GET /admin/shop/products/categories
   # GET /admin/shop/products/categories.js
@@ -117,9 +113,9 @@ class Admin::Shop::CategoriesController < Admin::ResourceController
           flash[:error] = "Unable to update new category."
           render
         }
-        format.js { render :text => @shop_category.errors.to_s, :status => 422 }
-        format.xml { render :xml => @shop_category.errors.to_xml, :status => 422 }
-        format.json { render :json => @shop_category.errors.to_json, :status => 422 }
+        format.js { render :text => @shop_category.errors.to_s, :status => :unprocessable_entity }
+        format.xml { render :xml => @shop_category.errors.to_xml, :status => :unprocessable_entity }
+        format.json { render :json => @shop_category.errors.to_json, :status => :unprocessable_entity }
       end
     end
   end

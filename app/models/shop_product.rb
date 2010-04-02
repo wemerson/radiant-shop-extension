@@ -4,8 +4,6 @@ class ShopProduct < ActiveRecord::Base
 
   has_many :line_items, :class_name => 'ShopLineItem', :foreign_key => 'product_id'
   has_many :orders, :class_name => 'ShopOrder', :foreign_key => 'order_id', :through => :line_items
-  has_many :product_attachments, :class_name => 'ShopProductAttachment', :foreign_key => 'product_id'
-  has_many :images, :through => :product_attachments, :order => 'shop_product_attachments.position ASC', :uniq => :true
   
   validates_presence_of :title
   validates_uniqueness_of :title 

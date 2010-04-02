@@ -28,7 +28,7 @@ class ShopExtension < Radiant::Extension
   end
   
   def activate  
-    Page.class_eval { include ShopTags }
+    Page.class_eval { include ShopTags, PageExtensionsForShop }
 
     # If our RadiantConfig settings are blank, set them up now
     Radiant::Config['shop.product_layout'] ||= 'Product'
