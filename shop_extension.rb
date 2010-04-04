@@ -17,10 +17,6 @@ class ShopExtension < Radiant::Extension
         shop.resources :orders
       end
     end
-    map.namespace 'shop' do |shop|
-      shop.connect 'category/:handle', :controller => 'categories', :action => 'show', :name => /([\w\_]+)\z?/
-      shop.connect 'product/:handle', :controller => 'products', :action => 'show', :name => /([\w\_]+)\z?/
-    end
   end
   
   extension_config do |config|
@@ -28,11 +24,7 @@ class ShopExtension < Radiant::Extension
   end
   
   def activate  
-    Page.class_eval { include ShopTags, PageExtensionsForShop }
-
-    # If our RadiantConfig settings are blank, set them up now
-    Radiant::Config['shop.product_layout'] ||= 'Product'
-    Radiant::Config['shop.category_layout'] ||= 'Category'
+    Page.class_eval { include ShopTags }
   end
   
 end

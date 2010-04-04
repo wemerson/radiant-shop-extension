@@ -17,18 +17,6 @@ class ShopProduct < ActiveRecord::Base
   before_validation :set_handle_and_sku
   before_validation :filter_handle_and_sku
 
-  def to_param
-    self.title.downcase.gsub(/[^A-Za-z\-]/,'_').gsub(/-+/,'_')
-  end
-  
-  def url
-    "product/#{self.to_param}"
-  end
-
-  def layout
-    self.category.product_layout
-  end
-
   def custom=(values)
     values.each do |key, value|
       self.json_field_set(key, value)
