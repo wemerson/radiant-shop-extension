@@ -1,4 +1,5 @@
 require_dependency 'application_controller'
+require_dependency "#{File.expand_path(File.dirname(__FILE__))}/lib/page_extensions_for_shop_category"
 require 'ostruct'
 
 class ShopExtension < Radiant::Extension
@@ -17,10 +18,6 @@ class ShopExtension < Radiant::Extension
         shop.resources :orders
       end
     end
-    map.namespace 'shop' do |shop|
-      shop.connect 'category/:handle', :controller => 'categories', :action => 'show', :name => /([\w\_]+)\z?/
-      shop.connect 'product/:handle', :controller => 'products', :action => 'show', :name => /([\w\_]+)\z?/
-    end
   end
   
   extension_config do |config|
@@ -29,10 +26,13 @@ class ShopExtension < Radiant::Extension
   
   def activate  
     Page.class_eval { include ShopTags }
+<<<<<<< HEAD
 
     # If our RadiantConfig settings are blank, set them up now
     Radiant::Config['shop.product_layout'] ||= 'Product'
     Radiant::Config['shop.category_layout'] ||= 'Category'
+=======
+>>>>>>> 1447562bb3828fc9ef0fb5b2beb2cd74784d8704
   end
   
 end
