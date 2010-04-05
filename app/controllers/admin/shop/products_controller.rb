@@ -1,10 +1,6 @@
 class Admin::Shop::ProductsController < Admin::ResourceController
   model_class ShopProduct
   helper :shop
-  only_allow_access_to :index, :show, :new, :create, :edit, :update, :remove, :destroy,
-      :when => [:admin, :designer],
-      :denied_url => :back,
-      :denied_message => "You don't have permission to access this page."
 
   # GET /admin/shop/products
   # GET /admin/shop/products.js
@@ -26,6 +22,22 @@ class Admin::Shop::ProductsController < Admin::ResourceController
     end
   end
 
+  # GET /admin/shop/products/new
+  # GET /admin/shop/products/new.js
+  # GET /admin/shop/products/new.xml
+  # GET /admin/shop/products/new.json                             AJAX and HTML
+  #----------------------------------------------------------------------------
+  def new
+    @shop_product = ShopProduct.new(params[:shop_product])
+    
+    if params[:shop_product].nil? or @shop_product.category
+      respond_to do |format|
+        format.html { render }
+      end
+    else
+      redirect_to admin_shop_products_path
+    end
+  end
 
   # GET /admin/shop/products/1
   # GET /admin/shop/products/1.js

@@ -1,5 +1,4 @@
 require_dependency 'application_controller'
-
 require 'ostruct'
 
 class ShopExtension < Radiant::Extension
@@ -11,7 +10,7 @@ class ShopExtension < Radiant::Extension
     #allows us to pass category to a product
     map.namespace :admin, :member => {:remove => :get} do |admin|
       admin.namespace :shop, :member => {:remove => :get} do |shop|
-        shop.connect 'products/categories/:id/products.:format', :controller => 'categories', :action => 'products', :conditions => { :method => :get }
+        shop.category_products 'products/categories/:id/products.:format', :controller => 'categories', :action => 'products', :conditions => { :method => :get }
         shop.resources :categories, :as => 'products/categories'
         shop.resources :products
         shop.resources :customers

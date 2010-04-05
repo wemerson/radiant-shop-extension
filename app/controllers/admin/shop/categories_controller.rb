@@ -70,7 +70,8 @@ class Admin::Shop::CategoriesController < Admin::ResourceController
       respond_to do |format|
         format.html { 
           flash[:notice] = "Category created successfully."
-          redirect_to admin_shop_categories_path 
+          redirect_to edit_admin_shop_category_path(@shop_category) if params[:continue]
+          redirect_to admin_shop_categories_path unless params[:continue]
         }
         format.js { render :partial => '/admin/shop/categories/excerpt', :locals => { :excerpt => @shop_category } }
         format.xml { redirect_to "/admin/shop/products/categories/#{@shop_category.id}.xml" }
@@ -101,7 +102,8 @@ class Admin::Shop::CategoriesController < Admin::ResourceController
       respond_to do |format|
         format.html { 
           flash[:notice] = "Category updated successfully."
-          redirect_to admin_shop_products_path 
+          redirect_to edit_admin_shop_category_path(@shop_category) if params[:continue]
+          redirect_to admin_shop_categories_path unless params[:continue]
         }
         format.js { render :partial => '/admin/shop/categories/excerpt', :locals => { :excerpt => @shop_category } }
         format.xml { redirect_to "/admin/shop/products/categories/#{@shop_category.id}.xml" }
