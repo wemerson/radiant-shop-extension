@@ -22,15 +22,17 @@ class Admin::Shop::ProductsController < Admin::ResourceController
     end
   end
 
-  # GET /admin/shop/products/new
-  # GET /admin/shop/products/new.js
-  # GET /admin/shop/products/new.xml
-  # GET /admin/shop/products/new.json                             AJAX and HTML
+  # GET /admin/shop/products/new                                  AJAX and HTML
   #----------------------------------------------------------------------------
   def new
-    @shop_product = ShopProduct.new(params[:shop_product])
+    if params[:category_id]
+      @shop_category = ShopCategory.find(params[:category_id])
+      @shop_product = @shop_category.products.new if @shop_category
+    else
+      @shop_product = ShopProduct.new
+    end
     
-    if params[:shop_product].nil? or @shop_product.category
+    if params[:category_id].nil? or @shop_category
       respond_to do |format|
         format.html { render }
       end
@@ -56,6 +58,28 @@ class Admin::Shop::ProductsController < Admin::ResourceController
       format.json { render :json => @shop_product.to_json(attr_hash) }
     end
   end
+  
+  # PUT /admin/shop/products/1/images/sort
+  # PUT /admin/shop/products/1/images/sort.js
+  # PUT /admin/shop/products/1/images/sort.xml
+  # PUT /admin/shop/products/1/images/sort.json                   AJAX and HTML
+  #----------------------------------------------------------------------------
+  def sort
+    @shop_product = ShopProduct.find(params[:product_id])
+    
+    # Wish this was cleaner
+    @images = CGI::parse(params[:images])['images_list[]']
+    @images.each_with_index do |id, index|
+      @shop_product.assets.update_all(['position=?', index+1], ['id=?', id])
+    end
+    
+    respond_to do |format|
+      format.html { render }
+      format.js { render :partial => '/admin/shop/products/images/excerpt', :collection => @shop_product.assets }
+      format.xml { render :xml => @shop_product.to_xml(attr_hash) }
+      format.json { render :json => @shop_product.to_json(attr_hash) }
+    end
+  end
 
   # POST /admin/shop/products
   # POST /admin/shop/products.js
@@ -69,7 +93,8 @@ class Admin::Shop::ProductsController < Admin::ResourceController
       respond_to do |format|
         format.html { 
           flash[:notice] = "Product created successfully."
-          redirect_to admin_shop_products_path 
+          redirect_to edit_admin_shop_product_path(@shop_product) if params[:continue]
+          redirect_to admin_shop_products_path unless params[:continue]
         }
         format.js { render :partial => '/admin/shop/products/excerpt', :locals => { :excerpt => @shop_product } }
         format.xml { redirect_to "/admin/shop/products/#{@shop_product.id}.xml" }
@@ -79,7 +104,7 @@ class Admin::Shop::ProductsController < Admin::ResourceController
       respond_to do |format|
         format.html { 
           flash[:error] = "Unable to create new product."
-          render
+          render :new
         }
         format.js { render :text => @shop_product.errors.to_json, :status => :unprocessable_entity }
         format.xml { render :xml => @shop_product.errors.to_xml, :status => :unprocessable_entity }
@@ -99,7 +124,8 @@ class Admin::Shop::ProductsController < Admin::ResourceController
       respond_to do |format|
         format.html { 
           flash[:notice] = "Product updated successfully."
-          redirect_to admin_shop_products_path
+          redirect_to edit_admin_shop_product_path(@shop_product) if params[:continue]
+          redirect_to admin_shop_products_path unless params[:continue]
         }
         format.js { render :partial => '/admin/shop/products/excerpt', :locals => { :excerpt => @shop_product } }
         format.xml { redirect_to "/admin/shop/products/#{@shop_product.id}.xml" }
@@ -108,8 +134,8 @@ class Admin::Shop::ProductsController < Admin::ResourceController
     else
       respond_to do |format|
         format.html {
-          flash[:error] = "Unable to update new product."
-          render
+          flash[:error] = "Unable to update product."
+          render :action => 'edit'
         }
         format.js { render :text => @shop_product.errors.to_s, :status => 422 }
         format.xml { render :xml => @shop_product.errors.to_xml, :status => 422 }

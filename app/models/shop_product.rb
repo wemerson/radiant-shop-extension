@@ -5,8 +5,8 @@ class ShopProduct < ActiveRecord::Base
   has_many :line_items, :class_name => 'ShopLineItem', :foreign_key => 'product_id'
   has_many :orders, :class_name => 'ShopOrder', :foreign_key => 'order_id', :through => :line_items
   
-  has_many :assets, :class_name => 'ShopProductAsset', :foreign_key => 'product_id'
-  has_many :images, :through => :assets, :order => 'shop_product_assets.position ASC', :uniq => :true
+  has_many :assets, :class_name => 'ShopProductImage', :foreign_key => 'product_id', :order => 'shop_product_images.position ASC'
+  has_many :images, :through => :assets, :order => 'shop_product_images.position ASC', :uniq => :true
   
   validates_presence_of :title
   validates_uniqueness_of :title 

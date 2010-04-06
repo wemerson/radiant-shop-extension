@@ -1,4 +1,4 @@
-class ShopProductAsset < ActiveRecord::Base
+class ShopProductImage < ActiveRecord::Base
   
   belongs_to :product, :class_name => 'ShopProduct'
   belongs_to :image, :class_name => 'Asset', :foreign_key => 'asset_id'

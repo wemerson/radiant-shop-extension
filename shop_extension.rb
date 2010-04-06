@@ -11,10 +11,21 @@ class ShopExtension < Radiant::Extension
   define_routes do |map|
     #allows us to pass category to a product
     map.namespace :admin, :member => {:remove => :get} do |admin|
-      admin.namespace :shop, :member => {:remove => :get} do |shop|
-        shop.category_products 'products/categories/:id/products.:format', :controller => 'categories', :action => 'products', :conditions => { :method => :get }
-        shop.resources :categories, :as => 'products/categories'
-        shop.resources :products
+      admin.namespace :shop do |shop|
+        shop.namespace :products do |products|
+          products.resources :images
+          products.resources :assets
+        end
+        
+        shop.resources :categories do |category|
+          category.new_product 'products/new.:format', :controller => 'products', :action => 'new', :conditions => { :method => :get }
+          category.products 'products.:format', :controller => 'categories', :action => 'products', :conditions => { :method => :get }
+        end
+        shop.resources :products do |product|
+          product.resources :assets, :controller => 'products/assets', :only => [ :index, :show, :create ]
+          product.images_sort 'images/sort.:format', :controller => 'products', :action => 'sort', :conditions => { :method => :put }
+          product.resources :images, :controller => 'products/images', :only => [ :index, :create, :show, :destroy ]
+        end
         shop.resources :customers
         shop.resources :orders
       end
