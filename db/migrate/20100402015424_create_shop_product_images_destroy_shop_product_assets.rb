@@ -1,4 +1,4 @@
-class CreateShopProductImages < ActiveRecord::Migration
+class CreateShopProductImagesDestroyShopProductAssets < ActiveRecord::Migration
   def self.up
     drop_table :shop_product_assets
     create_table :shop_product_images do |t|
