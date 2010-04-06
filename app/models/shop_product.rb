@@ -5,6 +5,9 @@ class ShopProduct < ActiveRecord::Base
   has_many :line_items, :class_name => 'ShopLineItem', :foreign_key => 'product_id'
   has_many :orders, :class_name => 'ShopOrder', :foreign_key => 'order_id', :through => :line_items
   
+  has_many :assets, :class_name => 'ShopProductAsset', :foreign_key => 'product_id'
+  has_many :images, :through => :assets, :order => 'shop_product_assets.position ASC', :uniq => :true
+  
   validates_presence_of :title
   validates_uniqueness_of :title 
   validates_presence_of :sku
@@ -54,8 +57,8 @@ private
   end
 
   def set_handle_and_sku
-    self.handle = self.title if self.handle.empty?
-    self.sku = self.title if self.sku.empty?
+    self.handle = self.title if self.handle.nil? or self.handle.empty?
+    self.sku = self.title if self.sku.nil? or self.sku.empty?
   end
 
 end

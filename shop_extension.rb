@@ -1,3 +1,5 @@
+require_dependency "#{File.expand_path(File.dirname(__FILE__))}/lib/asset_shop_product_images_associations"
+
 require_dependency 'application_controller'
 require 'ostruct'
 
@@ -21,14 +23,13 @@ class ShopExtension < Radiant::Extension
   
   extension_config do |config|
     config.gem 'will_paginate', :version => '~> 2.3.11', :source => 'http://gemcutter.org'
+    #config.gem 'radiant-paperclipped-extension'
   end
   
   def activate  
     Page.class_eval { include ShopTags }
-
-    # If our RadiantConfig settings are blank, set them up now
-    Radiant::Config['shop.product_layout'] ||= 'ShopProduct'
-    Radiant::Config['shop.category_layout'] ||= 'ShopCategory'
+    
+    Asset.class_eval { include AssetShopProductImagesAssociations } #Product Images uses paperclipped
   end
   
 end
