@@ -15,7 +15,7 @@ class Admin::Shop::CategoriesController < Admin::ResourceController
     }
     respond_to do |format|
       format.html { redirect_to admin_shop_products_path }
-      format.js { render :partial => '/admin/shop/products/categories/excerpt', :collection => @shop_categories }
+      format.js { render :partial => '/admin/shop/categories/excerpt', :collection => @shop_categories }
       format.json { render :json => @shop_categories.to_json(attr_hash) }
       format.xml { render :xml => @shop_categories.to_xml(attr_hash) }
     end
@@ -52,7 +52,7 @@ class Admin::Shop::CategoriesController < Admin::ResourceController
     }
     respond_to do |format|
       format.html { render }
-      format.js { render :partial => '/admin/shop/products/categories/category', :locals => { :category => @shop_category } }
+      format.js { render :partial => '/admin/shop/categories/category', :locals => { :category => @shop_category } }
       format.xml { render :xml => @shop_category.to_xml(attr_hash) }
       format.json { render :json => @shop_category.to_json(attr_hash) }
     end
@@ -73,7 +73,7 @@ class Admin::Shop::CategoriesController < Admin::ResourceController
           redirect_to edit_admin_shop_category_path(@shop_category) if params[:continue]
           redirect_to admin_shop_categories_path unless params[:continue]
         }
-        format.js { render :partial => '/admin/shop/products/categories/excerpt', :locals => { :excerpt => @shop_category } }
+        format.js { render :partial => '/admin/shop/categories/excerpt', :locals => { :excerpt => @shop_category } }
         format.xml { redirect_to "/admin/shop/products/categories/#{@shop_category.id}.xml" }
         format.json { redirect_to "/admin/shop/products/categories/#{@shop_category.id}.json" }
       end
@@ -105,7 +105,7 @@ class Admin::Shop::CategoriesController < Admin::ResourceController
           redirect_to edit_admin_shop_category_path(@shop_category) if params[:continue]
           redirect_to admin_shop_categories_path unless params[:continue]
         }
-        format.js { render :partial => '/admin/shop/products/categories/excerpt', :locals => { :excerpt => @shop_category } }
+        format.js { render :partial => '/admin/shop/categories/excerpt', :locals => { :excerpt => @shop_category } }
         format.xml { redirect_to "/admin/shop/products/categories/#{@shop_category.id}.xml" }
         format.json { redirect_to "/admin/shop/products/categories/#{@shop_category.id}.json" }
       end
