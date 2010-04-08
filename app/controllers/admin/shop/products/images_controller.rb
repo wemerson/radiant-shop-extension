@@ -15,7 +15,7 @@ class Admin::Shop::Products::ImagesController < Admin::ResourceController
     
     if params[:product_id]
       @shop_product = ShopProduct.find(params[:product_id])
-      @shop_product_images = @shop_product.assets
+      @shop_product_images = @shop_product.images
     else
       @shop_product_images = ShopProductImage.all
     end
@@ -52,7 +52,7 @@ class Admin::Shop::Products::ImagesController < Admin::ResourceController
   #----------------------------------------------------------------------------
   def create 
     @shop_product = ShopProduct.find(params[:product_id])
-    @shop_product_image = @shop_product.assets.new(params[:shop_product_image])
+    @shop_product_image = @shop_product.images.new(params[:shop_product_image])
     
     attr_hash =  {
       :include => :gallery,
@@ -105,7 +105,7 @@ class Admin::Shop::Products::ImagesController < Admin::ResourceController
   #----------------------------------------------------------------------------
   def destroy
     @shop_product_image = ShopProductImage.find(params[:id])
-    @asset = @shop_product_image.image
+    @asset = @shop_product_image.asset
     
     if @shop_product_image.destroy
       @message = "Image deleted successfully."

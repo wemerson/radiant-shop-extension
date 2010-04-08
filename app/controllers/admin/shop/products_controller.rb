@@ -70,12 +70,12 @@ class Admin::Shop::ProductsController < Admin::ResourceController
     # Wish this was cleaner
     @images = CGI::parse(params[:images])['images_list[]']
     @images.each_with_index do |id, index|
-      @shop_product.assets.update_all(['position=?', index+1], ['id=?', id])
+      @shop_product.images.update_all(['position=?', index+1], ['id=?', id])
     end
     
     respond_to do |format|
       format.html { render }
-      format.js { render :partial => '/admin/shop/products/images/excerpt', :collection => @shop_product.assets }
+      format.js { render :partial => '/admin/shop/products/images/excerpt', :collection => @shop_product.images }
       format.xml { render :xml => @shop_product.to_xml(attr_hash) }
       format.json { render :json => @shop_product.to_json(attr_hash) }
     end
