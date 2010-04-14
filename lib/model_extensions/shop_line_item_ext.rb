@@ -6,7 +6,7 @@ module ShopCart
           begin
             return ShopProduct.find(self.product_id).price.to_f * self.quantity.to_f
           rescue
-            return 'Unable to calculate the weight of a Product'
+            return 'Unable to calculate the price of the Product'
           end          
         end
 
@@ -14,7 +14,7 @@ module ShopCart
           begin
             return ShopProduct.find(self.product_id).weight.to_f * self.quantity.to_f
           rescue
-            return 'Unable to calculate the weight of a Product'
+            return 'Unable to calculate the weight of the Product'
           end
         end
       }
