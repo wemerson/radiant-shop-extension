@@ -4,69 +4,56 @@ module ShopCart
       base.class_eval {
         has_one :shipment, :class_name => 'ShopShippingMethod', :foreign_key => 'order_id'
         has_one :billing, :class_name => 'ShopBillingMethod', :foreign_key => 'order_id'
-
-        def add(product)
-          if self.line_items.exists?({:product_id => product.id})
-            new_qty = self.line_items.first(:conditions => {:product_id => product.id}).quantity += 1
-            self.line_items.first(:conditions => {:product_id => product.id}).update_attribute(:quantity, new_qty)
+        
+        def add(id, quantity = nil)
+          if self.line_items.exists?({:product_id => id})
+            line_item = self.line_items.find(:first, :conditions => {:product_id => id})
+            quantity = line_item.quantity += quantity.to_i
+            line_item.update_attribute(:quantity, quantity)
           else
-            self.line_items.create(:product_id => product.id, :quantity => 1)
+            self.line_items.create(:product_id => id, :quantity => quantity)
           end
-        end
-
-        def remove(id)
-          begin
-            self.line_items.first(:conditions => {:product_id => id}).destroy
-          rescue IndexError
-            raise 'No order found on ShopOrder.remove'
-          end          
         end
 
         def update(id, quantity)
           if quantity.to_i == 0
             remove(id)
           else
-            begin 
-              self.line_items.first(:conditions => {:product_id => id}).quantity = quantity.to_i
-            rescue IndexError
-              raise 'No order found on ShopOrder.update'
-            end
+            self.line_items.find(:first, :conditions => {:product_id => id}).update_attribute(:quantity, quantity.to_i)
           end          
+        end
+
+        def remove(id)
+          self.line_items.find(:first, :conditions => {:product_id => id}).destroy          
         end
 
         def clear
           self.line_items.destroy_all        
         end
 
-#        def balance
-#          # Add up all payments
-#          total_payments = 0
-#          unless self.payments.empty?
-#            self.payments.each do |payment|
-#              total_payments += payment.amount
-#            end
-#          end
-
-#          order_total = self.sub_total # After we add taxes,etc we'll need to update this to sub_total + taxes + shipping
-#          (order_total - total_payments)
-#        end
+        def quantity
+          quantity = 0
+          self.line_items.each do |line_item|
+            quantity += line_item.quantity
+          end
+          quantity
+        end
 
         def price
-          subtotal = 0
-          self.line_items.each do |item|
-            subtotal += item.calc_price
+          price = 0.00
+          self.line_items.each do |line_item|
+            price += line_item.price.to_f
           end
-          subtotal
+          price
         end
 
         def weight
-          weight_total = 0
-          self.line_items.each do |item|
-            weight_total += item.calc_weight
+          weight = 0
+          self.line_items.each do |line_item|
+            total += line_item.weight.to_f
           end
-          weight_total
+          weight
         end
-
       }
     end    
   end

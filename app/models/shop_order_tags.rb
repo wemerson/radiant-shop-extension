@@ -1,5 +1,6 @@
 module ShopOrderTags
   include Radiant::Taggable
+  include ActionView::Helpers::NumberHelper
   
   class ShopOrderTagError < StandardError; end
     
@@ -18,6 +19,26 @@ module ShopOrderTags
     end
   end
   
+  tag 'shop:cart:quantity' do |tag|
+    tag.locals.shop_order.quantity
+  end
+  
+  tag 'shop:cart:price' do |tag|
+    attrs = tag.attr.symbolize_keys
+    precision = attrs[:precision] || 2
+    precision = precision.to_i
+    
+    number_to_currency(tag.locals.shop_order.price.to_f, 
+                       :precision => precision,
+                       :unit => attrs[:unit] || "$",
+                       :separator => attrs[:separator] || ".",
+                       :delimiter => attrs[:delimiter] || ",")
+  end
+  
+  tag 'shop:cart:weight' do |tag|
+    tag.locals.shop_order.weight
+  end
+  
   tag 'shop:cart:items' do |tag|
     tag.expand
   end
@@ -34,7 +55,17 @@ module ShopOrderTags
   tag 'shop:cart:item' do |tag|
     tag.locals.shop_line_item = find_shop_line_item(tag)
     tag.locals.shop_product = tag.locals.shop_line_item.product
-    tag.expand unless tag.locals.shop_line_item.nil?
+    
+    unless tag.locals.shop_line_item.nil?
+      content = "<form action='/shop/cart/items/#{tag.locals.shop_line_item.id}' method='post'>"
+      content << "<input type='hidden' name='_method' value='put' />"
+      content << "<input type='hidden' name='shop_line_item[product_id]' value='#{tag.locals.shop_product.id}' />"
+      content << tag.expand
+      content << "<input type='submit' name='update_item' id='update_item#{tag.locals.shop_line_item.id}' value='Update' />"
+      content << "</form>"
+    else
+      raise ShopOrderTagError, "Item can't be found"
+    end
   end
   
   tag 'shop:cart:item:id' do |tag|
@@ -45,12 +76,20 @@ module ShopOrderTags
     tag.locals.shop_line_item.quantity
   end
   
-  tag 'shop:cart:item:total_price' do |tag|
-    tag.locals.shop_line_item.calc_price
+  tag 'shop:cart:item:price' do |tag|
+    attrs = tag.attr.symbolize_keys
+    precision = attrs[:precision] || 2
+    precision = precision.to_i
+    
+    number_to_currency(tag.locals.shop_line_item.price.to_f, 
+                       :precision => precision,
+                       :unit => attrs[:unit] || "$",
+                       :separator => attrs[:separator] || ".",
+                       :delimiter => attrs[:delimiter] || ",")
   end
   
-  tag 'shop:cart:item:total_weight' do |tag|
-    tag.locals.shop_line_item.calc_weight
+  tag 'shop:cart:item:weight' do |tag|
+    tag.locals.shop_line_item.weight
   end
   
   tag 'shop:cart:item:delete' do |tag|
@@ -61,15 +100,20 @@ module ShopOrderTags
     "<a href='#{url}' title='#{title}'>#{text}</a>"
   end
   
+  tag 'shop:product' do |tag|
+    unless tag.locals.shop_product.nil?
+      content = "<form action='/shop/cart/items/' method='post'>"
+      content << "<input type='hidden' name='shop_line_item[product_id]' value='#{tag.locals.shop_product.id}' />"
+      content << tag.expand
+      content << "<input type='submit' name='add_to_cart' id='add_to_cart_#{tag.locals.shop_product.id}' value='Add To Cart' />"
+      content << "</form>"
+    else 
+      raise ShopOrderTagError, "Product can't be found"
+    end
+  end
+
   tag 'shop:cart:product' do |tag|
     tag.expand
-  end
-  
-  tag 'shop:product' do |tag|
-    content = "<form action='/shop/cart/items/' method='post'>"
-    content << "<input type='hidden' name='shop_line_item[product_id]' value='#{tag.locals.shop_product.id}' />"
-    content << tag.expand
-    content << "</form>"
   end
   
 protected

@@ -1,6 +1,6 @@
 class Shop::OrdersController < ApplicationController
-  
   no_login_required
+  skip_before_filter :verify_authenticity_token
   
   def show
     if params[:id] == 'current'
@@ -8,8 +8,6 @@ class Shop::OrdersController < ApplicationController
     else
       @shop_order = ShopOrder.find(params[:id])
     end
-    
-    render :text => @shop_order.inspect
   end
   
   

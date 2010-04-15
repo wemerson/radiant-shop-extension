@@ -1,5 +1,4 @@
 class Shop::LineItemsController < ApplicationController
-  
   no_login_required
   skip_before_filter :verify_authenticity_token
   
@@ -43,22 +42,16 @@ class Shop::LineItemsController < ApplicationController
     end
   end
   
-  # POST /shop/line_items
-  # POST /shop/line_items.js
-  # POST /shop/line_items.xml
-  # POST /shop/line_items.json                                    AJAX and HTML
+  # POST /shop/line_items/1
+  # POST /shop/line_items/1.js
+  # POST /shop/line_items/1.xml
+  # POST /shop/line_items/1.json                                  AJAX and HTML
   #----------------------------------------------------------------------------
   def create
-    if @shop_line_item = current_shop_order.line_items.find_by_product_id(params[:shop_line_item][:product_id])
-      @shop_line_item.quantity += params[:shop_line_item][:quantity].to_i
-    else
-      @shop_line_item = current_shop_order.line_items.new(params[:shop_line_item])
-    end
-    
-    if @shop_line_item.save
+    if current_shop_order.add(params[:shop_line_item][:product_id], params[:shop_line_item][:quantity])
       respond_to do |format|
         format.html { 
-          flash[:notice] = "Line Item Successfully Created."
+          flash[:notice] = "Product added to cart."
           redirect_to :back
         }
         format.js { render :partial => '/shop/line_items/excerpt', :locals => { :excerpt => @shop_line_item } }
@@ -68,7 +61,7 @@ class Shop::LineItemsController < ApplicationController
     else
       respond_to do |format|
         format.html { 
-          flash[:error] = "Unable to create new line item."
+          flash[:error] = "Unable to add product to cart."
           render
         }
         format.js { render :text => @shop_line_item.errors.to_json, :status => :unprocessable_entity }
@@ -84,13 +77,11 @@ class Shop::LineItemsController < ApplicationController
   # PUT /shop/line_items/1.json                                   AJAX and HTML
   #----------------------------------------------------------------------------
   def update
-    @shop_line_item = current_shop_order.find(params[:id])
-    
-    if @shop_line_item.update_attributes!(params[:shop_line_item])
+    if current_shop_order.update(params[:shop_line_item][:product_id], params[:shop_line_item][:quantity])
       respond_to do |format|
         format.html { 
           flash[:notice] = "Line Item updated successfully."
-          redirect_to edit_shop_order_path(@shop_line_item.order)
+          redirect_to :back
         }
         format.js { render :partial => '/shop/line_item/excerpt', :locals => { :excerpt => @shop_line_item } }
         format.xml { redirect_to "/shop/line_item/#{@shop_line_item.id}.xml" }
