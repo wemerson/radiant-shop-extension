@@ -1,17 +1,16 @@
 module ShopOrderTags
   include Radiant::Taggable
-  include ActionView::Helpers::NumberHelper
   
   class ShopOrderTagError < StandardError; end
     
-  tag 'shop:order' do |tag|
+  tag 'shop:cart' do |tag|
     tag.locals.shop_order = find_shop_order(tag)
     tag.expand unless tag.locals.shop_order.nil?
   end
   
   [:id, :status].each do |symbol|
     desc %{ outputs the #{symbol} to the products generated page }
-    tag "shop:order:#{symbol}" do |tag|
+    tag "shop:cart:#{symbol}" do |tag|
       unless tag.locals.shop_order.nil?
         hash = tag.locals.shop_order
         hash[symbol]
@@ -19,11 +18,11 @@ module ShopOrderTags
     end
   end
   
-  tag 'shop:order:line_items' do |tag|
+  tag 'shop:cart:items' do |tag|
     tag.expand
   end
   
-  tag 'shop:order:line_items:each' do |tag|
+  tag 'shop:cart:items:each' do |tag|
     content = ''
     tag.locals.shop_order.line_items.each do |line_item|
       tag.locals.shop_line_item = line_item
@@ -32,22 +31,45 @@ module ShopOrderTags
     content
   end
   
-  tag 'shop:order:line_item' do |tag|
+  tag 'shop:cart:item' do |tag|
     tag.locals.shop_line_item = find_shop_line_item(tag)
     tag.locals.shop_product = tag.locals.shop_line_item.product
     tag.expand unless tag.locals.shop_line_item.nil?
   end
   
-  tag 'shop:order:line_item:quantity' do |tag|
+  tag 'shop:cart:item:id' do |tag|
+    tag.locals.shop_line_item.id
+  end
+  
+  tag 'shop:cart:item:quantity' do |tag|
     tag.locals.shop_line_item.quantity
   end
   
-  tag 'shop:order:line_item:total_price' do |tag|
+  tag 'shop:cart:item:total_price' do |tag|
     tag.locals.shop_line_item.calc_price
   end
   
-  tag 'shop:order:line_item:total_weight' do |tag|
+  tag 'shop:cart:item:total_weight' do |tag|
     tag.locals.shop_line_item.calc_weight
+  end
+  
+  tag 'shop:cart:item:delete' do |tag|
+    url = "/shop/cart/items/#{tag.locals.shop_line_item.id}/remove"
+    title = "Remove #{tag.locals.shop_product.title}"
+    text = "Remove"
+    
+    "<a href='#{url}' title='#{title}'>#{text}</a>"
+  end
+  
+  tag 'shop:cart:product' do |tag|
+    tag.expand
+  end
+  
+  tag 'shop:product' do |tag|
+    content = "<form action='/shop/cart/items/' method='post'>"
+    content << "<input type='hidden' name='shop_line_item[product_id]' value='#{tag.locals.shop_product.id}' />"
+    content << tag.expand
+    content << "</form>"
   end
   
 protected
