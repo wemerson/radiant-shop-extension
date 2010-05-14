@@ -8,7 +8,7 @@ class Admin::Shop::ProductsController < Admin::ResourceController
   # GET /admin/shop/products.json                                 AJAX and HTML
   #----------------------------------------------------------------------------
   def index
-    @shop_categories = ShopCategory.search(params[:psearch])
+    @shop_categories = ShopCategory.search(params[:csearch])
     @shop_products = ShopProduct.search(params[:psearch])
     attr_hash = {
       :include => {:category => {:only => [:id, :title]} },
@@ -24,15 +24,11 @@ class Admin::Shop::ProductsController < Admin::ResourceController
 
   # GET /admin/shop/products/new                                  AJAX and HTML
   #----------------------------------------------------------------------------
-  def new
-    if params[:category_id]
-      @shop_category = ShopCategory.find(params[:category_id])
-      @shop_product = @shop_category.products.new if @shop_category
-    else
-      @shop_product = ShopProduct.new
-    end
+  def new    
+    @ShopProduct = ShopProduct.new
+    @ShopProduct.category_id = params[:category_id]
     
-    if params[:category_id].nil? or @shop_category
+    if params[:category_id] or @shop_category
       respond_to do |format|
         format.html { render }
       end
