@@ -23,7 +23,7 @@ class ShopExtension < Radiant::Extension
         end
         shop.resources :products do |product|
           product.resources :assets, :controller => 'products/assets', :only => [ :index, :show, :create ]
-          product.images_sort 'images/sort.:format', :controller => 'products', :action => 'sort', :conditions => { :method => :put }
+          product.images_sort 'images/sort.:format', :controller => 'products/images', :action => 'sort', :conditions => { :method => :put }
           product.resources :images, :controller => 'products/images', :only => [ :index, :create, :show, :destroy ]
         end
         shop.resources :customers

@@ -98,6 +98,28 @@ class Admin::Shop::Products::ImagesController < Admin::ResourceController
     end
   end
   
+  # PUT /admin/shop/products/1/images/sort
+  # PUT /admin/shop/products/1/images/sort.js
+  # PUT /admin/shop/products/1/images/sort.xml
+  # PUT /admin/shop/products/1/images/sort.json                   AJAX and HTML
+  #----------------------------------------------------------------------------
+  def sort
+    @shop_product = ShopProduct.find(params[:product_id])
+    
+    # Wish this was cleaner
+    @images = CGI::parse(params[:images])['images_list[]']
+    @images.each_with_index do |id, index|
+      @shop_product.images.update_all(['position=?', index+1], ['id=?', id])
+    end
+    
+    respond_to do |format|
+      format.html { render }
+      format.js { render :partial => '/admin/shop/products/images/excerpt', :collection => @shop_product.images }
+      format.xml { render :xml => @shop_product.to_xml(attr_hash) }
+      format.json { render :json => @shop_product.to_json(attr_hash) }
+    end
+  end
+  
   # DELETE /admin/shop/products/images/1
   # DELETE /admin/shop/products/images/1.js
   # DELETE /admin/shop/products/images/1.xml
