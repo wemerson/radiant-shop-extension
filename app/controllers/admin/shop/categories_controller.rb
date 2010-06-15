@@ -1,6 +1,5 @@
 class Admin::Shop::CategoriesController < Admin::ResourceController
   model_class ShopCategory
-  helper :shop
   
   # GET /admin/shop/products/categories
   # GET /admin/shop/products/categories.js
@@ -80,7 +79,7 @@ class Admin::Shop::CategoriesController < Admin::ResourceController
     else
       respond_to do |format|
         format.html { 
-          flash[:error] = "Unable to create new product."
+          flash[:error] = "Unable to create new category."
           render
         }
         format.js { render :text => @shop_category.errors.to_json, :status => :unprocessable_entity }
@@ -128,12 +127,9 @@ class Admin::Shop::CategoriesController < Admin::ResourceController
   # DELETE /admin/shop/products/categories/1.json                 AJAX and HTML
   #----------------------------------------------------------------------------
   def destroy
-    # Need to rewrite this method to check for errors and return xml or json.
-    # For some reason the answer isn't obvious to me.
-    # DK - The conditional doesn't actually work...
     @shop_category = ShopCategory.find(params[:id])
 
-    if @shop_category and @shop_category.destroy
+    if @shop_category.destroy
       @message = "Category deleted successfully."
       
       respond_to do |format|
@@ -159,5 +155,44 @@ class Admin::Shop::CategoriesController < Admin::ResourceController
       end
     end
   end 
+  
+  
+  # PUT /admin/shop/categories/sort
+  # PUT /admin/shop/categories/sort.js
+  # PUT /admin/shop/categories/sort.xml
+  # PUT /admin/shop/categories/sort.json                          AJAX and HTML
+  #----------------------------------------------------------------------------
+  def sort    
+    begin  
+      @categories = CGI::parse(params[:categories])["shop_categories[]"]
+      @categories.each_with_index do |id, index|
+        ShopCategory.find(id).update_attributes({
+          :position => index+1
+        })
+      end
+      respond_to do |format|
+        @message = "Categories sorted successfully."
+        format.html {
+          flash[:notice] = @message
+          redirect_to admin_shop_products_path
+        }
+        format.js { render :text => @message, :status => 200 }
+        format.xml { render :xml => { :message => @message }, :status => 200 }
+        format.json { render :json => {:message => @message }, :status => 200 }
+      end
+    rescue Exception => e
+      respond_to do |format|
+        @message = "Couldn't sort Categories."
+        format.html {
+          flash[:error] = @message
+          redirect_to admin_shop_products_path
+        }
+        format.js { render :text => @message, :status => 422 }
+        format.xml { render :xml => @messages, :status => 422 }
+        format.json { render :json => @message, :status => 422 }
+      end
+    end
+    
+  end
   
 end

@@ -52,17 +52,12 @@ class Admin::Shop::Products::ImagesController < Admin::ResourceController
   #----------------------------------------------------------------------------
   def create 
     @shop_product = ShopProduct.find(params[:product_id])
-    @shop_product_image = @shop_product.images.new(params[:shop_product_image])
-    
-    attr_hash =  {
-      :include => :gallery,
-      :only => [:id, :handle, :title, :caption] 
-    }
+    @shop_product_image = @shop_product.product_images.new(params[:shop_product_image])
     
     if @shop_product_image.save
       respond_to do |format|
         format.html { render }
-        format.js { render :partial => '/admin/shop/products/images/excerpt', :locals => { :excerpt => @shop_product_image } }
+        format.js { render :partial => '/admin/shop/products/images/image', :locals => { :image => @shop_product_image } }
         format.xml { render :xml => @shop_product_image.to_xml(attr_hash) }
         format.json { render :json => @shop_product_image.to_json(attr_hash) }
       end
@@ -107,14 +102,14 @@ class Admin::Shop::Products::ImagesController < Admin::ResourceController
     @shop_product = ShopProduct.find(params[:product_id])
     
     # Wish this was cleaner
-    @images = CGI::parse(params[:images])['images_list[]']
+    @images = CGI::parse(params[:product_images])['product_images_list[]']
     @images.each_with_index do |id, index|
-      @shop_product.images.update_all(['position=?', index+1], ['id=?', id])
+      @shop_product.product_images.update_all(['position=?', index+1], ['id=?', id])
     end
     
     respond_to do |format|
       format.html { render }
-      format.js { render :partial => '/admin/shop/products/images/excerpt', :collection => @shop_product.images }
+      format.js { render :partial => '/admin/shop/products/images/image', :collection => @shop_product.images }
       format.xml { render :xml => @shop_product.to_xml(attr_hash) }
       format.json { render :json => @shop_product.to_json(attr_hash) }
     end
@@ -127,7 +122,7 @@ class Admin::Shop::Products::ImagesController < Admin::ResourceController
   #----------------------------------------------------------------------------
   def destroy
     @shop_product_image = ShopProductImage.find(params[:id])
-    @asset = @shop_product_image.asset
+    @image = @shop_product_image.image
     
     if @shop_product_image.destroy
       @message = "Image deleted successfully."
@@ -137,7 +132,7 @@ class Admin::Shop::Products::ImagesController < Admin::ResourceController
           flash[:notice] = @message
           redirect_to admin_shop_products_images_path
         }
-        format.js { render :partial => '/admin/shop/products/assets/excerpt', :locals => { :excerpt => @asset } }
+        format.js { render :partial => '/admin/shop/products/images/image', :locals => { :excerpt => @image } }
         format.xml { render :xml => { :message => @message}, :status => 200 }
         format.json { render :json => { :message => @message}, :status => 200}
       end

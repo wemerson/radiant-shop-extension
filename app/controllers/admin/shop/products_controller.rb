@@ -1,6 +1,5 @@
 class Admin::Shop::ProductsController < Admin::ResourceController
   model_class ShopProduct
-  helper :shop
 
   # GET /admin/shop/products
   # GET /admin/shop/products.js
@@ -22,19 +21,16 @@ class Admin::Shop::ProductsController < Admin::ResourceController
     end
   end
 
-  # GET /admin/shop/products/new                                  AJAX and HTML
+  # GET /admin/shop/products/new                                           HTML
   #----------------------------------------------------------------------------
   def new    
-    @ShopProduct = ShopProduct.new
-    @ShopProduct.category_id = params[:category_id]
+    @shop_product = ShopProduct.new
+    @shop_product.category = ShopCategory.find(params[:category_id])
     
-    if params[:category_id] or @shop_category
-      respond_to do |format|
-        format.html { render }
-      end
-    else
-      redirect_to admin_shop_products_path
+    respond_to do |format|
+      format.html { render }
     end
+    
   end
 
   # GET /admin/shop/products/1
@@ -124,19 +120,69 @@ class Admin::Shop::ProductsController < Admin::ResourceController
   # DELETE /admin/shop/products/1.json                            AJAX and HTML
   #----------------------------------------------------------------------------
   def destroy
-    # Need to rewrite this method to check for errors and return xml or json.
-    # For some reason the answer isn't obvious to me.
     @shop_product = ShopProduct.find(params[:id])
-    @shop_product.destroy if @shop_product
-    respond_to do |format|      
-      format.html { 
-        flash[:notice] = "Product deleted successfully."
-        redirect_to admin_shop_products_path 
-      }
-      format.js { render :text => "Product deleted successfully.", :status => 200 }
-      format.xml { render :xml => {:message => "Product deleted successfully."}, :status => 200 }
-      format.json { render :json => {:message => "Product deleted successfully."}, :status => 200 }
+    
+    begin @shop_product.destroy 
+      respond_to do |format|      
+        format.html { 
+          flash[:notice] = "Product deleted successfully."
+          redirect_to admin_shop_products_path 
+        }
+        format.js { render :text => "Product deleted successfully.", :status => 200 }
+        format.xml { render :xml => {:message => "Product deleted successfully."}, :status => 200 }
+        format.json { render :json => {:message => "Product deleted successfully."}, :status => 200 }
+      end
+    rescue
+      respond_to do |format|
+        format.html {
+          flash[:error] = "Unable to delete product."
+          render :action => 'remove'
+        }
+        format.js { render :text => @shop_product.errors.to_s, :status => 422 }
+        format.xml { render :xml => @shop_product.errors.to_xml, :status => 422 }
+        format.json { render :json => @shop_product.errors.to_json, :status => 422 }
+      end
     end
   end   
+  
+  # PUT /admin/shop/products/sort
+  # PUT /admin/shop/products/sort.js
+  # PUT /admin/shop/products/sort.xml
+  # PUT /admin/shop/products/sort.json                            AJAX and HTML
+  #----------------------------------------------------------------------------
+  def sort
+    @category = ShopCategory.find(params[:category_id])
+    
+    begin  
+      @products = CGI::parse(params[:products])["shop_category_#{@category.id}_products[]"]
+      @products.each_with_index do |id, index|
+        ShopProduct.find(id).update_attributes({
+          :position => index+1,
+          :category_id => @category.id
+        })
+      end
+      respond_to do |format|
+        @message = "Products sorted successfully."
+        format.html {
+          flash[:notice] = @message
+          redirect_to admin_shop_products_path
+        }
+        format.js { render :text => @message, :status => 200 }
+        format.xml { render :xml => { :message => @message }, :status => 200 }
+        format.json { render :json => {:message => @message }, :status => 200 }
+      end
+    rescue Exception => e
+      respond_to do |format|
+        @message = "Couldn't sort Products."
+        format.html {
+          flash[:error] = @message
+          redirect_to admin_shop_products_path
+        }
+        format.js { render :text => @message, :status => 422 }
+        format.xml { render :xml => @message, :status => 422 }
+        format.json { render :json => @message, :status => 422 }
+      end
+    end
+  end
   
 end

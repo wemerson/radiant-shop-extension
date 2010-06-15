@@ -4,7 +4,11 @@ class CreateShopOrders < ActiveRecord::Migration
       t.integer :customer_id
       t.integer :payment_id
       t.string  :status # in_progress, new, canceled, returned, resumed, paid, shipped, balance_due
-      t.timestamps
+
+      t.integer :created_by
+      t.integer :updated_by
+      t.datetime :created_at
+      t.datetime :updated_at
     end
   end
 

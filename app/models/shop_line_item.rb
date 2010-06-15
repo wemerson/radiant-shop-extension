@@ -1,4 +1,5 @@
 class ShopLineItem < ActiveRecord::Base
+  
   belongs_to :order, :class_name => 'ShopOrder', :foreign_key => :order_id
   belongs_to :product, :class_name => 'ShopProduct', :foreign_key => :product_id
   

@@ -1,3 +1,6 @@
 ---
 en: 
   shop: 'Shop'
+  shop_product: 'Product'
+  shop_category: 'Category'
+  shop_order: 'Order'

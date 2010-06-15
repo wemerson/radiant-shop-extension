@@ -1,4 +1,5 @@
 class ShopAddress < ActiveRecord::Base
+  
   belongs_to :customer, :class_name => 'ShopCustomer'
   has_many :shipments, :class_name => 'ShopShippingMethod', :foreign_key => 'address_id'
   has_many :billings, :class_name => 'ShopBillingMethod', :foreign_key => 'address_id'
@@ -10,4 +11,5 @@ class ShopAddress < ActiveRecord::Base
   validates_presence_of :postal_code
   validates_presence_of :atype
   validates_format_of :atype, :with => /(shipping|billing)/i
+  
 end

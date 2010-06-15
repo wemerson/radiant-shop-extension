@@ -4,6 +4,7 @@ class CreateShopLineItems < ActiveRecord::Migration
       t.integer :product_id
       t.integer :quantity
       t.integer :order_id
+      t.integer :quantity, :default => 1
       t.timestamps
     end
   end

@@ -6,6 +6,10 @@ We'll re-introduce the readme when we have an idea of what needs to be read.
 
 == History
 
+=== Version 0.8 (15 Jun 2010) ^DK
+* Started pulling apart the database, removing overkill columns and tidying up codebase
+* Making it easier to understand, and less feature bloated
+
 === Version 0.7 (11 Mar 2010)
 * DK and CR decide to make this the core for an entire shop extension
 

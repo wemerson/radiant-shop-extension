@@ -1,12 +1,12 @@
 class ShopCategory < ActiveRecord::Base
+  
   default_scope :order => 'position ASC'
   
-  belongs_to :parent, :class_name => 'ShopCategory'
-  acts_as_list  :scope => :parent
+  belongs_to :created_by, :class_name => 'User'
+  belongs_to :updated_by, :class_name => 'User'
     
   has_many :products, :class_name => 'ShopProduct', :foreign_key => :category_id, :dependent => :destroy
-  has_many :children, :class_name => 'ShopCategory', :foreign_key => :parent_id, :order => 'position', :dependent => :destroy
-    
+  
   before_validation :set_handle
   before_validation :filter_handle
     
@@ -15,6 +15,8 @@ class ShopCategory < ActiveRecord::Base
   
   validates_uniqueness_of :title
   validates_uniqueness_of :handle
+  
+  acts_as_list
   
   def custom=(values)
     values.each do |key, value|
@@ -34,15 +36,14 @@ class ShopCategory < ActiveRecord::Base
     else
       @conditions = []
     end
-    options = { :conditions => @conditions }
-    self.all(options)
+    self.all({ :conditions => @conditions })
   end
   
 private
   
   def filter_handle
     unless self.title.nil?
-      self.handle = self.handle.downcase.gsub(/[^-a-z0-9~\s\.:;+=_]/, '').strip.gsub(/[\s\.:;=+]+/, '-')
+      self.handle = self.handle.downcase.gsub(/[^-a-z0-9~\s\.:;+=_]/, '').strip.gsub(/[\s\.:;=+~]+/, '-')
     end
   end
   

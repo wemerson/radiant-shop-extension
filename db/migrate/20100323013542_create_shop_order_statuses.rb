@@ -3,6 +3,7 @@ class CreateShopOrderStatuses < ActiveRecord::Migration
     create_table :shop_order_statuses do |t|
       t.string :status
       t.string :description
+      
       t.timestamps
     end
   end

@@ -1,4 +1,17 @@
-# I think this is the one that should be moved to the extension Rakefile template
+begin
+  require 'jeweler'
+  Jeweler::Tasks.new do |gem|
+    gem.name = "radiant-shop-extension"
+    gem.summary = %Q{Shop API for Radiant CMS}
+    gem.description = %Q{Describe your extension here}
+    gem.email = "dirk.kelly@squaretalent.com"
+    gem.homepage = "http://yourwebsite.com/images"
+    gem.authors = ["dirkkelly"]
+    # gem is a Gem::Specification... see http://www.rubygems.org/read/chapter/20 for additional settings
+  end
+rescue LoadError
+  puts "Jeweler (or a dependency) not available. This is only required if you plan to package images as a gem."
+end
 
 # In rails 1.2, plugins aren't available in the path until they're loaded.
 # Check to see if the rspec plugin is installed first and require
@@ -24,7 +37,8 @@ require 'rake/testtask'
 rspec_base = File.expand_path(RADIANT_ROOT + '/vendor/plugins/rspec/lib')
 $LOAD_PATH.unshift(rspec_base) if File.exist?(rspec_base)
 require 'spec/rake/spectask'
-# require 'spec/translator'
+require 'cucumber'
+require 'cucumber/rake/task'
 
 # Cleanup the RADIANT_ROOT constant so specs will load the environment
 Object.send(:remove_const, :RADIANT_ROOT)
@@ -39,6 +53,8 @@ Spec::Rake::SpecTask.new(:spec) do |t|
   t.spec_opts = ['--options', "\"#{extension_root}/spec/spec.opts\""]
   t.spec_files = FileList['spec/**/*_spec.rb']
 end
+
+task :features => 'spec:integration'
 
 namespace :spec do
   desc "Run all specs in spec directory with RCov"
@@ -63,13 +79,13 @@ namespace :spec do
     end
   end
   
-  # Hopefully no one has written their extensions in pre-0.9 style
-  # desc "Translate specs from pre-0.9 to 0.9 style"
-  # task :translate do
-  #   translator = ::Spec::Translator.new
-  #   dir = RAILS_ROOT + '/spec'
-  #   translator.translate(dir, dir)
-  # end
+  desc "Run the Cucumber features"
+  Cucumber::Rake::Task.new(:integration) do |t|
+    t.fork = true
+    t.cucumber_opts = ['--format', (ENV['CUCUMBER_FORMAT'] || 'pretty')]
+    # t.feature_pattern = "#{extension_root}/features/**/*.feature"
+    t.profile = "default"
+  end
 
   # Setup specs for stats
   task :statsetup do
@@ -99,17 +115,17 @@ namespace :spec do
   end
 end
 
-desc 'Generate documentation for the simple_product_manager extension.'
+desc 'Generate documentation for the images extension.'
 Rake::RDocTask.new(:rdoc) do |rdoc|
   rdoc.rdoc_dir = 'rdoc'
-  rdoc.title    = 'SimpleProductManagerExtension'
+  rdoc.title    = 'ShopExtension'
   rdoc.options << '--line-numbers' << '--inline-source'
   rdoc.rdoc_files.include('README')
   rdoc.rdoc_files.include('lib/**/*.rb')
 end
 
 # For extensions that are in transition
-desc 'Test the simple_product_manager extension.'
+desc 'Test the images extension.'
 Rake::TestTask.new(:test) do |t|
   t.libs << 'lib'
   t.pattern = 'test/**/*_test.rb'
