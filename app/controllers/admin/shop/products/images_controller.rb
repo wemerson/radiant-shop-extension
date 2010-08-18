@@ -1,24 +1,14 @@
 class Admin::Shop::Products::ImagesController < Admin::ResourceController
   model_class ShopProductImage
   
-  # GET /admin/shop/products/images
-  # GET /admin/shop/products/images.js
-  # GET /admin/shop/products/images.xml
-  # GET /admin/shop/products/images.json                          AJAX and HTML
-  # ---------------------------------------------------------------------------
   # GET /admin/shop/products/1/images
   # GET /admin/shop/products/1/images.js
   # GET /admin/shop/products/1/images.xml
   # GET /admin/shop/products/1/images.json                        AJAX and HTML
   #----------------------------------------------------------------------------
   def index
-    
-    if params[:product_id]
-      @shop_product = ShopProduct.find(params[:product_id])
-      @shop_product_images = @shop_product.images
-    else
-      @shop_product_images = ShopProductImage.all
-    end
+    @shop_product = ShopProduct.find(params[:product_id])
+    @shop_product_images = @shop_product.images
     
     attr_hash =  {
       :only => [:id, :title, :caption, :asset_file_name, :asset_content_type, :asset_file_size, :original_extension] 
@@ -27,12 +17,12 @@ class Admin::Shop::Products::ImagesController < Admin::ResourceController
     unless @shop_product_images.nil?
       respond_to do |format|
         format.html { render }
-        format.js { render :partial => '/admin/shop/products/images/excerpt', :collection => @shop_product_images }
+        format.js { render :partial => '/admin/shop/products/images/image', :collection => @shop_product_images }
         format.json { render :json => @shop_product_images.to_json(attr_hash) }
         format.xml { render :xml => @shop_product_images.to_xml(attr_hash) }
       end
     else
-      @message = "No Images"
+      @message = "This Product has no Images."
       respond_to do |format|
         format.html { 
           flash[:error] = @message
@@ -87,7 +77,7 @@ class Admin::Shop::Products::ImagesController < Admin::ResourceController
     
     respond_to do |format|
       format.html { render }
-      format.js { render :partial => '/admin/shop/assets/category', :locals => { :asset => @shop_product_image } }
+      format.js { render :partial => '/admin/shop/products/images/image', :locals => { :asset => @shop_product_image } }
       format.xml { render :xml => @shop_product_image.to_xml(attr_hash) }
       format.json { render :json => @shop_product_image.to_json(attr_hash) }
     end
@@ -101,7 +91,6 @@ class Admin::Shop::Products::ImagesController < Admin::ResourceController
   def sort
     @shop_product = ShopProduct.find(params[:product_id])
     
-    # Wish this was cleaner
     @images = CGI::parse(params[:product_images])['product_images_list[]']
     @images.each_with_index do |id, index|
       @shop_product.product_images.update_all(['position=?', index+1], ['id=?', id])
@@ -137,7 +126,7 @@ class Admin::Shop::Products::ImagesController < Admin::ResourceController
         format.json { render :json => { :message => @message}, :status => 200}
       end
     else
-      @message = "Unable to delete image"
+      @message = "Unable to delete image."
       
       respond_to do |format|
         format.html {

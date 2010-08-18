@@ -3,7 +3,7 @@ require File.dirname(__FILE__) + '/../../../spec_helper'
 describe Admin::Shop::ProductsController do
   dataset :users, :shop_products
   
-  before :each do
+  before :all do
     @product = shop_products(:soft_bread)
     @products = [
       shop_products(:soft_bread),
@@ -559,16 +559,16 @@ describe Admin::Shop::ProductsController do
         context "products are passed" do
           
           before :all do
-            @category = shop_categories(:bread)
+            @id = @product.category.id
             @sort = [
-              "shop_category_#{@category.id}_products[]=#{shop_products(:warm_bread).id}",
-              "shop_category_#{@category.id}_products[]=#{shop_products(:crusty_bread).id}",
-              "shop_category_#{@category.id}_products[]=#{shop_products(:soft_bread).id}",
+              "shop_category_#{@id}_products[]=#{@products[2].id}",
+              "shop_category_#{@id}_products[]=#{@products[1].id}",
+              "shop_category_#{@id}_products[]=#{@products[0].id}",
             ]
           end
           
           before :each do
-            put :sort, :category_id => @category.id, :products => @sort.join('&')
+            put :sort, :category_id => @id, :products => @sort.join('&')
           end
                     
           it "should redirect to #index" do
@@ -580,8 +580,9 @@ describe Admin::Shop::ProductsController do
           end
           
           it "should have reordered them" do
-            shop_products(:warm_bread).position.should == 1
             shop_products(:soft_bread).position.should == 3
+            shop_products(:crusty_bread).position.should == 2
+            shop_products(:warm_bread).position.should == 1
           end
 
         end

@@ -5,6 +5,7 @@ class ShopExtension < Radiant::Extension
   
   extension_config do |config|
     config.gem 'will_paginate', :version => '~> 2.3.11', :source => 'http://gemcutter.org'
+    config.gem 'rr', :version => '~> 0.10.10', :source => 'http://gemcutter.org'
   end
   
   UserActionObserver.instance.send :add_observer!, ShopProduct

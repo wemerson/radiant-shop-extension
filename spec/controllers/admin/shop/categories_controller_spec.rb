@@ -3,7 +3,7 @@ require File.dirname(__FILE__) + '/../../../spec_helper'
 describe Admin::Shop::CategoriesController do
   dataset :users, :shop_categories
   
-  before :each do
+  before :all do
     @category = shop_categories(:bread)
     @categories = [
       shop_categories(:bread),

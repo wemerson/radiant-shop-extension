@@ -153,7 +153,7 @@ class Admin::Shop::ProductsController < Admin::ResourceController
   def sort
     @category = ShopCategory.find(params[:category_id])
     
-    begin  
+    begin
       @products = CGI::parse(params[:products])["shop_category_#{@category.id}_products[]"]
       @products.each_with_index do |id, index|
         ShopProduct.find(id).update_attributes({
