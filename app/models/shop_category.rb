@@ -10,10 +10,10 @@ class ShopCategory < ActiveRecord::Base
   before_validation :set_handle
   before_validation :filter_handle
     
-  validates_presence_of :title
+  validates_presence_of :name
   validates_presence_of :handle
   
-  validates_uniqueness_of :title
+  validates_uniqueness_of :name
   validates_uniqueness_of :handle
   
   acts_as_list
@@ -24,32 +24,41 @@ class ShopCategory < ActiveRecord::Base
     end
   end
   
-  def self.search(search)
-    unless search.blank?
-      queries = []
-      queries << 'LOWER(title) LIKE (:term)'
-      queries << 'LOWER(handle) LIKE (:term)'
-      queries << 'LOWER(description) LIKE (:term)'
+  class << self
+  
+    def search(search)
+      unless search.blank?
+        queries = []
+        queries << 'LOWER(title) LIKE (:term)'
+        queries << 'LOWER(handle) LIKE (:term)'
+        queries << 'LOWER(description) LIKE (:term)'
       
-      sql = queries.join(" OR ")
-      @conditions = [sql, {:term => "%#{search.downcase}%" }]
-    else
-      @conditions = []
+        sql = queries.join(" OR ")
+        conditions = [sql, {:term => "%#{search.downcase}%" }]
+      else
+        conditions = []
+      end
+    
+      all({ :conditions => conditions })
     end
-    self.all({ :conditions => @conditions })
+    
+    def params
+      [ :id, :handle, :description, :created_at, :updated_at ]
+    end
+    
   end
   
 private
   
-  def filter_handle
-    unless self.title.nil?
-      self.handle = self.handle.downcase.gsub(/[^-a-z0-9~\s\.:;+=_]/, '').strip.gsub(/[\s\.:;=+~]+/, '-')
+  def set_handle
+    unless self.name.nil?
+      self.handle = self.name if self.handle.nil? or self.handle.empty?
     end
   end
   
-  def set_handle
-    unless self.title.nil?
-      self.handle = self.title if self.handle.nil? or self.handle.empty?
+  def filter_handle
+    unless self.name.nil?
+      self.handle = self.handle.downcase.gsub(/[^-a-z0-9~\s\.:;+=_]/, '').strip.gsub(/[\s\.:;=+~]+/, '-')
     end
   end
   

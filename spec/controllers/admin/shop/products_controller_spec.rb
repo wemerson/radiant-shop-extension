@@ -5,221 +5,202 @@ describe Admin::Shop::ProductsController do
   
   before :all do
     @product = shop_products(:soft_bread)
+    @category = @product.category
     @products = [
       shop_products(:soft_bread),
-      shop_products(:crusty_bread),
-      shop_products(:warm_bread),
       shop_products(:full_milk),
+      shop_products(:crusty_bread),
       shop_products(:hilo_milk),
+      shop_products(:warm_bread),
       shop_products(:choc_milk)
     ]
   end
   
-  describe "#index" do    
+  before :each do
+    login_as :admin
+  end
+  
+  describe '#index' do
     
-    context "user not logged in" do
-
-      before :each do 
-        get :index
-      end
-
-      it "should redirect to #login" do
-        response.should redirect_to(login_path)
-      end
-
-    end
-    
-    context "user logged in" do
-    
+    context 'html' do
+      
       before :each do
-        login_as :admin
         get :index
       end
       
-      it "should render successfully" do
+      it 'should render successfully' do
         response.should be_success
       end
       
-      it "should have a list of products" do
-        assigns(:shop_products).length.should == @products.length
+      it 'should have a list of products' do
+        assigns(:shop_products).should == @products
+      end
+      
+    end
+    
+    context 'js' do
+      
+      before :each do
+        get :index, :format => 'js'
+      end
+      
+      it 'should render successfully' do
+        response.should render_template('/admin/shop/products/_product')
       end
       
     end
     
   end
   
-  describe "#show" do 
+  describe '#show' do 
     
-    context "user not logged in" do
-
-      before :each do 
+    context 'html' do
+      
+      before :each do
         get :show, :id => @product.id
       end
-
-      it "should redirect to #login" do
-        response.should redirect_to(login_path)
+      
+      it 'should render' do
+        response.should render_template(:show)
       end
-
+      
+      it 'should define the product' do
+        assigns(:shop_product).should == @product
+      end
+      
     end
     
-    context "user logged in" do
-    
+    context 'js' do
+      
       before :each do
-        login_as :admin
+        get :show, :id => @product.id, :format => 'js'
       end
-    
-      context "product does not exist" do
-    
-        before :each do
-          get :show, :id => 0
-        end
       
-        it "should redirect to #edit" do
-          response.should be_redirect
-          response.body.include?('/edit')
-        end
-    
+      it 'should render' do
+        response.should render_template( '/admin/shop/products/_product' )
       end
-    
-      context "product exists" do
       
-        before :each do
-          get :show, :id => @product.id
-        end
-      
-        it "should render" do
-          response.should be_success
-        end
-
-        it "should define the product" do
-          assigns[:shop_product].should == @product
-        end
-      
+      it 'should define the product' do
+        assigns(:shop_product).should == @product
       end
       
     end
     
   end
   
-  describe "#new" do
+  describe '#sort' do
     
-    context "user not logged in" do
-
-      before :each do 
-        get :show, :id => @product.id
+    context 'products are not passed' do
+      
+      before :each do
+        put :sort, :category_id => shop_categories(:bread).id, :products => nil
       end
-
-      it "should redirect to #login" do
-        response.should redirect_to(login_path)
+      
+      it 'should redirect to #index' do
+        response.should redirect_to(admin_shop_products_path)
       end
-
+      
+      it 'should have a flash message' do
+        flash.now[:error].should == "Couldn't sort Products"
+      end
+      
     end
     
-    context "user logged in" do
-    
-      before :each do
-        login_as :admin
-      end
-    
-      context "no category assigned" do
-    
-        before :each do
-          get :new, :category_id => 0
-        end
+    context 'products are passed' do
       
-        it "should redirect to #index" do
+      before :each do
+        @sort = [
+          "shop_category_#{@category.id}_products[]=#{@products[4].id}",
+          "shop_category_#{@category.id}_products[]=#{@products[2].id}",
+          "shop_category_#{@category.id}_products[]=#{@products[0].id}",
+        ]
+      end
+      
+      context 'html' do
+        
+        before :each do
+          put :sort, :category_id => @category.id, :products => @sort.join('&')
+        end
+        
+        it 'should redirect to #index' do
           response.should redirect_to(admin_shop_products_path)
         end
-    
-        it "should have a flash message" do
-          flash.now[:notice].should == "Product could not be found."
+        
+        it 'should have a flash message' do
+          flash.now[:notice].should == "Products sorted successfully"
         end
-    
+        
+        it 'should have reordered them' do
+          assigns(:shop_products)[0].should == @products[4].id.to_s
+          assigns(:shop_products)[1].should == @products[2].id.to_s
+          assigns(:shop_products)[2].should == @products[0].id.to_s
+        end
+        
       end
-    
-      context "category assigned" do
       
+      context 'js' do
+        
         before :each do
-          get :new, :category_id => shop_categories(:bread).id
-        end
-      
-        it "should render" do
-          response.should be_success
+          put :sort, :category_id => @category.id, :products => @sort.join('&'), :format => 'js'
         end
         
-        it "should define the product" do
-          assigns[:shop_product].class.should == ShopProduct
+        it 'should return success notice' do
+          response.body.should == 'Products sorted successfully'
         end
         
-        it "should have defined the category" do
-          assigns[:shop_product].category.should == shop_categories(:bread)
+        it 'should have reordered them' do
+          shop_products(:soft_bread).position.should == 3
+          shop_products(:crusty_bread).position.should == 2
+          shop_products(:warm_bread).position.should == 1
         end
-      
+        
       end
       
     end
     
   end
   
-  describe "#create" do
+  describe '#create' do
     
-    context "user not logged in" do
-
-      before :each do 
-        post :create, :shop_product => @product
+    context 'category could not be created' do
+      
+      before :each do
+        post :create, :shop_product => {}
       end
-
-      it "should redirect to #login" do
-        response.should redirect_to(login_path)
+      
+      it 'should just render new template' do
+        response.should render_template(:new)
       end
-
+      
+      it 'should have a flash message' do
+        flash.now[:error].should == "Couldn't create Product"
+      end
+      
     end
     
-    context "user logged in" do
-    
-      before :each do
-        login_as :admin
-      end
-    
-      context "no product data sent" do
-    
-        before :each do
-          post :create, :shop_product => {}
-        end
+    context 'category successfully created' do
       
-        it "should just render its self" do
-          response.should be_success
-        end
-    
-        it "should have a flash message" do
-          flash.now[:error].should == "Unable to create new product."
-        end
-    
+      before :all do 
+        @data = {
+          :name     => 'name',
+          :category => shop_categories(:bread)
+        }
       end
       
-      context "product data sent" do
+      context 'html' do
         
-        before :all do 
-          @data = {
-            :title => "new bread",
-            :category => shop_categories(:bread)
-          }
-        end
-      
         context 'save and continue' do
           
           before :each do
             post :create, :shop_product => @data, :continue => true
           end
-
-          it "should redirect back to edit" do
+          
+          it 'should redirect back to edit' do
             response.should redirect_to(edit_admin_shop_product_path(assigns[:shop_product]))
           end
-
-          it "should create the product" do
-            assigns[:shop_product].title.should == @data[:title]
-            assigns[:shop_product].category.should == @data[:category]
-            assigns[:shop_product].id.should_not be_nil
+          
+          it 'should create the product' do
+            flash.now[:notice].should == "Product created successfully"
           end
           
         end
@@ -229,139 +210,77 @@ describe Admin::Shop::ProductsController do
           before :each do
             post :create, :shop_product => @data
           end
-
+          
           it "should redirect back to edit" do
             response.should redirect_to(admin_shop_products_path)
           end
-
+          
           it "should create the product" do
-            assigns[:shop_product].title.should == @data[:title]
-            assigns[:shop_product].category.should == @data[:category]
-            assigns[:shop_product].id.should_not be_nil
+            flash.now[:notice].should == "Product created successfully"
           end
           
         end
+        
       end
       
-    end
-    
-  end
-  
-  describe "#edit" do
-    
-    context "user not logged in" do
-
-      before :each do 
-        get :show, :id => @product.id
-      end
-
-      it "should redirect to #login" do
-        response.should redirect_to(login_path)
-      end
-
-    end
-    
-    context "user logged in" do
-    
-      before :each do
-        login_as :admin
-      end
-    
-      context "product does not exist" do
-    
+      context 'js' do
+        
         before :each do
-          get :edit, :id => 0
-        end
-      
-        it "should redirect to #index" do
-          response.should redirect_to(admin_shop_products_path)
-        end
-    
-        it "should have a flash message" do
-          flash.now[:notice].should == "Product could not be found."
-        end
-    
-      end
-    
-      context "product exists" do
-      
-        before :each do
-          get :edit, :id => @product.id
-        end
-      
-        it "should render" do
-          response.should be_success
+          post :create, :shop_product => @data, :format => 'js'
         end
         
-        it "should define the product" do
-          assigns[:shop_product].should == @product
+        it 'should render the category excerpt template' do
+          response.should render_template( '/admin/shop/products/_product' )
         end
-      
+        
       end
       
     end
     
   end
   
-  describe "#update" do
-    
-    context "user not logged in" do
+  describe '#update' do
 
-      before :each do 
-        put :update, :id => @product.id
+    context 'could not be saved' do
+      
+      before :each do
+        put :update, :id => @product.id, :shop_product => { :name => nil }
       end
-
-      it "should redirect to #login" do
-        response.should redirect_to(login_path)
+      
+      it "should redirect back to edit" do
+        response.should render_template(:edit)
       end
-
+      
+      it "should define the product" do
+        assigns(:shop_product).should == @product
+      end
+      
+      it 'should assign a flash error' do
+        flash.now[:error].should == "Couldn't update Product"
+      end
+      
     end
     
-    context "user logged in" do
-    
-      before :each do
-        login_as :admin
-      end
-    
-      context "product does not exist" do
-    
-        before :each do
-          put :update, :id => 0
-        end
+    context 'successfully saved' do
       
-        it "should redirect to #index" do
-          response.should redirect_to(admin_shop_products_path)
-        end
-    
-        it "should have a flash message" do
-          flash.now[:notice].should == "Product could not be found."
-        end
-    
-      end
-    
-      context "product exists" do
-      
-        before :all do 
-          @title = "new title"
-        end
-      
+      context 'html' do
+        
         context 'save and continue' do
           
           before :each do
-            put :update, :id => @product.id, :shop_product => { :title => @title }, :continue => true
-          end
-
-          it "should redirect back to edit" do
-            response.should redirect_to(edit_admin_shop_product_path(@product))
-          end
-
-          it "should define the product" do
-            assigns[:shop_product].should == @product
+            put :update, :id => @product.id, :shop_product => { :name => 'name' }, :continue => true
           end
           
-          it "should update the product title" do
-            @product = ShopProduct.find(@product.id)
-            @product.title.should == @title
+          it 'should redirect back to edit' do
+            response.should redirect_to(edit_admin_shop_product_path(@product))
+          end
+          
+          it "should define the product" do
+            assigns(:shop_product).should == @product
+          end
+          
+          it 'should assign a flash notice' do
+            flash.now[:notice].should == "Product updated successfully"
           end
           
         end
@@ -369,224 +288,81 @@ describe Admin::Shop::ProductsController do
         context 'save' do
           
           before :each do
-            put :update, :id => @product.id, :shop_product => { :title => @title }
+            put :update, :id => @product.id, :shop_product => { :name => 'name' }
           end
-
-          it "should redirect back to edit" do
+          
+          it 'should redirect back to edit' do
             response.should redirect_to(admin_shop_products_path)
           end
-
-          it "should define the product" do
-            assigns[:shop_product].should == @product
+          
+          it 'should define the product' do
+            assigns(:shop_product).should == @product
           end
           
-          it "should update the product title" do
-            @product = ShopProduct.find(@product.id)
-            @product.title.should == @title
+          it 'should assign a flash notice' do
+            flash.now[:notice].should == "Product updated successfully"
           end
           
-        end
-      
-      end
-      
-    end
-    
-  end
-  
-  describe "#remove" do
-    
-    context "user not logged in" do
-
-      before :each do 
-        get :remove, :id => @product.id
-      end
-
-      it "should redirect to #login" do
-        response.should redirect_to(login_path)
-      end
-
-    end
-    
-    context "user logged in" do
-    
-      before :each do
-        login_as :admin
-      end
-    
-      context "product does not exist" do
-    
-        before :each do
-          get :remove, :id => 0
-        end
-      
-        it "should redirect to #index" do
-          response.should redirect_to(admin_shop_products_path)
-        end
-
-        it "should have a flash message" do
-          flash.now[:notice].should == "Product could not be found."
-        end
-    
-      end
-    
-      context "product exists" do
-      
-        before :each do
-          get :remove, :id => @product.id
-        end
-      
-        it "should render" do
-          response.should be_success
         end
         
-        it "should define the product" do
-          assigns[:shop_product].should == @product
-        end
+      end
       
+      context 'js' do
+        
+        before :each do
+          put :update, :id => @product.id, :shop_product => { :name => 'name' }, :format => 'js'
+        end
+        
+        it 'should render the category excerpt template' do
+          response.should render_template( '/admin/shop/products/_product' )
+        end
+        
       end
       
     end
     
   end
   
-  describe "#destroy" do
+  describe '#destroy' do
     
-    context "user not logged in" do
-
-      before :each do 
+    context 'product not destroyed' do
+      
+      before :each do
+        @length = ShopProduct.all.length
+        delete :destroy, :id => 0
+      end
+      
+      it 'should redirect to #index' do
+        response.should redirect_to(admin_shop_products_path)
+      end
+      
+      it 'should have a flash message' do
+        flash.now[:notice].should == "Product could not be found."
+      end
+      
+      it 'should have deleted the product' do
+        ShopProduct.all.length.should == @length
+      end
+      
+    end
+    
+    context 'product destroyed' do
+      
+      before :each do
+        @length = ShopProduct.all.length
         delete :destroy, :id => @product.id
       end
-
-      it "should redirect to #login" do
-        response.should redirect_to(login_path)
-      end
-
-    end
-    
-    context "user logged in" do
-    
-      before :each do
-        login_as :admin
-      end
-    
-      context "product does not exist" do
-    
-        before :each do
-          delete :destroy, :id => 0
-        end
       
-        it "should redirect to #index" do
-          response.should redirect_to(admin_shop_products_path)
-        end
-
-        it "should have a flash message" do
-          flash.now[:notice].should == "Product could not be found."
-        end
-    
-      end
-    
-      context "product exists" do
-      
-        before :each do
-          @length = ShopProduct.all.length
-          delete :destroy, :id => @product.id
-        end
-      
-        it "should redirect to #index" do
-          response.should redirect_to(admin_shop_products_path)
-        end
-        
-        it "should have a flash message" do
-          flash.now[:notice].should == "Product deleted successfully."
-        end
-        
-        it "should have deleted the product" do
-          ShopProduct.all.length.should == (@length - 1)
-        end
-      
+      it 'should redirect to #index' do
+        response.should redirect_to(admin_shop_products_path)
       end
       
-    end
-    
-  end
-  
-  describe "#sort" do    
-    
-    context "user not logged in" do
-
-      before :each do 
-        put :sort
+      it 'should have a flash message' do
+        flash.now[:notice].should == "Product deleted successfully"
       end
-
-      it "should redirect to #login" do
-        response.should redirect_to(login_path)
-      end
-
-    end
-    
-    context "user logged in" do
-    
-      before :each do
-        login_as :admin
-      end
-    
-      context "category does not exist" do
-    
-        before :each do
-          put :sort, :category_id => 0
-        end
       
-        it "should redirect to #index" do
-          response.should redirect_to(admin_shop_products_path)
-        end
-
-        it "should have a flash message" do
-          flash.now[:notice].should == "Product could not be found."
-        end
-    
-      end
-    
-      context "category is passed" do
-        
-        context "products are not passed" do
-          
-          before :each do
-            put :sort, :category_id => shop_categories(:bread).id
-          end
-          
-        end
-        
-        context "products are passed" do
-          
-          before :all do
-            @id = @product.category.id
-            @sort = [
-              "shop_category_#{@id}_products[]=#{@products[2].id}",
-              "shop_category_#{@id}_products[]=#{@products[1].id}",
-              "shop_category_#{@id}_products[]=#{@products[0].id}",
-            ]
-          end
-          
-          before :each do
-            put :sort, :category_id => @id, :products => @sort.join('&')
-          end
-                    
-          it "should redirect to #index" do
-            response.should redirect_to(admin_shop_products_path)
-          end
-
-          it "should have a flash message" do
-            flash.now[:notice].should == "Products sorted successfully."
-          end
-          
-          it "should have reordered them" do
-            shop_products(:soft_bread).position.should == 3
-            shop_products(:crusty_bread).position.should == 2
-            shop_products(:warm_bread).position.should == 1
-          end
-
-        end
-      
+      it 'should have deleted the product' do
+        ShopProduct.all.length.should == (@length - 1)
       end
       
     end

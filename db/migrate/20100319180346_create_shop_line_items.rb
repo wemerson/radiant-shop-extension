@@ -1,11 +1,13 @@
 class CreateShopLineItems < ActiveRecord::Migration
   def self.up
     create_table :shop_line_items do |t|
-      t.integer :product_id
-      t.integer :quantity
-      t.integer :order_id
-      t.integer :quantity, :default => 1
-      t.timestamps
+      t.integer   :quantity
+      t.integer   :quantity, :default => 1
+      
+      t.integer   :created_by
+      t.integer   :updated_by
+      t.datetime  :created_at
+      t.datetime  :updated_at
     end
   end
 

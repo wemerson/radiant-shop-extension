@@ -2,15 +2,15 @@ begin
   require 'jeweler'
   Jeweler::Tasks.new do |gem|
     gem.name = "radiant-shop-extension"
-    gem.summary = %Q{Shop API for Radiant CMS}
-    gem.description = %Q{Describe your extension here}
-    gem.email = "dirk.kelly@squaretalent.com"
-    gem.homepage = "http://yourwebsite.com/images"
-    gem.authors = ["dirkkelly"]
+    gem.summary = %Q{Shop Extension for Radiant CMS}
+    gem.description = %Q{Shop adds an easy to use api for creating products sold in a shop}
+    gem.email = "dk@dirkkelly.com"
+    gem.homepage = "http://github.com/squaretalent/radiant-shop-extension"
+    gem.authors = ["Dirk Kelly"]
     # gem is a Gem::Specification... see http://www.rubygems.org/read/chapter/20 for additional settings
   end
 rescue LoadError
-  puts "Jeweler (or a dependency) not available. This is only required if you plan to package images as a gem."
+  puts "Jeweler (or a dependency) not available. This is only required if you plan to package shop as a gem."
 end
 
 # In rails 1.2, plugins aren't available in the path until they're loaded.
@@ -115,7 +115,7 @@ namespace :spec do
   end
 end
 
-desc 'Generate documentation for the images extension.'
+desc 'Generate documentation for the shop extension.'
 Rake::RDocTask.new(:rdoc) do |rdoc|
   rdoc.rdoc_dir = 'rdoc'
   rdoc.title    = 'ShopExtension'
@@ -125,7 +125,7 @@ Rake::RDocTask.new(:rdoc) do |rdoc|
 end
 
 # For extensions that are in transition
-desc 'Test the images extension.'
+desc 'Test the shop extension.'
 Rake::TestTask.new(:test) do |t|
   t.libs << 'lib'
   t.pattern = 'test/**/*_test.rb'

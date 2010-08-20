@@ -5,9 +5,10 @@ class CreateShopProductImages < ActiveRecord::Migration
       t.column :product_id, :integer
       t.column :position,   :integer
     end
-    remove_table :shop_product_assets
     
-    add_column :shop_products, :image_id, :integer
+    drop_table :shop_product_assets rescue nil
+    add_column :shop_products, :image_id, :integer rescue nil
+    
     ShopProduct.all.each do |product|
       product.update_attribute('image_id', product.asset_id)
     end
@@ -20,7 +21,7 @@ class CreateShopProductImages < ActiveRecord::Migration
       t.column :product_id, :integer
       t.column :position,   :integer
     end
-    remove_table :shop_product_images
+    drop_table :shop_product_images
     
     add_column :shop_products, :asset_id, :integer
     ShopProduct.all.each do |product|

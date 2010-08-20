@@ -1,4 +1,5 @@
 class ShopProductsDataset < Dataset::Base  
+
   uses :shop_categories, :images
 
   def load
@@ -11,7 +12,7 @@ class ShopProductsDataset < Dataset::Base
     categories.each do |category, products|
       products.each_with_index do |product, i|
         create_record :shop_product, "#{product.to_s}_#{category.to_s}".to_sym,
-          :title    => "#{product.to_s} #{category.to_s}",
+          :name     => "#{product.to_s} #{category.to_s}",
           :sku      => "#{product.to_s}_#{category.to_s}",
           :price    => i+1*10,
           :position => i+1,

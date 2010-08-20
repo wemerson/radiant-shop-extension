@@ -14,8 +14,8 @@ describe ShopProduct do
   
   context 'attributes' do
     
-    it 'should have a title' do
-      @product.title.should == 'soft bread'
+    it 'should have a name' do
+      @product.name.should == 'soft bread'
     end
     
     it 'should have an sku' do
@@ -42,23 +42,23 @@ describe ShopProduct do
   
   context 'validation' do
     
-    it 'should require a title and category' do
+    it 'should require a name and category' do
       @product = ShopProduct.new()
       @product.valid? == false
       
-      @product.title = "title"
+      @product.name = "name"
       @product.valid? == false
-      @product.title = nil
+      @product.name = nil
       
       @product.category = shop_categories(:bread)
       @product.valid? == false
 
-      @product.title = "title"
+      @product.name = "name"
       @product.valid? == true
     end
     
     it 'should validate but not require the price' do
-      @product = ShopProduct.new({ :title => 'bread', :category => shop_categories(:bread) })
+      @product = ShopProduct.new({ :name => 'bread', :category => shop_categories(:bread) })
       @product.valid? == true
       
       @product.price = "asdas"
@@ -81,7 +81,7 @@ describe ShopProduct do
     end
     
     it 'should generate a valid sku on validation' do
-      @product = ShopProduct.new({ :title => 'dark_ _:_;_=_+_._~_toasted', :category => shop_categories(:bread) })
+      @product = ShopProduct.new({ :name => 'dark_ _:_;_=_+_._~_toasted', :category => shop_categories(:bread) })
       @product.valid? == true
       @product.sku.should == 'dark_-_-_-_-_-_-_-_toasted'
     end

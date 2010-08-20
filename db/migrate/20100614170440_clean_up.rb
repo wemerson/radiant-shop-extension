@@ -7,10 +7,11 @@ class CleanUp < ActiveRecord::Migration
     remove_column :shop_categories, :parent_id rescue nil
     remove_column :shop_categories, :json_field rescue nil
     remove_column :shop_categories, :sequence rescue nil
-    remove_column :shop_categories, :handle rescue nil
+    remove_column :shop_categories, :sku rescue nil
     
-    remove_column :shop_products, :json_field rescue nil
-    remove_column :shop_products, :sequence rescue nil
+    remove_column :shop_products,   :json_field rescue nil
+    remove_column :shop_products,   :sequence rescue nil
+    
     drop_table :shop_product_attachments rescue nil
     drop_table :shop_product_assets rescue nil
     
@@ -31,8 +32,21 @@ class CleanUp < ActiveRecord::Migration
     add_column :shop_orders, :updated_by, :integer rescue nil
     add_column :shop_orders, :updated_at, :datetime rescue nil
     add_column :shop_orders, :created_at, :datetime rescue nil
+    
+    add_column :shop_products, :name, :string
+    ShopProduct.all.each do |s|
+      s.update_attribute('name', s.title)
+    end
+    remove_column :shop_products, :title, :string
+    
+    add_column :shop_categories, :name, :string
+    ShopCategory.all.each do |c|
+      s.update_attribute('name', c.title)
+    end
+    remove_column :shop_categories, :title, :string
   end
 
   def self.down
+    
   end
 end

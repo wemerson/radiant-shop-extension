@@ -14,7 +14,7 @@ describe ShopCategory do
   context 'attributes' do
     
     it 'should have a title' do
-      @category.title.should == 'bread'
+      @category.name.should == 'bread'
     end
     
     it 'should have a handle' do
@@ -34,7 +34,7 @@ describe ShopCategory do
   context 'validation' do
     
     it 'should generate a valid handle on validation' do
-      @product = ShopCategory.new({ :title => 'delicious_ _:_;_=_+_._~_bread' })
+      @product = ShopCategory.new({ :name => 'delicious_ _:_;_=_+_._~_bread' })
       @product.valid? == true
       @product.handle.should == 'delicious_-_-_-_-_-_-_-_bread'
     end

@@ -1,21 +1,18 @@
 ActionController::Routing::Routes.draw do |map|
   
   map.namespace :admin do |admin|
-    admin.namespace :shop, :member => {:remove => :get } do |shop|
-      shop.namespace :products do |products|
-        products.resources :images
-        products.resources :assets
-      end
-    
-      shop.resources :categories, :collection => { :sort => :put } do |category|
-        category.new_product 'products/new.:format', :controller => 'products', :action => 'new', :conditions => { :method => :get }
-        category.products 'products.:format', :controller => 'categories', :action => 'products', :conditions => { :method => :get }
+    admin.namespace :shop, :member => { :remove => :get } do |shop|
+      
+      shop.resources :categories, :collection => { :sort => :put }, :member => { :products => :get } do |category|
+        category.resources :products, :only => :new
       end
       
-      shop.resources :products, :collection => { :sort => :put } do |product|
-        product.sort_images 'images/sort.:format', :controller => 'products/images', :action => 'sort', :conditions => { :method => :put }
-        product.resources :images, :controller => 'products/images'
+      shop.resources :products, :except => :new, :collection => { :sort => :put }
+      
+      shop.namespace :products do |product|
+        product.resources :images, :collection => { :sort => :put }
       end
+      
       shop.resources :customers
       shop.resources :orders
     end

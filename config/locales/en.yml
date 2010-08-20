@@ -1,6 +1,17 @@
 ---
-en: 
-  shop: 'Shop'
-  shop_product: 'Product'
-  shop_category: 'Category'
-  shop_order: 'Order'
+en:
+  shop: "shop"
+  shop_category:          "Category"
+  shop_categories:        "Categories"
+  shop_product:           "Product"
+  shop_products:          "Products"
+  shop_order:             "Order"
+  flash:
+    successfully_created:   "created successfully"
+    successfully_updated:   "updated successfully"
+    successfully_destroyed: "deleted successfully"
+    successfully_sorted:    "sorted successfully"
+    could_not_create:       "Couldn't create"
+    could_not_update:       "Couldn't update"
+    could_not_destroy:      "Couldn't delete"
+    could_not_sort:         "Couldn't sort"
