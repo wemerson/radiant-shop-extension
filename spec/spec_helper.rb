@@ -18,6 +18,9 @@ if File.directory?(File.dirname(__FILE__) + "/matchers")
 end
 
 Spec::Runner.configure do |config|
+  # Use rr for mocking
+  config.mock_with :rr
+  
   # config.use_transactional_fixtures = true
   # config.use_instantiated_fixtures  = false
   # config.fixture_path = RAILS_ROOT + '/spec/fixtures'
