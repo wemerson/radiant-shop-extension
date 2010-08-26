@@ -1,5 +1,9 @@
 require 'spec/spec_helper'
+require 'spec/helpers/nested_tag_helper'
 
+#
+# Tests for shop order tags module
+#
 describe ShopOrderTags do
   dataset :pages
 
@@ -23,64 +27,167 @@ describe ShopOrderTags do
       'shop:product'].sort
   end
 
-  describe '<r:shop:cart>' do
-    it 'should raise an exception if no id is specified' do
-      tag = '<r:shop:cart>Hello</r:shop:cart>'
-
-      pages(:home).should_not render(tag)
-    end
-
-    it 'should raise an exception if the shop item is not specified' do
-      tag = '<r:shop:cart id="1">Hello</r:shop:cart>'
-
-      pages(:home).should_not render(tag)
-    end
-
-    it 'should render the shop line item' do
-      shop_order = ShopOrder.create
-
-      tag = %{<r:shop:cart id="#{shop_order.id}">Hello</r:shop:cart>}
-
-      expected = %{Hello}
-
-      pages(:home).should render(tag).as(expected)
-    end
-  end
-
-  context 'inside a shopping cart tag' do
+  describe 'tag tests' do
     before :each do
-      @shop_order = ShopOrder.create
+      @tags = NestedTagHelper.new
     end
 
-    describe '<r:shop:cart:(id|status)>' do
-      [:id, :status].each do |symbol|
-        it 'should output the symbol' do
-          tag = %{<r:shop:cart:"#{symbol} id="#{@shop_order.id}"/>}
-
-          pages(:home).should render(tag)
-        end
-      end
-    end
-
-    describe '<r:shop:cart:quantity>' do
-      it 'should render the quantity' do
-        tag = %{<r:shop:cart:quantity id="#{@shop_order.id}"/>}
+    describe '<r:shop:cart>' do
+      it 'should raise an exception if no id is specified' do
+        tag = '<r:shop:cart>Hello</r:shop:cart>'
 
         pages(:home).should_not render(tag)
       end
 
-      it 'should render the quantity' do
-        tag = %{<r:shop:cart:quantity id="#{@shop_order.id}"/>}
+      it 'should raise an exception if the shop item is not specified' do
+        tag = '<r:shop:cart id="1">Hello</r:shop:cart>'
 
-        pages(:home).should render(tag).as(@shop_order.quantity)
+        pages(:home).should_not render(tag)
+      end
+
+      it 'should render the shop line item' do
+        shop_order = ShopOrder.create
+
+        tag = %{<r:shop:cart id="#{shop_order.id}">Hello</r:shop:cart>}
+
+        expected = %{Hello}
+
+        pages(:home).should render(tag).as(expected)
       end
     end
 
-    describe '<r:shop:cart:price>' do
-      it 'should display the value of the shopping cart' do
-        tag = %{<r:shop:cart:price id="#{@shop_order.id}"/>}
+    context 'inside a shopping cart tag' do
+      before :each do
+        @shop_order = ShopOrder.create
+        @tags.push %{<r:shop:cart id="#{@shop_order.id}">}, '</r:shop:cart>'
+      end
 
-        pages(:home).should render(tag)
+      describe '<r:shop:cart:(id|status)>' do
+        [:id, :status].each do |symbol|
+          it 'should output the symbol' do
+            @tags.push "<r:shop:cart:#{symbol}/>"
+
+            pages(:home).should render(@tags.to_s)
+          end
+        end
+      end
+
+      describe '<r:shop:cart:quantity>' do
+        it 'should render the quantity' do
+          @tags.push '<r:shop:cart:quantity/>'
+
+          pages(:home).should render(@tags.to_s)
+        end
+
+        it 'should render the quantity' do
+          @tags.push '<r:shop:cart:quantity/>'
+
+          pages(:home).should render(@tags.to_s).as('0')
+        end
+      end
+
+      describe '<r:shop:cart:price>' do
+        it 'should display the value of the shopping cart' do
+          @tags.push '<r:shop:cart:price/>'
+
+          pages(:home).should render(@tags.to_s).as('$0.00')
+        end
+      end
+
+      describe '<r:shop:cart:weight>' do
+        it 'should display the weight of the shopping cart' do
+          @tags.push '<r:shop:cart:weight/>'
+
+          pages(:home).should render(@tags.to_s).as('0')
+        end
+      end
+
+      describe '<r:shop:cart:items>' do
+        it 'should display the shop items' do
+          @tags.push '<r:shop:cart:items>Hello</r:shop:cart:items>'
+
+          pages(:home).should render(@tags.to_s).as('Hello')
+        end
+      end
+
+      describe '<r:shop:cart:items:each>' do
+
+        before :each do
+          @tags.push '<r:shop:cart:items:each>', '</r:shop:cart:items:each>'
+        end
+
+        it 'should display a blank string if no inner tags are supplied' do
+          pages(:home).should render(@tags.to_s).as('')
+        end
+
+        context 'has products and line items' do
+          before :each do
+            @category = ShopCategory.create(:name => 'Carpets', :handle => 'Goose')
+            @product = @shop_order.products.create(:name => 'Product', :sku => 'What is this', :category => @category)
+            @line_item = @shop_order.line_items.create(:product => @product)
+          end
+
+          describe '<r:shop:cart:item:id>' do
+            it 'should render an item id' do
+              @tags.push '<r:shop:cart:item:id/>'
+
+              pages(:home).should render(@tags.to_s).as %{<form action='/shop/cart/items/#{@product.id}' method='post'><input type='hidden' name='_method' value='put' /><input type='hidden' name='shop_line_item[product_id]' value='#{@product.id}' />#{@product.id}<input type='submit' name='update_item' id='update_item1' value='Update' /></form>}
+            end
+          end
+
+          describe '<r:shop:cart:item:quantity>' do
+            it 'should render an item quantity' do
+              @tags.push '<r:shop:cart:item:quantity/>'
+
+              pages(:home).should render(@tags.to_s).as %{<form action='/shop/cart/items/#{@product.id}' method='post'><input type='hidden' name='_method' value='put' /><input type='hidden' name='shop_line_item[product_id]' value='#{@product.id}' />1<input type='submit' name='update_item' id='update_item1' value='Update' /></form>}
+            end
+          end
+
+          describe '<r:shop:cart:item:price>' do
+            it 'should render an item price' do
+              @tags.push '<r:shop:cart:item:price/>'
+
+              pages(:home).should render(@tags.to_s).as %{<form action='/shop/cart/items/#{@product.id}' method='post'><input type='hidden' name='_method' value='put' /><input type='hidden' name='shop_line_item[product_id]' value='#{@product.id}' />$0.00<input type='submit' name='update_item' id='update_item1' value='Update' /></form>}
+            end
+          end
+
+          describe '<r:shop:cart:item:weight>' do
+            it 'should render an item weight' do
+              @tags.push '<r:shop:cart:item:weight/>'
+
+              pages(:home).should render(@tags.to_s).as %{<form action='/shop/cart/items/#{@product.id}' method='post'><input type='hidden' name='_method' value='put' /><input type='hidden' name='shop_line_item[product_id]' value='#{@product.id}' />0.0<input type='submit' name='update_item' id='update_item1' value='Update' /></form>}
+            end
+          end
+
+          describe '<r:shop:cart:item:delete>' do
+            it 'should render an item delete' do
+              @tags.push '<r:shop:cart:item:delete/>'
+
+              pages(:home).should render(@tags.to_s).as %{<form action='/shop/cart/items/#{@product.id}' method='post'><input type='hidden' name='_method' value='put' /><input type='hidden' name='shop_line_item[product_id]' value='#{@product.id}' /><a href='/shop/cart/items/#{@product.id}/remove' title='Remove Product'>Remove</a><input type='submit' name='update_item' id='update_item1' value='Update' /></form>}
+            end
+          end
+
+          describe '<r:shop:cart:item>' do
+            before :each do
+              @tags.push %{<r:shop:cart:item product_id="#{@product.id}">}, '</r:shop:cart:item>'
+            end
+
+            it 'should print an item' do
+              pages(:home).should render(@tags.to_s).as %{<form action='/shop/cart/items/#{@product.id}' method='post'><input type='hidden' name='_method' value='put' /><input type='hidden' name='shop_line_item[product_id]' value='#{@product.id}' /><input type='submit' name='update_item' id='update_item1' value='Update' /></form>}
+            end
+          end
+        end
+
+      end
+    end
+
+    describe '<r:shop:product>' do
+      before :each do
+        @tags.push %{<r:shop:product>}, '</r:shop:product>'
+      end
+
+      it 'should render a product form' do
+        pages(:home).should render(@tags.to_s).as ''
       end
     end
   end

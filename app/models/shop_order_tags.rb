@@ -11,7 +11,7 @@ module ShopOrderTags
     tag.locals.shop_order = find_shop_order(tag)
     tag.expand unless tag.locals.shop_order.nil?
   end
-  
+
   # Display the shop id / status
   [:id, :status].each do |symbol|
     desc %{ outputs the #{symbol} to the products generated page }
@@ -102,7 +102,7 @@ module ShopOrderTags
   
   tag 'shop:cart:item:delete' do |tag|
     url = "/shop/cart/items/#{tag.locals.shop_line_item.id}/remove"
-    title = "Remove #{tag.locals.shop_product.title}"
+    title = "Remove #{tag.locals.shop_product.name}"
     text = "Remove"
     
     "<a href='#{url}' title='#{title}'>#{text}</a>"
