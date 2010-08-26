@@ -4,11 +4,15 @@ module ShopOrderTags
   
   class ShopOrderTagError < StandardError; end
     
+  # Begin a shopping card, finds the shopping cart specified by id attribute,
+  # or one described in the session.
+  # @param [Integer] id Id of the shopping cart (ShopOrder)
   tag 'shop:cart' do |tag|
     tag.locals.shop_order = find_shop_order(tag)
     tag.expand unless tag.locals.shop_order.nil?
   end
   
+  # Display the shop id / status
   [:id, :status].each do |symbol|
     desc %{ outputs the #{symbol} to the products generated page }
     tag "shop:cart:#{symbol}" do |tag|
@@ -19,26 +23,30 @@ module ShopOrderTags
     end
   end
   
+  # Display the number of items in the shopping basket.
   tag 'shop:cart:quantity' do |tag|
     tag.locals.shop_order.quantity
   end
   
+  # This appears to be the total value of the shopping cart
   tag 'shop:cart:price' do |tag|
     attrs = tag.attr.symbolize_keys
     precision = attrs[:precision] || 2
     precision = precision.to_i
     
-    number_to_currency(tag.locals.shop_order.price.to_f, 
+    number_to_currency(tag.locals.shop_order.price.to_f,
                        :precision => precision,
                        :unit => attrs[:unit] || "$",
                        :separator => attrs[:separator] || ".",
                        :delimiter => attrs[:delimiter] || ",")
   end
   
+  # Total weight of all items in the shopping cart
   tag 'shop:cart:weight' do |tag|
     tag.locals.shop_order.weight
   end
   
+  # Display all the items in the shopping cart
   tag 'shop:cart:items' do |tag|
     tag.expand
   end
