@@ -5,7 +5,7 @@ require 'spec/helpers/nested_tag_helper'
 # Tests for shop order tags module
 #
 describe ShopOrderTags do
-  dataset :pages
+  dataset :pages, :shop_orders
 
   it 'should have certain tags something' do
     ShopOrderTags.tags.sort.should == [
@@ -58,7 +58,7 @@ describe ShopOrderTags do
 
     context 'inside a shopping cart tag' do
       before :each do
-        @shop_order = ShopOrder.create
+        @shop_order = shop_orders(:one_item)
         @tags.push %{<r:shop:cart id="#{@shop_order.id}">}, '</r:shop:cart>'
       end
 
@@ -82,7 +82,7 @@ describe ShopOrderTags do
         it 'should render the quantity' do
           @tags.push '<r:shop:cart:quantity/>'
 
-          pages(:home).should render(@tags.to_s).as('0')
+          pages(:home).should render(@tags.to_s).as('1')
         end
       end
 
@@ -90,7 +90,7 @@ describe ShopOrderTags do
         it 'should display the value of the shopping cart' do
           @tags.push '<r:shop:cart:price/>'
 
-          pages(:home).should render(@tags.to_s).as('$0.00')
+          pages(:home).should render(@tags.to_s).as('$11.00')
         end
       end
 
@@ -98,7 +98,7 @@ describe ShopOrderTags do
         it 'should display the weight of the shopping cart' do
           @tags.push '<r:shop:cart:weight/>'
 
-          pages(:home).should render(@tags.to_s).as('0')
+          pages(:home).should render(@tags.to_s).as('0.0')
         end
       end
 
@@ -113,6 +113,7 @@ describe ShopOrderTags do
       describe '<r:shop:cart:items:each>' do
 
         before :each do
+          @product = @shop_order.products.first
           @tags.push '<r:shop:cart:items:each>', '</r:shop:cart:items:each>'
         end
 
@@ -121,17 +122,12 @@ describe ShopOrderTags do
         end
 
         context 'has products and line items' do
-          before :each do
-            @category = ShopCategory.create(:name => 'Carpets', :handle => 'Goose')
-            @product = @shop_order.products.create(:name => 'Product', :sku => 'What is this', :category => @category)
-            @line_item = @shop_order.line_items.create(:product => @product)
-          end
 
           describe '<r:shop:cart:item:id>' do
             it 'should render an item id' do
               @tags.push '<r:shop:cart:item:id/>'
 
-              pages(:home).should render(@tags.to_s).as %{<form action='/shop/cart/items/#{@product.id}' method='post'><input type='hidden' name='_method' value='put' /><input type='hidden' name='shop_line_item[product_id]' value='#{@product.id}' />#{@product.id}<input type='submit' name='update_item' id='update_item1' value='Update' /></form>}
+              pages(:home).should render(@tags.to_s).as %{<form action='/shop/cart/items/#{@product.id}' method='post'><input type='hidden' name='_method' value='put' /><input type='hidden' name='shop_line_item[product_id]' value='#{@product.id}' />#{@product.id}<input type='submit' name='update_item' id='update_item#{@product.id}' value='Update' /></form>}
             end
           end
 
@@ -139,7 +135,7 @@ describe ShopOrderTags do
             it 'should render an item quantity' do
               @tags.push '<r:shop:cart:item:quantity/>'
 
-              pages(:home).should render(@tags.to_s).as %{<form action='/shop/cart/items/#{@product.id}' method='post'><input type='hidden' name='_method' value='put' /><input type='hidden' name='shop_line_item[product_id]' value='#{@product.id}' />1<input type='submit' name='update_item' id='update_item1' value='Update' /></form>}
+              pages(:home).should render(@tags.to_s).as %{<form action='/shop/cart/items/#{@product.id}' method='post'><input type='hidden' name='_method' value='put' /><input type='hidden' name='shop_line_item[product_id]' value='#{@product.id}' />1<input type='submit' name='update_item' id='update_item#{@product.id}' value='Update' /></form>}
             end
           end
 
@@ -147,7 +143,7 @@ describe ShopOrderTags do
             it 'should render an item price' do
               @tags.push '<r:shop:cart:item:price/>'
 
-              pages(:home).should render(@tags.to_s).as %{<form action='/shop/cart/items/#{@product.id}' method='post'><input type='hidden' name='_method' value='put' /><input type='hidden' name='shop_line_item[product_id]' value='#{@product.id}' />$0.00<input type='submit' name='update_item' id='update_item1' value='Update' /></form>}
+              pages(:home).should render(@tags.to_s).as %{<form action='/shop/cart/items/#{@product.id}' method='post'><input type='hidden' name='_method' value='put' /><input type='hidden' name='shop_line_item[product_id]' value='#{@product.id}' />$11.00<input type='submit' name='update_item' id='update_item#{@product.id}' value='Update' /></form>}
             end
           end
 
@@ -155,7 +151,7 @@ describe ShopOrderTags do
             it 'should render an item weight' do
               @tags.push '<r:shop:cart:item:weight/>'
 
-              pages(:home).should render(@tags.to_s).as %{<form action='/shop/cart/items/#{@product.id}' method='post'><input type='hidden' name='_method' value='put' /><input type='hidden' name='shop_line_item[product_id]' value='#{@product.id}' />0.0<input type='submit' name='update_item' id='update_item1' value='Update' /></form>}
+              pages(:home).should render(@tags.to_s).as %{<form action='/shop/cart/items/#{@product.id}' method='post'><input type='hidden' name='_method' value='put' /><input type='hidden' name='shop_line_item[product_id]' value='#{@product.id}' />0.0<input type='submit' name='update_item' id='update_item#{@product.id}' value='Update' /></form>}
             end
           end
 
@@ -163,7 +159,7 @@ describe ShopOrderTags do
             it 'should render an item delete' do
               @tags.push '<r:shop:cart:item:delete/>'
 
-              pages(:home).should render(@tags.to_s).as %{<form action='/shop/cart/items/#{@product.id}' method='post'><input type='hidden' name='_method' value='put' /><input type='hidden' name='shop_line_item[product_id]' value='#{@product.id}' /><a href='/shop/cart/items/#{@product.id}/remove' title='Remove Product'>Remove</a><input type='submit' name='update_item' id='update_item1' value='Update' /></form>}
+              pages(:home).should render(@tags.to_s).as %{<form action='/shop/cart/items/#{@product.id}' method='post'><input type='hidden' name='_method' value='put' /><input type='hidden' name='shop_line_item[product_id]' value='#{@product.id}' /><a href='/shop/cart/items/#{@product.id}/remove' title='Remove crusty bread'>Remove</a><input type='submit' name='update_item' id='update_item#{@product.id}' value='Update' /></form>}
             end
           end
 
@@ -173,7 +169,7 @@ describe ShopOrderTags do
             end
 
             it 'should print an item' do
-              pages(:home).should render(@tags.to_s).as %{<form action='/shop/cart/items/#{@product.id}' method='post'><input type='hidden' name='_method' value='put' /><input type='hidden' name='shop_line_item[product_id]' value='#{@product.id}' /><input type='submit' name='update_item' id='update_item1' value='Update' /></form>}
+              pages(:home).should render(@tags.to_s).as %{<form action='/shop/cart/items/#{@product.id}' method='post'><input type='hidden' name='_method' value='put' /><input type='hidden' name='shop_line_item[product_id]' value='#{@product.id}' /><input type='submit' name='update_item' id='update_item#{@product.id}' value='Update' /></form>}
             end
           end
         end
