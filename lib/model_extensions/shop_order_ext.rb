@@ -1,6 +1,6 @@
 module ShopCart
   module ShopOrderExt
-    def included(base)
+    def self.included(base)
       base.class_eval {
         has_one :shipment, :class_name => 'ShopShippingMethod', :foreign_key => 'order_id'
         has_one :billing, :class_name => 'ShopBillingMethod', :foreign_key => 'order_id'
