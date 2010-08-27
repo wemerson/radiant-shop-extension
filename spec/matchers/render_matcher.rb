@@ -15,7 +15,7 @@ module Spec::Rails::Matchers
       # using the comparison class, and save an error message
       def matches?(page)
         result = _old_matches? page
-        return result if result || !@expected
+        return result if result || !@expected || !@actual
 
         comparison = Comparison.new(@expected, @actual)
         @error_message = comparison.message

@@ -98,7 +98,7 @@ describe ShopOrderTags do
         it 'should display the weight of the shopping cart' do
           @tags.push '<r:shop:cart:weight/>'
 
-          pages(:home).should render(@tags.to_s).as('0.0')
+          pages(:home).should render(@tags.to_s).as('31.0')
         end
       end
 
@@ -151,7 +151,7 @@ describe ShopOrderTags do
             it 'should render an item weight' do
               @tags.push '<r:shop:cart:item:weight/>'
 
-              pages(:home).should render(@tags.to_s).as %{<form action='/shop/cart/items/#{@product.id}' method='post'><input type='hidden' name='_method' value='put' /><input type='hidden' name='shop_line_item[product_id]' value='#{@product.id}' />0.0<input type='submit' name='update_item' id='update_item#{@product.id}' value='Update' /></form>}
+              pages(:home).should render(@tags.to_s).as %{<form action='/shop/cart/items/#{@product.id}' method='post'><input type='hidden' name='_method' value='put' /><input type='hidden' name='shop_line_item[product_id]' value='#{@product.id}' />31.0<input type='submit' name='update_item' id='update_item#{@product.id}' value='Update' /></form>}
             end
           end
 
@@ -216,7 +216,7 @@ describe ShopOrderTags do
       <form action='/shop/cart/items/#{shop_order.line_items[2].id}' method='post'><input type='hidden' name='_method' value='put' /><input type='hidden' name='shop_line_item[product_id]' value='#{shop_order.line_items[2].product.id}' /><input type='submit' name='update_item' id='update_item#{shop_order.line_items[2].id}' value='Update' /></form>
     
     <span id="quantity">Quantity: 3</span>
-    <span id="weight">Weight: 0.0</span>
+    <span id="weight">Weight: 92.0</span>
     <span id="total">Total: $32.00</span>
   
 </div>
