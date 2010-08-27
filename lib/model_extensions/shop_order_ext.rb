@@ -1,17 +1,17 @@
 module ShopCart
   module ShopOrderExt
-    def self.included(base)
+    def included(base)
       base.class_eval {
         has_one :shipment, :class_name => 'ShopShippingMethod', :foreign_key => 'order_id'
         has_one :billing, :class_name => 'ShopBillingMethod', :foreign_key => 'order_id'
         
         def add(id, quantity = nil)
-          if self.line_items.exists?({:product_id => id})
-            line_item = self.line_items.find(:first, :conditions => {:product_id => id})
+          if line_items.exists?({:product_id => id})
+            line_item = line_items.find(:first, :conditions => {:product_id => id})
             quantity = line_item.quantity += quantity.to_i
             line_item.update_attribute(:quantity, quantity)
           else
-            self.line_items.create(:product_id => id, :quantity => quantity)
+            line_items.create(:product_id => id, :quantity => quantity)
           end
         end
 
@@ -19,42 +19,40 @@ module ShopCart
           if quantity.to_i == 0
             remove(id)
           else
-            self.line_items.find(:first, :conditions => {:product_id => id}).update_attribute(:quantity, quantity.to_i)
-          end          
+            line_item = line_items.find(:first, :conditions => {:product_id => id})
+            line_item.update_attribute(:quantity, quantity.to_i)
+            line_item
+          end
         end
 
         def remove(id)
-          self.line_items.find(:first, :conditions => {:product_id => id}).destroy          
+          line_item = line_items.find(:first, :conditions => {:product_id => id})
+          line_item.destroy
+          line_item
         end
 
         def clear
-          self.line_items.destroy_all        
+          line_items.destroy_all
         end
 
         def quantity
-          quantity = 0
-          self.line_items.each do |line_item|
-            quantity += line_item.quantity
+          line_items.inject(0) do |quantity, line_item|
+            quantity + line_item.quantity.to_i
           end
-          quantity
         end
 
         def price
-          price = 0.00
-          self.line_items.each do |line_item|
-            price += line_item.price.to_f
+          line_items.inject(0.0) do |price, line_item|
+            price + line_item.price.to_f
           end
-          price
         end
 
         def weight
-          weight = 0
-          self.line_items.each do |line_item|
-            total += line_item.weight.to_f
+          line_items.inject(0.0) do |weight, line_item|
+            weight + line_item.weight.to_f
           end
-          weight
         end
       }
-    end    
+    end
   end
 end

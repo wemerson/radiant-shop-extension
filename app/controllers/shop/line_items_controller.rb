@@ -48,25 +48,26 @@ class Shop::LineItemsController < ApplicationController
   # POST /shop/line_items/1.json                                  AJAX and HTML
   #----------------------------------------------------------------------------
   def create
-    if current_shop_order.add(params[:shop_line_item][:product_id], params[:shop_line_item][:quantity])
+    shop_line_item = current_shop_order.add(params[:shop_line_item][:product_id], params[:shop_line_item][:quantity])
+    if shop_line_item.errors.blank?
       respond_to do |format|
-        format.html { 
+        format.html {
           flash[:notice] = "Product added to cart."
           redirect_to :back
         }
-        format.js { render :partial => '/shop/line_items/excerpt', :locals => { :excerpt => @shop_line_item } }
-        format.xml { redirect_to "/shop/line_items/#{@shop_line_item.id}.xml" }
-        format.json { redirect_to "/shop/line_items/#{@shop_line_item.id}.json" }
+        format.js { render :partial => '/shop/line_items/excerpt', :locals => { :excerpt => shop_line_item } }
+        format.xml { redirect_to "/shop/line_items/#{shop_line_item.id}.xml" }
+        format.json { redirect_to "/shop/line_items/#{shop_line_item.id}.json" }
       end
     else
       respond_to do |format|
-        format.html { 
+        format.html {
           flash[:error] = "Unable to add product to cart."
           render
         }
-        format.js { render :text => @shop_line_item.errors.to_json, :status => :unprocessable_entity }
-        format.xml { render :xml => @shop_line_item.errors.to_xml, :status => :unprocessable_entity }
-        format.json { render :json => @shop_line_item.errors.to_json, :status => :unprocessable_entity }
+        format.js { render :text => shop_line_item.errors.to_json, :status => :unprocessable_entity }
+        format.xml { render :xml => shop_line_item.errors.to_xml, :status => :unprocessable_entity }
+        format.json { render :json => shop_line_item.errors.to_json, :status => :unprocessable_entity }
       end
     end
   end
@@ -77,25 +78,26 @@ class Shop::LineItemsController < ApplicationController
   # PUT /shop/line_items/1.json                                   AJAX and HTML
   #----------------------------------------------------------------------------
   def update
-    if current_shop_order.update(params[:shop_line_item][:product_id], params[:shop_line_item][:quantity])
+    shop_line_item = current_shop_order.update(params[:shop_line_item][:product_id], params[:shop_line_item][:quantity])
+    if shop_line_item.errors.empty?
       respond_to do |format|
-        format.html { 
+        format.html {
           flash[:notice] = "Line Item updated successfully."
           redirect_to :back
         }
-        format.js { render :partial => '/shop/line_item/excerpt', :locals => { :excerpt => @shop_line_item } }
-        format.xml { redirect_to "/shop/line_item/#{@shop_line_item.id}.xml" }
-        format.json { redirect_to "/shop/line_item/#{@shop_line_item.id}.json" }
+        format.js { render :partial => '/shop/line_item/excerpt', :locals => { :excerpt => shop_line_item } }
+        format.xml { redirect_to "/shop/line_item/#{shop_line_item.id}.xml" }
+        format.json { redirect_to "/shop/line_item/#{shop_line_item.id}.json" }
       end
     else
       respond_to do |format|
-        format.html { 
+        format.html {
           flash[:error] = "Unable to update Line Item."
           render
         }
-        format.js { render :text => @shop_line_item.errors.to_s, :status => :unprocessable_entity }
-        format.xml { render :xml => @shop_line_item.errors.to_xml, :status => :unprocessable_entity }
-        format.json { render :json => @shop_line_item.errors.to_json, :status => :unprocessable_entity }
+        format.js { render :text => shop_line_item.errors.to_s, :status => :unprocessable_entity }
+        format.xml { render :xml => shop_line_item.errors.to_xml, :status => :unprocessable_entity }
+        format.json { render :json => shop_line_item.errors.to_json, :status => :unprocessable_entity }
       end
     end
   end
@@ -106,10 +108,13 @@ class Shop::LineItemsController < ApplicationController
   # DELETE /shop/line_items/1.json                                AJAX and HTML
   #----------------------------------------------------------------------------
   def destroy
-    @shop_line_item = current_shop_order.line_items.find(params[:id])
-    @shop_order = @shop_line_item.order
+    @shop_order = current_shop_order
+    @shop_line_item = @shop_order.remove(params[:id])
 
-    if @shop_line_item and @shop_line_item.destroy
+    #@shop_line_item = current_shop_order.line_items.find(params[:id])
+    #@shop_order = @shop_line_item.order
+
+    if @shop_line_item.destroyed? #@shop_line_item and @shop_line_item.destroy
       @message = "Line Item deleted successfully."
 
       respond_to do |format|
