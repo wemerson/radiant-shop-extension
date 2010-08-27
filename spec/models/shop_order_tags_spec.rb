@@ -187,4 +187,40 @@ describe ShopOrderTags do
       end
     end
   end
+
+  describe 'complex form' do
+    it 'should render the form' do
+      shop_order = shop_orders(:several_items)
+
+      tags =<<-eol
+<div id="shopping_cart">
+  <r:shop:cart id="#{shop_order.id}">
+    <r:shop:items:each>
+      <r:shop:items:item/>
+    </r:shop:items:each>
+    <span id="quantity">Quantity: <r:shop:items:quantity/></span>
+    <span id="weight">Weight: <r:shop:items:weight/></span>
+    <span id="total">Total: <r:shop:items:price/></span>
+  </r:shop:cart>
+</div>
+      eol
+
+      pages(:home).should render(tags).as(<<-eol)
+<div id="shopping_cart">
+  
+    
+      <form action='/shop/cart/items/#{shop_order.line_items[0].id}' method='post'><input type='hidden' name='_method' value='put' /><input type='hidden' name='shop_line_item[product_id]' value='#{shop_order.line_items[0].product.id}' /><input type='submit' name='update_item' id='update_item#{shop_order.line_items[0].id}' value='Update' /></form>
+    
+      <form action='/shop/cart/items/#{shop_order.line_items[1].id}' method='post'><input type='hidden' name='_method' value='put' /><input type='hidden' name='shop_line_item[product_id]' value='#{shop_order.line_items[1].product.id}' /><input type='submit' name='update_item' id='update_item#{shop_order.line_items[1].id}' value='Update' /></form>
+    
+      <form action='/shop/cart/items/#{shop_order.line_items[2].id}' method='post'><input type='hidden' name='_method' value='put' /><input type='hidden' name='shop_line_item[product_id]' value='#{shop_order.line_items[2].product.id}' /><input type='submit' name='update_item' id='update_item#{shop_order.line_items[2].id}' value='Update' /></form>
+    
+    <span id="quantity">Quantity: 3</span>
+    <span id="weight">Weight: 0.0</span>
+    <span id="total">Total: $32.00</span>
+  
+</div>
+      eol
+    end
+  end
 end
