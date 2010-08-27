@@ -14,12 +14,12 @@ module Spec::Rails::Matchers
       # If comparison was just a straight '==' then redo the comparison
       # using the comparison class, and save an error message
       def matches?(page)
-        _old_matches? page
-        if @expected
-          comparison = Comparison.new(@expected, @actual)
-          @error_message = comparison.message
-          comparison.same?
-        end
+        result = _old_matches? page
+        return result if result || !@expected
+
+        comparison = Comparison.new(@expected, @actual)
+        @error_message = comparison.message
+        comparison.same?
       end
 
       # Return the error message from Comparison if it was saved
