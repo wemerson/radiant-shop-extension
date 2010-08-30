@@ -30,7 +30,7 @@ class ShopProduct < ActiveRecord::Base
   end
   
   def slug
-    '/' + self.slug_prefix + '/' + self.category.handle + '/' + self.handle
+    self.slug_prefix + '/' + self.category.handle + '/' + self.handle
   end
 
   def layout

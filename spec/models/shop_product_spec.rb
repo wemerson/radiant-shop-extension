@@ -97,8 +97,8 @@ describe ShopProduct do
   
   context 'shop product extension tests' do
     before(:each) do
-      @shop_product = shop_products(:white_bread)
-      @shop_category = shop_products(:white_bread).category
+      @shop_product = shop_products(:soft_bread)
+      @shop_category = shop_products(:soft_bread).category
       
       #@shop_product.stubs(:assets)
       #Assets.stubs(:search).and_returns([assets(:asset_one, :asset_two)])
