@@ -2,12 +2,12 @@ class ShopCategory < ActiveRecord::Base
   
   default_scope :order => 'position ASC'
   
-  belongs_to  :created_by, :class_name => 'User'
-  belongs_to  :updated_by, :class_name => 'User'
+  belongs_to  :created_by,      :class_name => 'User'
+  belongs_to  :updated_by,      :class_name => 'User'
   belongs_to  :layout
-  belongs_to  :product_layout, :class_name => 'Layout'
+  belongs_to  :product_layout,  :class_name => 'Layout'
   
-  has_many    :products, :class_name => 'ShopProduct', :dependent => :destroy
+  has_many    :products,        :class_name => 'ShopProduct', :dependent => :destroy
   
   before_validation :set_handle, :filter_handle
   
@@ -16,6 +16,10 @@ class ShopCategory < ActiveRecord::Base
   validates_uniqueness_of :name, :handle
   
   acts_as_list
+  
+  def self.find_by_handle(handle)
+    first(:conditions => ['LOWER(handle) = ?', handle])
+  end
   
   def custom=(values)
     values.each do |key, value|

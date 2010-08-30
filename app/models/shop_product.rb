@@ -18,6 +18,10 @@ class ShopProduct < ActiveRecord::Base
   validates_uniqueness_of   :name, :sku
   
   validates_numericality_of :price, :greater_than => 0.00, :allow_nil => true, :precisions => 2
+
+  def self.find_by_handle(handle)
+    first(:conditions => ['LOWER(sku) = ?', handle])
+  end
   
   acts_as_list              :scope =>  :shop_category
   
@@ -26,7 +30,11 @@ class ShopProduct < ActiveRecord::Base
   end
   
   def slug
+<<<<<<< HEAD
     "/#{self.slug_prefix}/#{self.category.handle}/#{self.handle}"
+=======
+    self.slug_prefix + '/' + self.category.handle + '/' + self.handle
+>>>>>>> 7370388eb85cf43f52c3e9ba00b4ec2558905761
   end
 
   def layout

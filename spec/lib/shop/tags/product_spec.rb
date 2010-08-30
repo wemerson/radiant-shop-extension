@@ -10,8 +10,8 @@ describe Shop::Tags::Product do
   end
   
   before(:each) do
-    @shop_product = shop_products(:white_bread)
-    @shop_products = [shop_products(:white_bread), shop_products(:wholemeal_bread), shop_products(:multigrain_bread)]
+    @shop_product = shop_products(:soft_bread)
+    @shop_products = [shop_products(:soft_bread), shop_products(:crusty_bread), shop_products(:warm_bread)]
   end
   
   describe '<r:shop:products>' do

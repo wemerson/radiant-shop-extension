@@ -1,52 +1,38 @@
 require 'spec/spec_helper'
 
 describe Shop::CategoriesController do
-  dataset :shop_categories
-  
   before(:each) do
-    @shop_category = shop_categories(:bread)
-    @shop_categories = [shop_categories(:bread), shop_categories(:salad)]
+    @shop_category = Object.new
+    stub(@shop_category).category.stub!.handle.returns(rand)
+    stub(@shop_category).handle.returns(rand)
+    @shop_categories = []
   end
   
-  describe "index" do    
-    it "should expose categories list" do
-      ShopCategory.stub!(:search).and_return(@shop_categories)
+  describe 'index' do
+    it 'should expose categories list' do
+      mock(ShopCategory).search(nil).returns(@shop_categories)
       get :index
       
       response.should be_success
-    end
-    
-    it "should return 404 if categories empty" do
-      ShopCategory.stub!(:search).and_return([])
-      get :index
-      
-      response.should render_template('site/not_found')
+      assigns(:shop_categories).should === @shop_categories
     end
   end
   
-  describe "#show" do
-    it "should expose category" do
-      ShopCategory.stub!(:find).and_return(@shop_category)
-      get :show
-      
-      response.should be_success
-    end
-    
-    it "should return 404 if product empty" do
-      ShopCategory.stub!(:find).and_return(nil)
-      get :show
-      
-      response.should render_template('site/not_found')
-    end
-    
-    it "should find a category by handle" do
+  describe '#show' do
+    it 'should expose category' do
+      mock(@shop_category).layout
+      mock(@shop_category).name
+      mock(ShopCategory).find_by_handle(@shop_category.handle).returns(@shop_category)
+
       get :show, :handle => @shop_category.handle
       
       response.should be_success
+      assigns(:shop_category).should === @shop_category
     end
     
-    it "should not find a category with an invalid handle" do
-      get :show, :handle => 'i-wont-exist'
+    it 'should return 404 if product empty' do
+      mock(ShopCategory).find_by_handle(@shop_category.handle) { raise ActiveRecord::RecordNotFound }
+      get :show, :handle => @shop_category.handle
       
       response.should render_template('site/not_found')
     end
