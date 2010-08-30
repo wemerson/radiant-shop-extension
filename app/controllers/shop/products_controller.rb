@@ -1,8 +1,11 @@
 class Shop::ProductsController < ApplicationController
   skip_before_filter :verify_authenticity_token
 
-  no_login_required  
+  no_login_required
   radiant_layout Radiant::Config['shop.product_layout']
+
+  before_filter(:only => :index) { |c| c.include_stylesheet 'admin/extensions/shop/products/products' }
+  before_filter(:only => :index) { |c| c.include_javascript 'admin/pagefactory' }
   
   # GET /shop/search/:query
   # GET /shop/search/:query.js
@@ -10,8 +13,6 @@ class Shop::ProductsController < ApplicationController
   # GET /shop/search/:query.json                                  AJAX and HTML
   #----------------------------------------------------------------------------
   def index
-    before_filter { |c| c.include_stylesheet 'admin/extensions/shop/products/products' }
-    before_filter { |c| c.include_javascript 'admin/pagefactory' }
     @shop_products = ShopProduct.search(params[:query])
     
     unless @shop_products.empty?
