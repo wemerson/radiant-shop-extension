@@ -4,6 +4,7 @@ class ShopExtension < Radiant::Extension
   url "http://github.com/squaretalent/radiant-shop-extension"
   
   extension_config do |config|
+    config.gem 'activemerchant',      :version => '1.7.2', :lib => 'active_merchant'
     config.gem 'will_paginate',       :version => '2.3.14'
 
     unless ENV["RAILS_ENV"] = "production"
@@ -21,9 +22,14 @@ class ShopExtension < Radiant::Extension
   UserActionObserver.instance.send :add_observer!, ShopCategory
   UserActionObserver.instance.send :add_observer!, ShopOrder
   
-  def activate  
-    Page.send :include, Shop::CoreTags
+  def activate
+    Page.send :include, Shop::CoreTags, ShopOrderTags
     Image.send :include, Shop::ImageExtensions
+
+    ApplicationController.send(:include, ShopCart::ApplicationControllerExt)
+    SiteController.send(:include, ShopCart::SiteControllerExt)
+    ShopOrder.send(:include, ShopCart::ShopOrderExt)
+    ShopLineItem.send(:include, ShopCart::ShopLineItemExt)
   end
   
 end
