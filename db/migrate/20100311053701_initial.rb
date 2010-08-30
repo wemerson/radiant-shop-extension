@@ -15,7 +15,7 @@ class Initial < ActiveRecord::Migration
       t.decimal   :depth
       
       t.references :layout
-      t.references :shop_categrory
+      t.references :shop_category
       
       t.integer   :created_by
       t.integer   :updated_by
@@ -33,9 +33,10 @@ class Initial < ActiveRecord::Migration
     end
     add_index :shop_product_images, :position
     add_index :shop_product_images, :image_id
-    add_index :shop_product_images, :product_id
+    add_index :shop_product_images, :shop_product_id
     
     create_table :shop_categories do |t|
+      t.string      :name
       t.string      :handle
       t.text        :description
       t.integer     :position
@@ -51,11 +52,11 @@ class Initial < ActiveRecord::Migration
     end
     
     create_table :shop_addressables do |t|
-      t.references  :address, :polymorphic => true
+      t.references  :address,   :polymorphic => true
       t.references  :addresser, :polymorphic => true
     end
-    add_index :shop_addressables, :shop_address_id
-    add_index :shop_addressables, :shop_addresser_id
+    add_index :shop_addressables, :address_id
+    add_index :shop_addressables, :addresser_id
     
     create_table :shop_addresses do |t|
       t.string      :unit

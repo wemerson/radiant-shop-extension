@@ -18,7 +18,7 @@ class ShopProduct < ActiveRecord::Base
   validates_uniqueness_of   :name, :sku
   
   validates_numericality_of :price, :greater_than => 0.00, :allow_nil => true, :precisions => 2
-
+  
   def self.find_by_handle(handle)
     first(:conditions => ['LOWER(sku) = ?', handle])
   end
@@ -30,17 +30,13 @@ class ShopProduct < ActiveRecord::Base
   end
   
   def slug
-<<<<<<< HEAD
     "/#{self.slug_prefix}/#{self.category.handle}/#{self.handle}"
-=======
-    self.slug_prefix + '/' + self.category.handle + '/' + self.handle
->>>>>>> 7370388eb85cf43f52c3e9ba00b4ec2558905761
   end
-
+  
   def layout
     self.category.product_layout
   end
-
+  
   def images_available
     Image.all - self.images
   end
@@ -48,7 +44,7 @@ class ShopProduct < ActiveRecord::Base
   def slug_prefix
     Radiant::Config['shop.url_prefix']
   end
-
+  
   class << self
     
     def search(search)
@@ -57,13 +53,13 @@ class ShopProduct < ActiveRecord::Base
         queries << 'LOWER(title) LIKE (:term)'
         queries << 'LOWER(sku) LIKE (:term)'
         queries << 'LOWER(description) LIKE (:term)'
-      
+        
         sql = queries.join(" OR ")
         conditions = [sql, {:term => "%#{search.downcase}%" }]
       else
         conditions = []
       end
-    
+      
       self.all({ :conditions => conditions })
     end
     
@@ -83,10 +79,6 @@ private
   def filter_sku
     unless self.name.nil?
       self.sku = self.sku.downcase.gsub(/[^-a-z0-9~\s\.:;+=_]/, '').strip.gsub(/[\s\.:;=+~]+/, '-')
-    end
-    
-    if self.handle.nil?
-      self.handle = self.sku
     end
   end
   

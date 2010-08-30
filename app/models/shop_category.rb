@@ -9,7 +9,7 @@ class ShopCategory < ActiveRecord::Base
   
   has_many    :products,        :class_name => 'ShopProduct', :dependent => :destroy
   
-  before_validation :set_handle, :filter_handle
+  before_validation :set_handle, :filter_handle, :set_layouts
   
   validates_presence_of :name, :handle
   
@@ -25,11 +25,6 @@ class ShopCategory < ActiveRecord::Base
     values.each do |key, value|
       self.json_field_set(key, value)
     end
-  end
-  
-  def after_initialize
-    self.custom_layout = Radiant::Config['shop.category_layout'] if self.custom_layout.nil?
-    self.custom_product_layout = Radiant::Config['shop.product_layout'] if self.custom_product_layout.nil?
   end
   
   def slug
@@ -76,6 +71,11 @@ private
     unless self.name.nil?
       self.handle = self.handle.downcase.gsub(/[^-a-z0-9~\s\.:;+=_]/, '').strip.gsub(/[\s\.:;=+~]+/, '-')
     end
+  end
+  
+  def set_layouts
+    self.layout         = Layout.find_by_name(Radiant::Config['shop.category_layout']) if self.layout.nil?
+    self.product_layout = Layout.find_by_name(Radiant::Config['shop.product_layout']) if self.product_layout.nil?
   end
   
 end
