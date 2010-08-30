@@ -1,4 +1,4 @@
-require File.dirname(__FILE__) + '/../spec_helper'
+require 'spec/spec_helper'
 
 describe ShopProductImage do
   dataset :shop_products
