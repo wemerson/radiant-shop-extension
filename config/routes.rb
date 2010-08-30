@@ -16,6 +16,8 @@ ActionController::Routing::Routes.draw do |map|
       shop.resources :customers
       shop.resources :orders
     end
+
+    admin.resources :shops, :as => 'shop', :only => [ :index ]
   end
 
   map.namespace 'shop' do |shop|
@@ -28,5 +30,11 @@ ActionController::Routing::Routes.draw do |map|
       orders.resources :line_items
     end
   end
-  
+
+  map.product_search "#{Radiant::Config['shop.url_prefix']}/search.:format", :controller => 'shop/products', :action => 'index', :conditions => { :method => :post }
+  map.product_search "#{Radiant::Config['shop.url_prefix']}/search/:query.:format", :controller => 'shop/products',   :action => 'index', :conditions => { :method => :get }    
+  map.shop_categories "#{Radiant::Config['shop.url_prefix']}/categories.:format", :controller => 'shop/categories', :action => 'index', :conditions => { :method => :get }
+  map.shop_product "#{Radiant::Config['shop.url_prefix']}/:category_handle/:handle.:format", :controller => 'shop/products',   :action => 'show', :conditions => { :method => :get }
+  map.shop_category "#{Radiant::Config['shop.url_prefix']}/:handle.:format", :controller => 'shop/categories', :action => 'show',  :conditions => { :method => :get }
+
 end
