@@ -1,12 +1,12 @@
-require File.dirname(__FILE__) + '/../../spec_helper'
+require 'spec/spec_helper'
 
-describe ShopProducts::ProductTags do
+describe Shop::Tags::Product do
   dataset :pages
   dataset :shop_products
   
   class ProductTags
     include Radiant::Taggable
-    include ShopProducts::ProductTags
+    include Shop::Tags::Product
   end
   
   before(:each) do

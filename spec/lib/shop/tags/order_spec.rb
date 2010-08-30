@@ -4,7 +4,7 @@ require 'spec/helpers/nested_tag_helper'
 #
 # Tests for shop order tags module
 #
-describe ShopOrderTags do
+describe Shop::Tags::Order do
   dataset :pages, :shop_orders
 
   it 'should have certain tags something' do

@@ -2,6 +2,8 @@ class Admin::Shop::CategoriesController < Admin::ResourceController
   
   model_class ShopCategory
   
+  before_filter :initialize_meta_buttons_and_parts
+    
   # GET /admin/shop/products/categories
   # GET /admin/shop/products/categories.js
   # GET /admin/shop/products/categories.xml
@@ -211,6 +213,18 @@ class Admin::Shop::CategoriesController < Admin::ResourceController
         format.json { render :json  => { :message => error }, :status => :unprocessable_entity }
       end
     end
+  end
+  
+private
+
+  def initialize_meta_buttons_and_parts
+    @meta ||= []
+    @meta << {:field => "handle", :type => "text_field", :args => [{:class => 'textbox', :maxlength => 160}]}
+    
+    @buttons_partials ||= []
+    
+    @parts ||= []
+    @parts << {:title => 'description'}
   end
   
 end

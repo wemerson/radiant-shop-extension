@@ -4,12 +4,12 @@ class ShopCategory < ActiveRecord::Base
   
   belongs_to :created_by, :class_name => 'User'
   belongs_to :updated_by, :class_name => 'User'
-    
+  
   has_many :products, :class_name => 'ShopProduct', :foreign_key => :category_id, :dependent => :destroy
   
   before_validation :set_handle
   before_validation :filter_handle
-    
+  
   validates_presence_of :name
   validates_presence_of :handle
   
@@ -22,6 +22,27 @@ class ShopCategory < ActiveRecord::Base
     values.each do |key, value|
       self.json_field_set(key, value)
     end
+  end
+  
+  def after_initialize
+    self.custom_layout = Radiant::Config['shop.category_layout'] if self.custom_layout.nil?
+    self.custom_product_layout = Radiant::Config['shop.product_layout'] if self.custom_product_layout.nil?
+  end
+  
+  def slug
+    "/#{self.slug_prefix}/#{self.handle}"
+  end
+  
+  def layout
+    custom_layout
+  end
+  
+  def product_layout
+    custom_product_layout
+  end
+
+  def slug_prefix
+    Radiant::Config['shop.url_prefix']
   end
   
   class << self

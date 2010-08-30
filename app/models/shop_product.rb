@@ -24,9 +24,25 @@ class ShopProduct < ActiveRecord::Base
   validates_uniqueness_of :sku
   
   validates_numericality_of :price, :greater_than => 0.00, :allow_nil => true, :precisions => 2
-
+  
   def handle
     self.sku
+  end
+  
+  def slug
+    '/' + self.slug_prefix + '/' + self.category.handle + '/' + self.handle
+  end
+
+  def layout
+    self.category.product_layout
+  end
+
+  def images_available
+    Image.search() - self.images
+  end
+  
+  def slug_prefix
+    Radiant::Config['shop.url_prefix']
   end
 
   class << self
