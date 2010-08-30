@@ -142,7 +142,7 @@ module Shop
         if tag.locals.shop_line_item
           tag.locals.shop_line_item
         elsif tag.attr['product_id']
-          tag.local.shop_order.line_items.find(:first, :conditions => {:product_id => tag.attr['product_id']})
+          tag.local.shop_order.line_items.find(:first, :conditions => {:shop_product_id => tag.attr['product_id']})
         end
       end
     

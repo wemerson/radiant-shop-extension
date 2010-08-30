@@ -8,7 +8,7 @@ describe Shop::Tags::Order do
   dataset :pages, :shop_orders
 
   it 'should have certain tags something' do
-    ShopOrderTags.tags.sort.should == [
+    Shop::Tags::Order.tags.sort.should == [
       'shop:cart',
       'shop:cart:id',
       'shop:cart:item',

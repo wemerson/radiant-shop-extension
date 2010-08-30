@@ -8,24 +8,24 @@ class ShopOrder < ActiveRecord::Base
   has_many  :billings,    :through => :addressables,  :source => :address, :source_type => 'ShopAddressBilling',  :uniq => true
   has_many  :shippings,   :through => :addressables,  :source => :address, :source_type => 'ShopAddressShipping', :uniq => true
   
-  belongs_to :status,     :class_name => 'ShopOrderStatus'
+  belongs_to :status,     :class_name => 'ShopOrderStatus', :foreign_key => :shop_order_status_id
   
   belongs_to :created_by, :class_name => 'User'
   belongs_to :updated_by, :class_name => 'User'
-  belongs_to :customer,   :class_name => 'ShopCustomer'
+  belongs_to :customer,   :class_name => 'ShopCustomer', :foreign_key => :shop_customer_id
   
   before_create :set_status_new
   
-  accepts_nested_attributes_for :line_items, :allow_destroy => true, :reject_if => :all_blank
-  accepts_nested_attributes_for :payments, :allow_destroy => true, :reject_if => :all_blank
+  accepts_nested_attributes_for :line_items,  :allow_destroy => true, :reject_if => :all_blank
+  accepts_nested_attributes_for :payments,    :allow_destroy => true, :reject_if => :all_blank
   
   def add(id, quantity = nil)
-    if line_items.exists?({:product_id => id})
-      line_item = line_items.find(:first, :conditions => {:product_id => id})
+    if line_items.exists?({:shop_product_id => id})
+      line_item = line_items.find(:first, :conditions => {:shop_product_id => id})
       quantity = line_item.quantity += quantity.to_i
       line_item.update_attribute(:quantity, quantity)
     else
-      line_items.create(:product_id => id, :quantity => quantity)
+      line_items.create(:shop_product_id => id, :quantity => quantity)
     end
   end
   
@@ -33,14 +33,14 @@ class ShopOrder < ActiveRecord::Base
     if quantity.to_i == 0
       remove(id)
     else
-      line_item = line_items.find(:first, :conditions => {:product_id => id})
+      line_item = line_items.find(:first, :conditions => {:shop_product_id => id})
       line_item.update_attribute(:quantity, quantity.to_i)
       line_item
     end
   end
   
   def remove(id)
-    line_item = line_items.find(:first, :conditions => {:product_id => id})
+    line_item = line_items.find(:first, :conditions => {:shop_product_id => id})
     line_item.destroy
     line_item
   end
@@ -86,7 +86,7 @@ class ShopOrder < ActiveRecord::Base
 private
   
   def set_status_new
-    self.status << ShopOrderStatus.find_by_name(:new)
+    self.status = ShopOrderStatus.find_by_name(:new)
   end
   
 end

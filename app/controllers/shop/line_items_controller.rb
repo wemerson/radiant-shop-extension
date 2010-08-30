@@ -48,7 +48,7 @@ class Shop::LineItemsController < ApplicationController
   # POST /shop/line_items/1.json                                  AJAX and HTML
   #----------------------------------------------------------------------------
   def create
-    shop_line_item = current_shop_order.add(params[:shop_line_item][:product_id], params[:shop_line_item][:quantity])
+    shop_line_item = current_shop_order.add(params[:shop_line_item][:shop_product_id], params[:shop_line_item][:quantity])
     if shop_line_item.errors.blank?
       respond_to do |format|
         format.html {
@@ -78,7 +78,7 @@ class Shop::LineItemsController < ApplicationController
   # PUT /shop/line_items/1.json                                   AJAX and HTML
   #----------------------------------------------------------------------------
   def update
-    shop_line_item = current_shop_order.update(params[:shop_line_item][:product_id], params[:shop_line_item][:quantity])
+    shop_line_item = current_shop_order.update(params[:shop_line_item][:shop_product_id], params[:shop_line_item][:quantity])
     if shop_line_item.errors.empty?
       respond_to do |format|
         format.html {

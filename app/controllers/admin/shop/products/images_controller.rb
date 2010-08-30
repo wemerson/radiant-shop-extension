@@ -7,7 +7,7 @@ class Admin::Shop::Products::ImagesController < Admin::ResourceController
   # GET /admin/shop/products/1/images.json                        AJAX and HTML
   #----------------------------------------------------------------------------
   def index
-    @shop_product = ShopProduct.find(params[:product_id])
+    @shop_product = ShopProduct.find(params[:shop_product_id])
     @shop_product_images = @shop_product.images
     
     attr_hash =  {
@@ -41,7 +41,7 @@ class Admin::Shop::Products::ImagesController < Admin::ResourceController
   # POST /admin/shop/products/images.json                         AJAX and HTML
   #----------------------------------------------------------------------------
   def create 
-    @shop_product = ShopProduct.find(params[:product_id])
+    @shop_product = ShopProduct.find(params[:shop_product_id])
     @shop_product_image = @shop_product.product_images.new(params[:shop_product_image])
     
     if @shop_product_image.save
@@ -89,7 +89,7 @@ class Admin::Shop::Products::ImagesController < Admin::ResourceController
   # PUT /admin/shop/products/1/images/sort.json                   AJAX and HTML
   #----------------------------------------------------------------------------
   def sort
-    @shop_product = ShopProduct.find(params[:product_id])
+    @shop_product = ShopProduct.find(params[:shop_product_id])
     
     @images = CGI::parse(params[:product_images])['product_images_list[]']
     @images.each_with_index do |id, index|

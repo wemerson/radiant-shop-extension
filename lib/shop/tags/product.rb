@@ -151,13 +151,13 @@ module Shop
         elsif tag.attr['id']
           ShopProduct.find(tag.attr['id'])
         elsif tag.attr['handle']
-          ShopProduct.find(:first, :conditions => {:handle => tag.attr['handle']})
+          ShopProduct.find(:first, :conditions => {:skue => tag.attr['handle']})
         elsif tag.attr['title']
           ShopProduct.find(:first, :conditions => {:title => tag.attr['title']})
         elsif tag.attr['position']
           ShopProduct.find(:first, :conditions => {:position => tag.attr['position']})
         elsif !ShopProduct.all.empty?
-          ShopProduct.find(:first, :conditions => {:handle => tag.locals.page.slug})
+          ShopProduct.find(:first, :conditions => {:sku => tag.locals.page.slug})
         else
           nil
         end

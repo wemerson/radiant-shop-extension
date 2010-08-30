@@ -87,10 +87,10 @@ describe ShopProduct do
     end
     
     it 'should have an array of images' do
-      @product.product_images.class.should == Array
+      @product.p_images.class.should == Array
       @product.images.class.should == Array
       @product.images.length.should == 3
-      @product.images.length.should == @product.product_images.length
+      @product.images.length.should == @product.p_images.length
     end
     
   end
@@ -111,7 +111,8 @@ describe ShopProduct do
     it "should return all assets minus itself for assets_available"
     
     it "should generate a shop.url_prefix based url" do
-      @shop_product.slug.should eql(@shop_product.slug_prefix + '/' + @shop_product.category.handle + '/' + @shop_product.handle)
+      mock(@shop_product).slug_prefix { 'a' }
+      @shop_product.slug.should eql("/a/#{@shop_product.category.handle}/#{@shop_product.handle}")
     end
   end
 

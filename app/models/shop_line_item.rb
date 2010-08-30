@@ -1,9 +1,9 @@
 class ShopLineItem < ActiveRecord::Base
   
-  belongs_to :order,      :class_name => 'ShopOrder'
-  belongs_to :product,    :class_name => 'ShopProduct'
+  belongs_to :order,      :class_name => 'ShopOrder', :foreign_key => :shop_order_id
+  belongs_to :product,    :class_name => 'ShopProduct', :foreign_key => :shop_product_id
   
-  validates_uniqueness_of :product_id, :scope => :order_id
+  validates_uniqueness_of :shop_product_id, :scope => :shop_order_id
   
   before_validation       :adjust_quantity
   

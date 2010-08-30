@@ -4,7 +4,7 @@ class ShopProduct < ActiveRecord::Base
   
   belongs_to  :created_by,  :class_name => 'User'
   belongs_to  :updated_by,  :class_name => 'User'  
-  belongs_to  :category,    :class_name => 'ShopCategory'
+  belongs_to  :category,    :class_name => 'ShopCategory', :foreign_key => :shop_category_id
   
   has_many    :line_items,  :class_name => 'ShopLineItem'
   has_many    :orders,      :class_name => 'ShopOrder', :through => :line_items

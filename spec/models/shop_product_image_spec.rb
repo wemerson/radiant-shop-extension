@@ -4,13 +4,13 @@ describe ShopProductImage do
   dataset :shop_products
   
   before(:each) do
-    @product_image = shop_products(:soft_bread).product_images.first
+    @product_image = shop_products(:soft_bread).p_images.first
   end
   
   context 'attributes' do
     
     it 'should have a product id' do
-      @product_image.product_id.should == shop_products(:soft_bread).id
+      @product_image.shop_product_id.should == shop_products(:soft_bread).id
     end
     
     it 'should have an image id' do

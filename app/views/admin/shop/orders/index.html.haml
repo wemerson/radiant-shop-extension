@@ -10,7 +10,7 @@ Add Order
   %p
     - f.fields_for :line_items do |li_f|
       = li_f.label :product
-      = li_f.select :product_id, ShopProduct.all.collect {|p| [p.title, p.id]}
+      = li_f.select :shop_product_id, ShopProduct.all.collect {|p| [p.title, p.id]}
       = li_f.label :quantity
       = li_f.text_field :quantity
 
