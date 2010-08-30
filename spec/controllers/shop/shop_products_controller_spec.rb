@@ -26,27 +26,21 @@ describe Shop::ProductsController do
   
   describe '#show' do
     it 'should expose product' do
-      mock(ShopProduct).find.returns(@shop_product)
-      get :show
+      mock(ShopProduct).find(:first, :conditions => ['LOWER(handle) = ?', @shop_product.handle]).returns(@shop_product)
+
+      get :show, :handle => @shop_product.handle, :category_handle => @shop_product.category.handle
       
       response.should be_success
+      assigns(:shop_product).should === @shop_product
+      assigns(:shop_category).should == @shop_product.category
     end
     
     it 'should return 404 if product empty' do
-      mock(ShopProduct).find.returns(nil)
-      get :show
-      
-      response.should render_template('site/not_found')
-    end
-    
-    it 'should find a product by handle' do
-      get :show, :handle => @shop_product.handle
-      
-      response.should be_success
-    end
-    
-    it 'should not find a product with an invalid handle' do
-      get :show, :handle => 'i-wont-exist'
+      mock(ShopProduct).find(
+        :first,
+        :conditions => ['LOWER(handle) = ?', @shop_product.handle]) { raise ActiveRecord::RecordNotFound }
+
+      get :show, :handle => @shop_product.handle, :category_handle => @shop_product.category.handle
       
       response.should render_template('site/not_found')
     end
