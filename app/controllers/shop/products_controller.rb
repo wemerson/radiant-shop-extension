@@ -18,18 +18,13 @@ class Shop::ProductsController < ApplicationController
   #----------------------------------------------------------------------------
   def index
     @shop_products = ShopProduct.search(params[:query])
-    
-    unless @shop_products.empty?
-      @radiant_layout = Radiant::Config['shop.category_layout']
+    @radiant_layout = Radiant::Config['shop.category_layout']
 
-      respond_to do |format|
-        format.html { render }
-        format.js { render :partial => '/shop/products/products', :collection => @shop_products }
-        format.xml { render :xml => @shop_products.to_xml(attr_hash) }
-        format.json { render :json => @shop_products.to_json(attr_hash) }
-      end
-    else
-      render :template => 'site/not_found', :status => 404
+    respond_to do |format|
+      format.html { render }
+      format.js { render :partial => '/shop/products/products', :collection => @shop_products }
+      format.xml { render :xml => @shop_products.to_xml(attr_hash) }
+      format.json { render :json => @shop_products.to_json(attr_hash) }
     end
   end
   
@@ -39,7 +34,7 @@ class Shop::ProductsController < ApplicationController
   # GET /shop/:category_handle/:handle.json                       AJAX and HTML
   #----------------------------------------------------------------------------
   def show
-    @shop_product = ShopProduct.find(:first, :conditions => ['LOWER(handle) = ?', params[:handle]])
+    @shop_product = ShopProduct.find_by_handle(params[:handle])
     @shop_category = @shop_product.category unless @shop_product.nil?
     
     @title = @shop_product.name

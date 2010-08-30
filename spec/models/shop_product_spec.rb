@@ -114,5 +114,9 @@ describe ShopProduct do
       @shop_product.slug.should eql(@shop_product.slug_prefix + '/' + @shop_product.category.handle + '/' + @shop_product.handle)
     end
   end
+
+  it 'should find a category by handle' do
+    ShopProduct.find_by_handle(@product.handle).should == @product
+  end
   
 end

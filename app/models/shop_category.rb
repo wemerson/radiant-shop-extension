@@ -15,8 +15,12 @@ class ShopCategory < ActiveRecord::Base
   
   validates_uniqueness_of :name
   validates_uniqueness_of :handle
-  
+
   acts_as_list
+
+  def self.find_by_handle(handle)
+    first(:conditions => ['LOWER(handle) = ?', handle])
+  end
   
   def custom=(values)
     values.each do |key, value|

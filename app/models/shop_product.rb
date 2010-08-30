@@ -20,10 +20,14 @@ class ShopProduct < ActiveRecord::Base
   validates_presence_of :sku
   validates_presence_of :category
   
-  validates_uniqueness_of :name 
+  validates_uniqueness_of :name
   validates_uniqueness_of :sku
   
   validates_numericality_of :price, :greater_than => 0.00, :allow_nil => true, :precisions => 2
+
+  def self.find_by_handle(handle)
+    first(:conditions => ['LOWER(sku) = ?', handle])
+  end
   
   def handle
     self.sku

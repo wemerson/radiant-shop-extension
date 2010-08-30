@@ -8,7 +8,8 @@ describe Admin::Shop::CategoriesController do
     @category = shop_categories(:bread)
     @categories = [
       shop_categories(:bread),
-      shop_categories(:milk)
+      shop_categories(:milk),
+      shop_categories(:salad)
     ]
   end
 

@@ -40,5 +40,9 @@ describe ShopCategory do
     end
     
   end
+
+  it 'should find a category by handle' do
+    ShopCategory.find_by_handle(@category.handle).should == @category
+  end
   
 end
