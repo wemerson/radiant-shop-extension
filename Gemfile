@@ -2,6 +2,7 @@ source :gemcutter
 
 gem 'activemerchant'
 gem 'will_paginate'
+gem 'radiant-layouts-extension', '0.9.1'
 
 group :development do
   gem 'reek'
