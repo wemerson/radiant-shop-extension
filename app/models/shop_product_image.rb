@@ -2,10 +2,10 @@ class ShopProductImage < ActiveRecord::Base
   
   default_scope :order => 'position ASC'
   
-  belongs_to :product, :class_name => 'ShopProduct'
-  belongs_to :image, :class_name => 'Image', :foreign_key => 'image_id'
+  belongs_to    :product,  :class_name => 'ShopProduct'
+  belongs_to    :image,    :class_name => 'Image'
 
-  acts_as_list :scope => :product_id
+  acts_as_list  :scope => :product_id
   
   def url(*params)
     image.url(*params)

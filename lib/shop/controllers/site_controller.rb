@@ -14,7 +14,7 @@ module Shop
           if request.session[:shop_order]
             @order = ShopOrder.find(request.session[:shop_order])
           else
-            @order = ShopOrder.create(:status => 'new')
+            @order = ShopOrder.create
             request.session[:shop_order] = @order.id
           end
         end

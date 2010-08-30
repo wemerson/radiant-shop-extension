@@ -1,36 +1,32 @@
 class ShopProduct < ActiveRecord::Base
   
-  default_scope :order => 'position ASC'
-  acts_as_list :scope =>  :category
+  default_scope             :order => 'position ASC'
   
-  belongs_to :created_by, :class_name => 'User'
-  belongs_to :updated_by, :class_name => 'User'  
-  belongs_to :category,   :class_name => 'ShopCategory'
+  belongs_to  :created_by,  :class_name => 'User'
+  belongs_to  :updated_by,  :class_name => 'User'  
+  belongs_to  :category,    :class_name => 'ShopCategory'
   
-  has_many :line_items,     :class_name => 'ShopLineItem',  :foreign_key => 'product_id'
-  has_many :orders,         :class_name => 'ShopOrder',     :foreign_key => 'order_id', :through => :line_items
+  has_many    :line_items,  :class_name => 'ShopLineItem'
+  has_many    :orders,      :class_name => 'ShopOrder', :through => :line_items
+  has_many    :p_images,    :class_name => 'ShopProductImage'
+  has_many    :images,      :through => :p_images,  :uniq => true
   
-  has_many :product_images, :class_name => 'ShopProductImage', :foreign_key => 'product_id'
-  has_many :images,         :through => :product_images, :uniq => true
+  before_validation         :set_sku, :filter_sku
   
-  before_validation     :set_sku
-  before_validation     :filter_sku
+  validates_presence_of     :name, :sku, :category
   
-  validates_presence_of :name
-  validates_presence_of :sku
-  validates_presence_of :category
-  
-  validates_uniqueness_of :name 
-  validates_uniqueness_of :sku
+  validates_uniqueness_of   :name, :sku
   
   validates_numericality_of :price, :greater_than => 0.00, :allow_nil => true, :precisions => 2
+  
+  acts_as_list              :scope =>  :shop_category
   
   def handle
     self.sku
   end
   
   def slug
-    '/' + self.slug_prefix + '/' + self.category.handle + '/' + self.handle
+    "/#{self.slug_prefix}/#{self.category.handle}/#{self.handle}"
   end
 
   def layout
@@ -38,7 +34,7 @@ class ShopProduct < ActiveRecord::Base
   end
 
   def images_available
-    Image.search() - self.images
+    Image.all - self.images
   end
   
   def slug_prefix

@@ -2,19 +2,18 @@ class ShopCategory < ActiveRecord::Base
   
   default_scope :order => 'position ASC'
   
-  belongs_to :created_by, :class_name => 'User'
-  belongs_to :updated_by, :class_name => 'User'
+  belongs_to  :created_by, :class_name => 'User'
+  belongs_to  :updated_by, :class_name => 'User'
+  belongs_to  :layout
+  belongs_to  :product_layout, :class_name => 'Layout'
   
-  has_many :products, :class_name => 'ShopProduct', :foreign_key => :category_id, :dependent => :destroy
+  has_many    :products, :class_name => 'ShopProduct', :dependent => :destroy
   
-  before_validation :set_handle
-  before_validation :filter_handle
+  before_validation :set_handle, :filter_handle
   
-  validates_presence_of :name
-  validates_presence_of :handle
+  validates_presence_of :name, :handle
   
-  validates_uniqueness_of :name
-  validates_uniqueness_of :handle
+  validates_uniqueness_of :name, :handle
   
   acts_as_list
   
@@ -33,14 +32,6 @@ class ShopCategory < ActiveRecord::Base
     "/#{self.slug_prefix}/#{self.handle}"
   end
   
-  def layout
-    custom_layout
-  end
-  
-  def product_layout
-    custom_product_layout
-  end
-
   def slug_prefix
     Radiant::Config['shop.url_prefix']
   end
@@ -59,7 +50,7 @@ class ShopCategory < ActiveRecord::Base
       else
         conditions = []
       end
-    
+      
       all({ :conditions => conditions })
     end
     
