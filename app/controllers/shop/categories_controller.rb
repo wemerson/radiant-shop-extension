@@ -40,7 +40,7 @@ class Shop::CategoriesController < ApplicationController
         :except => [:json_field]
       }
       
-      @title = @shop_category.title
+      @title = @shop_category.name
       @radiant_layout = @shop_category.layout
       
       respond_to do |format|
