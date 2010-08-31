@@ -1,10 +1,10 @@
-- @page_title = @shop_product.title + ' - ' + default_page_title
+- @page_title = @shop_product.name + ' - ' + default_page_title
 
 - render_region :main do |main|
   - main.edit_header do
     %h1
       = t('edit_product')
-      = render 'admin/shop/products/images/head'
+      = render 'admin/shop/products/head'
   - main.edit_form do
     - form_for :shop_product, @shop_product, :url => admin_shop_product_path(@shop_product), :html => {:method => :put, :multipart => true, :id => 'edit_shop_product', 'data-onsubmit_status'=>"Saving Changes&#8230;"} do |f|
       = f.hidden_field :id

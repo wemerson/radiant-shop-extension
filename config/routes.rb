@@ -8,7 +8,7 @@ ActionController::Routing::Routes.draw do |map|
       end
       
       shop.resources :products, :except => :new, :collection => { :sort => :put } do |product|
-        product.resources :images, :collection => { :sort => :put }
+        product.resources :images, :controller => 'products/images', :collection => { :sort => :put }
       end
       
       shop.resources :customers
@@ -29,12 +29,13 @@ ActionController::Routing::Routes.draw do |map|
     end
   end
   
-  map.namespace Radiant::Config['shop.url_prefix'] do |shop|
-    shop.product_search   'search.:format',                   :controller => 'shop/products',   :action => 'index', :conditions => { :method => :post }
-    shop.product_search   '/search/:query.:format',           :controller => 'shop/products',   :action => 'index', :conditions => { :method => :get }
-    shop.shop_categories  'categories.:format',               :controller => 'shop/categories', :action => 'index', :conditions => { :method => :get }
-    shop.shop_product     'category_handle/:handle.:format',  :controller => 'shop/products',   :action => 'show',  :conditions => { :method => :get }
-    shop.shop_category    ':handle.:format',                  :controller => 'shop/categories', :action => 'show',  :conditions => { :method => :get }
+  # Maps the following routes within a prefix scope of either the configured shop.url_prefix or shop
+  map.with_options(:path_prefix => Radiant::Config['shop.url_prefix'].blank? ? 'shop' : Radiant::Config['shop.url_prefix']) do |prefix|
+    prefix.product_search   'search.:format',                   :controller => 'shop/products',   :action => 'index', :conditions => { :method => :post }
+    prefix.product_search   'search/:query.:format',            :controller => 'shop/products',   :action => 'index', :conditions => { :method => :get }
+    prefix.shop_categories  'categories.:format',               :controller => 'shop/categories', :action => 'index', :conditions => { :method => :get }
+    prefix.shop_product     ':category_handle/:handle.:format', :controller => 'shop/products',   :action => 'show',  :conditions => { :method => :get }
+    prefix.shop_category    ':handle.:format',                  :controller => 'shop/categories', :action => 'show',  :conditions => { :method => :get }
   end
 
 end

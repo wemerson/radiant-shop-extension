@@ -1,9 +1,9 @@
 = render_region :form_top
 
 - render_region :form do |form|
-  - form.edit_title do
+  - form.edit_name do
     %p.title
-      %label{:for => 'shop_category_title'}= t('title')
+      %label{:for => 'shop_category_name'}= t('name')
       = fields.text_field :name, :class => 'textbox', :maxlenth => 255
   
   - form.edit_extended_metadata do

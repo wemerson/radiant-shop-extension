@@ -2,6 +2,7 @@ class Shop::CategoriesController < ApplicationController
   skip_before_filter :verify_authenticity_token
   
   no_login_required
+  
   radiant_layout Radiant::Config['shop.product_layout']
 
   rescue_from ActiveRecord::RecordNotFound do |exception|

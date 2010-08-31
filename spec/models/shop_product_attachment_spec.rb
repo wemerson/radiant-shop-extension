@@ -1,10 +1,10 @@
 require 'spec/spec_helper'
 
-describe ShopProductImage do
+describe ShopProductAttachment do
   dataset :shop_products
   
   before(:each) do
-    @product_image = shop_products(:soft_bread).p_images.first
+    @product_image = shop_products(:soft_bread).attachments.first
   end
   
   context 'attributes' do

@@ -1,6 +1,6 @@
 %h3.title Upload New Image
 .popup_content
-  - form_for :image, :url => admin_images_path(:format => 'js'), :html => { :method => "post", :multipart => true, :target => 'image_frame', :id => 'image_form' } do |f|
+  - form_for :image, :url => admin_shop_product_images_path(@shop_product.id), :html => { :method => "post", :multipart => true, :id => 'image_form' } do |f|
     %ol
       %li.image_title
         = f.label :title, t('name')
@@ -13,7 +13,5 @@
     
       %li.image_submit
         = f.submit 'Create'
-  
-    %iframe#image_frame{ :name => 'image_frame', :src => 'about:blank' }
 
   %a#image_form_popup_close{ :href => '#image_form_popup' } Close

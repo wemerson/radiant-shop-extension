@@ -11,7 +11,7 @@ document.observe("dom:loaded", function() {
     '#image_form:submit' : function(e) { shop.ImageSubmit() },
     
     '#image_browse_popup .image:click' : function(e) { shop.ProductImageCreate($(this)) },
-    '#product_images_list .delete:click' : function(e) { shop.ProductImageDestroy($(this).up('.image')) }
+    '#product_attachments .delete:click' : function(e) { shop.ProductImageDestroy($(this).up('.image')) }
   })
 })
 
@@ -32,16 +32,16 @@ var Shop = Class.create({
   },
   
   ProductImagesSort: function() {
-    Sortable.create('product_images_list', {
+    Sortable.create('product_attachments', {
       constraint: false, 
       overlap: 'horizontal',
-      containment: ['product_images_list'],
+      containment: ['product_attachments'],
       onUpdate: function(element) {
-        new Ajax.Request(urlify($('admin_shop_product_sort_images_path').value), {
+        new Ajax.Request(urlify($('sort_admin_shop_product_images_path').value), {
           method: 'put',
           parameters: {
             'product_id': $('shop_product_id').value,
-            'product_images':Sortable.serialize('product_images_list')
+            'attachments':Sortable.serialize('product_attachments')
           }
         });
       }.bind(this)
@@ -55,13 +55,12 @@ var Shop = Class.create({
       method: 'post',
       parameters: {
         'product_id' : $('shop_product_id').value,
-        'shop_product_image[image_id]' : element.getAttribute('data-image_id')
+        'image[image_id]' : element.getAttribute('data-image_id')
       },
       onSuccess: function(data) {
         // Insert item into list, re-call events
-        $('product_images_list').insert({ 'bottom' : data.responseText})
+        $('product_attachments').insert({ 'bottom' : data.responseText})
         shop.ProductImagesSort()
-        
         element.remove()
         hideStatus()
       }.bind(element),
@@ -75,10 +74,10 @@ var Shop = Class.create({
   ProductImageDestroy: function(element) {
     showStatus('Removing Image...');
     element.hide();
-    new Ajax.Request(urlify($('admin_shop_product_images_path').value, element.readAttribute('data-product_image_id')), { 
+    new Ajax.Request(urlify($('admin_shop_product_images_path').value, element.readAttribute('data-attachment_id')), { 
       method: 'delete',
       onSuccess: function(data) {
-        $('images_list').insert({ 'bottom' : data.responseText })
+        $('images').insert({ 'bottom' : data.responseText })
         element.remove()
         hideStatus()
       }.bind(this),
@@ -91,16 +90,6 @@ var Shop = Class.create({
   
   ImageSubmit: function() {
     showStatus('Uploading Image...')
-  },
-  
-  ProductAssetCreate: function() {
-    ShopProductAssets.List.attach($("assets_list").down(".asset"));
-    this.ProductImageCreate($("assets_list").down(".asset"));
-    this.ProductAssetClear();
-    
-    hideStatus();
-    
-    return null;
   },
   
   ImageClose: function() {

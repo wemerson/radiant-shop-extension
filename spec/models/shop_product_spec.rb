@@ -87,10 +87,10 @@ describe ShopProduct do
     end
     
     it 'should have an array of images' do
-      @product.p_images.class.should == Array
+      @product.attachments.class.should == Array
       @product.images.class.should == Array
       @product.images.length.should == 3
-      @product.images.length.should == @product.p_images.length
+      @product.images.length.should == @product.attachments.length
     end
     
   end

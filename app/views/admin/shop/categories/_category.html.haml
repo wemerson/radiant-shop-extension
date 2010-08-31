@@ -1,9 +1,9 @@
-%li.region{:id => "shop_category_#{category.id}", :'data-id' => category.id }
+%li.category{:id => "shop_category_#{category.id}", :'data-id' => category.id }
   .attributes
     %span.handle
     - render_region :category_attributes do |region|
       - region.category_name do
-        %span.title.attribute= link_to category.name, edit_admin_shop_category_path(category)
+        %span.name.attribute= link_to category.name, edit_admin_shop_category_path(category)
       - region.category_description do
         %span.sku.attribute= category.handle
       - region.category_modify do

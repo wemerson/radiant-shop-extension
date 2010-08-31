@@ -1,6 +1,6 @@
-%h3.title Existing Images
+%h3.title Browse Images
 
-%ol#images_list
+%ol#images
   = render :partial => '/admin/shop/products/images/image', :collection => @shop_product.images_available
-  
-%a#image_browse_popup_close{ :href => '#image_browse_popup' } Close
+
+%a#images_browse_popup_close{ :href => '#image_browse_popup' } Close

@@ -8,8 +8,8 @@ class ShopProduct < ActiveRecord::Base
   
   has_many    :line_items,  :class_name => 'ShopLineItem'
   has_many    :orders,      :class_name => 'ShopOrder', :through => :line_items
-  has_many    :p_images,    :class_name => 'ShopProductImage'
-  has_many    :images,      :through => :p_images,  :uniq => true
+  has_many    :attachments, :class_name => 'ShopProductAttachment'
+  has_many    :images,      :through => :attachments,  :uniq => true
   
   before_validation         :set_sku, :filter_sku
   

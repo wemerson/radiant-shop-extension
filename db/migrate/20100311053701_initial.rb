@@ -25,15 +25,15 @@ class Initial < ActiveRecord::Migration
     add_index :shop_products, :position
     add_index :shop_products, :shop_category_id
     
-    create_table :shop_product_images do |t|
+    create_table :shop_product_attachments do |t|
       t.integer   :position
       
       t.references  :image
       t.references  :shop_product
     end
-    add_index :shop_product_images, :position
-    add_index :shop_product_images, :image_id
-    add_index :shop_product_images, :shop_product_id
+    add_index :shop_product_attachments, :position
+    add_index :shop_product_attachments, :image_id
+    add_index :shop_product_attachments, :shop_product_id
     
     create_table :shop_categories do |t|
       t.string      :name
