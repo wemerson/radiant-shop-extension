@@ -45,7 +45,7 @@ class ShopExtension < Radiant::Extension
     SiteController.send :include, Shop::Controllers::SiteController
     
     # Tabs
-    tab 'shop' do
+    tab 'Shop' do
       add_item 'Products', '/admin/shop' #will redirect to shop_products
     end
     

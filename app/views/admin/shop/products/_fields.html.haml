@@ -4,7 +4,7 @@
   - form.edit_title do
     %p.title
       %label{:for => 'shop_product_title'}= t('title')
-      = fields.text_field :title, :class => 'textbox', :maxlenth => 255
+      = fields.text_field :name, :class => 'textbox', :maxlenth => 255
       
   - form.edit_price do
     %p.title
@@ -44,4 +44,4 @@
 #routes{:style => 'display:none'}
 
   = hidden_field_tag 'admin_shop_product_images_path', admin_shop_product_images_path(@shop_product)
-  = hidden_field_tag 'admin_shop_product_sort_images_path', admin_shop_product_sort_images_path(@shop_product)
+  = hidden_field_tag 'admin_shop_product_sort_images_path', sort_admin_shop_product_images_path(@shop_product)

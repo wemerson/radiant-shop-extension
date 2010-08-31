@@ -1,11 +1,10 @@
 - @page_title = t('products') + ' - ' + default_page_title
 
 .outset
-  = render_region :top
 
   #products_map
     %ul#shop_categories
-      = render :partial => '/admin/shop/categories/node', :collection => @shop_categories
+      = render :partial => '/admin/shop/categories/category', :collection => @shop_categories
 
   #actions
     = render 'bottom'
