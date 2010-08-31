@@ -329,8 +329,38 @@ describe Admin::Shop::Products::ImagesController do
       end
       
       context 'successfully found image' do
+        before :each do
+          mock(Image).find('1') { @image }
+        end
+
         context 'could not create attachment' do
-        
+          before :each do
+            stub(@shop_product).attachments.stub!.create!({ :image => @image }) { raise 'Could not create Attachment' }
+          end
+          
+          context 'html' do
+            it 'should assign an error and redirect to edit_shop_product path' do
+              post :create, :product_id => 1, :attachment => { :image_id => '1' }
+              flash.now[:error].should_not be_nil
+              response.should redirect_to(edit_admin_shop_product_path(@shop_product))
+            end
+          end
+
+          context 'js' do
+            it 'should return an error string and unprocessable status' do
+              post :create, :product_id => 1, :attachment => { :image_id => '1' }, :format => 'js'
+              response.should_not be_success
+              response.body.should == 'Unable to create Image.'
+            end
+          end
+
+          context 'json' do
+            it 'should return a json error object and unprocessable status' do
+              post :create, :product_id => 1, :attachment => { :image_id => '1' }, :format => 'json'
+              response.should_not be_success
+              JSON.parse(response.body)['error'].should == 'Unable to create Image.'
+            end
+          end
         end
       
         context 'successfully created attachment' do
