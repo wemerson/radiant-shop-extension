@@ -362,9 +362,37 @@ describe Admin::Shop::Products::ImagesController do
             end
           end
         end
-      
-        context 'successfully created attachment' do
         
+        context 'successfully created attachment' do
+          before :each do
+            @attachment = Object.new
+            stub(@shop_product).attachments.stub!.create!({ :image => @image }) { @attachment }
+          end
+          
+          context 'html' do
+            it 'should assign a notice and redirect to edit_shop_product path' do
+              post :create, :product_id => 1, :attachment => { :image_id => '1' }
+              flash.now[:notice].should_not be_nil
+              response.should redirect_to(edit_admin_shop_product_path(@shop_product))
+            end
+          end
+          
+          context 'js' do
+            it 'should render the collection partial and success status' do
+              post :create, :product_id => 1, :attachment => { :image_id => '1' }, :format => 'js'
+              response.should be_success
+              assigns(:shop_product_attachment).should == @attachment
+              response.should render_template('/admin/shop/products/images/_image')
+            end
+          end
+          
+          context 'json' do
+            it 'should return a json object of the array and success status' do
+              post :create, :product_id => 1, :attachment => { :image_id => '1' }, :format => 'json'
+              response.should be_success
+              response.body.should == @attachment.to_json(ShopProductAttachment.params)
+            end
+          end
         end
       end
     end
