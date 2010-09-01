@@ -19,27 +19,27 @@ class ShopOrder < ActiveRecord::Base
   accepts_nested_attributes_for :line_items,  :allow_destroy => true, :reject_if => :all_blank
   accepts_nested_attributes_for :payments,    :allow_destroy => true, :reject_if => :all_blank
   
-  def add(id, quantity = nil)
+  def add!(id, quantity = nil)
     if line_items.exists?({:shop_product_id => id})
       line_item = line_items.find(:first, :conditions => {:shop_product_id => id})
       quantity = line_item.quantity += quantity.to_i
-      line_item.update_attribute(:quantity, quantity)
+      line_item.update_attribute!(:quantity, quantity)
     else
-      line_items.create(:shop_product_id => id, :quantity => quantity)
+      line_items.create!(:shop_product_id => id, :quantity => quantity)
     end
   end
   
-  def update(id, quantity)
+  def update!(id, quantity)
     if quantity.to_i == 0
       remove(id)
     else
       line_item = line_items.find(:first, :conditions => {:shop_product_id => id})
-      line_item.update_attribute(:quantity, quantity.to_i)
+      line_item.update_attribute!(:quantity, quantity.to_i)
       line_item
     end
   end
   
-  def remove(id)
+  def remove!(id)
     line_item = line_items.find(:first, :conditions => {:shop_product_id => id})
     line_item.destroy
     line_item
@@ -80,6 +80,10 @@ class ShopOrder < ActiveRecord::Base
       end
     
       all({ :conditions => conditions })
+    end
+    
+    def params
+      [ :id, :notes ]
     end
   end
   

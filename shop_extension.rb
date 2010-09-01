@@ -41,8 +41,8 @@ class ShopExtension < Radiant::Extension
     # Model Includes
     Page.send :include, Shop::Tags::Core, Shop::Tags::Product, Shop::Tags::Category, Shop::Tags::Order
     
+    # Controller Includes
     ApplicationController.send :include, Shop::Controllers::ApplicationController
-    SiteController.send :include, Shop::Controllers::SiteController
     
     # Tabs
     tab 'Shop' do
@@ -53,6 +53,7 @@ class ShopExtension < Radiant::Extension
     Radiant::Config['shop.url_prefix'] = Radiant::Config['shop.url_prefix'] == '' ? 'shop' : Radiant::Config['shop.url_prefix']
     Radiant::Config['shop.product_layout']  ||= 'Product'
     Radiant::Config['shop.category_layout'] ||= 'Products'
+    Radiant::Config['shop.order_layout']    ||= 'Order'
   end
   
 end

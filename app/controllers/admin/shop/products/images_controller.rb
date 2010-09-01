@@ -47,7 +47,7 @@ class Admin::Shop::Products::ImagesController < Admin::ResourceController
       
       @images = CGI::parse(params[:attachments])['product_attachments[]']
       @images.each_with_index do |id, index|
-        @shop_product.attachments.find(id).update_attribute('position', index+1)
+        @shop_product.attachments.find(id).update_attribute!('position', index+1)
       end
       
       respond_to do |format|
@@ -70,19 +70,19 @@ class Admin::Shop::Products::ImagesController < Admin::ResourceController
     end
   end
   
-  # POST /admin/shop/products/images
-  # POST /admin/shop/products/images.js
-  # POST /admin/shop/products/images.xml
-  # POST /admin/shop/products/images.json                         AJAX and HTML
+  # POST /admin/shop/products/1/images
+  # POST /admin/shop/products/1/images.js
+  # POST /admin/shop/products/1/images.xml
+  # POST /admin/shop/products/1/images.json                       AJAX and HTML
   #----------------------------------------------------------------------------
   def create
     notice   = 'Successfully created Image.'
     error    = 'Unable to create Image.'
     attr_hash = ShopProductAttachment.params
     
-    @shop_product = ShopProduct.find(params[:product_id])
-    
     begin
+      @shop_product = ShopProduct.find(params[:product_id])
+      
       if params[:image]
         @image = Image.create!(params[:image])
       elsif params[:attachment]
@@ -99,7 +99,7 @@ class Admin::Shop::Products::ImagesController < Admin::ResourceController
         format.js   { render :partial => '/admin/shop/products/images/image', :locals => { :image => @shop_product_attachment } }
         format.json { render :json    => @shop_product_attachment.to_json(attr_hash)  }
       end
-    rescue Exception => e
+    rescue
       respond_to do |format|
         format.html { 
           flash[:error] = error
@@ -111,36 +111,37 @@ class Admin::Shop::Products::ImagesController < Admin::ResourceController
     end
   end
   
-  # DELETE /admin/shop/products/images/1
-  # DELETE /admin/shop/products/images/1.js
-  # DELETE /admin/shop/products/images/1.xml
-  # DELETE /admin/shop/products/images/1.json                     AJAX and HTML
+  # DELETE /admin/shop/products/1/images/1
+  # DELETE /admin/shop/products/1/images/1.js
+  # DELETE /admin/shop/products/1/images/1.xml
+  # DELETE /admin/shop/products/1/images/1.json                   AJAX and HTML
   #----------------------------------------------------------------------------
   def destroy
-    notice = "Image deleted successfully."
-    error  = "Unable to delete Image."
+    notice = 'Image deleted successfully.'
+    error  = 'Unable to delete Image.'
     
-    begin      
-      @shop_product_attachment = ShopProductAttachment.find(params[:id])
+    begin
+      @shop_product = ShopProduct.find(params[:product_id])
       @image = @shop_product_attachment.image
-      @shop_product_attachment.destroy      
+      @shop_product_attachment.destroy
       
       respond_to do |format|
         format.html {
           flash[:notice] = notice
-          redirect_to admin_shop_products_path
+          redirect_to edit_admin_shop_product_path(@shop_product)
         }
         format.js   { render :partial => '/admin/shop/products/images/image', :locals => { :excerpt => @image } }
-        format.json { render :json    => { :message => notice }, :status => :ok }
+        format.json { render :json    => { :notice => notice }, :status => :ok }
       end
-    rescue
+    rescue Exception => e
+      
       respond_to do |format|
         format.html {
           flash[:error] = error
-          render
+          render :remove
         }
-        format.js   { render :text  => error, :status => :unprocessable_entity }
-        format.json { render :xml   => { :message => error}, :status => :unprocessable_entity }
+        format.js   { render :text    => error, :status => :unprocessable_entity }
+        format.json { render :json    => { :error => error }, :status => :unprocessable_entity }
       end
     end
   end

@@ -15,6 +15,14 @@ class ShopLineItem < ActiveRecord::Base
     product.weight.to_f * self.quantity.to_f rescue 'Unable to calculate the weight of the Product'
   end
   
+  class << self
+    
+    def params
+      [ :id, :quantity ]
+    end
+    
+  end
+  
 private
   
   def adjust_quantity

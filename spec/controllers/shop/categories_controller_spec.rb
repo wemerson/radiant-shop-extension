@@ -3,8 +3,7 @@ require 'spec/spec_helper'
 describe Shop::CategoriesController do
   before(:each) do
     @shop_category = Object.new
-    stub(@shop_category).category.stub!.handle.returns(rand)
-    stub(@shop_category).handle.returns(rand)
+    stub(@shop_category).handle { 'a' }
     @shop_categories = []
   end
   
@@ -22,8 +21,8 @@ describe Shop::CategoriesController do
     it 'should expose category' do
       mock(@shop_category).layout
       mock(@shop_category).name
-      mock(ShopCategory).find_by_handle(@shop_category.handle).returns(@shop_category)
-
+      mock(ShopCategory).find_by_handle(@shop_category.handle) { @shop_category }
+      
       get :show, :handle => @shop_category.handle
       
       response.should be_success

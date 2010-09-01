@@ -1,283 +1,217 @@
 require 'spec/spec_helper'
 
 describe Shop::LineItemsController do
+  before :each do
+    request.env["HTTP_REFERER"] = '/back'
 
+    @order = Object.new
+    stub(@order).id { '1' }
+    
+    @line_item = Object.new
+    stub(@line_item).id { '1' }
+    
+    @attr_hash = { 
+      :include  => :product,
+      :only     => ShopLineItem.params
+    }
+  end
+  
   describe '#index' do
     before :each do
-      @order = Object.new
-      stub(@order).id.returns(rand(1000))
-
       @line_items = Object.new
       mock(controller).current_shop_order.mock!.line_items.mock!.all { @line_items }
     end
-
+    
     it 'should list all items' do
       get :index
       response.should be_success
+      response.should render_template(:index)
     end
-
+    
     it 'should list all items in js' do
       get :index, :format => 'js'
       response.should be_success
+      response.should render_template('/shop/line_items/_line_item')
     end
-
+    
     it 'should list all items in json' do
-      mock(@line_items).to_json(is_a(Hash))
       get :index, :format => 'json'
       response.should be_success
-    end
-
-    it 'should list all items in xml' do
-      mock(@line_items).to_xml(is_a(Hash))
-      get :index, :format => 'xml'
-      response.should be_success
+      response.body.should == @line_items.to_json(@attr_hash)
     end
   end
-
+  
   describe '#show' do
     before :each do
-      @order = Object.new
-      stub(@order).id.returns(rand(1000))
-
-      @line_item = Object.new
-      stub(@line_item).id.returns(rand(1000))
-
       @line_items = Object.new
       mock(controller).current_shop_order.mock!.line_items.mock!.find(@line_item.id.to_s) { @line_items }
     end
-
+    
     it 'should list all items' do
       get :show, :id => @line_item.id
       response.should be_success
+      response.should render_template(:show)
     end
-
+    
     it 'should list all items in js' do
       get :show, :format => 'js', :id => @line_item.id
       response.should be_success
+      response.should render_template('/shop/line_items/_line_item')
     end
-
+    
     it 'should list all items in json' do
-      mock(@line_items).to_json(is_a(Hash))
       get :show, :format => 'json', :id => @line_item.id
       response.should be_success
-    end
-
-    it 'should list all items in xml' do
-      mock(@line_items).to_xml(is_a(Hash))
-      get :show, :format => 'xml', :id => @line_item.id
-      response.should be_success
+      response.body.should == @line_item.to_json(@attr_hash)
     end
   end
-
+  
   describe '#create' do
-    before :each do
-      @order = Object.new
-      stub(@order).id.returns(rand(1000))
-
-      @line_item = Object.new
-      stub(@line_item).id.returns(rand(1000))
-    end
-
     context 'success' do
       before :each do
-        mock(controller).current_shop_order.mock!.add(nil, nil) { @line_item }
-        mock(@line_item).errors.mock!.empty?.returns(true)
+        mock(controller).current_shop_order.mock!.add!(nil, nil) { @line_item }
       end
-
+      
       it 'should redirect back' do
-        mock(controller).redirect_to :back
-        post :create, :shop_line_item => {}
-        response.should be_success
+        post :create, :line_item => {}
+        flash.now[:notice] === 'Item added to Cart.'
+        response.should redirect_to('/back')
       end
-
+      
       it 'should list all items in js' do
-        mock(controller).render.with_any_args.twice
-        post :create, :format => 'js', :shop_line_item => {}
+        post :create, :format => 'js', :line_item => {}
         response.should be_success
+        response.should render_template('/shop/line_items/_line_item')
       end
-
+      
       it 'should list all items in json' do
-        mock(controller).redirect_to "/shop/line_items/#{@line_item.id}.json"
-        post :create, :format => 'json', :shop_line_item => {}
+        post :create, :format => 'json', :line_item => {}
         response.should be_success
-      end
-
-      it 'should list all items in xml' do
-        mock(controller).redirect_to "/shop/line_items/#{@line_item.id}.xml"
-        post :create, :format => 'xml', :shop_line_item => {}
-        response.should be_success
+        response.body.should === @line_item.to_json(@attr_hash)
       end
     end
 
     context 'failure' do
       before :each do
-        mock(controller).current_shop_order.mock!.add(nil, nil) { @line_item }
-        mock(@line_item).errors.mock!.empty?
-        mock(controller).render.with_any_args.twice
+        mock(controller).current_shop_order.mock!.add!(nil, nil) { raise ActiveRecord::RecordNotSaved }
       end
 
       it 'should list all items' do
-        post :create, :shop_line_item => {}
-        response.should be_success
+        post :create, :line_item => {}
+        flash.now[:error].should === 'Could not add Item to Cart.'
+        response.should redirect_to('/back')
       end
-
+      
       it 'should list all items in js' do
-        mock(@line_item).errors.mock!.to_json
-        post :create, :format => 'js', :shop_line_item => {}
-        response.should be_success
+        post :create, :format => 'js', :line_item => {}
+        response.should_not be_success
+        response.body.should === 'Could not add Item to Cart.'  
       end
-
+      
       it 'should list all items in json' do
-        mock(@line_item).errors.mock!.to_json
-        post :create, :format => 'json', :shop_line_item => {}
-        response.should be_success
-      end
-
-      it 'should list all items in xml' do
-        mock(@line_item).errors.mock!.to_xml
-        post :create, :format => 'xml', :shop_line_item => {}
-        response.should be_success
+        post :create, :format => 'json', :line_item => {}
+        response.should_not be_success
+        JSON.parse(response.body)['error'].should === 'Could not add Item to Cart.'
       end
     end
   end
-
+  
   describe '#update' do
-    before :each do
-      @order = Object.new
-      stub(@order).id.returns(rand(1000))
-
-      @line_item = Object.new
-      stub(@line_item).id.returns(rand(1000))
-    end
-
     context 'success' do
       before :each do
-        mock(controller).current_shop_order.mock!.update(nil, nil) { @line_item }
-        mock(@line_item).errors.mock!.empty?.returns(true)
+        mock(controller).current_shop_order.mock!.update!(nil, nil) { @line_item }
       end
-
+      
       it 'should redirect back' do
-        mock(controller).redirect_to :back
-        put :update, :id => @line_item.id, :shop_line_item => {}
-        response.should be_success
+        put :update, :id => @line_item.id, :line_item => {}
+        flash.now[:notice].should === 'Item updated successfully.'
+        response.should redirect_to('/back')
       end
-
+      
       it 'should list all items in js' do
-        mock(controller).render.with_any_args.twice
-        put :update, :format => 'js', :id => @line_item.id, :shop_line_item => {}
+        put :update, :format => 'js', :id => @line_item.id, :line_item => {}
         response.should be_success
+        response.should render_template('/shop/line_items/_line_item')
       end
-
+      
       it 'should list all items in json' do
-        mock(controller).redirect_to "/shop/line_item/#{@line_item.id}.json"
-        put :update, :format => 'json', :id => @line_item.id, :shop_line_item => {}
+        put :update, :format => 'json', :id => @line_item.id, :line_item => {}
         response.should be_success
-      end
-
-      it 'should list all items in xml' do
-        mock(controller).redirect_to "/shop/line_item/#{@line_item.id}.xml"
-        put :update, :format => 'xml', :id => @line_item.id, :shop_line_item => {}
-        response.should be_success
+        response.body.should === @line_item.to_json(@attr_hash)
       end
     end
 
     context 'failure' do
       before :each do
-        mock(controller).current_shop_order.mock!.update(nil, nil) { @line_item }
-        mock(@line_item).errors.mock!.empty?
-        mock(controller).render.with_any_args.twice
+        mock(controller).current_shop_order.mock!.update!(nil, nil) { raise ActiveRecord::RecordNotSaved }
       end
-
+      
       it 'should list all items' do
-        put :update, :id => @line_item.id, :shop_line_item => {}
-        response.should be_success
+        put :update, :id => @line_item.id, :line_item => {}
+        flash.now[:error].should === 'Could not update Item.'
+        response.should redirect_to('/back')
       end
-
+      
       it 'should list all items in js' do
-        mock(@line_item).errors.mock!.to_s
-        put :update, :format => 'js', :id => @line_item.id, :shop_line_item => {}
-        response.should be_success
+        put :update, :format => 'js', :id => @line_item.id, :line_item => {}
+        response.should_not be_success
+        response.body.should === 'Could not update Item.'
       end
-
+      
       it 'should list all items in json' do
-        mock(@line_item).errors.mock!.to_json
-        put :update, :format => 'json', :id => @line_item.id, :shop_line_item => {}
-        response.should be_success
-      end
-
-      it 'should list all items in xml' do
-        mock(@line_item).errors.mock!.to_xml
-        put :update, :format => 'xml', :id => @line_item.id, :shop_line_item => {}
-        response.should be_success
+        put :update, :format => 'json', :id => @line_item.id, :line_item => {}
+        response.should_not be_success
+        JSON.parse(response.body)['error'].should === 'Could not update Item.'
       end
     end
   end
 
-  describe '#destroy' do
-    before :each do
-      @order = Object.new
-      stub(@order).id.returns(rand(1000))
-
-      @line_item = Object.new
-      stub(@line_item).id.returns(rand(1000))
-    end
-
+  describe '#destroy' do  
     context 'success' do
       before :each do
-        mock(controller).current_shop_order.mock!.remove(@line_item.id.to_s) { @line_item }
-        mock(@line_item).destroyed?.returns(true)
+        mock(controller).current_shop_order.mock!.remove!(@line_item.id.to_s) { true }
       end
-
+      
       it 'should redirect back' do
-        mock(controller).redirect_to :back
         delete :destroy, :id => @line_item.id
-        response.should be_success
+        flash.now[:notice].should === 'Item removed from Cart.'
+        response.should redirect_to('/back')
       end
-
+      
       it 'should list all items in js' do
-        mock(controller).render.with_any_args.twice
         delete :destroy, :format => 'js', :id => @line_item.id
         response.should be_success
+        response.body.should === 'Item removed from Cart.'
       end
-
+      
       it 'should list all items in json' do
-        mock(controller).render.with_any_args.twice
         delete :destroy, :format => 'json', :id => @line_item.id
-        response.should be_success
-      end
-
-      it 'should list all items in xml' do
-        mock(controller).render.with_any_args.twice
-        delete :destroy, :format => 'xml', :id => @line_item.id
-        response.should be_success
+        response.should be_success        
+        JSON.parse(response.body)['notice'].should === 'Item removed from Cart.'
       end
     end
-
+    
     context 'failure' do
       before :each do
-        mock(controller).current_shop_order.mock!.remove(@line_item.id.to_s) { @line_item }
-        mock(@line_item).destroyed?
-        mock(controller).render.with_any_args.twice
+        mock(controller).current_shop_order.mock!.remove!(@line_item.id.to_s) { raise ActiveRecord::RecordNotFound }
       end
-
+      
       it 'should list all items' do
         delete :destroy, :id => @line_item.id
-        response.should be_success
+        flash.now[:error].should === 'Could not remove Item from Cart.'
+        response.should redirect_to('/back')
       end
-
+      
       it 'should list all items in js' do
         delete :destroy, :format => 'js', :id => @line_item.id
-        response.should be_success
+        response.should_not be_success
+        response.body.should === 'Could not remove Item from Cart.'
       end
-
+      
       it 'should list all items in json' do
         delete :destroy, :format => 'json', :id => @line_item.id
-        response.should be_success
-      end
-
-      it 'should list all items in xml' do
-        delete :destroy, :format => 'xml', :id => @line_item.id
-        response.should be_success
+        response.should_not be_success
+        JSON.parse(response.body)['error'].should === 'Could not remove Item from Cart.'
       end
     end
   end

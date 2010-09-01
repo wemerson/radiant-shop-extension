@@ -52,42 +52,6 @@ describe Admin::Shop::ProductsController do
     
   end
   
-  describe '#show' do 
-    
-    context 'html' do
-      
-      before :each do
-        get :show, :id => @product.id
-      end
-      
-      it 'should render' do
-        response.should render_template(:show)
-      end
-      
-      it 'should define the product' do
-        assigns(:shop_product).should == @product
-      end
-      
-    end
-    
-    context 'js' do
-      
-      before :each do
-        get :show, :id => @product.id, :format => 'js'
-      end
-      
-      it 'should render' do
-        response.should render_template( '/admin/shop/products/_product' )
-      end
-      
-      it 'should define the product' do
-        assigns(:shop_product).should == @product
-      end
-      
-    end
-    
-  end
-  
   describe '#sort' do
     
     context 'products are not passed' do

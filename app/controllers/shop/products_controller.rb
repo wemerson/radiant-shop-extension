@@ -1,4 +1,5 @@
 class Shop::ProductsController < ApplicationController
+  
   skip_before_filter :verify_authenticity_token
 
   no_login_required
@@ -8,32 +9,33 @@ class Shop::ProductsController < ApplicationController
   before_filter(:only => :index) { |c| c.include_javascript 'admin/pagefactory' }
 
   rescue_from ActiveRecord::RecordNotFound do |exception|
-    render :template => 'site/not_found', :status => 404
+    render :template => 'site/not_found', :status => :unprocessable_entity
   end
   
   # GET /shop/search/:query
   # GET /shop/search/:query.js
-  # GET /shop/search/:query.xml
   # GET /shop/search/:query.json                                  AJAX and HTML
   #----------------------------------------------------------------------------
   def index
+    attr_hash = ShopProduct.params
+    
     @shop_products = ShopProduct.search(params[:query])
     @radiant_layout = Radiant::Config['shop.category_layout']
-
+    
     respond_to do |format|
       format.html { render }
-      format.js { render :partial => '/shop/products/products', :collection => @shop_products }
-      format.xml { render :xml => @shop_products.to_xml(attr_hash) }
-      format.json { render :json => @shop_products.to_json(attr_hash) }
+      format.js   { render :partial => '/shop/products/products', :collection => @shop_products }
+      format.json { render :json    => @shop_products.to_json(attr_hash) }
     end
   end
   
   # GET /shop/:category_handle/:handle
   # GET /shop/:category_handle/:handle.js
-  # GET /shop/:category_handle/:handle.xml
   # GET /shop/:category_handle/:handle.json                       AJAX and HTML
   #----------------------------------------------------------------------------
   def show
+    attr_hash = ShopProduct.params
+    
     @shop_product = ShopProduct.find_by_handle(params[:handle])
     @shop_category = @shop_product.category unless @shop_product.nil?
     
@@ -42,8 +44,7 @@ class Shop::ProductsController < ApplicationController
     
     respond_to do |format|
       format.html { render }
-      format.js { render :partial => '/shop/products/product', :locals => { :product => @shop_product } }
-      format.xml { render :xml => @shop_product.to_xml(attr_hash) }
+      format.js   { render :partial => '/shop/products/product', :locals => { :product => @shop_product } }
       format.json { render :json => @shop_product.to_json(attr_hash) }
     end
   end

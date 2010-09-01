@@ -27,7 +27,7 @@ ActionController::Routing::Routes.draw do |map|
       shop.shop_categories  'categories.:format',               :controller => 'categories', :action => 'index', :conditions => { :method => :get }
       shop.shop_product     ':category_handle/:handle.:format', :controller => 'products',   :action => 'show',  :conditions => { :method => :get }
       shop.shop_category    ':handle.:format',                  :controller => 'categories', :action => 'show',  :conditions => { :method => :get }
-      shop.cart             'cart',                             :controller => 'cart',       :action => 'show',  :conditions => { :method => :get }
+      shop.cart             'cart',                             :controller => 'orders',     :action => 'show',  :conditions => { :method => :get }
     
       shop.with_options :path_prefix => "#{shop_prefix}/cart" do |cart|
         cart.resources :line_items, :as => :items

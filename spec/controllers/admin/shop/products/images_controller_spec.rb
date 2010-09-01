@@ -10,13 +10,12 @@ describe Admin::Shop::Products::ImagesController do
     @shop_product = Object.new
     stub(@shop_product).id { 1 }
     mock(ShopProduct).find('1') { @shop_product }
-        
+    
     @image = Object.new
     @images = [ @image ]
   end
   
   describe '#index' do
-    
     context 'product has no images' do
       before :each do
         stub(@shop_product).images { [] }
@@ -24,7 +23,7 @@ describe Admin::Shop::Products::ImagesController do
       
       context 'html' do
         it 'should assign an error and redirect to edit_shop_product path' do
-          get :index, :product_id => 1
+          get :index, :product_id => @shop_product.id
           response.should redirect_to(edit_admin_shop_product_path(@shop_product))
           flash.now[:error].should_not be_nil
         end
@@ -32,17 +31,17 @@ describe Admin::Shop::Products::ImagesController do
       
       context 'js' do
         it 'should return an error string and unprocessable status' do
-          get :index, :product_id => 1, :format => 'js'
+          get :index, :product_id => @shop_product.id, :format => 'js'
           response.should_not be_success
-          response.body.should == 'This Product has no Images.'
+          response.body.should === 'This Product has no Images.'
         end
       end
       
       context 'json' do
         it 'should return a json error object and unprocessable status' do
-          get :index, :product_id => 1, :format => 'json'
+          get :index, :product_id => @shop_product.id, :format => 'json'
           response.should_not be_success
-          JSON.parse(response.body)['error'].should == 'This Product has no Images.'
+          JSON.parse(response.body)['error'].should === 'This Product has no Images.'
         end
       end
     end
@@ -54,7 +53,7 @@ describe Admin::Shop::Products::ImagesController do
       
       context 'html' do
         before :each do
-          get :index, :product_id => 1
+          get :index, :product_id => @shop_product.id
         end
         
         it 'should not assign an error or notice and redirect to edit_shop_product path' do
@@ -64,13 +63,13 @@ describe Admin::Shop::Products::ImagesController do
         end
         
         it 'should assign the shop_product_images instance variable' do
-          assigns(:shop_product_images).should == @images
+          assigns(:shop_product_images).should === @images
         end
       end
       
       context 'js' do
         before :each do
-          get :index, :product_id => 1, :format => 'js'
+          get :index, :product_id => @shop_product.id, :format => 'js'
         end
         
         it 'should render the collection partial and success status' do
@@ -79,28 +78,29 @@ describe Admin::Shop::Products::ImagesController do
         end
         
         it 'should assign the shop_product_images instance variable' do
-          assigns(:shop_product_images).should == @images
+          assigns(:shop_product_images).should === @images
         end
       end
       
       context 'json' do
         before :each do
-          get :index, :product_id => 1, :format => 'json'
+          get :index, :product_id => @shop_product.id, :format => 'json'
         end
         
         it 'should return a json object of the array and success status' do
           response.should be_success
-          response.body.should == @images.to_json(ShopProductAttachment.params)
+          response.body.should === @images.to_json(ShopProductAttachment.params)
         end
         
         it 'should assign the shop_product_images instance variable' do
-          assigns(:shop_product_images).should == @images
+          assigns(:shop_product_images).should === @images
         end
       end
     end
   end
   
   describe '#sort' do
+    
     before :each do
       @attachments = [
         'product_attachments[]=2',
@@ -110,13 +110,13 @@ describe Admin::Shop::Products::ImagesController do
     
     context 'could not sort' do
       before :each do
-        stub(@shop_product).attachments.stub!.find('2').stub!.update_attribute('position',1) { raise 'No Sorting' }
+        stub(@shop_product).attachments.stub!.find('2').stub!.update_attribute!('position',1) { raise 'No Sorting' }
         stub(@shop_product).images { @images }
       end
       
       context 'html' do
         it 'should assign an error and redirect to edit_shop_product path' do
-          put :sort, :product_id => 1, :attachments => @attachments
+          put :sort, :product_id => @shop_product.id, :attachments => @attachments
           flash.now[:error].should_not be_nil
           response.should redirect_to(edit_admin_shop_product_path(@shop_product))
         end
@@ -124,30 +124,30 @@ describe Admin::Shop::Products::ImagesController do
       
       context 'js' do
         it 'should return an error string and unprocessable status' do
-          put :sort, :product_id => 1, :attachments => @attachments, :format => 'js'
+          put :sort, :product_id => @shop_product.id, :attachments => @attachments, :format => 'js'
           response.should_not be_success
-          response.body.should == 'Could not sort Images.'
+          response.body.should === 'Could not sort Images.'
         end
       end
       
       context 'json' do
         it 'should return a json error object and unprocessable status' do
-          put :sort, :product_id => 1, :attachments => @attachments, :format => 'json'
+          put :sort, :product_id => @shop_product.id, :attachments => @attachments, :format => 'json'
           response.should_not be_success
-          JSON.parse(response.body)['error'].should == 'Could not sort Images.'
+          JSON.parse(response.body)['error'].should === 'Could not sort Images.'
         end
       end
     end
     
     context 'successfully sorted' do 
       before :each do
-        stub(@shop_product).attachments.stub!.find(anything).stub!.update_attribute('position',anything) { true }
+        stub(@shop_product).attachments.stub!.find(anything).stub!.update_attribute!('position',anything) { true }
         stub(@shop_product).images { @images }
       end
       
       context 'html' do
         before :each do
-          put :sort, :product_id => 1, :attachments => @attachments
+          put :sort, :product_id => @shop_product.id, :attachments => @attachments
         end
         
         it 'should assign a notice and redirect to edit_shop_product path' do
@@ -156,14 +156,14 @@ describe Admin::Shop::Products::ImagesController do
         end
         
         it 'should have ordered the images based on input' do
-          assigns(:images).first.should == '2'
-          assigns(:images).last.should == '1'
+          assigns(:images).first.should === '2'
+          assigns(:images).last.should === '1'
         end
       end
       
       context 'js' do
         before :each do
-          put :sort, :product_id => 1, :attachments => @attachments, :format => 'js'
+          put :sort, :product_id => @shop_product.id, :attachments => @attachments, :format => 'js'
         end
         
         it 'should render the collection partial and success status' do
@@ -172,14 +172,14 @@ describe Admin::Shop::Products::ImagesController do
         end
 
         it 'should have ordered the images based on input' do
-          assigns(:images).first.should == '2'
-          assigns(:images).last.should == '1'
+          assigns(:images).first.should === '2'
+          assigns(:images).last.should === '1'
         end
       end
       
       context 'json' do
         before :each do
-          put :sort, :product_id => 1, :attachments => @attachments, :format => 'json'
+          put :sort, :product_id => @shop_product.id, :attachments => @attachments, :format => 'json'
         end
         
         it 'should return a json object of the array and success status' do
@@ -188,8 +188,8 @@ describe Admin::Shop::Products::ImagesController do
         end
         
         it 'should have ordered the images based on input' do
-          assigns(:images).first.should == '2'
-          assigns(:images).last.should == '1'
+          assigns(:images).first.should === '2'
+          assigns(:images).last.should === '1'
         end
       end
     end
@@ -204,7 +204,7 @@ describe Admin::Shop::Products::ImagesController do
         
         context 'html' do
           it 'should assign an error and redirect to edit_shop_product path' do
-            post :create, :product_id => 1, :image => 'FileObject'
+            post :create, :product_id => @shop_product.id, :image => 'FileObject'
             flash.now[:error].should_not be_nil
             response.should redirect_to(edit_admin_shop_product_path(@shop_product))
           end
@@ -212,7 +212,7 @@ describe Admin::Shop::Products::ImagesController do
         
         context 'js' do
           it 'should return an error string and unprocessable status' do
-            post :create, :product_id => 1, :image => 'FileObject', :format => 'js'
+            post :create, :product_id => @shop_product.id, :image => 'FileObject', :format => 'js'
             response.should_not be_success
             response.body.should == 'Unable to create Image.'
           end
@@ -220,9 +220,9 @@ describe Admin::Shop::Products::ImagesController do
         
         context 'json' do
           it 'should return a json error object and unprocessable status' do
-            post :create, :product_id => 1, :image => 'FileObject', :format => 'json'
+            post :create, :product_id => @shop_product.id, :image => 'FileObject', :format => 'json'
             response.should_not be_success
-            JSON.parse(response.body)['error'].should == 'Unable to create Image.'
+            JSON.parse(response.body)['error'].should === 'Unable to create Image.'
           end
         end
         
@@ -240,7 +240,7 @@ describe Admin::Shop::Products::ImagesController do
           
           context 'html' do
             it 'should assign an error and redirect to edit_shop_product path' do
-              post :create, :product_id => 1, :image => 'FileObject'
+              post :create, :product_id => @shop_product.id, :image => 'FileObject'
               flash.now[:error].should_not be_nil
               response.should redirect_to(edit_admin_shop_product_path(@shop_product))
             end
@@ -248,7 +248,7 @@ describe Admin::Shop::Products::ImagesController do
           
           context 'js' do
             it 'should return an error string and unprocessable status' do
-              post :create, :product_id => 1, :image => 'FileObject', :format => 'js'
+              post :create, :product_id => @shop_product.id, :image => 'FileObject', :format => 'js'
               response.should_not be_success
               response.body.should == 'Unable to create Image.'
             end
@@ -256,9 +256,9 @@ describe Admin::Shop::Products::ImagesController do
 
           context 'json' do
             it 'should return a json error object and unprocessable status' do
-              post :create, :product_id => 1, :image => 'FileObject', :format => 'json'
+              post :create, :product_id => @shop_product.id, :image => 'FileObject', :format => 'json'
               response.should_not be_success
-              JSON.parse(response.body)['error'].should == 'Unable to create Image.'
+              JSON.parse(response.body)['error'].should === 'Unable to create Image.'
             end
           end
         end
@@ -271,7 +271,7 @@ describe Admin::Shop::Products::ImagesController do
           
           context 'html' do
             it 'should assign a notice and redirect to edit_shop_product path' do
-              post :create, :product_id => 1, :image => 'FileObject'
+              post :create, :product_id => @shop_product.id, :image => 'FileObject'
               flash.now[:notice].should_not be_nil
               response.should redirect_to(edit_admin_shop_product_path(@shop_product))
             end
@@ -279,7 +279,7 @@ describe Admin::Shop::Products::ImagesController do
           
           context 'js' do
             it 'should render the collection partial and success status' do
-              post :create, :product_id => 1, :image => 'FileObject', :format => 'js'
+              post :create, :product_id => @shop_product.id, :image => 'FileObject', :format => 'js'
               response.should be_success
               assigns(:shop_product_attachment).should == @attachment
               response.should render_template('/admin/shop/products/images/_image')
@@ -288,7 +288,7 @@ describe Admin::Shop::Products::ImagesController do
           
           context 'json' do
             it 'should return a json object of the array and success status' do
-              post :create, :product_id => 1, :image => 'FileObject', :format => 'json'
+              post :create, :product_id => @shop_product.id, :image => 'FileObject', :format => 'json'
               response.should be_success
               response.body.should == @attachment.to_json(ShopProductAttachment.params)
             end
@@ -305,7 +305,7 @@ describe Admin::Shop::Products::ImagesController do
         
         context 'html' do
           it 'should assign an error and redirect to edit_shop_product path' do
-            post :create, :product_id => 1, :attachment => { :image_id => '1' }
+            post :create, :product_id => @shop_product.id, :attachment => { :image_id => '1' }
             flash.now[:error].should_not be_nil
             response.should redirect_to(edit_admin_shop_product_path(@shop_product))
           end
@@ -313,7 +313,7 @@ describe Admin::Shop::Products::ImagesController do
         
         context 'js' do
           it 'should return an error string and unprocessable status' do
-            post :create, :product_id => 1, :attachment => { :image_id => '1' }, :format => 'js'
+            post :create, :product_id => @shop_product.id, :attachment => { :image_id => '1' }, :format => 'js'
             response.should_not be_success
             response.body.should == 'Unable to create Image.'
           end
@@ -321,7 +321,7 @@ describe Admin::Shop::Products::ImagesController do
         
         context 'json' do
           it 'should return a json error object and unprocessable status' do
-            post :create, :product_id => 1, :attachment => { :image_id => '1' }, :format => 'json'
+            post :create, :product_id => @shop_product.id, :attachment => { :image_id => '1' }, :format => 'json'
             response.should_not be_success
             JSON.parse(response.body)['error'].should == 'Unable to create Image.'
           end
@@ -332,7 +332,7 @@ describe Admin::Shop::Products::ImagesController do
         before :each do
           mock(Image).find('1') { @image }
         end
-
+        
         context 'could not create attachment' do
           before :each do
             stub(@shop_product).attachments.stub!.create!({ :image => @image }) { raise 'Could not create Attachment' }
@@ -340,7 +340,7 @@ describe Admin::Shop::Products::ImagesController do
           
           context 'html' do
             it 'should assign an error and redirect to edit_shop_product path' do
-              post :create, :product_id => 1, :attachment => { :image_id => '1' }
+              post :create, :product_id => @shop_product.id, :attachment => { :image_id => '1' }
               flash.now[:error].should_not be_nil
               response.should redirect_to(edit_admin_shop_product_path(@shop_product))
             end
@@ -348,7 +348,7 @@ describe Admin::Shop::Products::ImagesController do
 
           context 'js' do
             it 'should return an error string and unprocessable status' do
-              post :create, :product_id => 1, :attachment => { :image_id => '1' }, :format => 'js'
+              post :create, :product_id => @shop_product.id, :attachment => { :image_id => '1' }, :format => 'js'
               response.should_not be_success
               response.body.should == 'Unable to create Image.'
             end
@@ -356,7 +356,7 @@ describe Admin::Shop::Products::ImagesController do
 
           context 'json' do
             it 'should return a json error object and unprocessable status' do
-              post :create, :product_id => 1, :attachment => { :image_id => '1' }, :format => 'json'
+              post :create, :product_id => @shop_product.id, :attachment => { :image_id => '1' }, :format => 'json'
               response.should_not be_success
               JSON.parse(response.body)['error'].should == 'Unable to create Image.'
             end
@@ -371,7 +371,7 @@ describe Admin::Shop::Products::ImagesController do
           
           context 'html' do
             it 'should assign a notice and redirect to edit_shop_product path' do
-              post :create, :product_id => 1, :attachment => { :image_id => '1' }
+              post :create, :product_id => @shop_product.id, :attachment => { :image_id => '1' }
               flash.now[:notice].should_not be_nil
               response.should redirect_to(edit_admin_shop_product_path(@shop_product))
             end
@@ -379,16 +379,16 @@ describe Admin::Shop::Products::ImagesController do
           
           context 'js' do
             it 'should render the collection partial and success status' do
-              post :create, :product_id => 1, :attachment => { :image_id => '1' }, :format => 'js'
+              post :create, :product_id => @shop_product.id, :attachment => { :image_id => '1' }, :format => 'js'
               response.should be_success
-              assigns(:shop_product_attachment).should == @attachment
+              assigns(:shop_product_attachment).should === @attachment
               response.should render_template('/admin/shop/products/images/_image')
             end
           end
           
           context 'json' do
             it 'should return a json object of the array and success status' do
-              post :create, :product_id => 1, :attachment => { :image_id => '1' }, :format => 'json'
+              post :create, :product_id => @shop_product.id, :attachment => { :image_id => '1' }, :format => 'json'
               response.should be_success
               response.body.should == @attachment.to_json(ShopProductAttachment.params)
             end
@@ -399,7 +399,76 @@ describe Admin::Shop::Products::ImagesController do
   end
   
   describe '#destroy' do
-    
+    context 'Attachment does not exist' do
+      # Resource controller handles this
+    end
+    context 'Attachment exists' do
+      before :each do 
+        mock(ShopProductAttachment).find('1') { @image }
+        stub(@image).id { 1 }
+      end
+      context 'could not destroy attachment' do
+        before :each do
+          stub(@image).destroy { raise 'Could not destroy attachment' }
+          stub(@image).image { nil }
+        end
+        
+        context 'html' do
+          it 'should assign an error and redirect to edit_shop_product path' do
+            delete :destroy, :id => @image.id, :product_id => @shop_product.id
+            flash.now[:error].should_not be_nil
+            response.should redirect_to(edit_admin_shop_product_path(@shop_product))
+          end
+        end
+
+        context 'js' do
+          it 'should return an error string and unprocessable status' do
+            delete :destroy, :id => @image.id, :product_id => @shop_product.id, :format => 'js'
+            response.should_not be_success
+            response.body.should == 'Unable to delete Image.'
+          end
+        end
+
+        context 'json' do
+          it 'should return a json error object and unprocessable status' do
+            delete :destroy, :id => @image.id, :product_id => @shop_product.id, :format => 'json'
+            response.should_not be_success
+            JSON.parse(response.body)['error'].should === 'Unable to delete Image.'
+          end
+        end
+      end
+      context 'Successfully destroy attachment' do
+        before :each do
+          stub(@image).destroy { true }
+          stub(@image).image { nil }
+        end
+        
+        context 'html' do
+          it 'should assign a notice and redirect to edit_shop_product path' do
+            delete :destroy, :id => @image.id, :product_id => @shop_product.id
+            flash.now[:notice].should_not be_nil
+            response.should redirect_to(edit_admin_shop_product_path(@shop_product))
+          end
+        end
+        
+        context 'js' do
+          it 'should render the collection partial and success status' do
+            delete :destroy, :id => @image.id, :product_id => @shop_product.id, :format => 'js'
+            response.should be_success
+            assigns(:shop_product_attachment).should == @image
+            response.should render_template('/admin/shop/products/images/_image')
+          end
+        end
+        
+        context 'json' do
+          it 'should return a json object of the array and success status' do
+            delete :destroy, :id => @image.id, :product_id => @shop_product.id, :format => 'json'
+            response.should be_success
+            JSON.parse(response.body)['notice'].should === 'Image deleted successfully.'
+          end
+        end
+      end
+    end
   end
   
 end
