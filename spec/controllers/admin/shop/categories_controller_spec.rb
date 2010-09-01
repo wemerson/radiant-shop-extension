@@ -338,14 +338,14 @@ describe Admin::Shop::CategoriesController do
         context 'not continue' do
           it 'should assign a notice and redirect to edit_shop_product path' do
             put :update, :id => @shop_category.id, :shop_category => {}
-            flash.now[:notice].should === 'Category successfully updated.'
+            flash.now[:notice].should === 'Category updated successfully.'
             response.should redirect_to(admin_shop_categories_path)
           end
         end
         context 'continue' do
           it 'should assign a notice and redirect to edit_shop_product path' do
             put :update, :id => @shop_category.id, :shop_category => {}, :continue => true
-            flash.now[:notice].should === 'Category successfully updated.'
+            flash.now[:notice].should === 'Category updated successfully.'
             response.should redirect_to(edit_admin_shop_category_path(@shop_category))
           end
         end
@@ -413,7 +413,7 @@ describe Admin::Shop::CategoriesController do
       context 'html' do
         it 'should assign a flash notice and redirect to shop_categories path' do
           delete :destroy, :id => 1
-          flash.now[:notice].should === 'Category successfully deleted.'
+          flash.now[:notice].should === 'Category deleted successfully.'
           response.should redirect_to(admin_shop_categories_path)
         end
       end
@@ -421,7 +421,7 @@ describe Admin::Shop::CategoriesController do
       context 'js' do
         it 'should render success message and success status' do
           delete :destroy, :id => 1, :format => 'js'
-          response.body.should === 'Category successfully deleted.'
+          response.body.should === 'Category deleted successfully.'
           response.should be_success
         end
       end
@@ -429,7 +429,7 @@ describe Admin::Shop::CategoriesController do
       context 'json' do
         it 'should return a success json object and success status' do
           delete :destroy, :id => 1, :format => 'json'
-          JSON.parse(response.body)['notice'].should === 'Category successfully deleted.'
+          JSON.parse(response.body)['notice'].should === 'Category deleted successfully.'
           response.should be_success
         end
       end

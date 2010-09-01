@@ -32,15 +32,15 @@ class Admin::Shop::ProductsController < Admin::ResourceController
   # PUT /admin/shop/products/sort.json                            AJAX and HTML
   #----------------------------------------------------------------------------
   def sort
-    notice = t('shop_products') + ' ' + t('flash.successfully_sorted')
-    error = t('flash.could_not_sort') + ' ' + t('shop_products')
+    notice = 'Products successfully sorted.'
+    error = 'Could not sort Products.'
     
     begin
       @shop_category = ShopCategory.find(params[:category_id])
-      @shop_products = CGI::parse(params[:products])["shop_category_#{@shop_category.id}_products[]"]
+      @shop_products = CGI::parse(params[:products])["shop_category_#{params[:category_id]}_products[]"]
       
       @shop_products.each_with_index do |id, index|
-        ShopProduct.find(id).update_attributes({
+        ShopProduct.find(id).update_attributes!({
           :position           => index+1,
           :shop_category_id   => @shop_category.id
         })
@@ -71,11 +71,16 @@ class Admin::Shop::ProductsController < Admin::ResourceController
   # POST /admin/shop/products.json                                AJAX and HTML
   #----------------------------------------------------------------------------
   def create
-    notice = t('shop_product') + ' ' + t('flash.successfully_created')
-    error = t('flash.could_not_create') + ' ' + t('shop_product')
+    notice = 'Product created successfully.'
+    error = 'Could not create Product.'
+    
+    attr_hash = {
+      :include  => { :category => { :only => ShopCategory.params } },
+      :only     => ShopProduct.params
+    }
     
     begin
-      @shop_product.create!(params[:shop_product])
+      @shop_product = ShopProduct.create!(params[:shop_product])
       
       respond_to do |format|
         format.html { 
@@ -83,10 +88,10 @@ class Admin::Shop::ProductsController < Admin::ResourceController
           redirect_to edit_admin_shop_product_path(@shop_product) if params[:continue]
           redirect_to admin_shop_products_path unless params[:continue]
         }
-        format.js   { render :partial => '/admin/shop/products/product', :locals => { :excerpt => @shop_product } }
-        format.json { redirect_to "/admin/shop/products/#{@shop_product.id}.json" }
+        format.js   { render  :partial  => '/admin/shop/products/product', :locals => { :excerpt => @shop_product } }
+        format.json { render  :json     => @shop_product.to_json(attr_hash) }
       end
-    else
+    rescue
       respond_to do |format|
         format.html {
           flash[:error] = error
@@ -104,9 +109,14 @@ class Admin::Shop::ProductsController < Admin::ResourceController
   # PUT /admin/shop/products/1.json                               AJAX and HTML
   #----------------------------------------------------------------------------
   def update
-    notice = t('shop_product') + ' ' + t('flash.successfully_updated')
-    error = t('flash.could_not_update') + ' ' + t('shop_product')
-
+    notice = 'Product updated successfully.'
+    error = 'Could not update Product.'
+    
+    attr_hash = {
+      :include  => { :category => { :only => ShopCategory.params } },
+      :only     => ShopProduct.params
+    }
+    
     begin
       @shop_product.update_attributes!(params[:shop_product])
 
@@ -116,10 +126,10 @@ class Admin::Shop::ProductsController < Admin::ResourceController
           redirect_to edit_admin_shop_product_path(@shop_product) if params[:continue]
           redirect_to admin_shop_products_path unless params[:continue]
         }
-        format.js   { render :partial => '/admin/shop/products/product', :locals => { :product => @shop_product } }
-        format.json { redirect_to "/admin/shop/products/#{@shop_product.id}.json" }
+        format.js   { render  :partial  => '/admin/shop/products/product', :locals => { :product => @shop_product } }
+        format.json { render  :json     => @shop_product.to_json(attr_hash) }
       end
-    else
+    rescue
       respond_to do |format|
         format.html {
           flash[:error] = error
@@ -137,11 +147,11 @@ class Admin::Shop::ProductsController < Admin::ResourceController
   # DELETE /admin/shop/products/1.json                            AJAX and HTML
   #----------------------------------------------------------------------------
   def destroy
-    notice = t('shop_product') + ' ' + t('flash.successfully_destroyed')
-    error = t('flash.couldnt_destory') + ' ' + t('shop_product')
+    notice = 'Product deleted successfully.'
+    error = 'Could not delete Product.'
     
     begin
-      @shop_product.destroy!
+      @shop_product.destroy
       
       respond_to do |format|
         format.html { 

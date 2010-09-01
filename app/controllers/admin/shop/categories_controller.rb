@@ -116,7 +116,7 @@ class Admin::Shop::CategoriesController < Admin::ResourceController
   # PUT /admin/shop/products/categories/1.json                    AJAX and HTML
   #----------------------------------------------------------------------------
   def update
-    notice = 'Category successfully updated.'
+    notice = 'Category updated successfully.'
     error = 'Could not update Category.'
     attr_hash = ShopCategory.params
     
@@ -149,7 +149,7 @@ class Admin::Shop::CategoriesController < Admin::ResourceController
   # DELETE /admin/shop/products/categories/1.json                 AJAX and HTML
   #----------------------------------------------------------------------------
   def destroy
-    notice = 'Category successfully deleted.'
+    notice = 'Category deleted successfully.'
     error = 'Could not delete Category.'
     
     begin

@@ -417,7 +417,7 @@ describe Admin::Shop::Products::ImagesController do
           it 'should assign an error and redirect to edit_shop_product path' do
             delete :destroy, :id => @image.id, :product_id => @shop_product.id
             flash.now[:error].should_not be_nil
-            response.should redirect_to(edit_admin_shop_product_path(@shop_product))
+            response.should render_template(:remove)
           end
         end
 
