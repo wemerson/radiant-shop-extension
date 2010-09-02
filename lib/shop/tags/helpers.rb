@@ -6,7 +6,7 @@ module Shop
         def current_categories(tag)
           result = []
           
-          if tag.locals.page.params.include? 'query'
+          if tag.locals.page.params.has_key? 'query'
             result = ShopCategory.search(tag.locals.page.params['query'])
           else
             result = ShopCategory.all
@@ -14,28 +14,28 @@ module Shop
           
           result
         end
-
+        
         def current_category(tag)
           result = nil
-
-          if tag.locals.shop_category
+          
+          if tag.attr['id']
+            result = ShopCategory.find(tag.attr['id'])
+          elsif tag.attr['handle']
+            result = ShopCategory.find_by_handle(tag.attr['handle'])
+          elsif tag.attr['name']
+            result = ShopCategory.find_by_name(tag.attr['name'])
+          elsif tag.attr['position']
+            result = ShopCategory.find_by_position(tag.attr['position'])
+          elsif tag.locals.shop_category
             result = tag.locals.shop_category
           elsif tag.locals.page.shop_category_id
             result = ShopCategory.find(tag.locals.page.shop_category_id)
           elsif tag.locals.shop_product
-            result = tag.locals.shop_product.category
-          elsif tag.attr['id']
-            result = ShopCategory.find(tag.attr['id'])
-          elsif tag.attr['handle']
-            result = ShopCategory.find(:first, :conditions => {:handle    => tag.attr['handle']})
-          elsif tag.attr['name']
-            result = ShopCategory.find(:first, :conditions => {:name      => tag.attr['name']})
-          elsif tag.attr['position']
-            result = ShopCategory.find(:first, :conditions => {:position  => tag.attr['position']})
+            result = tag.locals.shop_product.category            
           else
-            result = ShopCategory.find(:first, :conditions => {:handle    => tag.locals.page.slug})
+            result = ShopCategory.find_by_handle(tag.locals.page.slug)
           end
-
+          
           result
         end
         
@@ -71,28 +71,6 @@ module Shop
             result = ShopProduct.find(:first, :conditions => {:position => tag.attr['position']})
           else
             result = ShopProduct.find(:first, :conditions => {:sku => tag.locals.page.slug})
-          end
-          
-          result
-        end
-        
-        def current_product_image(tag)  
-          result = nil
-          
-          if tag.locals.shop_product_image
-            image = tag.locals.shop_product_image
-          elsif tag.attr['id']
-            image = tag.locals.shop_product.images.find(tag.attr['id'])
-          elsif tag.attr['title']
-            image = tag.locals.shop_product.images.find(:first, :conditions => {:title => tag.attr['title']})
-          elsif tag.attr['position']
-            image = tag.locals.shop_product.images.find(:first, :conditions => {:position => tag.attr['position']})
-          else
-            image = tag.locals.shop_product.images.first
-          end
-          
-          unless image.nil?
-            result = image.asset unless image.asset.nil?
           end
           
           result

@@ -25,6 +25,7 @@ describe Shop::Tags::Category do
         
         tag = %{<r:shop:if_categories>success</r:shop:if_categories>}
         expected = %{success}
+
         pages(:home).should render(tag).as(expected)
       end
     end

@@ -16,11 +16,7 @@ class ShopCategory < ActiveRecord::Base
   validates_uniqueness_of :name, :handle
   
   acts_as_list
-  
-  def self.find_by_handle(handle)
-    first(:conditions => ['LOWER(handle) = ?', handle])
-  end
-  
+
   def custom=(values)
     values.each do |key, value|
       self.json_field_set(key, value)
@@ -71,6 +67,7 @@ private
     unless self.name.nil?
       self.handle = self.handle.downcase.gsub(/[^-a-z0-9~\s\.:;+=_]/, '').strip.gsub(/[\s\.:;=+~]+/, '-')
     end
+    self.handle.downcase
   end
   
   def set_layouts
