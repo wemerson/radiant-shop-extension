@@ -17,11 +17,11 @@ class Shop::ProductsController < ApplicationController
   # GET /shop/search/:query.json                                  AJAX and HTML
   #----------------------------------------------------------------------------
   def index
-    attr_hash = ShopProduct.params
-    
     @shop_products = ShopProduct.search(params[:query])
     @radiant_layout = Radiant::Config['shop.category_layout']
     
+    attr_hash = ShopProduct.params
+      
     respond_to do |format|
       format.html { render }
       format.js   { render :partial => '/shop/products/products', :collection => @shop_products }
@@ -34,11 +34,11 @@ class Shop::ProductsController < ApplicationController
   # GET /shop/:category_handle/:handle.json                       AJAX and HTML
   #----------------------------------------------------------------------------
   def show
-    attr_hash = ShopProduct.params
-    
-    @shop_product = ShopProduct.find_by_handle(params[:handle])
+    @shop_product = ShopProduct.find_by_sku(params[:sku])
     @shop_category = @shop_product.category unless @shop_product.nil?
     
+    attr_hash = ShopProduct.params
+      
     @title = @shop_product.name
     @radiant_layout = @shop_product.layout
     

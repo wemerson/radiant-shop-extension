@@ -54,6 +54,11 @@ class ShopExtension < Radiant::Extension
     Radiant::Config['shop.product_layout']  ||= 'Product'
     Radiant::Config['shop.category_layout'] ||= 'Products'
     Radiant::Config['shop.order_layout']    ||= 'Order'
+    
+    Radiant::Config['shop_price_unit']      ||= '$'
+    Radiant::Config['shop_price_precision'] ||= 2
+    Radiant::Config['shop_price_seperator'] ||= '.'
+    Radiant::Config['shop_price_delimiter'] ||= ','
   end
   
 end

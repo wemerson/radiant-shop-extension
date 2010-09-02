@@ -80,23 +80,27 @@ module Shop
       end
       
       def find_shop_category(tag)
+        result = nil
+        
         if tag.locals.shop_category
-          tag.locals.shop_category
+          result = tag.locals.shop_category
+        elsif tag.locals.page.shop_category_id
+          result = ShopCategory.find(tag.locals.page.shop_category_id)
         elsif tag.locals.shop_product
-          tag.locals.shop_product.category
+          result = tag.locals.shop_product.category
         elsif tag.attr['id']
-          ShopCategory.find(tag.attr['id'])
+          result = ShopCategory.find(tag.attr['id'])
         elsif tag.attr['handle']
-          ShopCategory.find(:first, :conditions => {:handle => tag.attr['handle']})
-        elsif tag.attr['title']
-          ShopCategory.find(:first, :conditions => {:title => tag.attr['title']})
+          result = ShopCategory.find(:first, :conditions => {:handle    => tag.attr['handle']})
+        elsif tag.attr['name']
+          result = ShopCategory.find(:first, :conditions => {:name      => tag.attr['name']})
         elsif tag.attr['position']
-          ShopCategory.find(:first, :conditions => {:position => tag.attr['position']})
-        elsif !ShopCategory.all.empty?
-          ShopCategory.find(:first, :conditions => {:handle => tag.locals.page.slug})
+          result = ShopCategory.find(:first, :conditions => {:position  => tag.attr['position']})
         else
-          nil
+          result = ShopCategory.find(:first, :conditions => {:handle    => tag.locals.page.slug})
         end
+        
+        result
       end
       
     end
