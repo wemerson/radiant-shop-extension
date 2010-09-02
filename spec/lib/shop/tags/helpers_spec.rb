@@ -4,6 +4,7 @@ describe Shop::Tags::Helpers do
   
   before(:each) do
     tag = Object.new
+    stub(tag).attr { {} }
     @tag = tag
     
     category = Object.new
@@ -12,6 +13,7 @@ describe Shop::Tags::Helpers do
     
     product = Object.new
     @shop_product   = product
+    stub(@shop_product).category { @shop_category }
     @shop_products  = [ product, product, product ]
   end
   
@@ -79,6 +81,42 @@ describe Shop::Tags::Helpers do
         stub(@tag).attr { { 'position' => @shop_category.position } }
         
         mock(ShopCategory).find(:first, {:conditions=>{:position=>@shop_category.position}}) { @shop_category }
+        
+        result = Shop::Tags::Helpers.current_category(@tag)
+        result.should == @shop_category
+      end
+    end
+    context 'tag.locals.shop_category' do
+      it 'should return the matching category' do
+        stub(@tag).locals.stub!.shop_category { @shop_category }
+        
+        result = Shop::Tags::Helpers.current_category(@tag)
+        result.should == @shop_category
+      end
+    end
+    context 'tag.locals.page.shop_category_id' do
+      it 'should return the matching category' do
+        stub(@tag).locals.stub!.page.stub!.shop_category_id { @shop_category.id }
+        mock(ShopCategory).find(@shop_category.id) { @shop_category }
+        
+        result = Shop::Tags::Helpers.current_category(@tag)
+        result.should == @shop_category
+      end
+    end
+    context 'tag.locals.shop_product' do
+      it 'should return the matching category' do
+        stub(@tag).locals.stub!.shop_product { @shop_product }
+        
+        result = Shop::Tags::Helpers.current_category(@tag)
+        result.should == @shop_category
+      end
+    end
+    context 'Using page slug' do
+      it 'should return the matching category' do
+        stub(@shop_category).handle { 'bob' }
+        stub(@tag).locals.stub!.page.stub!.slug { @shop_category.handle }
+        
+        mock(ShopCategory).find(:first, {:conditions=>{:handle=>@shop_category.handle}}) { @shop_category }
         
         result = Shop::Tags::Helpers.current_category(@tag)
         result.should == @shop_category

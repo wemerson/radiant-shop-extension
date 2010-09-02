@@ -26,11 +26,11 @@ module Shop
             result = ShopCategory.find_by_name(tag.attr['name'])
           elsif tag.attr['position']
             result = ShopCategory.find_by_position(tag.attr['position'])
-          elsif tag.locals.shop_category
+          elsif defined?(tag.locals.shop_category)
             result = tag.locals.shop_category
-          elsif tag.locals.page.shop_category_id
+          elsif defined?(tag.locals.page.shop_category_id)
             result = ShopCategory.find(tag.locals.page.shop_category_id)
-          elsif tag.locals.shop_product
+          elsif defined?(tag.locals.shop_product)
             result = tag.locals.shop_product.category            
           else
             result = ShopCategory.find_by_handle(tag.locals.page.slug)
