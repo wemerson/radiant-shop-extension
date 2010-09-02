@@ -111,6 +111,8 @@ module Shop
       end
     
       tag 'shop:product' do |tag|
+        tag.locals.shop_product = Helpers.current_product(tag)
+        debugger
         unless tag.locals.shop_product.nil?
           content = "<form action='/shop/cart/items/' method='post'>"
           content << "<input type='hidden' name='shop_line_item[product_id]' value='#{tag.locals.shop_product.id}' />"

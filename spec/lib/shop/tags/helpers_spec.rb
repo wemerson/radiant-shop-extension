@@ -96,6 +96,7 @@ describe Shop::Tags::Helpers do
     end
     context 'tag.locals.page.shop_category_id' do
       it 'should return the matching category' do
+        stub(@shop_category).id { 1 }
         stub(@tag).locals.stub!.page.stub!.shop_category_id { @shop_category.id }
         mock(ShopCategory).find(@shop_category.id) { @shop_category }
         

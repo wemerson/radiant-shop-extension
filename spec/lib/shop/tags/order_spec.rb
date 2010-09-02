@@ -179,6 +179,8 @@ describe Shop::Tags::Order do
 
     describe '<r:shop:product>' do
       before :each do
+        @shop_order = shop_orders(:one_item)
+        mock(Shop::Tags::Helpers).current_product(anything) { @shop_order.products.first }
         @tags.push %{<r:shop:product>}, '</r:shop:product>'
       end
 
