@@ -4,8 +4,6 @@ module Shop
       include Radiant::Taggable
       include ActionView::Helpers::NumberHelper
       
-      class TagError < StandardError; end
-      
       desc %{ expands if there are products within the context }
       tag 'shop:if_products' do |tag|
         tag.expand unless Helpers.current_products(tag).empty?
@@ -29,6 +27,7 @@ module Shop
           tag.locals.shop_product = product
           content << tag.expand
         end
+        
         content
       end
       
@@ -37,18 +36,16 @@ module Shop
         tag.expand unless tag.locals.shop_product.nil?
       end
       
-      [:id, :name, :sku].each do |symbol|
-        desc %{ outputs the #{symbol} to the products generated page }
+      [:id, :name, :sku, :slug].each do |symbol|
+        desc %{ outputs the #{symbol} of the current shop product }
         tag "shop:product:#{symbol}" do |tag|
           tag.locals.shop_product.send(symbol)
         end
       end
       
-      desc %{ outputs the description to the products generated page }
+      desc %{ outputs the description of the current shop product}
       tag "shop:product:description" do |tag|
-        unless tag.locals.shop_product.nil?
-          parse(TextileFilter.filter(tag.locals.shop_product.description))
-        end
+        parse(TextileFilter.filter(tag.locals.shop_product.description))
       end
       
       desc %{ generates a link to the products generated page }
@@ -98,10 +95,12 @@ module Shop
       desc %{ iterates through each of the products images }
       tag 'shop:product:images:each' do |tag|
         content = ''
+        
         tag.locals.shop_product.images.each do |image|
           tag.locals.image = image
           content << tag.expand
         end
+        
         content
       end
       

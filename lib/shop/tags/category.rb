@@ -1,20 +1,16 @@
 module Shop
   module Tags
     module Category
-      
       include Radiant::Taggable
-      include ERB::Util
-      
-      class ShopCategoryTagError < StandardError; end
       
       desc %{ expands if there are shop categories within the context }
       tag 'shop:if_categories' do |tag|
-        tag.expand unless find_shop_categories(tag).empty?
+        tag.expand unless Helpers.current_categories(tag).empty?
       end
       
       desc %{ expands if there are not shop categories within the context }
       tag 'shop:unless_categories' do |tag|
-        tag.expand if find_shop_categories(tag).empty?
+        tag.expand if Helpers.current_categories(tag).empty?
       end
       
       tag 'shop:categories' do |tag|
@@ -24,83 +20,61 @@ module Shop
       desc %{ iterates through each product category }
       tag 'shop:categories:each' do |tag|
         content = ''
-        categories = find_shop_categories(tag)
+        categories = Helpers.current_categories(tag)
         
         categories.each do |category|
           tag.locals.shop_category = category
           content << tag.expand
         end
+        
         content
       end
       
       tag 'shop:category' do |tag|
-        tag.locals.shop_category = find_shop_category(tag)
+        tag.locals.shop_category = Helpers.current_category(tag)
         tag.expand unless tag.locals.shop_category.nil?
       end
       
       tag 'shop:category:if_current' do |tag|
-        page        = tag.locals.page
-        category    = find_shop_category(tag)
-        product     = find_shop_product(tag)
         
-        if (category and category.handle == page.slug) or (product and category == product.category)
+        if tag.locals.shop_category.handle == tag.locals.page.slug
+          # Looking at the shop_category generated page
           tag.expand
+        elsif tag.locals.page.shop_category_id == tag.locals.shop_category.id
+          # A category page which is using this category
+          tag.expand
+        elsif tag.locals.shop_product
+          # A product page
+          if tag.locals.shop_product.category == tag.locals.shop_category
+            # Where the products category is this category
+            tag.expand
+          end
+        end
+        
+      end
+      
+      [:id, :name, :handle, :slug].each do |symbol|
+        desc %{ outputs the #{symbol} of the current shop category }
+        tag "shop:category:#{symbol}" do |tag|
+          tag.locals.shop_category.send(symbol)
         end
       end
       
-      [:title, :handle, :description, :slug].each do |symbol|
-        desc %{ outputs the #{symbol} of the current product category }
-        tag "shop:category:#{symbol}" do |tag|
-          category = find_shop_category(tag)
-          unless category.nil?
-            hash = tag.locals.shop_category
-            hash[symbol]
-          end
-        end
+      desc %{ outputs the description of the current shop category }
+      tag "shop:category:description" do |tag|
+        parse(TextileFilter.filter(tag.locals.shop_category.description))
       end
       
       desc %{ returns a link to the current category }
       tag 'shop:category:link' do |tag|
+        category = tag.locals.shop_category
         options = tag.attr.dup
-        category = find_shop_category(tag)
         attributes = options.inject('') { |s, (k, v)| s << %{#{k.downcase}="#{v}" } }.strip
         attributes = " #{attributes}" unless attributes.empty?
-        text = tag.double? ? tag.expand : tag.render('title')
-        %{<a href="#{category.slug}" #{attributes}>#{text}</a>}
-      end
-      
-    protected
-      
-      def find_shop_categories(tag)
-        if params[:query]
-          ShopCategory.search(params[:query])
-        else
-          ShopCategory.all
-        end
-      end
-      
-      def find_shop_category(tag)
-        result = nil
         
-        if tag.locals.shop_category
-          result = tag.locals.shop_category
-        elsif tag.locals.page.shop_category_id
-          result = ShopCategory.find(tag.locals.page.shop_category_id)
-        elsif tag.locals.shop_product
-          result = tag.locals.shop_product.category
-        elsif tag.attr['id']
-          result = ShopCategory.find(tag.attr['id'])
-        elsif tag.attr['handle']
-          result = ShopCategory.find(:first, :conditions => {:handle    => tag.attr['handle']})
-        elsif tag.attr['name']
-          result = ShopCategory.find(:first, :conditions => {:name      => tag.attr['name']})
-        elsif tag.attr['position']
-          result = ShopCategory.find(:first, :conditions => {:position  => tag.attr['position']})
-        else
-          result = ShopCategory.find(:first, :conditions => {:handle    => tag.locals.page.slug})
-        end
+        text = tag.double? ? tag.expand : category.name
         
-        result
+        %{<a href="#{category.slug}"#{attributes}>#{text}</a>}
       end
       
     end

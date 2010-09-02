@@ -62,7 +62,7 @@ describe Shop::Tags::Product do
   
   describe '<r:shop:products>' do
     it 'should render' do
-      tag = %{<r:shop>success</r:shop>}
+      tag = %{<r:shop:products>success</r:shop:products>}
       expected = %{success}
       
       pages(:home).should render(tag).as(expected)
@@ -133,6 +133,13 @@ describe Shop::Tags::Product do
         
         tag = %{<r:shop:product:sku />}
         expected = %{sku}
+        pages(:home).should render(tag).as(expected)
+      end
+      it 'should render <r:slug />' do
+        stub(@shop_product).slug { 'slug' }
+        
+        tag = %{<r:shop:product:slug />}
+        expected = %{slug}
         pages(:home).should render(tag).as(expected)
       end
     end
