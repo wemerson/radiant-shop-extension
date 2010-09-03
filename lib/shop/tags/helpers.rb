@@ -41,11 +41,10 @@ module Shop
         
         def current_products(tag)
           result = nil
-          
-          if tag.locals.page.params.include? 'handle'
-            category = ShopCategory.find_by_handle(tag.locals.page.params['handle'])
-            result = category.products
-          elsif tag.locals.shop_category
+
+          if tag.locals.page.params.has_key? 'query'
+            result = ShopProduct.search(tag.locals.page.params['query'])
+          elsif defined?(tag.locals.shop_category)
             result = tag.locals.shop_category.products            
           else
             result = ShopProduct.all
