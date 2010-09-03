@@ -6,6 +6,7 @@ module Shop
       tag 'shop' do |tag|
         tag.expand
       end
+      
     end
   end
 end
