@@ -40,7 +40,6 @@ class Shop::ProductsController < ApplicationController
     attr_hash = ShopProduct.params
       
     @title = @shop_product.name
-    @radiant_layout = @shop_product.layout
     
     respond_to do |format|
       format.html { render }

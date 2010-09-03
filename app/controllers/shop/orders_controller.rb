@@ -1,7 +1,8 @@
 class Shop::OrdersController < ApplicationController
   
-  radiant_layout Radiant::Config['shop.order_layout']
   no_login_required
+  
+  radiant_layout Radiant::Config['shop.order_layout']
   
   rescue_from ActiveRecord::RecordNotFound do |exception|
     render :template => 'site/not_found', :status => :unprocessable_entity
@@ -14,7 +15,7 @@ class Shop::OrdersController < ApplicationController
   def show
     attr_hash = ShopOrder.params
     
-    @shop_order = current_shop_order
+    @shop_order = find_or_create_shop_order
     @title = @shop_order.id
     
     respond_to do |format|

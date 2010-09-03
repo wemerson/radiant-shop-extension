@@ -21,9 +21,9 @@ class ShopOrder < ActiveRecord::Base
   
   def add!(id, quantity = nil)
     if line_items.exists?({:shop_product_id => id})
-      line_item = line_items.find(:first, :conditions => {:shop_product_id => id})
+      line_item = line_items.find_by_shop_product_id(id)
       quantity = line_item.quantity += quantity.to_i
-      line_item.update_attribute!(:quantity, quantity)
+      line_item.update_attributes!({ :quantity => quantity })
     else
       line_items.create!(:shop_product_id => id, :quantity => quantity)
     end
@@ -31,16 +31,16 @@ class ShopOrder < ActiveRecord::Base
   
   def update!(id, quantity)
     if quantity.to_i == 0
-      remove(id)
+      remove!(id)
     else
-      line_item = line_items.find(:first, :conditions => {:shop_product_id => id})
-      line_item.update_attribute!(:quantity, quantity.to_i)
+      line_item = line_items.find_by_shop_product_id(id)
+      line_item.update_attributes!({:quantity => quantity.to_i })
       line_item
     end
   end
   
   def remove!(id)
-    line_item = line_items.find(:first, :conditions => {:shop_product_id => id})
+    line_item = line_items.find_by_shop_product_id(id)
     line_item.destroy
     line_item
   end

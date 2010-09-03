@@ -31,7 +31,7 @@ module Shop
           elsif defined?(tag.locals.page.shop_category_id)
             result = ShopCategory.find(tag.locals.page.shop_category_id)
           elsif defined?(tag.locals.shop_product)
-            result = tag.locals.shop_product.category            
+            result = tag.locals.shop_product.category     
           else
             result = ShopCategory.find_by_handle(tag.locals.page.slug)
           end
@@ -66,13 +66,29 @@ module Shop
             result = ShopProduct.find_by_position(tag.attr['position'])
           elsif defined?(tag.locals.shop_product)
             result = tag.locals.shop_product
-          elsif defined?(tag.locals.page.shop_product_id)
-            result = ShopProduct.find(tag.locals.page.shop_product_id)
           else
             result = ShopProduct.find_by_sku(tag.locals.page.slug)
           end
           
           result
+        end
+        
+        def current_order(tag)
+          if tag.locals.shop_order
+            tag.locals.shop_order
+          elsif tag.attr['id']
+            ShopOrder.find(tag.attr['id'])
+          elsif tag.locals.page.request.session[:shop_order]
+            ShopOrder.find(tag.locals.page.request.session[:shop_order])
+          end
+        end
+
+        def current_line_item(tag)
+          if tag.locals.shop_line_item
+            tag.locals.shop_line_item
+          elsif tag.attr['product_id']
+            tag.locals.shop_line_item = tag.local.shop_order.line_items.find_by_shop_product_id(tag.attr['product_id'])
+          end
         end
         
       end

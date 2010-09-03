@@ -104,16 +104,6 @@ describe Shop::Tags::Helpers do
         result.should == @shop_category
       end
     end
-    context 'tag.locals.page.shop_category_id' do
-      it 'should return the matching category' do
-        stub(@shop_category).id { 1 }
-        stub(@tag).locals.stub!.page.stub!.shop_category_id { @shop_category.id }
-        mock(ShopCategory).find(@shop_category.id) { @shop_category }
-        
-        result = Shop::Tags::Helpers.current_category(@tag)
-        result.should == @shop_category
-      end
-    end
     context 'tag.locals.shop_product' do
       it 'should return the matching category' do
         stub(@tag).locals.stub!.shop_product { @shop_product }
@@ -227,16 +217,6 @@ describe Shop::Tags::Helpers do
     context 'tag.locals.shop_product' do
       it 'should return the matching product' do
         stub(@tag).locals.stub!.shop_product { @shop_product }
-        
-        result = Shop::Tags::Helpers.current_product(@tag)
-        result.should == @shop_product
-      end
-    end
-    context 'tag.locals.page.shop_product_id' do
-      it 'should return the matching product' do
-        stub(@shop_product).id { 1 }
-        stub(@tag).locals.stub!.page.stub!.shop_product_id { @shop_product.id }
-        mock(ShopProduct).find(@shop_product.id) { @shop_product }
         
         result = Shop::Tags::Helpers.current_product(@tag)
         result.should == @shop_product

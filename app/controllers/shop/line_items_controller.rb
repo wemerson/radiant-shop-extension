@@ -13,7 +13,7 @@ class Shop::LineItemsController < ApplicationController
       :only     => ShopLineItem.params
     }
     
-    @shop_line_items = current_shop_order.line_items.all
+    @shop_line_items = find_or_create_shop_order.line_items.all
         
     respond_to do |format|
       format.html { render :index }
@@ -32,7 +32,7 @@ class Shop::LineItemsController < ApplicationController
       :only     => ShopLineItem.params
     }
     
-    @shop_line_item = current_shop_order.line_items.find(params[:id])
+    @shop_line_item = find_or_create_shop_order.line_items.find(params[:id])
     
     respond_to do |format|
       format.html { render :show }
@@ -47,16 +47,16 @@ class Shop::LineItemsController < ApplicationController
   # POST /shop/line_items/1.json                                  AJAX and HTML
   #----------------------------------------------------------------------------
   def create
-    notice = 'Item added to Cart.'
-    error = 'Could not add Item to Cart.'
+    notice  = 'Item added to Cart.'
+    error   = 'Could not add Item to Cart.'
     
     attr_hash = { 
       :include  => :product,
       :only     => ShopLineItem.params
-    }
+    } 
     
     begin
-      @shop_line_item = current_shop_order.add!(params[:line_item][:product_id], params[:line_item][:quantity])
+      @shop_line_item = find_or_create_shop_order.add!(params[:line_item][:product_id], params[:line_item][:quantity])
       
       respond_to do |format|
         format.html {
@@ -84,8 +84,8 @@ class Shop::LineItemsController < ApplicationController
   # PUT /shop/line_items/1.json                                   AJAX and HTML
   #----------------------------------------------------------------------------
   def update
-    notice = 'Item updated successfully.'
-    error = 'Could not update Item.'
+    notice  = 'Item updated successfully.'
+    error   = 'Could not update Item.'
     
     attr_hash = { 
       :include  => :product,
@@ -93,7 +93,7 @@ class Shop::LineItemsController < ApplicationController
     }
     
     begin
-      @shop_line_item = current_shop_order.update!(params[:line_item][:product_id], params[:line_item][:quantity])
+      @shop_line_item = find_or_create_shop_order.update!(params[:line_item][:product_id], params[:line_item][:quantity])
       
       respond_to do |format|
         format.html {
@@ -121,11 +121,12 @@ class Shop::LineItemsController < ApplicationController
   # DELETE /shop/line_items/1.json                                AJAX and HTML
   #----------------------------------------------------------------------------
   def destroy
-    notice = 'Item removed from Cart.'
-    error = 'Could not remove Item from Cart.'
+    notice  = 'Item removed from Cart.'
+    error   = 'Could not remove Item from Cart.'
     
     begin
-      current_shop_order.remove!(params[:id])
+      # Expects the product it, not the line item
+      find_or_create_shop_order.remove!(params[:id])
       
       respond_to do |format|
         format.html {

@@ -1,11 +1,10 @@
 class Shop::CategoriesController < ApplicationController
   
   skip_before_filter :verify_authenticity_token
-  
   no_login_required
   
   radiant_layout Radiant::Config['shop.category_layout']
-
+  
   rescue_from ActiveRecord::RecordNotFound do |exception|
     render :template => 'site/not_found', :status => 404
   end
@@ -48,8 +47,7 @@ class Shop::CategoriesController < ApplicationController
       format.html { render }
       format.js   { render :partial => '/shop/categories/category', :locals => { :category => @shop_category } }
       format.json { render :json    => @shop_category.to_json(attr_hash) }
-    end
-    
+    end    
   end
 
 end

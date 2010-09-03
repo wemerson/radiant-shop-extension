@@ -30,7 +30,7 @@ ActionController::Routing::Routes.draw do |map|
       shop.cart             'cart',                             :controller => 'orders',     :action => 'show',  :conditions => { :method => :get }
     
       shop.with_options :path_prefix => "#{shop_prefix}/cart" do |cart|
-        cart.resources :line_items, :as => :items
+        cart.resources :line_items, :as => :items, :member => { :destroy => :get }
       end
     end
   end

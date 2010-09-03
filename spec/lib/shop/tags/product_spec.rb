@@ -3,6 +3,26 @@ require 'spec/spec_helper'
 describe Shop::Tags::Product do
   
   dataset :pages
+  
+  it 'should describe these tags' do
+    Shop::Tags::Product.tags.sort.should == [
+      'shop:if_products',
+      'shop:unless_products',
+      'shop:products',
+      'shop:products:each',
+      'shop:product',
+      'shop:product:id',
+      'shop:product:name',
+      'shop:product:price',
+      'shop:product:sku',
+      'shop:product:slug',
+      'shop:product:description',
+      'shop:product:link',
+      'shop:product:if_images',
+      'shop:product:unless_images',
+      'shop:product:images',
+      'shop:product:images:each'].sort
+  end
 
   before(:each) do
     product = Object.new

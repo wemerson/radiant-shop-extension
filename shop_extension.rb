@@ -39,10 +39,11 @@ class ShopExtension < Radiant::Extension
     end
     
     # Model Includes
-    Page.send :include, Shop::Tags::Core, Shop::Tags::Product, Shop::Tags::Category, Shop::Tags::Order
+    Page.send :include, Shop::Tags::Core, Shop::Tags::Cart, Shop::Tags::Category, Shop::Tags::Item, Shop::Tags::Product
     
     # Controller Includes
     ApplicationController.send :include, Shop::Controllers::ApplicationController
+    SiteController.send :include, Shop::Controllers::SiteController
     
     # Tabs
     tab 'Shop' do
