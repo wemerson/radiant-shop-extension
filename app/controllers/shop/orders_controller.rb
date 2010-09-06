@@ -19,9 +19,9 @@ class Shop::OrdersController < ApplicationController
     @title = @shop_order.id
     
     respond_to do |format|
-      format.html   { render }
+      format.html   { render :show }
       format.js     { render :partial => '/shop/orders/order', :locals => { :order => @shop_order } }
-      format.json   { render :json    => @shop_order.to_json() }
+      format.json   { render :json    => @shop_order.to_json(attr_hash) }
     end
     
   end
