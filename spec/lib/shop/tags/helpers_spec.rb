@@ -2,10 +2,21 @@ require 'spec/spec_helper'
 
 describe Shop::Tags::Helpers do
   
+  dataset :pages
+  
+  before :all do
+    @page = pages(:home)
+  end
+  
   before(:each) do
-    tag = Object.new
-    stub(tag).attr { {} }
-    @tag = tag
+    @locals = Object.new
+    stub(@locals).page { @page }
+    
+    @attrs  = {}
+    
+    @tag = Object.new
+    stub(@tag).attr   { @attrs }
+    stub(@tag).locals { @locals }
     
     category = Object.new
     @shop_category = category
@@ -22,8 +33,8 @@ describe Shop::Tags::Helpers do
   describe '#current_categories(tag)' do
     context 'search query' do
       it 'should return matching categories' do
-        stub(@tag).locals.stub!.page.stub!.params { {'query'=>'term'} }
-
+        stub(@page).params { {'query'=>'term'} }
+        
         mock(ShopCategory).search('term') { @shop_categories }
         
         result = Shop::Tags::Helpers.current_categories(@tag)
@@ -33,7 +44,7 @@ describe Shop::Tags::Helpers do
     
     context 'all results' do
       it 'should return all categories' do
-        stub(@tag).locals.stub!.page.stub!.params { {} }
+        stub(@page).params { {} }
         
         mock(ShopCategory).all { @shop_categories }
         
@@ -55,7 +66,7 @@ describe Shop::Tags::Helpers do
     context 'id' do
       it 'should return the matching category' do
         stub(@shop_category).id { 1 }
-        stub(@tag).attr { { 'id' => @shop_category.id } }
+        @attrs['id'] = @shop_category.id
         
         mock(ShopCategory).find(@shop_category.id) { @shop_category }
         
@@ -66,7 +77,7 @@ describe Shop::Tags::Helpers do
     context 'handle' do
       it 'should return the matching category' do
         stub(@shop_category).handle { 'bob' }
-        stub(@tag).attr { { 'handle' => @shop_category.handle } }
+        @attrs['handle'] = @shop_category.handle
         
         mock(ShopCategory).find(:first, {:conditions=>{:handle=>@shop_category.handle}}) { @shop_category }
         
@@ -77,7 +88,7 @@ describe Shop::Tags::Helpers do
     context 'name' do
       it 'should return the matching category' do
         stub(@shop_category).name { 'bob' }
-        stub(@tag).attr { { 'name' => @shop_category.name } }
+        @attrs['name'] = @shop_category.name
         
         mock(ShopCategory).find(:first, {:conditions=>{:name=>@shop_category.name}}) { @shop_category }
         
@@ -88,7 +99,7 @@ describe Shop::Tags::Helpers do
     context 'position' do
       it 'should return the matching category' do
         stub(@shop_category).position { '10' }
-        stub(@tag).attr { { 'position' => @shop_category.position } }
+        @attrs['position'] = @shop_category.position
         
         mock(ShopCategory).find(:first, {:conditions=>{:position=>@shop_category.position}}) { @shop_category }
         
@@ -98,7 +109,7 @@ describe Shop::Tags::Helpers do
     end
     context 'tag.locals.shop_category' do
       it 'should return the matching category' do
-        stub(@tag).locals.stub!.shop_category { @shop_category }
+        stub(@locals).shop_category { @shop_category }
         
         result = Shop::Tags::Helpers.current_category(@tag)
         result.should == @shop_category
@@ -106,7 +117,8 @@ describe Shop::Tags::Helpers do
     end
     context 'tag.locals.shop_product' do
       it 'should return the matching category' do
-        stub(@tag).locals.stub!.shop_product { @shop_product }
+        stub(@locals).shop_category { nil }
+        stub(@locals).shop_product { @shop_product }
         
         result = Shop::Tags::Helpers.current_category(@tag)
         result.should == @shop_category
@@ -115,7 +127,9 @@ describe Shop::Tags::Helpers do
     context 'Using page slug' do
       it 'should return the matching category' do
         stub(@shop_category).handle { 'bob' }
-        stub(@tag).locals.stub!.page.stub!.slug { @shop_category.handle }
+        stub(@locals).shop_category { nil }
+        stub(@locals).shop_product  { nil }
+        stub(@page).slug { @shop_category.handle }
         
         mock(ShopCategory).find(:first, {:conditions=>{:handle=>@shop_category.handle}}) { @shop_category }
         
@@ -128,7 +142,7 @@ describe Shop::Tags::Helpers do
   describe '#current_products(tag)' do
     context 'search query' do
       it 'should return matching products' do
-        stub(@tag).locals.stub!.page.stub!.params { {'query'=>'term'} }
+        stub(@locals).page.stub!.params { {'query'=>'term'} }
         
         mock(ShopProduct).search('term') { @shop_products }
         
@@ -139,10 +153,8 @@ describe Shop::Tags::Helpers do
     context 'no query' do
       context 'current category' do
         it 'should return all products in that category' do
-          @locals = Object.new
-          stub(@locals).shop_category     { @shop_category }
-          stub(@locals).page.stub!.params { { } }
-          stub(@tag).locals               { @locals }
+          stub(@locals).shop_category { @shop_category }
+          stub(@page).params { { } }
           
           result = Shop::Tags::Helpers.current_products(@tag)
           result.should == @shop_category.products
@@ -151,7 +163,8 @@ describe Shop::Tags::Helpers do
       
       context 'all results' do
         it 'should return all products' do
-          stub(@tag).locals.stub!.page.stub!.params { {} }
+          stub(@locals).shop_category     { nil }
+          stub(@locals).page.stub!.params { {} }
           mock(ShopProduct).all { @shop_products }
           
           result = Shop::Tags::Helpers.current_products(@tag)
@@ -173,7 +186,7 @@ describe Shop::Tags::Helpers do
     context 'id' do
       it 'should return the matching product' do
         stub(@shop_product).id { 1 }
-        stub(@tag).attr { { 'id' => @shop_product.id } }
+        @attrs['id'] = @shop_product.id
         
         mock(ShopProduct).find(@shop_product.id) { @shop_product }
         
@@ -184,7 +197,7 @@ describe Shop::Tags::Helpers do
     context 'sku' do
       it 'should return the matching product' do
         stub(@shop_product).sku { 'bob' }
-        stub(@tag).attr { { 'sku' => @shop_product.sku } }
+        @attrs['sku'] = @shop_product.sku
         
         mock(ShopProduct).find(:first, :conditions => { :sku => @shop_product.sku}) { @shop_product }
         
@@ -195,7 +208,7 @@ describe Shop::Tags::Helpers do
     context 'name' do
       it 'should return the matching product' do
         stub(@shop_product).name { 'bob' }
-        stub(@tag).attr { { 'name' => @shop_product.name } }
+        @attrs['name'] = @shop_product.name
         
         mock(ShopProduct).find(:first, :conditions => { :name => @shop_product.name}) { @shop_product }
         
@@ -206,7 +219,7 @@ describe Shop::Tags::Helpers do
     context 'position' do
       it 'should return the matching product' do
         stub(@shop_product).position { '10' }
-        stub(@tag).attr { { 'position' => @shop_product.position } }
+        @attrs['position'] = @shop_product.position
         
         mock(ShopProduct).find(:first, :conditions => { :position => @shop_product.position}) { @shop_product }
         
@@ -216,7 +229,7 @@ describe Shop::Tags::Helpers do
     end
     context 'tag.locals.shop_product' do
       it 'should return the matching product' do
-        stub(@tag).locals.stub!.shop_product { @shop_product }
+        stub(@locals).shop_product { @shop_product }
         
         result = Shop::Tags::Helpers.current_product(@tag)
         result.should == @shop_product
@@ -225,7 +238,9 @@ describe Shop::Tags::Helpers do
     context 'Using page slug' do
       it 'should return the matching category' do
         stub(@shop_product).sku { 'bob' }
-        stub(@tag).locals.stub!.page.stub!.slug { @shop_product.sku }
+        
+        stub(@page).slug { @shop_product.sku }
+        stub(@locals).shop_product { nil }
         
         mock(ShopProduct).find(:first, {:conditions=>{:sku=>@shop_product.sku}}) { @shop_product }
         

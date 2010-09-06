@@ -38,6 +38,8 @@ class Shop::ProductsController < ApplicationController
     @shop_category = @shop_product.category unless @shop_product.nil?
     
     attr_hash = ShopProduct.params
+    
+    @shop_layout = @shop_product.layout
       
     @title = @shop_product.name
     

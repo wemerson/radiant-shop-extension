@@ -72,10 +72,10 @@ module Shop
         product = tag.locals.shop_product
                 
         number_to_currency(product.price, 
-          :precision  =>(attr[:precision] || Radiant::Config['shop_price_precision']).to_i,
-          :unit       => attr[:unit]      || Radiant::Config['shop_price_unit'],
-          :separator  => attr[:separator] || Radiant::Config['shop_price_seperator'],
-          :delimiter  => attr[:delimiter] || Radiant::Config['shop_price_delimiter'])
+          :precision  =>(attr[:precision] || Radiant::Config['shop.price_precision']).to_i,
+          :unit       => attr[:unit]      || Radiant::Config['shop.price_unit'],
+          :separator  => attr[:separator] || Radiant::Config['shop.price_seperator'],
+          :delimiter  => attr[:delimiter] || Radiant::Config['shop.price_delimiter'])
       end
       
       desc %{ expands if the product has a valid image }

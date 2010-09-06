@@ -305,7 +305,7 @@ describe Shop::Tags::Product do
         before :each do
           stub(@shop_product).images { @images }
         end
-        it 'should not render' do
+        it 'should render' do
           tag = %{<r:shop:product:images:each>.a.</r:shop:product:images:each>}
           expected = %{.a..a..a.}
           

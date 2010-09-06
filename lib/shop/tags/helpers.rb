@@ -26,11 +26,11 @@ module Shop
             result = ShopCategory.find_by_name(tag.attr['name'])
           elsif tag.attr['position']
             result = ShopCategory.find_by_position(tag.attr['position'])
-          elsif defined?(tag.locals.shop_category)
+          elsif !tag.locals.shop_category.nil?
             result = tag.locals.shop_category
-          elsif defined?(tag.locals.page.shop_category_id)
+          elsif !tag.locals.page.shop_category_id.nil?
             result = ShopCategory.find(tag.locals.page.shop_category_id)
-          elsif defined?(tag.locals.shop_product)
+          elsif !tag.locals.shop_product.nil?
             result = tag.locals.shop_product.category     
           else
             result = ShopCategory.find_by_handle(tag.locals.page.slug)
@@ -44,7 +44,7 @@ module Shop
 
           if tag.locals.page.params.has_key? 'query'
             result = ShopProduct.search(tag.locals.page.params['query'])
-          elsif defined?(tag.locals.shop_category)
+          elsif !tag.locals.shop_category.nil?
             result = tag.locals.shop_category.products            
           else
             result = ShopProduct.all
@@ -64,7 +64,7 @@ module Shop
             result = ShopProduct.find_by_name(tag.attr['name'])
           elsif tag.attr['position']
             result = ShopProduct.find_by_position(tag.attr['position'])
-          elsif defined?(tag.locals.shop_product)
+          elsif !tag.locals.shop_product.nil?
             result = tag.locals.shop_product
           else
             result = ShopProduct.find_by_sku(tag.locals.page.slug)

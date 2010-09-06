@@ -95,29 +95,4 @@ describe ShopProduct do
     
   end
   
-  context 'shop product extension tests' do
-    before(:each) do
-      @shop_product = shop_products(:soft_bread)
-      @shop_category = shop_products(:soft_bread).category
-      
-      #@shop_product.stubs(:assets)
-      #Assets.stubs(:search).and_returns([assets(:asset_one, :asset_two)])
-    end
-    
-    it "should return its categories product_layout" do
-      @shop_product.layout.should eql(@shop_category.product_layout)
-    end
-    
-    it "should return all assets minus itself for assets_available"
-    
-    it "should generate a shop.url_prefix based url" do
-      mock(@shop_product).slug_prefix { 'a' }
-      @shop_product.slug.should eql("/a/#{@shop_product.category.handle}/#{@shop_product.handle}")
-    end
-  end
-
-  it 'should find a category by handle' do
-    ShopProduct.find_by_handle(@product.handle).should == @product
-  end
-  
 end

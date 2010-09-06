@@ -5,9 +5,9 @@ require 'spec/helpers/nested_tag_helper'
 # Tests for shop order tags module
 #
 describe Shop::Tags::Cart do
-
+  
   dataset :pages
-
+  
   it 'should describe these tags' do
     Shop::Tags::Cart.tags.sort.should == [
       'shop:if_cart',
@@ -21,7 +21,6 @@ describe Shop::Tags::Cart do
   end
   
   before :all do
-    @tags = NestedTagHelper.new
     @page = pages(:home)
   end
   
@@ -32,39 +31,59 @@ describe Shop::Tags::Cart do
     @shop_orders = [ order, order, order ]
     
     item = Object.new
-    
-    @shop_line_item = item
-    @shop_line_items = [ item, item, item ]
-    
-    stub(@shop_order).line_items { @shop_line_items }
-    stub(@shop_line_item).order { @shop_order }
   end
-
+  
   context 'outside cart context' do
     describe '<r:shop:if_cart>' do
       context 'success' do
         it 'should render' do
           mock(Shop::Tags::Helpers).current_order(anything) { @shop_order }
-
-          tag = %{<r:shop:if_order>success</r:shop:if_order>}
+          
+          tag = %{<r:shop:if_cart>success</r:shop:if_cart>}
           expected = %{success}
+          @page.should render(tag).as(expected)
+        end
+      end
+      context 'failure' do
+        it 'should render' do
+          mock(Shop::Tags::Helpers).current_order(anything) { nil }
+          
+          tag = %{<r:shop:if_cart>failure</r:shop:if_cart>}
+          expected = %{}
           @page.should render(tag).as(expected)
         end
       end
     end
     
     describe '<r:shop:unless_cart>' do
-      
+      context 'success' do
+        it 'should render' do
+          mock(Shop::Tags::Helpers).current_order(anything) { nil }
+          
+          tag = %{<r:shop:unless_cart>success</r:shop:unless_cart>}
+          expected = %{success}
+          @page.should render(tag).as(expected)
+        end
+      end
+      context 'failure' do
+        it 'should render' do
+          mock(Shop::Tags::Helpers).current_order(anything) { @shop_order }
+          
+          tag = %{<r:shop:unless_cart>failure</r:shop:unless_cart>}
+          expected = %{}
+          @page.should render(tag).as(expected)
+        end
+      end
     end
     
     describe '<r:shop:cart>' do
       context 'success' do
         it 'should render' do
           mock(Shop::Tags::Helpers).current_order(anything) { @shop_order }
-
-          tag = %{<r:shop:cart>Success</r:shop:cart>}
-          expected = %{}
-        
+          
+          tag = %{<r:shop:cart>success</r:shop:cart>}
+          expected = %{success}
+          
           @page.should render(tag).as(expected)
         end
       end
@@ -78,6 +97,73 @@ describe Shop::Tags::Cart do
         end
       end
     end
+    
+    describe 'simple attributes' do
+      before :each do
+        mock(Shop::Tags::Helpers).current_order(anything) { @shop_order }
+      end
+      it 'should render <r:id />' do
+        stub(@shop_order).id { 1 }
+        
+        tag = %{<r:shop:cart:id />}
+        expected = %{1}
+        
+        @page.should render(tag).as(expected)
+      end
+      it 'should render <r:status />' do
+        stub(@shop_order).status { 'new' }
+        
+        tag = %{<r:shop:cart:status />}
+        expected = %{new}
+        
+        @page.should render(tag).as(expected)
+      end
+      it 'should render <r:quantity />' do
+        stub(@shop_order).quantity { 1 }
+        
+        tag = %{<r:shop:cart:quantity />}
+        expected = %{1}
+        
+        @page.should render(tag).as(expected)
+      end
+      it 'should render <r:weight />' do
+        stub(@shop_order).weight { 100 }
+        
+        tag = %{<r:shop:cart:weight />}
+        expected = %{100}
+        
+        @page.should render(tag).as(expected)
+      end
+    end
+    
+    describe '<r:price />' do
+      before :each do
+        mock(Shop::Tags::Helpers).current_order(anything) { @shop_order }
+        stub(@shop_order).price { 1234.34567890 }
+      end
+      
+      it 'should render a standard price' do
+        tag = %{<r:shop:cart:price />}
+        expected = %{$1,234.35}
+        
+        @page.should render(tag).as(expected)
+      end
+      
+      it 'should render a high precision price' do
+        tag = %{<r:shop:cart:price precision="8"/>}
+        expected = %{$1,234.34567890}
+        
+        @page.should render(tag).as(expected)
+      end
+      
+      it 'should render a custom format' do
+        tag = %{<r:shop:cart:price unit="%" separator="-" delimiter="+" />}
+        expected = %{%1+234-35}
+        
+        @page.should render(tag).as(expected)
+      end
+    end
+    
   end
   
 end

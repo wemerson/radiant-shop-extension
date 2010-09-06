@@ -19,7 +19,7 @@ describe Shop::LineItemsController do
   describe '#index' do
     before :each do
       @line_items = Object.new
-      mock(controller).current_shop_order.mock!.line_items.mock!.all { @line_items }
+      mock(controller).find_or_create_shop_order.mock!.line_items.mock!.all { @line_items }
     end
     
     it 'should list all items' do
@@ -44,7 +44,7 @@ describe Shop::LineItemsController do
   describe '#show' do
     before :each do
       @line_items = Object.new
-      mock(controller).current_shop_order.mock!.line_items.mock!.find(@line_item.id.to_s) { @line_items }
+      mock(controller).find_or_create_shop_order.mock!.line_items.mock!.find(@line_item.id.to_s) { @line_items }
     end
     
     it 'should list all items' do
@@ -69,7 +69,7 @@ describe Shop::LineItemsController do
   describe '#create' do
     context 'success' do
       before :each do
-        mock(controller).current_shop_order.mock!.add!(nil, nil) { @line_item }
+        mock(controller).find_or_create_shop_order.mock!.add!(nil, nil) { @line_item }
       end
       
       it 'should redirect back' do
@@ -93,7 +93,7 @@ describe Shop::LineItemsController do
 
     context 'failure' do
       before :each do
-        mock(controller).current_shop_order.mock!.add!(nil, nil) { raise ActiveRecord::RecordNotSaved }
+        mock(controller).find_or_create_shop_order.mock!.add!(nil, nil) { raise ActiveRecord::RecordNotSaved }
       end
 
       it 'should list all items' do
@@ -119,7 +119,7 @@ describe Shop::LineItemsController do
   describe '#update' do
     context 'success' do
       before :each do
-        mock(controller).current_shop_order.mock!.update!(nil, nil) { @line_item }
+        mock(controller).find_or_create_shop_order.mock!.update!(nil, nil) { @line_item }
       end
       
       it 'should redirect back' do
@@ -143,7 +143,7 @@ describe Shop::LineItemsController do
 
     context 'failure' do
       before :each do
-        mock(controller).current_shop_order.mock!.update!(nil, nil) { raise ActiveRecord::RecordNotSaved }
+        mock(controller).find_or_create_shop_order.mock!.update!(nil, nil) { raise ActiveRecord::RecordNotSaved }
       end
       
       it 'should list all items' do
@@ -169,7 +169,7 @@ describe Shop::LineItemsController do
   describe '#destroy' do  
     context 'success' do
       before :each do
-        mock(controller).current_shop_order.mock!.remove!(@line_item.id.to_s) { true }
+        mock(controller).find_or_create_shop_order.mock!.remove!(@line_item.id.to_s) { true }
       end
       
       it 'should redirect back' do
@@ -186,14 +186,14 @@ describe Shop::LineItemsController do
       
       it 'should list all items in json' do
         delete :destroy, :format => 'json', :id => @line_item.id
-        response.should be_success        
+        response.should be_success
         JSON.parse(response.body)['notice'].should === 'Item removed from Cart.'
       end
     end
     
     context 'failure' do
       before :each do
-        mock(controller).current_shop_order.mock!.remove!(@line_item.id.to_s) { raise ActiveRecord::RecordNotFound }
+        mock(controller).find_or_create_shop_order.mock!.remove!(@line_item.id.to_s) { raise ActiveRecord::RecordNotFound }
       end
       
       it 'should list all items' do

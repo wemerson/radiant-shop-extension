@@ -29,20 +29,22 @@ module Shop
         
         items.each do |line_item|
           tag.locals.shop_line_item = line_item
+          tag.locals.shop_product = line_item.product
+          
           content << tag.expand
         end
         
         content
       end
-
+      
       # Assigns the line item and expands the context
       desc %{ Expand the current line item }
       tag 'shop:cart:item' do |tag|
         tag.locals.shop_line_item = Helpers.current_line_item(tag)
-  
-        if tag.locals.shop_line_item
-          item = tag.locals.shop_line_item
-          tag.locals.shop_product = item.product
+        
+        unless tag.locals.shop_line_item.nil?
+          line_item = tag.locals.shop_line_item
+          tag.locals.shop_product = line_item.product
           
           tag.expand
         end
@@ -50,23 +52,23 @@ module Shop
       
       # Output the line item id/quantity/weight
       [:id, :quantity, :weight].each do |symbol|
-        desc %{ outputs the #{symbol} of the current item }
+        desc %{ outputs the #{symbol} of the current cart item }
         tag "shop:cart:item:#{symbol}" do |tag|
           tag.locals.shop_line_item.send(symbol)
         end
       end
       
       # Output the price of the line item
-      desc %{ outputs the total price of the current line item }
+      desc %{ outputs the total price of the current cart item }
       tag 'shop:cart:item:price' do |tag|
         attr = tag.attr.symbolize_keys
         item = tag.locals.shop_line_item
         
         number_to_currency(item.price.to_f, 
-          :precision  =>(attr[:precision] || Radiant::Config['shop_price_precision']).to_i,
-          :unit       => attr[:unit]      || Radiant::Config['shop_price_unit'],
-          :separator  => attr[:separator] || Radiant::Config['shop_price_seperator'],
-          :delimiter  => attr[:delimiter] || Radiant::Config['shop_price_delimiter'])
+          :precision  =>(attr[:precision] || Radiant::Config['shop.price_precision']).to_i,
+          :unit       => attr[:unit]      || Radiant::Config['shop.price_unit'],
+          :separator  => attr[:separator] || Radiant::Config['shop.price_seperator'],
+          :delimiter  => attr[:delimiter] || Radiant::Config['shop.price_delimiter'])
       end
       
       # Output a link to remove the item from the cart
@@ -76,10 +78,10 @@ module Shop
         options = tag.attr.dup
         attributes = options.inject('') { |s, (k, v)| s << %{#{k.downcase}="#{v}" } }.strip
         attributes = " #{attributes}" unless attributes.empty?
-  
+        
         text = tag.double? ? tag.expand : 'remove'
-  
-        %{<a href="/shop/cart/items/#{item.product.id}/destroy"#{attributes}>#{text}</a>}
+        
+        %{<a href="/#{Radiant::Config['shop.url_prefix']}/cart/items/#{item.product.id}/destroy"#{attributes}>#{text}</a>}
       end
       
     end

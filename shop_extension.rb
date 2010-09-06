@@ -51,15 +51,15 @@ class ShopExtension < Radiant::Extension
     end
     
     # Ensure there is always a shop prefix, otherwise we'll lose admin and pages
-    Radiant::Config['shop.url_prefix'] = Radiant::Config['shop.url_prefix'] == '' ? 'shop' : Radiant::Config['shop.url_prefix']
+    Radiant::Config['shop.url_prefix'] = Radiant::Config['shop.url_prefix'].blank? ? 'shop' : Radiant::Config['shop.url_prefix']
     Radiant::Config['shop.product_layout']  ||= 'Product'
     Radiant::Config['shop.category_layout'] ||= 'Products'
     Radiant::Config['shop.order_layout']    ||= 'Order'
     
-    Radiant::Config['shop_price_unit']      ||= '$'
-    Radiant::Config['shop_price_precision'] ||= 2
-    Radiant::Config['shop_price_seperator'] ||= '.'
-    Radiant::Config['shop_price_delimiter'] ||= ','
+    Radiant::Config['shop.price_unit']      ||= '$'
+    Radiant::Config['shop.price_precision'] ||= 2
+    Radiant::Config['shop.price_seperator'] ||= '.'
+    Radiant::Config['shop.price_delimiter'] ||= ','
   end
   
 end
