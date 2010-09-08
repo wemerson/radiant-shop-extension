@@ -29,7 +29,7 @@ module Shop
         
         items.each do |line_item|
           tag.locals.shop_line_item = line_item
-          tag.locals.shop_product = line_item.product
+          tag.locals.shop_product = line_item.item
           
           content << tag.expand
         end
@@ -44,25 +44,33 @@ module Shop
         
         unless tag.locals.shop_line_item.nil?
           line_item = tag.locals.shop_line_item
-          tag.locals.shop_product = line_item.product
+          tag.locals.shop_product = line_item.item
           
           tag.expand
         end
       end
       
       # Output the line item id/quantity/weight
-      [:id, :quantity, :weight].each do |symbol|
+      [:id, :quantity].each do |symbol|
         desc %{ outputs the #{symbol} of the current cart item }
         tag "shop:cart:item:#{symbol}" do |tag|
           tag.locals.shop_line_item.send(symbol)
         end
       end
       
+      # Output the related elements attributes
+      [:name, :price, :weight].each do |symbol|
+        desc %{ outputs the #{symbol} of the current cart item }
+        tag "shop:cart:item:#{symbol}" do |tag|
+          tag.locals.shop_line_item.item.send(symbol)
+        end        
+      end
+      
       # Output the price of the line item
       desc %{ outputs the total price of the current cart item }
       tag 'shop:cart:item:price' do |tag|
         attr = tag.attr.symbolize_keys
-        item = tag.locals.shop_line_item
+        item = tag.locals.shop_line_item.item
         
         number_to_currency(item.price.to_f, 
           :precision  =>(attr[:precision] || Radiant::Config['shop.price_precision']).to_i,
@@ -81,7 +89,7 @@ module Shop
         
         text = tag.double? ? tag.expand : 'remove'
         
-        %{<a href="/#{Radiant::Config['shop.url_prefix']}/cart/items/#{item.product.id}/destroy"#{attributes}>#{text}</a>}
+        %{<a href="/#{Radiant::Config['shop.url_prefix']}/cart/items/#{item.id}/destroy"#{attributes}>#{text}</a>}
       end
       
     end

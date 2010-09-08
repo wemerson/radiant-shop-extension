@@ -81,7 +81,7 @@ class Initial < ActiveRecord::Migration
       t.integer     :quantity, :default => 1
       
       t.references  :shop_order
-      t.references  :shop_product
+      t.references  :item, :polymorphic => true
       
       t.integer     :created_by
       t.integer     :updated_by
@@ -89,13 +89,13 @@ class Initial < ActiveRecord::Migration
       t.timestamps
     end
     add_index :shop_line_items, :shop_order_id
-    add_index :shop_line_items, :shop_product_id
+    add_index :shop_line_items, :item_id
     
     create_table :shop_orders do |t|
       t.text        :notes
+      t.text        :status, :default => 'new'
       
       t.references  :shop_customer
-      t.references  :shop_order_status
       
       t.integer     :created_by
       t.integer     :updated_by
@@ -103,11 +103,7 @@ class Initial < ActiveRecord::Migration
       t.timestamps
     end
     add_index :shop_orders, :shop_customer_id
-    add_index :shop_orders, :shop_order_status_id
-    
-    create_table :shop_order_statuses do |t|
-      t.string    :name
-    end
+    add_index :shop_orders, :status
     
     create_table :shop_payments do |t|
       t.float       :amount

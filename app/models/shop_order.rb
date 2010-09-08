@@ -2,95 +2,96 @@ class ShopOrder < ActiveRecord::Base
   
   has_many  :payments,    :class_name => 'ShopPayment',   :dependent => :destroy
   has_many  :line_items,  :class_name => 'ShopLineItem',  :dependent => :destroy
-  has_many  :products,    :class_name => 'ShopProduct',   :through => :line_items
+  has_many  :items,       :through => :line_items
   
   has_many  :addressables,:class_name => 'ShopAddressable', :as => :addresser
   has_many  :billings,    :through => :addressables,  :source => :address, :source_type => 'ShopAddressBilling',  :uniq => true
   has_many  :shippings,   :through => :addressables,  :source => :address, :source_type => 'ShopAddressShipping', :uniq => true
   
-  belongs_to :status,     :class_name => 'ShopOrderStatus', :foreign_key => :shop_order_status_id
-  
   belongs_to :created_by, :class_name => 'User'
   belongs_to :updated_by, :class_name => 'User'
   belongs_to :customer,   :class_name => 'ShopCustomer', :foreign_key => :shop_customer_id
   
-  before_create :set_status_new
-  
   accepts_nested_attributes_for :line_items,  :allow_destroy => true, :reject_if => :all_blank
   accepts_nested_attributes_for :payments,    :allow_destroy => true, :reject_if => :all_blank
   
-  def add!(id, quantity = nil)
-    if line_items.exists?({:shop_product_id => id})
-      line_item = line_items.find_by_shop_product_id(id)
-      quantity = line_item.quantity += quantity.to_i
-      line_item.update_attributes!({ :quantity => quantity })
+  def add!(id, quantity = nil, type = nil)
+    quantity  ||= 1
+    type      ||= 'ShopProduct'
+    
+    if self.line_items.exists?({:item_id => id, :item_type => type})
+      line_item = self.line_items.first(:conditions => {:item_id => id, :item_type => type})
+      quantity  = line_item.quantity + quantity.to_i
+      
+      self.update!(line_item.id, quantity)
     else
-      line_items.create!(:shop_product_id => id, :quantity => quantity)
+      self.line_items.create!({:item_id => id, :item_type => type, :quantity => quantity})
     end
+    
+    true
   end
   
-  def update!(id, quantity)
-    if quantity.to_i == 0
+  def update!(id, quantity = 1)
+    quantity = quantity.to_i
+    if quantity <= 0
       remove!(id)
     else
-      line_item = line_items.find_by_shop_product_id(id)
-      line_item.update_attributes!({:quantity => quantity.to_i })
-      line_item
+      line_item = self.line_items.find(id)
+      line_item.update_attribute(:quantity, quantity)
     end
+    
+    true
   end
   
   def remove!(id)
-    line_item = line_items.find_by_shop_product_id(id)
+    line_item = line_items.find(id)
     line_item.destroy
-    line_item
+    
+    true
   end
   
-  def clear
+  def clear!
     line_items.destroy_all
   end
   
   def quantity
-    line_items.inject(0) do |quantity, line_item|
-      quantity + line_item.quantity.to_i
-    end
+    self.line_items.sum(:quantity)
   end
   
   def price
-    line_items.inject(0.0) do |price, line_item|
-      price + line_item.price.to_f
-    end
+    price = 0
+    self.line_items.map { |l| price += l.item.price }
+    price
   end
   
   def weight
-    line_items.inject(0.0) do |weight, line_item|
-      weight + line_item.weight.to_f
-    end
+    weight = 0
+    self.line_items.map { |l| weight += l.item.weight }
+    weight
   end
   
   class << self
-    def search(search)
+    def search(search = nil)
       unless search.blank?
+        search = search.downcase
+        
         queries = []
         queries << 'LOWER(status) LIKE (:term)'
-      
-        sql = queries.join(" OR ")
-        conditions = [sql, {:term => "%#{search.downcase}%" }]
+        
+        sql = queries.join(' OR ')
+        
+        # This looks tricky, but not subject to sql injection :-)
+        conditions = [sql, {:term => "%#{search}%" }]
       else
         conditions = []
       end
-    
-      all({ :conditions => conditions })
+      
+      all(:conditions => conditions)
     end
     
     def params
-      [ :id, :notes ]
+      [ :id, :notes, :status ]
     end
-  end
-  
-private
-  
-  def set_status_new
-    self.status = ShopOrderStatus.find_by_name(:new)
   end
   
 end

@@ -24,6 +24,7 @@ CONTENT
     <div id="shop_product_<r:handle />" class="shop_product">
       <h2><r:title /></h2>
       <h3><r:price /></h3>
+      <r:form name='AddToCart' />
       <div id="shop_product_description">
         <h3>Description</h3>
         <div class="body"><r:description /></div>

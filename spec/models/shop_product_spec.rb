@@ -12,7 +12,7 @@ describe ShopProduct do
     ]
   end
   
-  context 'attributes' do
+  describe 'attributes' do
     
     it 'should have a name' do
       @product.name.should == 'soft bread'
@@ -40,7 +40,7 @@ describe ShopProduct do
     
   end
   
-  context 'validation' do
+  describe 'validation' do
     
     it 'should require a name and category' do
       @product = ShopProduct.new()
@@ -82,15 +82,72 @@ describe ShopProduct do
     
     it 'should generate a valid sku on validation' do
       @product = ShopProduct.new({ :name => 'dark_ _:_;_=_+_._~_toasted', :category => shop_categories(:bread) })
-      @product.valid? == true
-      @product.sku.should == 'dark_-_-_-_-_-_-_-_toasted'
+      @product.valid?     === true
+      @product.sku.should === 'dark_-_-_-_-_-_-_-_toasted'
     end
     
     it 'should have an array of images' do
       @product.attachments.class.should == Array
-      @product.images.class.should == Array
-      @product.images.length.should == 3
-      @product.images.length.should == @product.attachments.length
+      @product.images.class.should      == Array
+      @product.images.length.should     === 3
+      @product.images.length.should     === @product.attachments.length
+    end
+    
+  end
+  
+  describe '#handle' do
+    it 'should return the sku' do
+      product     = ShopProduct.new
+      product.sku = 'success'
+      
+      product.handle.should === 'success'
+    end
+  end
+  
+  describe '#slug' do
+    it 'should return a generated slug' do
+      product     = ShopProduct.new
+      product.sku = 'product'
+      stub(product).category.stub!.handle { 'category' }
+      
+      product.slug.should === %{/#{Radiant::Config['shop.url_prefix']}/category/product}
+    end
+  end
+  
+  describe '#layout' do
+    it 'should return the layout defined by its category' do
+      @product.layout.should === @product.category.product_layout
+    end
+  end
+  
+  describe '#available_images' do
+    it 'should return all the Images minus its own' do
+      @images = Image.all - @product.images
+      
+      @product.available_images.should === @images
+    end
+  end
+  
+  describe '#slug_prefix' do
+    it 'should return the configured shop.url_prefix' do
+      @product.slug_prefix.should === Radiant::Config['shop.url_prefix']
+    end
+  end
+  
+  context 'Class Methods' do
+    
+    describe '#params' do
+      it 'should have a set of standard parameters' do
+        ShopProduct.params.should === [
+          :id,
+          :name,
+          :price,
+          :sku,
+          :description,
+          :created_at,
+          :updated_at
+        ]
+      end
     end
     
   end

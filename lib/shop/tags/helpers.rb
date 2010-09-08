@@ -26,12 +26,14 @@ module Shop
             result = ShopCategory.find_by_name(tag.attr['name'])
           elsif tag.attr['position']
             result = ShopCategory.find_by_position(tag.attr['position'])
+          elsif !tag.locals.page.shop_category.nil?
+            result = tag.locals.page.shop_category
+          elsif !tag.locals.page.shop_product.nil?
+            result = tag.locals.page.shop_product.category            
           elsif !tag.locals.shop_category.nil?
             result = tag.locals.shop_category
-          elsif !tag.locals.page.shop_category_id.nil?
-            result = ShopCategory.find(tag.locals.page.shop_category_id)
           elsif !tag.locals.shop_product.nil?
-            result = tag.locals.shop_product.category     
+            result = tag.locals.shop_product.category
           else
             result = ShopCategory.find_by_handle(tag.locals.page.slug)
           end
@@ -44,8 +46,10 @@ module Shop
 
           if tag.locals.page.params.has_key? 'query'
             result = ShopProduct.search(tag.locals.page.params['query'])
+          elsif !tag.locals.page.shop_category.nil?
+            result = tag.locals.page.shop_category.products          
           elsif !tag.locals.shop_category.nil?
-            result = tag.locals.shop_category.products            
+            result = tag.locals.shop_category.products  
           else
             result = ShopProduct.all
           end
@@ -54,6 +58,7 @@ module Shop
         end
         
         def current_product(tag)
+          
           result = nil
 
           if tag.attr['id']
@@ -64,6 +69,8 @@ module Shop
             result = ShopProduct.find_by_name(tag.attr['name'])
           elsif tag.attr['position']
             result = ShopProduct.find_by_position(tag.attr['position'])
+          elsif !tag.locals.page.shop_product.nil?
+            result = tag.locals.page.shop_product
           elsif !tag.locals.shop_product.nil?
             result = tag.locals.shop_product
           else
@@ -74,21 +81,33 @@ module Shop
         end
         
         def current_order(tag)
-          if tag.locals.shop_order
-            tag.locals.shop_order
+          result = nil
+          
+          if !tag.locals.shop_order.nil?
+            result  = tag.locals.shop_order
           elsif tag.attr['id']
-            ShopOrder.find(tag.attr['id'])
+            result  = ShopOrder.find(tag.attr['id'])
           elsif tag.locals.page.request.session[:shop_order]
-            ShopOrder.find(tag.locals.page.request.session[:shop_order])
+            result  = ShopOrder.find(tag.locals.page.request.session[:shop_order])
           end
+          
+          result
         end
 
         def current_line_item(tag)
-          if tag.locals.shop_line_item
-            tag.locals.shop_line_item
-          elsif tag.attr['product_id']
-            tag.locals.shop_line_item = tag.local.shop_order.line_items.find_by_shop_product_id(tag.attr['product_id'])
+          result = nil
+          
+          if !tag.locals.shop_line_item.nil?
+            result  = tag.locals.shop_line_item
+          elsif !tag.locals.shop_product.nil?
+            order   = tag.locals.shop_order
+            product = tag.locals.shop_product
+            item    = order.line_items.find_by_item_id(product.id)
+            
+            result  = item
           end
+          
+          result
         end
         
       end

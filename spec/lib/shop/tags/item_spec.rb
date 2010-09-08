@@ -17,8 +17,9 @@ describe Shop::Tags::Item do
       'shop:cart:item',
       'shop:cart:item:id',
       'shop:cart:item:quantity',
-      'shop:cart:item:weight',
+      'shop:cart:item:name',
       'shop:cart:item:price',
+      'shop:cart:item:weight',
       'shop:cart:item:remove'].sort
   end
   
@@ -39,8 +40,8 @@ describe Shop::Tags::Item do
     stub(product).id { 1 }
     @shop_product = product
     
-    stub(@shop_line_item).product { @shop_product }
-    stub(@shop_line_item).order   { @shop_order }
+    stub(@shop_line_item).item  { @shop_product }
+    stub(@shop_line_item).order { @shop_order }
     
     @shop_line_items = [ @shop_line_item, @shop_line_item, @shop_line_item ]
     stub(@shop_order).line_items  { @shop_line_items }
@@ -188,8 +189,22 @@ describe Shop::Tags::Item do
             
             @page.should render(tag).as(expected)
           end
+        end
+        
+        describe 'item attributes' do
+          before :each do
+            mock(Shop::Tags::Helpers).current_line_item(anything) { @shop_line_item }
+          end
+          it 'should render <r:name />' do
+            stub(@shop_line_item).item.stub!.name { 'name' }
+            
+            tag = %{<r:shop:cart:item:name />}
+            expected = %{name}
+            
+            @page.should render(tag).as(expected)
+          end
           it 'should render <r:weight />' do
-            stub(@shop_line_item).weight { 100 }
+            stub(@shop_line_item).item.stub!.weight { 100 }
             
             tag = %{<r:shop:cart:item:weight />}
             expected = %{100}
@@ -201,7 +216,11 @@ describe Shop::Tags::Item do
         describe '<r:shop:cart:item:price />' do
           before :each do
             mock(Shop::Tags::Helpers).current_line_item(anything) { @shop_line_item }
-            stub(@shop_line_item).price { 1234.34567890 }
+            
+            item = Object.new
+            stub(item).price { 1234.34567890 }
+            
+            stub(@shop_line_item).item { item }
           end
           
           it 'should render a standard price' do

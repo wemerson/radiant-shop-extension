@@ -7,9 +7,9 @@ class CreateForms < ActiveRecord::Migration
       :body   => <<-CONTENT
 <r:shop>
   <r:product>
-    <input type="hidden" name="shop_line_item[product_id]" value="<r:id />" />
+    <input type="hidden" name="line_item[item_id]" value="<r:id />" />
       <!-- Your Customisation Here -->
-      <p>Add <r:form:text name='shop_line_item[quantity]' /> <r:name /></p>
+      <p>Add <r:form:text name='line_item[quantity]' /> <r:name /></p>
       <!-- Your Customisation Here -->    
     <input type="submit" name="add_to_cart" id="add_to_cart_<r:id />" value="Add To Cart" />
   </r:product>

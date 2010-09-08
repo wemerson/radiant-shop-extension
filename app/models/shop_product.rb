@@ -6,7 +6,7 @@ class ShopProduct < ActiveRecord::Base
   belongs_to  :updated_by,  :class_name => 'User'  
   belongs_to  :category,    :class_name => 'ShopCategory', :foreign_key => :shop_category_id
   
-  has_many    :line_items,  :class_name => 'ShopLineItem'
+  has_many    :line_items,  :class_name => 'ShopLineItem', :as => :item
   has_many    :orders,      :class_name => 'ShopOrder', :through => :line_items
   has_many    :attachments, :class_name => 'ShopProductAttachment'
   has_many    :images,      :through => :attachments,  :uniq => true
@@ -37,7 +37,7 @@ class ShopProduct < ActiveRecord::Base
     self.category.product_layout
   end
   
-  def images_available
+  def available_images
     Image.all - self.images
   end
   
@@ -50,9 +50,9 @@ class ShopProduct < ActiveRecord::Base
     def search(search)
       unless search.blank?
         queries = []
-        queries << 'LOWER(title) LIKE (:term)'
-        queries << 'LOWER(sku) LIKE (:term)'
-        queries << 'LOWER(description) LIKE (:term)'
+        queries << 'LOWER(title)        LIKE (:term)'
+        queries << 'LOWER(sku)          LIKE (:term)'
+        queries << 'LOWER(description)  LIKE (:term)'
         
         sql = queries.join(" OR ")
         conditions = [sql, {:term => "%#{search.downcase}%" }]
@@ -64,8 +64,9 @@ class ShopProduct < ActiveRecord::Base
     end
     
     def params
-      [ :id, :name, :price, :sku, :handle, :description, :created_at, :updated_at ]
+      [ :id, :name, :price, :sku, :description, :created_at, :updated_at ]
     end
+    
   end
   
 private

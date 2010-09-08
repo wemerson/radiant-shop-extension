@@ -22,7 +22,7 @@ class ShopProductAttachment < ActiveRecord::Base
   class << self
     
     def params
-      [ :id, :title, :caption, :asset_file_name, :asset_content_type, :asset_file_size, :original_extension ]
+      [ :id, :title, :caption, :image_file_name, :image_content_type, :image_file_size ]
     end
     
   end

@@ -38,8 +38,12 @@ class ShopExtension < Radiant::Extension
       admin.page.edit.add :layout_row, 'shop_product' 
     end
     
-    # Model Includes
+    # Tags
     Page.send :include, Shop::Tags::Core, Shop::Tags::Cart, Shop::Tags::Category, Shop::Tags::Item, Shop::Tags::Product
+    
+    # Model Includes
+    Page.send :include, Shop::Models::Page
+    Image.send :include, Shop::Models::Image
     
     # Controller Includes
     ApplicationController.send :include, Shop::Controllers::ApplicationController

@@ -51,12 +51,16 @@ class Shop::LineItemsController < ApplicationController
     error   = 'Could not add Item to Cart.'
     
     attr_hash = { 
-      :include  => :product,
+      :include  => :item,
       :only     => ShopLineItem.params
     } 
     
     begin
-      @shop_line_item = find_or_create_shop_order.add!(params[:line_item][:product_id], params[:line_item][:quantity])
+      id        = params[:line_item][:item_id]
+      type      = params[:line_item][:item_type]
+      quantity  = params[:line_item][:quantity]
+      
+      @shop_line_item = find_or_create_shop_order.add!(id, quantity, type)
       
       respond_to do |format|
         format.html {
@@ -93,7 +97,10 @@ class Shop::LineItemsController < ApplicationController
     }
     
     begin
-      @shop_line_item = find_or_create_shop_order.update!(params[:line_item][:product_id], params[:line_item][:quantity])
+      id = params[:id]
+      quantity = params[:line_item][:quantity] || 1
+      
+      @shop_line_item = find_or_create_shop_order.update!(id, quantity)
       
       respond_to do |format|
         format.html {
