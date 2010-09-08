@@ -70,7 +70,7 @@ module Shop
       desc %{ outputs the total price of the current cart item }
       tag 'shop:cart:item:price' do |tag|
         attr = tag.attr.symbolize_keys
-        item = tag.locals.shop_line_item.item
+        item = tag.locals.shop_line_item
         
         number_to_currency(item.price.to_f, 
           :precision  =>(attr[:precision] || Radiant::Config['shop.price_precision']).to_i,

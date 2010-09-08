@@ -217,10 +217,7 @@ describe Shop::Tags::Item do
           before :each do
             mock(Shop::Tags::Helpers).current_line_item(anything) { @shop_line_item }
             
-            item = Object.new
-            stub(item).price { 1234.34567890 }
-            
-            stub(@shop_line_item).item { item }
+            stub(@shop_line_item).price { 1234.34567890 }
           end
           
           it 'should render a standard price' do

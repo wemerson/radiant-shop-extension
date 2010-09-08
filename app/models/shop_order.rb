@@ -61,13 +61,13 @@ class ShopOrder < ActiveRecord::Base
   def price
     price = 0
     self.line_items.map { |l| price += l.item.price }
-    price
+    price * self.quantity
   end
   
   def weight
     weight = 0
     self.line_items.map { |l| weight += l.item.weight }
-    weight
+    weight * self.quantity
   end
   
   class << self
