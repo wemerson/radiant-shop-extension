@@ -2,8 +2,8 @@ class CreateLayouts < ActiveRecord::Migration
   def self.up
     # Will only create a layout if it doesn't exist
     Layout.create({
-      :name => 'Application',
-      :content => <<-CONTENT
+      :name       => 'Application',
+      :content    => <<-CONTENT
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
   <head>
@@ -17,22 +17,23 @@ CONTENT
     })
     
     Layout.create({
-      :name => Radiant::Config['shop.product_layout'],
-      :content => <<-CONTENT
+      :name       => Radiant::Config['shop.product_layout'],
+      :content    => <<-CONTENT
 <r:inside_layout name='Application'>
   <r:shop:product>
-    <div id="shop_product_<r:handle />" class="shop_product">
+    <div id="shop_product_<r:sku />" class="shop_product">
       <h2><r:title /></h2>
       <h3><r:price /></h3>
-      <r:form name='AddToCart' />
-      <div id="shop_product_description">
-        <h3>Description</h3>
-        <div class="body"><r:description /></div>
-      </div>
+      <dl id="shop_product_details">
+        <dd>Description</dt>
+        <dd class="body"><r:description /></dd>
+        <dd>Add To Cart</dt>
+        <dd class="add"><r:form name="AddCartItem" /></dd>
+      </dl>
       <r:if_images>
         <ul id="shop_product_images">
           <r:images:each>
-            <li class="shop_product_image" id="shop_product_image_<r:handle />">
+            <li class="shop_product_image" id="shop_product_image_<r:sku />">
               <a href="<r:image style='normal' />" title="<r:title />"">  
                 <img id="shop_product_image_<r:position />" class="shop_product_image" src="<r:image style='thumbnail'/>" alt="<r:title />" />
               </a>
@@ -77,6 +78,35 @@ CONTENT
       </r:unless_products>
     </div>
   </r:shop:category>
+</r:inside_layout>
+CONTENT
+    })
+    
+    Layout.create({
+      :name => Radiant::Config['shop.order_layout'],
+      :content => <<-CONTENT
+<r:inside_layout name='Application'>
+  <r:shop:cart>
+    <r:if_items>
+      <ol class="items">
+        <r:items:each>
+          <r:item>
+            <li class="item" id="item_<r:id />">
+              <span class="quantity"><r:quantity /></span>
+              <span class="name"><r:name /></name></span>
+              <span class="update"><r:form name="UpdateCartItem" /></span>
+              <span class="price"><r:price /></span>
+              <span class="remove"><r:remove /></span>
+            </li>
+          </r:item>
+        </r:items:each>
+      </ol>
+      <span class="total"><r:price /></span>
+    </r:if_items>
+    <r:unless_items>
+      <p>Your cart is currently empty</p>
+    </r:unless_items>
+  </r:shop:cart>
 </r:inside_layout>
 CONTENT
     })

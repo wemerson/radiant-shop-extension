@@ -20,7 +20,7 @@ describe Shop::OrdersController do
     it 'should assign the title' do
       get :show
       
-      assigns(:title).should === @shop_order.id
+      assigns(:title).should === 'Your Cart'
     end
     
     context 'html' do

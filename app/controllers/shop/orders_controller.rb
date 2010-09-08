@@ -16,7 +16,7 @@ class Shop::OrdersController < ApplicationController
     attr_hash = ShopOrder.params
     
     @shop_order = find_or_create_shop_order
-    @title = @shop_order.id
+    @title = "Your Cart"
     
     respond_to do |format|
       format.html   { render :show }

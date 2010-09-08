@@ -15,7 +15,7 @@ module Shop
             if request.session[:shop_order]
               shop_order = ShopOrder.find(request.session[:shop_order])
             end
-            
+                        
             shop_order
           end
           

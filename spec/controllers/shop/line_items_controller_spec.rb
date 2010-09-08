@@ -157,21 +157,21 @@ describe Shop::LineItemsController do
       end
       
       it 'should redirect back' do
-        put :update, :id => @line_item.id, :line_item => {}
+        put :update, :id => 'x', :line_item => { :id => @line_item.id }
         
         flash.now[:notice].should === 'Item updated successfully.'
         response.should redirect_to('/back')
       end
       
       it 'should list all items in js' do
-        put :update, :id => @line_item.id, :line_item => {}, :format => 'js'
+        put :update, :id => 'x', :line_item => { :id => @line_item.id }, :format => 'js'
         
         response.should be_success
         response.should render_template('/shop/line_items/_line_item')
       end
       
       it 'should list all items in json' do
-        put :update, :id => @line_item.id, :line_item => {}, :format => 'json'
+        put :update, :id => 'x', :line_item => { :id => @line_item.id }, :format => 'json'
         
         response.should be_success
         response.body.should === @line_item.to_json(@attr_hash)
@@ -184,19 +184,19 @@ describe Shop::LineItemsController do
       end
       
       it 'HTML should list all items' do
-        put :update, :id => @line_item.id, :line_item => {}
+        put :update, :id => 'x', :line_item => { :id => @line_item.id }
         flash.now[:error].should === 'Could not update Item.'
         response.should redirect_to('/back')
       end
       
       it 'JS should list all items' do
-        put :update, :id => @line_item.id, :line_item => {}, :format => 'js'
+        put :update, :id => 'x', :line_item => { :id => @line_item.id }, :format => 'js'
         response.should_not be_success
         response.body.should === 'Could not update Item.'
       end
       
       it 'JSON should list all items' do
-        put :update, :id => @line_item.id, :line_item => {}, :format => 'json'
+        put :update, :id => 'x', :line_item => { :id => @line_item.id }, :format => 'json'
         response.should_not be_success
         JSON.parse(response.body)['error'].should === 'Could not update Item.'
       end

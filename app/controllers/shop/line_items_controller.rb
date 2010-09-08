@@ -70,7 +70,9 @@ class Shop::LineItemsController < ApplicationController
         format.js   { render :partial => '/shop/line_items/line_item', :locals => { :line_item => @shop_line_item } }
         format.json { render :json    => @shop_line_item.to_json(attr_hash)  }
       end
-    rescue
+    rescue Exception => e
+      raise e.inspect if RAILS_ENV['development']
+            
       respond_to do |format|
         format.html {
           flash[:error] = error
@@ -97,7 +99,8 @@ class Shop::LineItemsController < ApplicationController
     }
     
     begin
-      id = params[:id]
+      id = params[:line_item][:id]
+      
       quantity = params[:line_item][:quantity] || 1
       
       @shop_line_item = find_or_create_shop_order.update!(id, quantity)
@@ -110,7 +113,9 @@ class Shop::LineItemsController < ApplicationController
         format.js   { render :partial => '/shop/line_items/line_item', :locals => { :line_item => @shop_line_item } }
         format.json { render :json    => @shop_line_item.to_json(attr_hash)  }
       end
-    rescue
+    rescue Exception => e
+      raise e.inspect if RAILS_ENV['development']
+      
       respond_to do |format|
         format.html {
           flash[:error] = error
@@ -143,7 +148,9 @@ class Shop::LineItemsController < ApplicationController
         format.js   { render  :text => notice, :status => :ok }
         format.json { render  :json => { :notice => notice }, :status => :ok }
       end
-    rescue
+    rescue Exception => e
+      raise e.inspect if RAILS_ENV['development']
+      
       respond_to do |format|
         format.html {
           flash[:error] = error

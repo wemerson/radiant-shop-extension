@@ -31,6 +31,18 @@ module Shop
         end
       end
       
+      # Output a link to cart
+      desc %{ Output a link to the cart }
+      tag 'shop:cart:link' do |tag|
+        options = tag.attr.dup
+        attributes = options.inject('') { |s, (k, v)| s << %{#{k.downcase}="#{v}" } }.strip
+        attributes = " #{attributes}" unless attributes.empty?
+        
+        text = tag.double? ? tag.expand : 'Your Cart'
+        
+        %{<a href="/#{Radiant::Config['shop.url_prefix']}/cart"#{attributes}>#{text}</a>}
+      end
+      
       # Display the total price of the items in the shopping basket.
       desc %{ Output the total price of the items in the shopping basket. }
       tag 'shop:cart:price' do |tag|
