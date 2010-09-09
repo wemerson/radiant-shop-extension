@@ -2,7 +2,6 @@ class ShopOrder < ActiveRecord::Base
   
   has_many  :payments,    :class_name => 'ShopPayment',   :dependent => :destroy
   has_many  :line_items,  :class_name => 'ShopLineItem',  :dependent => :destroy
-  has_many  :items,       :through => :line_items
   
   has_many  :addressables,:class_name => 'ShopAddressable', :as => :addresser
   has_many  :billings,    :through => :addressables,  :source => :address, :source_type => 'ShopAddressBilling',  :uniq => true

@@ -5,7 +5,7 @@ class Admin::Shop::ProductsController < Admin::ResourceController
   before_filter :initialize_meta_buttons_and_parts
   before_filter :assets
   before_filter :index_assets,  :only => :index
-  before_filter :edit_assets,   :only => :edit
+  before_filter :edit_assets,   :only => [ :edit, :update ]
   
   # GET /admin/shop/products
   # GET /admin/shop/products.js
@@ -79,8 +79,10 @@ class Admin::Shop::ProductsController < Admin::ResourceController
       :only     => ShopProduct.params
     }
     
+    @shop_product = ShopProduct.new(params[:shop_product])
+    
     begin
-      @shop_product = ShopProduct.create!(params[:shop_product])
+      @shop_product.save!
       
       respond_to do |format|
         format.html { 

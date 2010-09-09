@@ -39,7 +39,7 @@ class Shop::CategoriesController < ApplicationController
     }
     
     @shop_category = ShopCategory.find_by_handle(params[:handle])
-    
+
     @title = @shop_category.name
     @radiant_layout = @shop_category.layout
     

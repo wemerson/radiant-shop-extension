@@ -66,6 +66,18 @@ module Shop
         end        
       end
       
+      desc %{ generates a link to the items generated page }
+      tag 'shop:cart:item:link' do |tag|
+        item = tag.locals.shop_line_item.item
+        options = tag.attr.dup
+        attributes = options.inject('') { |s, (k, v)| s << %{#{k.downcase}="#{v}" } }.strip
+        attributes = " #{attributes}" unless attributes.empty?
+        
+        text = tag.double? ? tag.expand : item.name
+        
+        %{<a href="#{item.slug}"#{attributes}>#{text}</a>}
+      end
+      
       # Output the price of the line item
       desc %{ outputs the total price of the current cart item }
       tag 'shop:cart:item:price' do |tag|

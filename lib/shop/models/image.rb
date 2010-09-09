@@ -4,7 +4,8 @@ module Shop
       
       def self.included(base)
         base.class_eval do
-          has_many :shop_product_images, :class_name => 'ShopProductImage', :order => "position ASC", :dependent => :destroy
+          has_many :shop_product_attachments, :dependent => :destroy
+          has_many :shop_products,            :through => :shop_product_attachments, :source => :product
         end
       end
       

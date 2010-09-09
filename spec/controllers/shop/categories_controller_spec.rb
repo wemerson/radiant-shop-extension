@@ -21,7 +21,7 @@ describe Shop::CategoriesController do
     it 'should expose category' do
       mock(@shop_category).layout
       mock(@shop_category).name
-      mock(ShopCategory).find_by_handle(@shop_category.handle) { @shop_category }
+      mock(ShopCategory).find(:first, :conditions => { :handle => @shop_category.handle}) { @shop_category }
       
       get :show, :handle => @shop_category.handle
       
@@ -30,7 +30,7 @@ describe Shop::CategoriesController do
     end
     
     it 'should return 404 if product empty' do
-      mock(ShopCategory).find_by_handle(@shop_category.handle) { raise ActiveRecord::RecordNotFound }
+      mock(ShopCategory).find(:first, :conditions => { :handle => @shop_category.handle}) { raise ActiveRecord::RecordNotFound }
       get :show, :handle => @shop_category.handle
       
       response.should render_template('site/not_found')

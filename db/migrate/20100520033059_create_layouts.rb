@@ -10,6 +10,7 @@ class CreateLayouts < ActiveRecord::Migration
     <title><r:title /></title>
   </head>
   <body>
+    <r:snippet name='CartOverview' />
     <r:content_for_layout />
   </body>
 </html>
@@ -93,7 +94,7 @@ CONTENT
           <r:item>
             <li class="item" id="item_<r:id />">
               <span class="quantity"><r:quantity /></span>
-              <span class="name"><r:name /></name></span>
+              <span class="name"><r:link><r:name /></r:link></name></span>
               <span class="update"><r:form name="UpdateCartItem" /></span>
               <span class="price"><r:price /></span>
               <span class="remove"><r:remove /></span>

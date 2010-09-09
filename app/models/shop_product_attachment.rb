@@ -1,6 +1,6 @@
 class ShopProductAttachment < ActiveRecord::Base
   
-  default_scope :order => 'position ASC'
+  default_scope :order => 'shop_product_attachments.position ASC'
   
   belongs_to    :product,   :class_name => 'ShopProduct', :foreign_key => :shop_product_id
   belongs_to    :image

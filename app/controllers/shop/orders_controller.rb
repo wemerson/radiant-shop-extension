@@ -8,9 +8,9 @@ class Shop::OrdersController < ApplicationController
     render :template => 'site/not_found', :status => :unprocessable_entity
   end  
   
-  # GET /cart
-  # GET /cart.js
-  # GET /cart.json                                                AJAX and HTML
+  # GET /shop/cart
+  # GET /shop/cart.js
+  # GET /shop/cart.json                                           AJAX and HTML
   #----------------------------------------------------------------------------
   def show
     attr_hash = ShopOrder.params

@@ -18,6 +18,7 @@ describe Shop::Tags::Item do
       'shop:cart:item:id',
       'shop:cart:item:quantity',
       'shop:cart:item:name',
+      'shop:cart:item:link',
       'shop:cart:item:price',
       'shop:cart:item:weight',
       'shop:cart:item:remove'].sort
@@ -213,6 +214,43 @@ describe Shop::Tags::Item do
           end
         end
         
+        describe '<r:shop:cart:item:link />' do
+          before :each do
+            mock(Shop::Tags::Helpers).current_line_item(anything) { @shop_line_item }
+          end
+
+          context 'standalone' do
+            before :each do
+              item = Object.new
+              stub(@shop_line_item).item { item }
+              stub(item).slug { 'slug' }
+              stub(item).name { 'name' }
+            end
+            it 'should render an anchor element' do
+              tag = %{<r:shop:cart:item:link />}
+              expected = %{<a href="slug">name</a>}
+              pages(:home).should render(tag).as(expected)
+            end
+            it 'should assign attributes' do
+              tag = %{<r:shop:cart:item:link title="title" data-title="data-title"/>}
+              expected = %{<a href="slug" data-title="data-title" title="title">name</a>}
+              pages(:home).should render(tag).as(expected)          
+            end
+          end
+
+          context 'wrapped' do
+            it 'should render an anchor element' do
+              item = Object.new
+              stub(@shop_line_item).item { item }
+              stub(item).slug { 'slug' }
+
+              tag = %{<r:shop:cart:item:link>title</r:shop:cart:item:link>}
+              expected = %{<a href="slug">title</a>}
+              pages(:home).should render(tag).as(expected)
+            end
+          end
+        end
+        
         describe '<r:shop:cart:item:price />' do
           before :each do
             mock(Shop::Tags::Helpers).current_line_item(anything) { @shop_line_item }
@@ -250,12 +288,12 @@ describe Shop::Tags::Item do
           context 'standalone' do
             it 'should render an anchor element' do
               tag = %{<r:shop:cart:item:remove />}
-              expected = %{<a href="/#{Radiant::Config['shop.url_prefix']}/cart/items/#{@shop_product.id}/destroy">remove</a>}
+              expected = %{<a href="/#{Radiant::Config['shop.url_prefix']}/cart/items/#{@shop_line_item.id}/destroy">remove</a>}
               pages(:home).should render(tag).as(expected)
             end
             it 'should assign attributes' do
               tag = %{<r:shop:cart:item:remove title="title" data-title="data-title"/>}
-              expected = %{<a href="/#{Radiant::Config['shop.url_prefix']}/cart/items/#{@shop_product.id}/destroy" data-title="data-title" title="title">remove</a>}
+              expected = %{<a href="/#{Radiant::Config['shop.url_prefix']}/cart/items/#{@shop_line_item.id}/destroy" data-title="data-title" title="title">remove</a>}
               pages(:home).should render(tag).as(expected)
             end
           end
@@ -263,7 +301,7 @@ describe Shop::Tags::Item do
           context 'wrapped' do
             it 'should render an anchor element' do
               tag = %{<r:shop:cart:item:remove>get rid of me</r:shop:cart:item:remove>}
-              expected = %{<a href="/#{Radiant::Config['shop.url_prefix']}/cart/items/#{@shop_product.id}/destroy">get rid of me</a>}
+              expected = %{<a href="/#{Radiant::Config['shop.url_prefix']}/cart/items/#{@shop_line_item.id}/destroy">get rid of me</a>}
               pages(:home).should render(tag).as(expected)
             end
           end

@@ -182,7 +182,9 @@ describe Admin::Shop::ProductsController do
   describe '#create' do
     context 'product could not be created' do
       before :each do
-        mock(ShopProduct).create!({}) { raise ActiveRecord::RecordNotSaved }
+        mock(ShopProduct).new()   { @shop_product } # Resource Helper
+        mock(ShopProduct).new({}) { @shop_product }
+        stub(@shop_product).save! { raise ActiveRecord::RecordNotSaved }
       end
       
       context 'html' do
@@ -215,7 +217,9 @@ describe Admin::Shop::ProductsController do
 
     context 'product successfully created' do
       before :each do
-        mock(ShopProduct).create!({}) { @shop_product }
+        mock(ShopProduct).new()   { @shop_product } # Resource Helper
+        mock(ShopProduct).new({}) { @shop_product }
+        stub(@shop_product).save! { true }
       end
       
       context 'html' do

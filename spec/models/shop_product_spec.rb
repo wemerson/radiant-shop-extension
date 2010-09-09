@@ -1,6 +1,7 @@
 require 'spec/spec_helper'
 
 describe ShopProduct do
+  
   dataset :shop_products
   
   before(:each) do
@@ -20,10 +21,6 @@ describe ShopProduct do
     
     it 'should have an sku' do
       @product.sku.should == 'soft_bread'
-    end
-    
-    it 'should have the same handle as its sku' do
-      @product.sku.should == @product.handle
     end
     
     it 'should have a position' do
@@ -93,15 +90,6 @@ describe ShopProduct do
       @product.images.length.should     === @product.attachments.length
     end
     
-  end
-  
-  describe '#handle' do
-    it 'should return the sku' do
-      product     = ShopProduct.new
-      product.sku = 'success'
-      
-      product.handle.should === 'success'
-    end
   end
   
   describe '#slug' do

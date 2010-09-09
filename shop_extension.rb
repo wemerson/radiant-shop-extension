@@ -49,9 +49,9 @@ class ShopExtension < Radiant::Extension
     ApplicationController.send :include, Shop::Controllers::ApplicationController
     SiteController.send :include, Shop::Controllers::SiteController
     
-    # Tabs
-    tab 'Shop' do
-      add_item 'Products', '/admin/shop' #will redirect to shop_products
+    # Tabs3
+    tab "Shop" do
+      add_item "Products", "/admin/shop"
     end
     
     # Ensure there is always a shop prefix, otherwise we'll lose admin and pages

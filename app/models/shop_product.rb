@@ -1,12 +1,13 @@
 class ShopProduct < ActiveRecord::Base
   
-  default_scope             :order => 'position ASC'
+  default_scope             :order => 'shop_products.position ASC'
   
   belongs_to  :created_by,  :class_name => 'User'
-  belongs_to  :updated_by,  :class_name => 'User'  
+  belongs_to  :updated_by,  :class_name => 'User'
   belongs_to  :category,    :class_name => 'ShopCategory', :foreign_key => :shop_category_id
   
   has_many    :line_items,  :class_name => 'ShopLineItem', :as => :item
+  has_many    :packings,    :class_name => 'ShopPackings'
   has_many    :orders,      :class_name => 'ShopOrder', :through => :line_items
   has_many    :attachments, :class_name => 'ShopProductAttachment'
   has_many    :images,      :through => :attachments,  :uniq => true
@@ -19,18 +20,10 @@ class ShopProduct < ActiveRecord::Base
   
   validates_numericality_of :price, :greater_than => 0.00, :allow_nil => true, :precisions => 2
   
-  def self.find_by_handle(handle)
-    first(:conditions => ['LOWER(sku) = ?', handle])
-  end
-  
   acts_as_list              :scope =>  :shop_category
   
-  def handle
-    self.sku
-  end
-  
   def slug
-    "/#{self.slug_prefix}/#{self.category.handle}/#{self.handle}"
+    "/#{self.slug_prefix}/#{self.category.handle}/#{self.sku}"
   end
   
   def layout
