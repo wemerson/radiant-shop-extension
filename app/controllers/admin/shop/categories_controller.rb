@@ -54,7 +54,7 @@ class Admin::Shop::CategoriesController < Admin::ResourceController
       @shop_categories = CGI::parse(params[:categories])["shop_categories[]"]
 
       @shop_categories.each_with_index do |id, index|
-        ShopCategory.find(id).update_attribute!('position', index+1)
+        ShopCategory.find(id).update_attribute(:position, index+1)
       end
       
       respond_to do |format|

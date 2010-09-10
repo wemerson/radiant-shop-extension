@@ -47,7 +47,7 @@ class Admin::Shop::Products::ImagesController < Admin::ResourceController
       
       @images = CGI::parse(params[:attachments])['product_attachments[]']
       @images.each_with_index do |id, index|
-        @shop_product.attachments.find(id).update_attribute!('position', index+1)
+        @shop_product.attachments.find(id).update_attribute(:position, index+1)
       end
       
       respond_to do |format|
