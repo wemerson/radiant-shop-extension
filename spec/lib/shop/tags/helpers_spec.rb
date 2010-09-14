@@ -19,8 +19,8 @@ describe Shop::Tags::Helpers do
     stub(@tag).locals { @locals }
     
     category = Object.new
-    @shop_category = category
-    @shop_categories = [ @shop_category, @shop_category, @shop_category ]
+    @shop_category    = category
+    @shop_categories  = [ @shop_category, @shop_category, @shop_category ]
     
     product = Object.new
     @shop_product   = product
@@ -30,8 +30,8 @@ describe Shop::Tags::Helpers do
     @shop_order = order
     
     item = Object.new
-    @shop_line_item = item
-    @shop_line_items = [ @shop_line_item, @shop_line_item, @shop_line_item ]
+    @shop_line_item   = item
+    @shop_line_items  = [ @shop_line_item, @shop_line_item, @shop_line_item ]
     
     stub(@shop_product).category  { @shop_category }
     stub(@shop_category).products { @shop_products }

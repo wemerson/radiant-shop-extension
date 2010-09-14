@@ -3,7 +3,7 @@ class ShopLineItem < ActiveRecord::Base
   belongs_to :order,      :class_name => 'ShopOrder', :foreign_key => :shop_order_id
   belongs_to :item,       :polymorphic => true
   
-  validates_uniqueness_of :item_id, :scope => :shop_order_id
+  validates_uniqueness_of :item_id, :scope => [ :shop_order_id, :item_type ]
   
   before_validation       :adjust_quantity
   

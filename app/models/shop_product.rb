@@ -7,7 +7,6 @@ class ShopProduct < ActiveRecord::Base
   belongs_to  :category,    :class_name => 'ShopCategory', :foreign_key => :shop_category_id
   
   has_many    :line_items,  :class_name => 'ShopLineItem', :as => :item
-  has_many    :packings,    :class_name => 'ShopPackings'
   has_many    :orders,      :class_name => 'ShopOrder', :through => :line_items
   has_many    :attachments, :class_name => 'ShopProductAttachment'
   has_many    :images,      :through => :attachments,  :uniq => true

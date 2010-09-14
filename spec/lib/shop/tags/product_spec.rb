@@ -164,7 +164,7 @@ describe Shop::Tags::Product do
       end
     end
     
-    describe '<r:description />' do
+    describe '<r:shop:product:description />' do
       it 'should render a textile filtered result' do
         mock(Shop::Tags::Helpers).current_product(anything) { @shop_product }
         stub(@shop_product).description { '*bold*' }

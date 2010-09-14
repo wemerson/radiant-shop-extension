@@ -146,7 +146,7 @@ describe Shop::Tags::Item do
         end
       end
     end
-      
+    
     context 'a single item' do
       describe '<r:shop:cart:item>' do
         context 'success' do
@@ -218,7 +218,7 @@ describe Shop::Tags::Item do
           before :each do
             mock(Shop::Tags::Helpers).current_line_item(anything) { @shop_line_item }
           end
-
+          
           context 'standalone' do
             before :each do
               item = Object.new
@@ -237,13 +237,13 @@ describe Shop::Tags::Item do
               pages(:home).should render(tag).as(expected)          
             end
           end
-
+          
           context 'wrapped' do
             it 'should render an anchor element' do
               item = Object.new
               stub(@shop_line_item).item { item }
               stub(item).slug { 'slug' }
-
+              
               tag = %{<r:shop:cart:item:link>title</r:shop:cart:item:link>}
               expected = %{<a href="slug">title</a>}
               pages(:home).should render(tag).as(expected)
@@ -297,7 +297,7 @@ describe Shop::Tags::Item do
               pages(:home).should render(tag).as(expected)
             end
           end
-
+          
           context 'wrapped' do
             it 'should render an anchor element' do
               tag = %{<r:shop:cart:item:remove>get rid of me</r:shop:cart:item:remove>}
