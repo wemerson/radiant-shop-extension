@@ -4,8 +4,8 @@
     - render_region :product do |region|
       - region.product_name do
         %a{ :href => edit_admin_shop_product_path(product), :name => product.name}
-          - unless product.images.empty?
-            %img{:src => product.images.first.url(:preview), :class => 'icon'}
+          - unless product.attachments.empty?
+            %img{:src => product.attachments.first.image.url(:preview), :class => 'icon'}
         %span.name.attribute= link_to product.name, edit_admin_shop_product_path(product)
         %span.sku.attribute= product.sku
       - region.product_modify do

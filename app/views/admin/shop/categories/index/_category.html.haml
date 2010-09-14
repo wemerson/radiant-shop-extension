@@ -13,4 +13,4 @@
   - render_region :category_products do |region|
     - region.category_products do
       %ul.products{ :id => "shop_category_#{category.id}_products", :'data-id' => category.id }
-        = render :partial => '/admin/shop/products/product', :collection => category.products
+        = render :partial => '/admin/shop/products/index/product', :collection => category.products

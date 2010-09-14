@@ -1,5 +1,5 @@
 - unless @shop_product.new_record?
   %ul#product_attachments
-    = render :partial => '/admin/shop/products/images/image', :collection => @shop_product.attachments
+    = render :partial => '/admin/shop/products/edit/images/image', :collection => @shop_product.attachments
 - else
   %p You can add images once you've created the product

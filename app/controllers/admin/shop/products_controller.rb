@@ -24,7 +24,7 @@ class Admin::Shop::ProductsController < Admin::ResourceController
     
     respond_to do |format|
       format.html { render :index }
-      format.js   { render :partial => '/admin/shop/products/product', :collection => @shop_products }
+      format.js   { render :partial => '/admin/shop/products/edit/product', :collection => @shop_products }
       format.json { render :json    => @shop_products.to_json(attr_hash) }
     end
   end
@@ -92,7 +92,7 @@ class Admin::Shop::ProductsController < Admin::ResourceController
           redirect_to edit_admin_shop_product_path(@shop_product) if params[:continue]
           redirect_to admin_shop_products_path unless params[:continue]
         }
-        format.js   { render  :partial  => '/admin/shop/products/product', :locals => { :excerpt => @shop_product } }
+        format.js   { render  :partial  => '/admin/shop/products/edit/product', :locals => { :excerpt => @shop_product } }
         format.json { render  :json     => @shop_product.to_json(attr_hash) }
       end
     rescue
@@ -130,7 +130,7 @@ class Admin::Shop::ProductsController < Admin::ResourceController
           redirect_to edit_admin_shop_product_path(@shop_product) if params[:continue]
           redirect_to admin_shop_products_path unless params[:continue]
         }
-        format.js   { render  :partial  => '/admin/shop/products/product', :locals => { :product => @shop_product } }
+        format.js   { render  :partial  => '/admin/shop/products/edit/product', :locals => { :product => @shop_product } }
         format.json { render  :json     => @shop_product.to_json(attr_hash) }
       end
     rescue

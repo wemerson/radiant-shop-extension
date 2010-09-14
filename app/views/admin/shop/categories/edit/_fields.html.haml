@@ -7,7 +7,7 @@
       = fields.text_field :name, :class => 'textbox', :maxlenth => 255
   
   - form.edit_extended_metadata do
-    = render :partial => 'meta', :locals => { :fields => fields }
+    = render :partial => 'admin/shop/categories/edit/meta', :locals => { :fields => fields }
     
   - form.edit_content do 
     #tab_control
@@ -15,7 +15,7 @@
         #tab_toolbar
       #pages.pages
         = hidden_field_tag 'page_part_index_field' #important
-        = render :partial => 'part', :collection => @parts
+        = render :partial => 'admin/shop/categories/edit/part', :collection => @parts
     
 - render_region :form_bottom do |form_bottom|
   - form_bottom.edit_buttons do

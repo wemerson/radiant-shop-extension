@@ -4,11 +4,11 @@
   - main.edit_header do
     %h1
       = t('edit_product')
-      = render 'admin/shop/products/head'
+      = render 'admin/shop/products/edit/head'
   - main.edit_form do
     - form_for :shop_product, @shop_product, :url => admin_shop_product_path(@shop_product), :html => {:method => :put, :multipart => true, :id => 'edit_shop_product', 'data-onsubmit_status'=>"Saving Changes&#8230;"} do |f|
       = f.hidden_field :id
-      = render :partial => 'fields', :object => f
+      = render :partial => 'admin/shop/products/edit/fields', :object => f
   - main.edit_popups do
     #popups
-      = render 'popup'
+      = render 'admin/shop/products/edit/popup'

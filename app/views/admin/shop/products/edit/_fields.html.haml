@@ -12,7 +12,7 @@
       = fields.text_field :price, :class => 'textbox', :maxlenth => 255, :value => number_to_currency(@shop_product.price, :unit => '', :delimiter => '') 
   
   - form.edit_extended_metadata do
-    = render :partial => '/admin/shop/products/meta', :locals => { :fields => fields }
+    = render :partial => '/admin/shop/products/edit/meta', :locals => { :fields => fields }
     
   - form.edit_content do 
     #tab_control
@@ -20,7 +20,7 @@
         #tab_toolbar
       #pages.pages
         = hidden_field_tag 'page_part_index_field' #important
-        = render :partial => 'part', :collection => @parts
+        = render :partial => '/admin/shop/products/edit/part', :collection => @parts
     
 - render_region :form_bottom do |form_bottom|
   - form_bottom.edit_buttons do

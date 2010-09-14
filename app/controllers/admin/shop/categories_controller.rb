@@ -21,7 +21,7 @@ class Admin::Shop::CategoriesController < Admin::ResourceController
     
     respond_to do |format|
       format.html { redirect_to admin_shop_products_path }
-      format.js   { render :partial => '/admin/shop/categories/category', :collection => @shop_categories }
+      format.js   { render :partial => '/admin/shop/categories/edit/category', :collection => @shop_categories }
       format.json { render :json    => @shop_categories.to_json(attr_hash) }
     end
   end
@@ -39,8 +39,8 @@ class Admin::Shop::CategoriesController < Admin::ResourceController
     }
     
     respond_to do |format|
-      format.html { render :template  => '/admin/shop/products/index' }
-      format.js   { render :partial   => '/admin/shop/products/product', :collection => @shop_products }
+      format.html { render :template  => '/admin/shop/products/edit/index' }
+      format.js   { render :partial   => '/admin/shop/products/edit/product', :collection => @shop_products }
       format.json { render :json      => @shop_products.to_json(attr_hash) }
     end
   end
@@ -99,7 +99,7 @@ class Admin::Shop::CategoriesController < Admin::ResourceController
           redirect_to edit_admin_shop_category_path(@shop_category) if params[:continue]
           redirect_to admin_shop_categories_path unless params[:continue]
         }
-        format.js   { render :partial => '/admin/shop/categories/category', :locals => { :product => @shop_category } }
+        format.js   { render :partial => '/admin/shop/categories/edit/category', :locals => { :product => @shop_category } }
         format.json { render :json    => @shop_category.to_json(attr_hash) }
       end
     rescue
@@ -132,7 +132,7 @@ class Admin::Shop::CategoriesController < Admin::ResourceController
           redirect_to edit_admin_shop_category_path(@shop_category) if params[:continue]
           redirect_to admin_shop_categories_path unless params[:continue]
         }
-        format.js   { render :partial => '/admin/shop/categories/category', :locals => { :product => @shop_category } }
+        format.js   { render :partial => '/admin/shop/categories/edit/category', :locals => { :product => @shop_category } }
         format.json { render :json    => @shop_category.to_json(attr_hash) }
       end
     rescue
