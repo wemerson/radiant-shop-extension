@@ -5,12 +5,12 @@ document.observe("dom:loaded", function() {
   shop.ProductInitialize()
   
   Event.addBehavior({
-    '#image_browse_popup_close:click' : function(e) { shop.ImageClose() },
+    '#images_browse_popup_close:click' : function(e) { shop.ImageClose() },
     '#image_form_popup_close:click' : function(e) { shop.ImageClose() },
     
     '#image_form:submit' : function(e) { shop.ImageSubmit() },
     
-    '#image_browse_popup .image:click' : function(e) { shop.ProductImageCreate($(this)) },
+    '#images_browse_popup .image:click' : function(e) { shop.ProductImageCreate($(this)) },
     '#product_attachments .delete:click' : function(e) { shop.ProductImageDestroy($(this).up('.image')) }
   })
 })
@@ -55,7 +55,7 @@ var Shop = Class.create({
       method: 'post',
       parameters: {
         'product_id' : $('shop_product_id').value,
-        'image[image_id]' : element.getAttribute('data-image_id')
+        'attachment[image_id]' : element.getAttribute('data-image_id')
       },
       onSuccess: function(data) {
         // Insert item into list, re-call events
@@ -94,7 +94,7 @@ var Shop = Class.create({
   
   ImageClose: function() {
     Element.closePopup('image_form_popup')
-    Element.closePopup('image_browse_popup')
+    Element.closePopup('images_browse_popup')
     
     $$('#image_browse_form .clearable').each(function(input) {
       input.value = ''

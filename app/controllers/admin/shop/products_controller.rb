@@ -2,10 +2,12 @@ class Admin::Shop::ProductsController < Admin::ResourceController
   
   model_class ShopProduct
   
-  before_filter :initialize_meta_buttons_and_parts
-  before_filter :assets
-  before_filter :index_assets,  :only => :index
-  before_filter :edit_assets,   :only => [ :edit, :update ]
+  before_filter :config_global
+  before_filter :config_new,    :only => [ :new, :create ]
+  before_filter :config_edit,   :only => [ :edit, :update ]
+  before_filter :assets_global
+  before_filter :assets_index,  :only => :index
+  before_filter :assets_edit,   :only => [ :edit, :update ]
   
   # GET /admin/shop/products
   # GET /admin/shop/products.js
@@ -177,32 +179,35 @@ class Admin::Shop::ProductsController < Admin::ResourceController
   
 private
   
-  def initialize_meta_buttons_and_parts
-    @meta ||= []
-    @meta << 'sku'
-    @meta << 'category'
-    
-    @buttons_partials ||= []
-    
-    @parts ||= []
-    @parts << { :title => 'images' }
+  def config_global
+    @meta     ||= []
+    @buttons  ||= []
+    @parts    ||= []
+  end
+  
+  def config_new
     @parts << { :title => 'description' }
   end
   
-  def assets
-    include_stylesheet 'admin/extensions/shop/products/forms'
+  def config_edit
+    @parts << { :title => 'description' }
+    @parts << { :title => 'images' }
   end
   
-  def index_assets
-    include_javascript 'admin/dragdrop'
-    include_javascript 'admin/extensions/shop/products/product_index'
-    include_stylesheet 'admin/extensions/shop/products/product_index'
+  def assets_global
+    include_stylesheet 'admin/extensions/shop/forms'
   end
   
-  def edit_assets
+  def assets_index
     include_javascript 'admin/dragdrop'
-    include_stylesheet 'admin/extensions/shop/products/product_edit'
-    include_javascript 'admin/extensions/shop/products/product_edit'
+    include_javascript 'admin/extensions/shop/products/index'
+    include_stylesheet 'admin/extensions/shop/products/index'
+  end
+  
+  def assets_edit
+    include_javascript 'admin/dragdrop'
+    include_stylesheet 'admin/extensions/shop/products/edit'
+    include_javascript 'admin/extensions/shop/products/edit'
   end
   
 end

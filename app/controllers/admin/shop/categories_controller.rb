@@ -2,8 +2,11 @@ class Admin::Shop::CategoriesController < Admin::ResourceController
   
   model_class ShopCategory
   
-  before_filter :initialize_meta_buttons_and_parts
-    
+  before_filter :config_global
+  before_filter :config_new,    :only => [ :new, :create ]
+  before_filter :config_edit,   :only => [ :edit, :update ]
+  before_filter :assets_global
+  
   # GET /admin/shop/products/categories
   # GET /admin/shop/products/categories.js
   # GET /admin/shop/products/categories.json                      AJAX and HTML
@@ -177,14 +180,26 @@ class Admin::Shop::CategoriesController < Admin::ResourceController
   
 private
 
-  def initialize_meta_buttons_and_parts
-    @meta ||= []
-    @meta << { :field => 'handle', :type => 'text_field', :args => [{:class => 'textbox', :maxlength => 160 }]}
-    
-    @buttons_partials ||= []
-    
-    @parts ||= []
+  def config_global
+    @meta     ||= []
+    @buttons  ||= []
+    @parts    ||= []
+  end
+
+  def config_new
+    @meta  << 'layouts'
+    @meta  << 'handle'
     @parts << { :title => 'description' }
+  end
+
+  def config_edit
+    @meta  << 'layouts'
+    @meta  << 'handle'
+    @parts << { :title => 'description' }
+  end
+
+  def assets_global
+    include_stylesheet 'admin/extensions/shop/forms'
   end
   
 end

@@ -7,14 +7,7 @@
       = fields.text_field :name, :class => 'textbox', :maxlenth => 255
   
   - form.edit_extended_metadata do
-    .drawer
-      .drawer_contents#attributes
-        %table.fieldset
-          = render :partial => 'meta_row', :collection => @meta, :locals => { :f => fields }
-          = render :partial => 'meta_row_layouts', :locals => { :f => fields }
-          = render_region :extended_metadata, :locals => { :f => fields }
-      .drawer_handle
-        %a.toggle{:href=>'#attributes', :rel=>"toggle[attributes]", :class=>"#{(meta_errors? ? 'less' : 'more')}"}= meta_label
+    = render :partial => 'meta', :locals => { :fields => fields }
     
   - form.edit_content do 
     #tab_control
@@ -26,7 +19,7 @@
     
 - render_region :form_bottom do |form_bottom|
   - form_bottom.edit_buttons do
-    - @buttons_partials.each do |partial|
+    - @buttons.each do |partial|
       = render :partial => partial, :locals => {:f => fields}
     %p.buttons{:style=>"clear: left"}
       = save_model_button(@shop_category)
