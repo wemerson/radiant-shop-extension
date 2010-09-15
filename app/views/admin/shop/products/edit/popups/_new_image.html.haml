@@ -1,4 +1,5 @@
 %h3.title Upload New Image
+
 .popup_content
   - form_for :image, :url => admin_shop_product_images_path(@shop_product.id), :html => { :method => "post", :multipart => true, :id => 'image_form' } do |f|
     %ol

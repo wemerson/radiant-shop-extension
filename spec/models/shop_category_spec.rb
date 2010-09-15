@@ -36,7 +36,7 @@ describe ShopCategory do
     it 'should generate a valid handle on validation' do
       @product = ShopCategory.new({ :name => 'delicious_ _:_;_=_+_._~_bread' })
       @product.valid? == true
-      @product.handle.should == 'delicious_-_-_-_-_-_-_-_bread'
+      @product.handle.should == 'delicious_______________bread'
     end
     
   end

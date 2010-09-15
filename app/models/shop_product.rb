@@ -6,7 +6,7 @@ class ShopProduct < ActiveRecord::Base
   belongs_to  :updated_by,  :class_name => 'User'
   belongs_to  :category,    :class_name => 'ShopCategory', :foreign_key => :shop_category_id
   
-  has_many    :line_items,  :class_name => 'ShopLineItem', :as => :item
+  has_many    :line_items,  :class_name => 'ShopLineItem', :as => :item, :dependent => :destroy
   has_many    :orders,      :class_name => 'ShopOrder', :through => :line_items
   has_many    :attachments, :class_name => 'ShopProductAttachment'
   has_many    :images,      :through => :attachments,  :uniq => true
@@ -15,7 +15,9 @@ class ShopProduct < ActiveRecord::Base
   
   validates_presence_of     :name, :sku, :category
   
-  validates_uniqueness_of   :name, :sku
+  validates_uniqueness_of   :name, :scope => 'shop_category_id'
+  
+  validates_uniqueness_of   :sku
   
   validates_numericality_of :price, :greater_than => 0.00, :allow_nil => true, :precisions => 2
   
@@ -78,7 +80,7 @@ private
   
   def filter_sku
     unless self.name.nil?
-      self.sku = self.sku.downcase.gsub(/[^-a-z0-9~\s\.:;+=_]/, '').strip.gsub(/[\s\.:;=+~]+/, '-')
+      self.sku = self.sku.downcase.gsub(/[^-a-z0-9~\s\.:;+=_]/, '').strip.gsub(/[\s\.:;=+~]+/, '_')
     end
   end
   

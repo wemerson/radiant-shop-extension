@@ -80,7 +80,7 @@ describe ShopProduct do
     it 'should generate a valid sku on validation' do
       @product = ShopProduct.new({ :name => 'dark_ _:_;_=_+_._~_toasted', :category => shop_categories(:bread) })
       @product.valid?     === true
-      @product.sku.should === 'dark_-_-_-_-_-_-_-_toasted'
+      @product.sku.should === 'dark_______________toasted'
     end
     
     it 'should have an array of images' do
