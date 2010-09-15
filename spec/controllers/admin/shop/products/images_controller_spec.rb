@@ -74,7 +74,7 @@ describe Admin::Shop::Products::ImagesController do
         
         it 'should render the collection partial and success status' do
           response.should be_success
-          response.should render_template('/admin/shop/products/images/_image')
+          response.should render_template('/admin/shop/products/edit/images/_image')
         end
         
         it 'should assign the shop_product_images instance variable' do
@@ -110,7 +110,8 @@ describe Admin::Shop::Products::ImagesController do
     
     context 'could not sort' do
       before :each do
-        stub(@shop_product).attachments.stub!.find('2').stub!.update_attribute!('position',1) { raise 'No Sorting' }
+        stub(@shop_product).attachments.stub!.find('2').stub!.update_attributes!({ :position => 1 }) { raise ActiveRecord::RecordNotFound }
+        
         stub(@shop_product).images { @images }
       end
       
@@ -140,8 +141,10 @@ describe Admin::Shop::Products::ImagesController do
     end
     
     context 'successfully sorted' do 
-      before :each do
-        stub(@shop_product).attachments.stub!.find(anything).stub!.update_attribute!('position',anything) { true }
+      before :each do        
+        mock(ShopProductAttachment).find('2').stub!.update_attributes!({:position => 1}) { true }
+        mock(ShopProductAttachment).find('1').stub!.update_attributes!({:position => 2}) { true }
+        
         stub(@shop_product).images { @images }
       end
       
@@ -168,7 +171,7 @@ describe Admin::Shop::Products::ImagesController do
         
         it 'should render the collection partial and success status' do
           response.should be_success
-          response.should render_template('/admin/shop/products/images/_image')
+          response.should render_template('/admin/shop/products/edit/images/_image')
         end
 
         it 'should have ordered the images based on input' do
@@ -235,7 +238,7 @@ describe Admin::Shop::Products::ImagesController do
         
         context 'could not create attachment' do
           before :each do
-            stub(@shop_product).attachments.stub!.create!({ :image => @image }) { raise 'Could not create Attachment' }
+            stub(@shop_product).attachments.stub!.create!({ :image => @image }) { raise ActiveRecord::RecordNotSaved }
           end
           
           context 'html' do
@@ -282,7 +285,7 @@ describe Admin::Shop::Products::ImagesController do
               post :create, :product_id => @shop_product.id, :image => 'FileObject', :format => 'js'
               response.should be_success
               assigns(:shop_product_attachment).should == @attachment
-              response.should render_template('/admin/shop/products/images/_image')
+              response.should render_template('/admin/shop/products/edit/images/_image')
             end
           end
           
@@ -335,7 +338,7 @@ describe Admin::Shop::Products::ImagesController do
         
         context 'could not create attachment' do
           before :each do
-            stub(@shop_product).attachments.stub!.create!({ :image => @image }) { raise 'Could not create Attachment' }
+            stub(@shop_product).attachments.stub!.create!({ :image => @image }) { raise ActiveRecord::RecordNotSaved }
           end
           
           context 'html' do
@@ -382,7 +385,7 @@ describe Admin::Shop::Products::ImagesController do
               post :create, :product_id => @shop_product.id, :attachment => { :image_id => '1' }, :format => 'js'
               response.should be_success
               assigns(:shop_product_attachment).should === @attachment
-              response.should render_template('/admin/shop/products/images/_image')
+              response.should render_template('/admin/shop/products/edit/images/_image')
             end
           end
           
@@ -456,7 +459,7 @@ describe Admin::Shop::Products::ImagesController do
             delete :destroy, :id => @image.id, :product_id => @shop_product.id, :format => 'js'
             response.should be_success
             assigns(:shop_product_attachment).should == @image
-            response.should render_template('/admin/shop/products/images/_image')
+            response.should render_template('/admin/shop/products/edit/images/_image')
           end
         end
         

@@ -6,8 +6,10 @@ class Admin::Shop::ProductsController < Admin::ResourceController
   before_filter :config_new,    :only => [ :new, :create ]
   before_filter :config_edit,   :only => [ :edit, :update ]
   before_filter :assets_global
-  before_filter :assets_index,  :only => :index
+  before_filter :assets_index,  :only => [ :index ]
   before_filter :assets_edit,   :only => [ :edit, :update ]
+  
+  before_filter :set_category,  :only => [ :new ]
   
   # GET /admin/shop/products
   # GET /admin/shop/products.js
@@ -17,15 +19,10 @@ class Admin::Shop::ProductsController < Admin::ResourceController
     @shop_categories = ShopCategory.all
     @shop_products = ShopProduct.search(params[:search])
     
-    attr_hash = {
-      :include  => { :category => { :only => ShopCategory.params } },
-      :only     => ShopProduct.params
-    }
-    
     respond_to do |format|
       format.html { render :index }
-      format.js   { render :partial => '/admin/shop/products/edit/product', :collection => @shop_products }
-      format.json { render :json    => @shop_products.to_json(attr_hash) }
+      format.js   { render :partial => '/admin/shop/products/index/product', :collection => @shop_products }
+      format.json { render :json    => @shop_products.to_json(ShopProduct.params) }
     end
   end
   
@@ -76,12 +73,7 @@ class Admin::Shop::ProductsController < Admin::ResourceController
     notice = 'Product created successfully.'
     error = 'Could not create Product.'
     
-    attr_hash = {
-      :include  => { :category => { :only => ShopCategory.params } },
-      :only     => ShopProduct.params
-    }
-    
-    @shop_product = ShopProduct.new(params[:shop_product])
+    @shop_product.attributes = params[:shop_product]
     
     begin
       @shop_product.save!
@@ -92,8 +84,8 @@ class Admin::Shop::ProductsController < Admin::ResourceController
           redirect_to edit_admin_shop_product_path(@shop_product) if params[:continue]
           redirect_to admin_shop_products_path unless params[:continue]
         }
-        format.js   { render  :partial  => '/admin/shop/products/edit/product', :locals => { :excerpt => @shop_product } }
-        format.json { render  :json     => @shop_product.to_json(attr_hash) }
+        format.js   { render  :partial  => '/admin/shop/products/index/product', :locals => { :excerpt => @shop_product } }
+        format.json { render  :json     => @shop_product.to_json(ShopProduct.params) }
       end
     rescue
       respond_to do |format|
@@ -116,11 +108,6 @@ class Admin::Shop::ProductsController < Admin::ResourceController
     notice = 'Product updated successfully.'
     error = 'Could not update Product.'
     
-    attr_hash = {
-      :include  => { :category => { :only => ShopCategory.params } },
-      :only     => ShopProduct.params
-    }
-    
     begin
       @shop_product.update_attributes!(params[:shop_product])
 
@@ -130,8 +117,8 @@ class Admin::Shop::ProductsController < Admin::ResourceController
           redirect_to edit_admin_shop_product_path(@shop_product) if params[:continue]
           redirect_to admin_shop_products_path unless params[:continue]
         }
-        format.js   { render  :partial  => '/admin/shop/products/edit/product', :locals => { :product => @shop_product } }
-        format.json { render  :json     => @shop_product.to_json(attr_hash) }
+        format.js   { render  :partial  => '/admin/shop/products/index/product', :locals => { :product => @shop_product } }
+        format.json { render  :json     => @shop_product.to_json(ShopProduct.params) }
       end
     rescue
       respond_to do |format|
@@ -186,10 +173,16 @@ private
   end
   
   def config_new
+    @meta  << 'category'
+    @meta  << 'sku'
+    
     @parts << { :title => 'description' }
   end
   
   def config_edit
+    @meta  << 'category'
+    @meta  << 'sku'
+    
     @parts << { :title => 'description' }
     @parts << { :title => 'images' }
   end
@@ -208,6 +201,10 @@ private
     include_javascript 'admin/dragdrop'
     include_stylesheet 'admin/extensions/shop/products/edit'
     include_javascript 'admin/extensions/shop/products/edit'
+  end
+  
+  def set_category
+    @shop_product.category = ShopCategory.find(params[:category_id])
   end
   
 end

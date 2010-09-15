@@ -7,10 +7,10 @@ describe Admin::Shop::CategoriesController do
   before(:each) do
     login_as  :admin
     
-    @shop_category = Object.new
+    @shop_category = ShopCategory.new
     @shop_categories = [ @shop_category ]
     
-    @shop_product = Object.new
+    @shop_product = ShopProduct.new
     @shop_products = [ @shop_product ]
     
     stub(@shop_category).id { 1 }
@@ -46,7 +46,7 @@ describe Admin::Shop::CategoriesController do
       
       it 'should render the collection partial and success status' do
         response.should be_success
-        response.should render_template('/admin/shop/categories/_category')
+        response.should render_template('/admin/shop/categories/index/_category')
       end
       
       it 'should assign the shop_categories instance variable' do
@@ -97,7 +97,7 @@ describe Admin::Shop::CategoriesController do
       
       it 'should render the collection template' do
         response.should be_success
-        response.should render_template( '/admin/shop/products/_product' )
+        response.should render_template( '/admin/shop/products/index/_product' )
       end
       
       it 'should assign the shop_products instance variable' do
@@ -159,7 +159,7 @@ describe Admin::Shop::CategoriesController do
     context 'categories are passed' do
       context 'could not sort' do
         before :each do
-          mock(ShopCategory).find('2').stub!.update_attribute!('position',1) { raise 'No Sorting' }
+          mock(ShopCategory).find('2').stub!.update_attributes!({:position => 1}) { raise ActiveRecord::RecordNotSaved }
         end
         
         context 'html' do
@@ -189,7 +189,8 @@ describe Admin::Shop::CategoriesController do
       
       context 'successfully sorted' do
         before :each do
-          mock(ShopCategory).find(anything).times(2).stub!.update_attribute!('position',anything) { true }
+          mock(ShopCategory).find('2').stub!.update_attributes!({:position => 1}) { true }
+          mock(ShopCategory).find('1').stub!.update_attributes!({:position => 2}) { true }
         end
         
         context 'html' do
@@ -220,9 +221,12 @@ describe Admin::Shop::CategoriesController do
   end
   
   describe '#create' do
+    before :each do
+      mock(ShopCategory).new { @shop_category }
+    end
     context 'category could not be created' do
       before :each do
-        mock(ShopCategory).create!({}) { raise ActiveRecord::RecordNotSaved }
+        mock(@shop_category).save! { raise ActiveRecord::RecordNotSaved }
       end
       
       context 'html' do
@@ -255,7 +259,7 @@ describe Admin::Shop::CategoriesController do
 
     context 'category successfully created' do
       before :each do
-        mock(ShopCategory).create!({}) { @shop_category }
+        mock(@shop_category).save! { @shop_category }
       end
       
       context 'html' do
@@ -280,7 +284,7 @@ describe Admin::Shop::CategoriesController do
           post :create, :shop_category => {}, :format => 'js'
           response.should be_success
           assigns(:shop_category).should === @shop_category
-          response.should render_template('/admin/shop/categories/_category')
+          response.should render_template('/admin/shop/categories/index/_category')
         end
       end
       
@@ -355,7 +359,7 @@ describe Admin::Shop::CategoriesController do
         it 'should render the partial and success status' do
           put :update, :id => @shop_category.id, :shop_category => {}, :format => 'js'
           response.should be_success
-          response.should render_template('/admin/shop/categories/_category')
+          response.should render_template('/admin/shop/categories/index/_category')
         end
       end
       

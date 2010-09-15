@@ -4,7 +4,6 @@ class Admin::Shop::Products::ImagesController < Admin::ResourceController
   
   # GET /admin/shop/products/1/images
   # GET /admin/shop/products/1/images.js
-  # GET /admin/shop/products/1/images.xml
   # GET /admin/shop/products/1/images.json                        AJAX and HTML
   #----------------------------------------------------------------------------
   def index
@@ -34,7 +33,6 @@ class Admin::Shop::Products::ImagesController < Admin::ResourceController
 
   # PUT /admin/shop/products/1/images/sort
   # PUT /admin/shop/products/1/images/sort.js
-  # PUT /admin/shop/products/1/images/sort.xml
   # PUT /admin/shop/products/1/images/sort.json                   AJAX and HTML
   #----------------------------------------------------------------------------
   def sort
@@ -47,7 +45,7 @@ class Admin::Shop::Products::ImagesController < Admin::ResourceController
       
       @images = CGI::parse(params[:attachments])['product_attachments[]']
       @images.each_with_index do |id, index|
-        @shop_product.attachments.find(id).update_attribute(:position, index+1)
+        ShopProductAttachment.find(id).update_attributes!({ :position => index+1 })
       end
       
       respond_to do |format|
@@ -72,7 +70,6 @@ class Admin::Shop::Products::ImagesController < Admin::ResourceController
   
   # POST /admin/shop/products/1/images
   # POST /admin/shop/products/1/images.js
-  # POST /admin/shop/products/1/images.xml
   # POST /admin/shop/products/1/images.json                       AJAX and HTML
   #----------------------------------------------------------------------------
   def create
@@ -113,7 +110,6 @@ class Admin::Shop::Products::ImagesController < Admin::ResourceController
   
   # DELETE /admin/shop/products/1/images/1
   # DELETE /admin/shop/products/1/images/1.js
-  # DELETE /admin/shop/products/1/images/1.xml
   # DELETE /admin/shop/products/1/images/1.json                   AJAX and HTML
   #----------------------------------------------------------------------------
   def destroy
@@ -133,8 +129,7 @@ class Admin::Shop::Products::ImagesController < Admin::ResourceController
         format.js   { render :partial => '/admin/shop/products/edit/images/image', :locals => { :excerpt => @image } }
         format.json { render :json    => { :notice => notice }, :status => :ok }
       end
-    rescue Exception => e
-      
+    rescue
       respond_to do |format|
         format.html {
           flash[:error] = error

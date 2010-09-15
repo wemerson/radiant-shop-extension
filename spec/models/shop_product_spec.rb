@@ -124,17 +124,9 @@ describe ShopProduct do
   
   context 'Class Methods' do
     
-    describe '#params' do
+    describe '#attrs' do
       it 'should have a set of standard parameters' do
-        ShopProduct.params.should === [
-          :id,
-          :name,
-          :price,
-          :sku,
-          :description,
-          :created_at,
-          :updated_at
-        ]
+        ShopProduct.attrs.should === [ :id, :name, :price, :sku, :description, :created_at, :updated_at ]
       end
     end
     

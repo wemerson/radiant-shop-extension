@@ -2,22 +2,15 @@ require 'spec/spec_helper'
 
 describe Admin::Shop::ProductsController do
   
-  before :all do
-    @attr_hash = {
-      :include  => { :category => { :only => ShopCategory.params } },
-      :only     => ShopProduct.params
-    }
-  end
-  
   dataset :users
     
   before(:each) do
     login_as  :admin
     
-    @shop_category = Object.new
-    @shop_categories = [ @shop_categories ]
+    @shop_category = ShopCategory.new
+    @shop_categories = [ @shop_category ]
     
-    @shop_product = Object.new
+    @shop_product = ShopProduct.new
     @shop_products = [ @shop_product ]
     
     stub(@shop_category).id { 1 }
@@ -54,7 +47,7 @@ describe Admin::Shop::ProductsController do
       
       it 'should render the collection partial and success status' do
         response.should be_success
-        response.should render_template('/admin/shop/products/_product')
+        response.should render_template('/admin/shop/products/index/_product')
       end
       
       it 'should assign the shop_products instance variable' do
@@ -182,8 +175,7 @@ describe Admin::Shop::ProductsController do
   describe '#create' do
     context 'product could not be created' do
       before :each do
-        mock(ShopProduct).new()   { @shop_product } # Resource Helper
-        mock(ShopProduct).new({}) { @shop_product }
+        mock(ShopProduct).new()   { @shop_product }
         stub(@shop_product).save! { raise ActiveRecord::RecordNotSaved }
       end
       
@@ -217,8 +209,7 @@ describe Admin::Shop::ProductsController do
 
     context 'product successfully created' do
       before :each do
-        mock(ShopProduct).new()   { @shop_product } # Resource Helper
-        mock(ShopProduct).new({}) { @shop_product }
+        mock(ShopProduct).new()   { @shop_product }
         stub(@shop_product).save! { true }
       end
       
@@ -244,7 +235,7 @@ describe Admin::Shop::ProductsController do
           post :create, :shop_product => {}, :format => 'js'
           response.should be_success
           assigns(:shop_product).should === @shop_product
-          response.should render_template('/admin/shop/products/_product')
+          response.should render_template('/admin/shop/products/index/_product')
         end
       end
       
@@ -319,7 +310,7 @@ describe Admin::Shop::ProductsController do
         it 'should render the partial and success status' do
           put :update, :id => @shop_product.id, :shop_product => {}, :format => 'js'
           response.should be_success
-          response.should render_template('/admin/shop/products/_product')
+          response.should render_template('/admin/shop/products/index/_product')
         end
       end
       

@@ -45,4 +45,14 @@ describe ShopCategory do
     ShopCategory.find_by_handle(@category.handle).should == @category
   end
   
+  context 'Class Methods' do
+    
+    describe '#attrs' do
+      it 'should have a set of standard parameters' do
+        ShopCategory.attrs.should === [ :id, :handle, :description, :created_at, :updated_at ]
+      end
+    end
+    
+  end
+  
 end

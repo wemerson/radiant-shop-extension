@@ -63,15 +63,15 @@ CONTENT
       </div>
       <r:if_products>
         <ul class="shop_products" id="shop_products_<r:handle/>" >
-        <r:products:each>
-          <r:product>
-            <li class="shop_product" id="shop_product_<r:handle />">
-              <r:link><img src="<r:image style='thumbnail' />" alt="<r:handle />" class="shop_product_image" /></r:link>
-              <h3 class="shop_product_title"><r:link><r:title /> <small><r:price /></small></r:link></h3>
+          <r:products:each:product>
+            <li class="shop_product" id="shop_product_<r:sku />">
+              <r:image position='1'>
+                <r:link><img src="<r:url style='preview' />" alt="<r:handle />" class="shop_product_image" /></r:link>
+              </r:image>
+              <h3 class="shop_product_name"><r:link><r:name /> <small><r:price /></small></r:link></h3>
               <div class="shop_product_description"><r:description /></div>
             </li>
-          </r:product>
-        </r:products:each>
+          </r:products:each:product>
         </ul>
       </r:if_products>
       <r:unless_products>

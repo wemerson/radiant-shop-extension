@@ -4,6 +4,8 @@ describe Shop::CategoriesController do
   before(:each) do
     @shop_category = Object.new
     stub(@shop_category).handle { 'a' }
+    stub(@shop_category).layout.stub!.name { 'Layout' }
+    stub(@shop_category).name { 'Bob' }
     @shop_categories = []
   end
   
@@ -19,18 +21,18 @@ describe Shop::CategoriesController do
   
   describe '#show' do
     it 'should expose category' do
-      mock(@shop_category).layout
-      mock(@shop_category).name
       mock(ShopCategory).find(:first, :conditions => { :handle => @shop_category.handle}) { @shop_category }
       
       get :show, :handle => @shop_category.handle
       
       response.should be_success
       assigns(:shop_category).should === @shop_category
+      assigns(:title).should === 'Bob'
+      assigns(:radiant_layout).should === 'Layout'
     end
     
     it 'should return 404 if product empty' do
-      mock(ShopCategory).find(:first, :conditions => { :handle => @shop_category.handle}) { raise ActiveRecord::RecordNotFound }
+      mock(ShopCategory).find(:first, :conditions => { :handle => @shop_category.handle}) { false }
       get :show, :handle => @shop_category.handle
       
       response.should render_template('site/not_found')

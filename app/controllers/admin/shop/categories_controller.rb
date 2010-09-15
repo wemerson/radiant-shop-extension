@@ -7,6 +7,8 @@ class Admin::Shop::CategoriesController < Admin::ResourceController
   before_filter :config_edit,   :only => [ :edit, :update ]
   before_filter :assets_global
   
+  before_filter :set_layouts,   :only => [ :new ]
+  
   # GET /admin/shop/products/categories
   # GET /admin/shop/products/categories.js
   # GET /admin/shop/products/categories.json                      AJAX and HTML
@@ -14,15 +16,10 @@ class Admin::Shop::CategoriesController < Admin::ResourceController
   def index
     @shop_categories = ShopCategory.search(params[:search])
     
-    attr_hash = {
-      :include  => { :products => { :only => ShopProduct.params } },
-      :only     => ShopCategory.params
-    }
-    
     respond_to do |format|
       format.html { redirect_to admin_shop_products_path }
-      format.js   { render :partial => '/admin/shop/categories/edit/category', :collection => @shop_categories }
-      format.json { render :json    => @shop_categories.to_json(attr_hash) }
+      format.js   { render :partial => '/admin/shop/categories/index/category', :collection => @shop_categories }
+      format.json { render :json    => @shop_categories.to_json(ShopCategory.params) }
     end
   end
   
@@ -34,14 +31,10 @@ class Admin::Shop::CategoriesController < Admin::ResourceController
     @shop_category = ShopCategory.find(params[:id])
     @shop_products = @shop_category.products
     
-    attr_hash = {
-      :only     => ShopProduct.params
-    }
-    
     respond_to do |format|
-      format.html { render :template  => '/admin/shop/products/edit/index' }
-      format.js   { render :partial   => '/admin/shop/products/edit/product', :collection => @shop_products }
-      format.json { render :json      => @shop_products.to_json(attr_hash) }
+      format.html { render :template  => '/admin/shop/products/index' }
+      format.js   { render :partial   => '/admin/shop/products/index/product', :collection => @shop_products }
+      format.json { render :json      => @shop_products.to_json(ShopProduct.params) }
     end
   end
   
@@ -57,7 +50,7 @@ class Admin::Shop::CategoriesController < Admin::ResourceController
       @shop_categories = CGI::parse(params[:categories])["shop_categories[]"]
 
       @shop_categories.each_with_index do |id, index|
-        ShopCategory.find(id).update_attribute(:position, index+1)
+        ShopCategory.find(id).update_attributes!({:position => index+1})
       end
       
       respond_to do |format|
@@ -87,10 +80,11 @@ class Admin::Shop::CategoriesController < Admin::ResourceController
   def create
     notice = 'Category created successfully.'
     error = 'Could not create Category.'
-    attr_hash = ShopCategory.params
+    
+    @shop_category.attributes = params[:shop_category]
     
     begin
-      @shop_category = ShopCategory.create!(params[:shop_category])
+      @shop_category.save!
       
       respond_to do |format|
         format.html { 
@@ -99,8 +93,8 @@ class Admin::Shop::CategoriesController < Admin::ResourceController
           redirect_to edit_admin_shop_category_path(@shop_category) if params[:continue]
           redirect_to admin_shop_categories_path unless params[:continue]
         }
-        format.js   { render :partial => '/admin/shop/categories/edit/category', :locals => { :product => @shop_category } }
-        format.json { render :json    => @shop_category.to_json(attr_hash) }
+        format.js   { render :partial => '/admin/shop/categories/index/category', :locals => { :product => @shop_category } }
+        format.json { render :json    => @shop_category.to_json(ShopCategory.params) }
       end
     rescue
       respond_to do |format|
@@ -121,7 +115,6 @@ class Admin::Shop::CategoriesController < Admin::ResourceController
   def update
     notice = 'Category updated successfully.'
     error = 'Could not update Category.'
-    attr_hash = ShopCategory.params
     
     begin
       @shop_category.update_attributes!(params[:shop_category])
@@ -132,8 +125,8 @@ class Admin::Shop::CategoriesController < Admin::ResourceController
           redirect_to edit_admin_shop_category_path(@shop_category) if params[:continue]
           redirect_to admin_shop_categories_path unless params[:continue]
         }
-        format.js   { render :partial => '/admin/shop/categories/edit/category', :locals => { :product => @shop_category } }
-        format.json { render :json    => @shop_category.to_json(attr_hash) }
+        format.js   { render :partial => '/admin/shop/categories/index/category', :locals => { :product => @shop_category } }
+        format.json { render :json    => @shop_category.to_json(ShopCategory.params) }
       end
     rescue
       respond_to do |format|
@@ -179,7 +172,7 @@ class Admin::Shop::CategoriesController < Admin::ResourceController
   end
   
 private
-
+  
   def config_global
     @meta     ||= []
     @buttons  ||= []
@@ -200,6 +193,11 @@ private
 
   def assets_global
     include_stylesheet 'admin/extensions/shop/forms'
+  end
+  
+  def set_layouts
+    @shop_category.layout = Layout.find_by_name(Radiant::Config['shop.category_layout'])
+    @shop_category.product_layout = Layout.find_by_name(Radiant::Config['shop.product_layout'])
   end
   
 end

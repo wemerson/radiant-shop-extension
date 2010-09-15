@@ -6,7 +6,8 @@ module Shop
         def current_categories(tag)
           result = []
           
-          if tag.locals.page.params.has_key? 'query'
+          # Page params are protected, send is used to overcome this
+          if tag.locals.page.send(:params).has_key? 'query'
             result = ShopCategory.search(tag.locals.page.params['query'])
           else
             result = ShopCategory.all
@@ -44,7 +45,9 @@ module Shop
         def current_products(tag)
           result = nil
 
-          if tag.locals.page.params.has_key? 'query'
+          
+
+          if tag.locals.page.send(:params).has_key? 'query'
             result = ShopProduct.search(tag.locals.page.params['query'])
           elsif !tag.locals.page.shop_category.nil?
             result = tag.locals.page.shop_category.products          

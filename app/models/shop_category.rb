@@ -49,8 +49,15 @@ class ShopCategory < ActiveRecord::Base
       all({ :conditions => conditions })
     end
     
-    def params
+    def attrs
       [ :id, :handle, :description, :created_at, :updated_at ]
+    end
+    
+    def params
+      {
+        :include  => { :products => { :only => ShopProduct.attrs } },
+        :only     => ShopCategory.attrs
+      }
     end
     
   end
