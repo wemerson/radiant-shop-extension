@@ -170,25 +170,32 @@ private
     @meta     ||= []
     @buttons  ||= []
     @parts    ||= []
+    @popups   ||= []
   end
   
   def config_new
     @meta  << 'category'
     @meta  << 'sku'
     
-    @parts << { :title => 'description' }
+    @parts << 'description'
   end
   
   def config_edit
     @meta  << 'category'
     @meta  << 'sku'
     
-    @parts << { :title => 'description' }
-    @parts << { :title => 'images' }
+    @parts << 'description'
+    @parts << 'images'
+    
+    @buttons << 'browse_images'
+    @buttons << 'new_image'
+    
+    @popups  << 'browse_images'
+    @popups  << 'new_image'
   end
   
   def assets_global
-    include_stylesheet 'admin/extensions/shop/forms'
+    include_stylesheet 'admin/extensions/shop/edit'
   end
   
   def assets_index

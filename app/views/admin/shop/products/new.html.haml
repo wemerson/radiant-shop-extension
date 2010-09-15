@@ -1,7 +1,8 @@
 - render_region :main do |main|
   - main.edit_header do
     %h1
-      = t('new_product')    
+      = t('new_product')
+      = render :partial => 'admin/shop/products/edit/head'
   - main.edit_form do
     - form_for :shop_product, @shop_product, :url => admin_shop_products_path, :html => {:id => 'new_shop_product', :multipart => true, 'data-onsubmit_status'=>"Creating Product&#8230;"} do |f|
       = render :partial => 'admin/shop/products/edit/fields', :object => f

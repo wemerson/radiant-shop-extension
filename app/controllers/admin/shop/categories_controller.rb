@@ -1,5 +1,5 @@
 class Admin::Shop::CategoriesController < Admin::ResourceController
-  
+    
   model_class ShopCategory
   
   before_filter :config_global
@@ -177,22 +177,25 @@ private
     @meta     ||= []
     @buttons  ||= []
     @parts    ||= []
+    @popups   ||= []
   end
-
+  
   def config_new
     @meta  << 'layouts'
     @meta  << 'handle'
-    @parts << { :title => 'description' }
+    
+    @parts << 'description'
   end
-
+  
   def config_edit
     @meta  << 'layouts'
     @meta  << 'handle'
-    @parts << { :title => 'description' }
+    
+    @parts << 'description'
   end
-
+  
   def assets_global
-    include_stylesheet 'admin/extensions/shop/forms'
+    include_stylesheet 'admin/extensions/shop/edit'
   end
   
   def set_layouts

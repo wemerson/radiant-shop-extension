@@ -24,8 +24,6 @@
     
 - render_region :form_bottom do |form_bottom|
   - form_bottom.edit_buttons do
-    - @buttons.each do |partial|
-      = render :partial => partial, :locals => {:f => fields}
     %p.buttons{:style=>"clear: left"}
       = save_model_button(@shop_product)
       = save_model_and_continue_editing_button(@shop_product)
