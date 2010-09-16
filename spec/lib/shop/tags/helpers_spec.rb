@@ -51,6 +51,19 @@ describe Shop::Tags::Helpers do
       end
     end
     
+    context 'key => value' do
+      it 'should return matching categories' do
+        stub(@page).params { {} }
+        @attrs['key'] = 'find'
+        @attrs['value'] = 'me'
+        
+        mock(ShopCategory).all(:conditions => { :find => 'me' }) { @shop_categories }
+        
+        result = Shop::Tags::Helpers.current_categories(@tag)
+        result.should == @shop_categories
+      end
+    end
+    
     context 'all results' do
       it 'should return all categories' do
         stub(@page).params { {} }
@@ -72,48 +85,16 @@ describe Shop::Tags::Helpers do
         object.attributes.include?('position').should == true
       end
     end
-    context 'id' do
+    context 'key => value' do
       it 'should return the matching category' do
-        stub(@shop_category).id { 1 }
-        @attrs['id'] = @shop_category.id
+        stub
+        @attrs['key'] = 'find'
+        @attrs['value'] = 'me'
         
-        mock(ShopCategory).find(@shop_category.id) { @shop_category }
+        mock(ShopCategory).first(:conditions => { :find => 'me' }) { @shop_categories }
         
         result = Shop::Tags::Helpers.current_category(@tag)
-        result.should == @shop_category
-      end
-    end
-    context 'handle' do
-      it 'should return the matching category' do
-        stub(@shop_category).handle { 'bob' }
-        @attrs['handle'] = @shop_category.handle
-        
-        mock(ShopCategory).find(:first, {:conditions=>{:handle=>@shop_category.handle}}) { @shop_category }
-        
-        result = Shop::Tags::Helpers.current_category(@tag)
-        result.should == @shop_category
-      end
-    end
-    context 'name' do
-      it 'should return the matching category' do
-        stub(@shop_category).name { 'bob' }
-        @attrs['name'] = @shop_category.name
-        
-        mock(ShopCategory).find(:first, {:conditions=>{:name=>@shop_category.name}}) { @shop_category }
-        
-        result = Shop::Tags::Helpers.current_category(@tag)
-        result.should == @shop_category
-      end
-    end
-    context 'position' do
-      it 'should return the matching category' do
-        stub(@shop_category).position { '10' }
-        @attrs['position'] = @shop_category.position
-        
-        mock(ShopCategory).find(:first, {:conditions=>{:position=>@shop_category.position}}) { @shop_category }
-        
-        result = Shop::Tags::Helpers.current_category(@tag)
-        result.should == @shop_category
+        result.should == @shop_categories
       end
     end
     context 'tag.locals.page.shop_category' do
@@ -182,6 +163,18 @@ describe Shop::Tags::Helpers do
         result.should == @shop_products
       end
     end
+    context 'key => value' do
+      it 'should return the matching products' do
+        stub(@page).params { {} }
+        @attrs['key'] = 'find'
+        @attrs['value'] = 'me'
+        
+        mock(ShopProduct).all(:conditions => { :find => 'me' }) { @shop_products }
+        
+        result = Shop::Tags::Helpers.current_products(@tag)
+        result.should == @shop_products
+      end
+    end
     context 'no query' do
       context 'tag.locals.page.shop_category' do
         it 'should return all products in that category' do
@@ -227,45 +220,13 @@ describe Shop::Tags::Helpers do
         object.attributes.include?('position').should == true
       end
     end
-    context 'id' do
+    context 'key => value' do
       it 'should return the matching product' do
-        stub(@shop_product).id { 1 }
-        @attrs['id'] = @shop_product.id
+        stub
+        @attrs['key'] = 'find'
+        @attrs['value'] = 'me'
         
-        mock(ShopProduct).find(@shop_product.id) { @shop_product }
-        
-        result = Shop::Tags::Helpers.current_product(@tag)
-        result.should == @shop_product
-      end
-    end
-    context 'sku' do
-      it 'should return the matching product' do
-        stub(@shop_product).sku { 'bob' }
-        @attrs['sku'] = @shop_product.sku
-        
-        mock(ShopProduct).find(:first, :conditions => { :sku => @shop_product.sku}) { @shop_product }
-        
-        result = Shop::Tags::Helpers.current_product(@tag)
-        result.should == @shop_product
-      end
-    end
-    context 'name' do
-      it 'should return the matching product' do
-        stub(@shop_product).name { 'bob' }
-        @attrs['name'] = @shop_product.name
-        
-        mock(ShopProduct).find(:first, :conditions => { :name => @shop_product.name}) { @shop_product }
-        
-        result = Shop::Tags::Helpers.current_product(@tag)
-        result.should == @shop_product
-      end
-    end
-    context 'position' do
-      it 'should return the matching product' do
-        stub(@shop_product).position { '10' }
-        @attrs['position'] = @shop_product.position
-        
-        mock(ShopProduct).find(:first, :conditions => { :position => @shop_product.position}) { @shop_product }
+        mock(ShopProduct).first(:conditions => { :find => 'me' }) { @shop_product }
         
         result = Shop::Tags::Helpers.current_product(@tag)
         result.should == @shop_product

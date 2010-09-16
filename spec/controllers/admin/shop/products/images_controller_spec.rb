@@ -74,7 +74,7 @@ describe Admin::Shop::Products::ImagesController do
         
         it 'should render the collection partial and success status' do
           response.should be_success
-          response.should render_template('/admin/shop/products/edit/images/_image')
+          response.should render_template('/admin/shop/products/edit/_image')
         end
         
         it 'should assign the shop_product_images instance variable' do
@@ -171,7 +171,7 @@ describe Admin::Shop::Products::ImagesController do
         
         it 'should render the collection partial and success status' do
           response.should be_success
-          response.should render_template('/admin/shop/products/edit/images/_image')
+          response.should render_template('/admin/shop/products/edit/_image')
         end
 
         it 'should have ordered the images based on input' do
@@ -285,7 +285,7 @@ describe Admin::Shop::Products::ImagesController do
               post :create, :product_id => @shop_product.id, :image => 'FileObject', :format => 'js'
               response.should be_success
               assigns(:shop_product_attachment).should == @attachment
-              response.should render_template('/admin/shop/products/edit/images/_image')
+              response.should render_template('/admin/shop/products/edit/_image')
             end
           end
           
@@ -385,7 +385,7 @@ describe Admin::Shop::Products::ImagesController do
               post :create, :product_id => @shop_product.id, :attachment => { :image_id => '1' }, :format => 'js'
               response.should be_success
               assigns(:shop_product_attachment).should === @attachment
-              response.should render_template('/admin/shop/products/edit/images/_image')
+              response.should render_template('/admin/shop/products/edit/_image')
             end
           end
           
@@ -459,7 +459,7 @@ describe Admin::Shop::Products::ImagesController do
             delete :destroy, :id => @image.id, :product_id => @shop_product.id, :format => 'js'
             response.should be_success
             assigns(:shop_product_attachment).should == @image
-            response.should render_template('/admin/shop/products/edit/images/_image')
+            response.should render_template('/admin/shop/products/edit/_image')
           end
         end
         

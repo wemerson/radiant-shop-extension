@@ -63,6 +63,7 @@ describe Shop::Tags::Category do
   
   describe '<r:shop:categories>' do
     it 'should render' do
+      mock(Shop::Tags::Helpers).current_categories(anything) { @shop_categories }
       tag = %{<r:shop:categories>success</r:shop:categories>}
       expected = %{success}
       

@@ -5,22 +5,23 @@ module Shop
       
       desc %{ expands if there are shop categories within the context }
       tag 'shop:if_categories' do |tag|
-        tag.expand unless Helpers.current_categories(tag).empty?
+        tag.expand if Helpers.current_categories(tag).present?
       end
       
       desc %{ expands if there are not shop categories within the context }
       tag 'shop:unless_categories' do |tag|
-        tag.expand if Helpers.current_categories(tag).empty?
+        tag.expand unless Helpers.current_categories(tag).present?
       end
       
       tag 'shop:categories' do |tag|
-        tag.expand
+        tag.locals.shop_categories = Helpers.current_categories(tag)
+        tag.expand if tag.locals.shop_categories.present?
       end
       
       desc %{ iterates through each product category }
       tag 'shop:categories:each' do |tag|
         content = ''
-        categories = Helpers.current_categories(tag)
+        categories = tag.locals.shop_categories
         
         categories.each do |category|
           tag.locals.shop_category = category

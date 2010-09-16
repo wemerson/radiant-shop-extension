@@ -9,6 +9,8 @@ module Shop
           # Page params are protected, send is used to overcome this
           if tag.locals.page.send(:params).has_key? 'query'
             result = ShopCategory.search(tag.locals.page.params['query'])
+          elsif tag.attr['key'] and tag.attr['value']
+            result = ShopCategory.all(:conditions => { tag.attr['key'].downcase.to_sym => tag.attr['value'] })
           else
             result = ShopCategory.all
           end
@@ -19,14 +21,8 @@ module Shop
         def current_category(tag)
           result = nil
           
-          if tag.attr['id']
-            result = ShopCategory.find(tag.attr['id'])
-          elsif tag.attr['handle']
-            result = ShopCategory.find_by_handle(tag.attr['handle'])
-          elsif tag.attr['name']
-            result = ShopCategory.find_by_name(tag.attr['name'])
-          elsif tag.attr['position']
-            result = ShopCategory.find_by_position(tag.attr['position'])
+          if tag.attr['key'] and tag.attr['value']
+            result = ShopCategory.first(:conditions => { tag.attr['key'].downcase.to_sym => tag.attr['value'] })
           elsif !tag.locals.page.shop_category.nil?
             result = tag.locals.page.shop_category
           elsif !tag.locals.page.shop_product.nil?
@@ -44,11 +40,11 @@ module Shop
         
         def current_products(tag)
           result = nil
-
           
-
           if tag.locals.page.send(:params).has_key? 'query'
             result = ShopProduct.search(tag.locals.page.params['query'])
+          elsif tag.attr['key'] and tag.attr['value']
+            result = ShopProduct.all(:conditions => { tag.attr['key'].downcase.to_sym => tag.attr['value'] })
           elsif !tag.locals.page.shop_category.nil?
             result = tag.locals.page.shop_category.products          
           elsif !tag.locals.shop_category.nil?
@@ -64,14 +60,8 @@ module Shop
           
           result = nil
 
-          if tag.attr['id']
-            result = ShopProduct.find(tag.attr['id'])
-          elsif tag.attr['sku']
-            result = ShopProduct.find_by_sku(tag.attr['sku'])
-          elsif tag.attr['name']
-            result = ShopProduct.find_by_name(tag.attr['name'])
-          elsif tag.attr['position']
-            result = ShopProduct.find_by_position(tag.attr['position'])
+          if tag.attr['key'] and tag.attr['value']
+            result = ShopProduct.first(:conditions => { tag.attr['key'].downcase.to_sym => tag.attr['value'] })
           elsif !tag.locals.page.shop_product.nil?
             result = tag.locals.page.shop_product
           elsif !tag.locals.shop_product.nil?
