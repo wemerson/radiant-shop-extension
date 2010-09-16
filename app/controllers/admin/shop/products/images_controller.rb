@@ -16,7 +16,7 @@ class Admin::Shop::Products::ImagesController < Admin::ResourceController
     unless @shop_product_images.empty?
       respond_to do |format|
         format.html { redirect_to edit_admin_shop_product_path(@shop_product) }
-        format.js   { render :partial => '/admin/shop/products/edit/images/image', :collection => @shop_product_images }
+        format.js   { render :partial => '/admin/shop/products/edit/image', :collection => @shop_product_images }
         format.json { render :json    => @shop_product_images.to_json(attr_hash) }
       end
     else
@@ -53,7 +53,7 @@ class Admin::Shop::Products::ImagesController < Admin::ResourceController
           flash[:notice] = notice
           redirect_to edit_admin_shop_product_path(@shop_product)
         }
-        format.js   { render :partial => '/admin/shop/products/edit/images/image', :collection => @shop_product.images }
+        format.js   { render :partial => '/admin/shop/products/edit/image', :collection => @shop_product.images }
         format.json { render :json    => @shop_product.images.to_json(attr_hash) }
       end
     rescue
@@ -93,7 +93,7 @@ class Admin::Shop::Products::ImagesController < Admin::ResourceController
           flash[:notice] = notice
           redirect_to edit_admin_shop_product_path(@shop_product)
         }
-        format.js   { render :partial => '/admin/shop/products/edit/images/image', :locals => { :image => @shop_product_attachment } }
+        format.js   { render :partial => '/admin/shop/products/edit/image', :locals => { :image => @shop_product_attachment } }
         format.json { render :json    => @shop_product_attachment.to_json(attr_hash)  }
       end
     rescue
@@ -126,7 +126,7 @@ class Admin::Shop::Products::ImagesController < Admin::ResourceController
           flash[:notice] = notice
           redirect_to edit_admin_shop_product_path(@shop_product)
         }
-        format.js   { render :partial => '/admin/shop/products/edit/images/image', :locals => { :excerpt => @image } }
+        format.js   { render :partial => '/admin/shop/products/edit/image', :locals => { :excerpt => @image } }
         format.json { render :json    => { :notice => notice }, :status => :ok }
       end
     rescue

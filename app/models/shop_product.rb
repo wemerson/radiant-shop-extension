@@ -1,7 +1,5 @@
 class ShopProduct < ActiveRecord::Base
   
-  default_scope             :order => 'shop_products.position ASC'
-  
   belongs_to  :created_by,  :class_name => 'User'
   belongs_to  :updated_by,  :class_name => 'User'
   belongs_to  :category,    :class_name => 'ShopCategory', :foreign_key => :shop_category_id
@@ -10,6 +8,8 @@ class ShopProduct < ActiveRecord::Base
   has_many    :orders,      :class_name => 'ShopOrder', :through => :line_items
   has_many    :attachments, :class_name => 'ShopProductAttachment'
   has_many    :images,      :through => :attachments,  :uniq => true
+  
+  default_scope             :joins => :category, :order => 'shop_categories.position, shop_products.position ASC'
   
   before_validation         :set_sku, :filter_sku
   
