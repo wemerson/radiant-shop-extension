@@ -7,7 +7,9 @@ module Shop
           result = []
           
           # Page params are protected, send is used to overcome this
-          if tag.locals.page.send(:params).has_key? 'query'
+          if tag.locals.shop_categories.present?
+            result = tag.locals.shop_categories
+          elsif tag.locals.page.send(:params).has_key? 'query'
             result = ShopCategory.search(tag.locals.page.params['query'])
           elsif tag.attr['key'] and tag.attr['value']
             result = ShopCategory.all(:conditions => { tag.attr['key'].downcase.to_sym => tag.attr['value'] })
@@ -21,15 +23,15 @@ module Shop
         def current_category(tag)
           result = nil
           
-          if tag.attr['key'] and tag.attr['value']
-            result = ShopCategory.first(:conditions => { tag.attr['key'].downcase.to_sym => tag.attr['value'] })
-          elsif !tag.locals.page.shop_category.nil?
-            result = tag.locals.page.shop_category
-          elsif !tag.locals.page.shop_product.nil?
-            result = tag.locals.page.shop_product.category            
-          elsif !tag.locals.shop_category.nil?
+          if tag.locals.shop_category.present?
             result = tag.locals.shop_category
-          elsif !tag.locals.shop_product.nil?
+          elsif tag.attr['key'] and tag.attr['value']
+            result = ShopCategory.first(:conditions => { tag.attr['key'].downcase.to_sym => tag.attr['value'] })
+          elsif tag.locals.page.shop_category.present?
+            result = tag.locals.page.shop_category
+          elsif tag.locals.page.shop_product.present?
+            result = tag.locals.page.shop_product.category
+          elsif tag.locals.shop_product.present?
             result = tag.locals.shop_product.category
           else
             result = ShopCategory.find_by_handle(tag.locals.page.slug)
@@ -40,14 +42,16 @@ module Shop
         
         def current_products(tag)
           result = nil
-          
-          if tag.locals.page.send(:params).has_key? 'query'
+         
+          if tag.locals.shop_products.present?
+            result = tag.locals.shop_products
+          elsif tag.locals.page.send(:params).has_key? 'query'
             result = ShopProduct.search(tag.locals.page.params['query'])
           elsif tag.attr['key'] and tag.attr['value']
             result = ShopProduct.all(:conditions => { tag.attr['key'].downcase.to_sym => tag.attr['value'] })
-          elsif !tag.locals.page.shop_category.nil?
+          elsif tag.locals.page.shop_category.present?
             result = tag.locals.page.shop_category.products          
-          elsif !tag.locals.shop_category.nil?
+          elsif tag.locals.shop_category.present?
             result = tag.locals.shop_category.products  
           else
             result = ShopProduct.all
@@ -60,12 +64,12 @@ module Shop
           
           result = nil
 
-          if tag.attr['key'] and tag.attr['value']
-            result = ShopProduct.first(:conditions => { tag.attr['key'].downcase.to_sym => tag.attr['value'] })
-          elsif !tag.locals.page.shop_product.nil?
-            result = tag.locals.page.shop_product
-          elsif !tag.locals.shop_product.nil?
+          if tag.locals.shop_product.present?
             result = tag.locals.shop_product
+          elsif tag.locals.page.shop_product.present?
+            result = tag.locals.page.shop_product
+          elsif tag.attr['key'] and tag.attr['value']
+            result = ShopProduct.first(:conditions => { tag.attr['key'].downcase.to_sym => tag.attr['value'] })
           else
             result = ShopProduct.find_by_sku(tag.locals.page.slug)
           end
