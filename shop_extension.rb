@@ -4,7 +4,7 @@ class ShopExtension < Radiant::Extension
   url "http://github.com/squaretalent/radiant-shop-extension"
   
   extension_config do |config|
-    config.gem 'activemerchant',      :version => '1.7.2', :lib => 'active_merchant'
+    config.gem 'activemerchant',      :version => '1.7.3', :lib => 'active_merchant'
     config.gem 'will_paginate',       :version => '2.3.14'
     config.gem 'radiant-layouts-extension', :version => '0.9.1', :lib => false
 

@@ -59,6 +59,7 @@ class Initial < ActiveRecord::Migration
     add_index :shop_addressables, :addresser_id
     
     create_table :shop_addresses do |t|
+      t.string      :name
       t.string      :unit
       t.string      :street
       t.string      :city
