@@ -4,7 +4,7 @@ module Shop
       
       def self.included(base)
         base.class_eval do
-          def current_shop_order            
+          def current_shop_order
             return @current_shop_order if defined?(@current_shop_order)
             @current_shop_order = find_shop_order
           end

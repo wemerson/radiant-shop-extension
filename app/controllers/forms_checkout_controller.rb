@@ -1,19 +1,12 @@
-class FormsCheckoutController < ApplicationController
+class FormsCheckoutController
   include Forms::Controllers::Extensions
   
   def create
-    @order = current_shop_order
+    raise @page.request.inspect
     
-    checkout = FormCheckout.new(@form, @page, @order)
+    @order = ShopOrder.find(@page.request.session[:shop_order])
     
-    checkout.process
-    
-    result = {
-      :checkout => {
-        :success => checkout.success?,
-        :message => checkout.message
-      } 
-    }
+    raise @order.inspect
     
   end
     

@@ -1,20 +1,16 @@
 class FormCheckout
-
-  attr_reader :page, :config, :data, :errors
-
-  def initialize(form, page, order)
-     @data   = page.data
-     @config = form.config[:checkout].symbolize_keys
-     @order  = order
-     
-     ActiveMerchant::Billing::Base.mode = :test if testing
-  end
+  include Forms::Models::Extension
   
-  def process
-    gateway  = build_gateway(@config[:gateway])
-    card     = build_card(@data[:card])
+  def create
+    @order  = ShopOrder.find(@page.request[:session][:shop_order])
     
-    response = gateway.purchase(@order.price, card, @config[:order])
+    ActiveMerchant::Billing::Base.mode = :test if testing
+    
+    build_gateway
+    
+    #card     = build_card(@data[:card])
+    
+    #response = gateway.purchase(@order.price, card, @config[:order])
     
     if response.success?
       @order.update_attribute('status', :paid)
@@ -27,7 +23,7 @@ class FormCheckout
   end
 
   def build_gateway
-    @gateway = ActiveMerchant::Billing.const_get("#{gateway[:name]}Gateway").new(
+    @gateway = ActiveMerchant::Billing.const_get("#{gateway_name}Gateway").new(
       :username => gateway_username,
       :password => gateway_password,
       :merchant => gateway_merchant,
@@ -47,7 +43,7 @@ class FormCheckout
     )
   end
   
-  def private
+  private
     
     def success?
       @success
@@ -55,6 +51,10 @@ class FormCheckout
   
     def testing
       @config[:testing].present?
+    end
+    
+    def gateway_name
+      @config[:gateway][:name]
     end
     
     def gateway_username

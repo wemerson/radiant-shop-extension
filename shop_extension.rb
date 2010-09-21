@@ -58,7 +58,7 @@ class ShopExtension < Radiant::Extension
     Radiant::Config['shop.url_prefix'] = Radiant::Config['shop.url_prefix'].blank? ? 'shop' : Radiant::Config['shop.url_prefix']
     Radiant::Config['shop.product_layout']  ||= 'Product'
     Radiant::Config['shop.category_layout'] ||= 'Products'
-    Radiant::Config['shop.order_layout']    ||= 'Order'
+    Radiant::Config['shop.order_layout']    ||= 'Cart'
     
     Radiant::Config['shop.price_unit']      ||= '$'
     Radiant::Config['shop.price_precision'] ||= 2
