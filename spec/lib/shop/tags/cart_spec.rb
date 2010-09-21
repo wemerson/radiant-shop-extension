@@ -13,7 +13,6 @@ describe Shop::Tags::Cart do
       'shop:if_cart',
       'shop:unless_cart',
       'shop:cart',
-      'shop:cart:link',
       'shop:cart:id',
       'shop:cart:status',
       'shop:cart:quantity',
@@ -134,32 +133,6 @@ describe Shop::Tags::Cart do
         expected = %{100}
         
         @page.should render(tag).as(expected)
-      end
-    end
-    
-    describe '<r:link />' do
-      before :each do
-        mock(Shop::Tags::Helpers).current_order(anything) { @shop_order }
-      end
-      context 'standalone' do
-        it 'should render an anchor element' do
-          tag = %{<r:shop:cart:link />}
-          expected = %{<a href="/#{Radiant::Config['shop.url_prefix']}/cart">Your Cart</a>}
-          pages(:home).should render(tag).as(expected)
-        end
-        it 'should assign attributes' do
-          tag = %{<r:shop:cart:link title="title" data-title="data-title"/>}
-          expected = %{<a href="/#{Radiant::Config['shop.url_prefix']}/cart" data-title="data-title" title="title">Your Cart</a>}
-          pages(:home).should render(tag).as(expected)
-        end
-      end
-
-      context 'wrapped' do
-        it 'should render an anchor element' do
-          tag = %{<r:shop:cart:link>checkout</r:shop:cart:link>}
-          expected = %{<a href="/#{Radiant::Config['shop.url_prefix']}/cart">checkout</a>}
-          pages(:home).should render(tag).as(expected)
-        end
       end
     end
     

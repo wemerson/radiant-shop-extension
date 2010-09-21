@@ -2,27 +2,116 @@ require 'spec/spec_helper'
 
 describe FormCheckout do
 
-  dataset :shop_orders, :pages, :forms
+  dataset :shop_orders, :pages, :forms, :shop_addresses
+  
+  before :each do
+    @form = forms(:checkout)
+    @page = pages(:home)
+    @order = shop_orders(:one_item)
+    
+    @config   = ''
+    @data     = { }
+    @request  = {
+      :session => {
+        :shop_order => @order.id
+      }
+    }
+    mock(@page).data { @data }
+    mock(@page).request { @request }
+    
+    @form = FormCheckout.new(@form, @page)
+  end
+  
   
   describe '#initialize' do
     it 'should assign the instance variables' do
-      @form = forms(:checkout)
-      @page = pages(:home)
-      @order = shop_orders(:one_item)
+
     end
   end
   
-  describe '#process' do
-    it 'should accept a payment method'
-
-    it 'should set status' do
-      context 'success' do
-        it 'should set status to success'
+  describe '#create' do
+    context 'addresses' do
+      before :each do
+        @config = <<-CONFIG
+checkout:
+  address:
+    active: true
+CONFIG
+        mock(@form).config { @config }
       end
-      context 'failure' do
-        it 'should set status to failed'
+      it 'should build the addresses' do
+        mock(@form).build_addresses { true }
       end
     end
+    
+    context 'gateway' do
+      before :each do
+        @config = <<-CONFIG
+checkout:
+  gateway:
+    name: PayWay
+    username: 123456
+    password: abcdef
+    merchant: test
+    pem: /var/www/certificate.pem
+CONFIG
+        mock(@form).config { @config }
+      end
+      it 'should build the gateway' do
+        mock(@form).build_gateway { true }
+      end
+      it 'should build the card' do
+        mock(@form).build_card { true }
+      end
+    end
+    
+    context 'both' do
+      before :each do
+        @config = <<-CONFIG
+checkout:
+  address:
+    active: true
+  gateway:
+    name: PayWay
+    username: 123456
+    password: abcdef
+    merchant: test
+    pem: /var/www/certificate.pem
+CONFIG
+        mock(@form).config { @config }
+      end
+      it 'should build the addresses' do
+        mock(@form).build_addresses { true }
+      end
+      it 'should build the gateway' do
+        mock(@form).build_gateway { true }
+      end
+      it 'should build the card' do
+        mock(@form).build_card { true }
+      end
+    end
+  end
+  
+  describe '#build_addresses' do
+    context 'billing' do
+      
+    end
+    
+    # context 'ids exist' do
+    #   @billing  = shop_addresses(:billing)
+    #   @shipping =  shop_addresses(:shipping)
+    #   
+    #   @data = {
+    #     'billing'   => { 'id' => @billing.id },
+    #     'shipping'  => { 'id' => @shipping.id }
+    #   }
+    #   it 'should update their attributes and assign them to the order' do
+    #     @form.build_addresses
+    #     
+    #     @order.billing_id.should === @billing.id
+    #     @order.shipping_id.should === @shipping.id
+    #   end
+    # end
   end
   
   describe '#build_gateway' do

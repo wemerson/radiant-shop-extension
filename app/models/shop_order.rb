@@ -3,16 +3,16 @@ class ShopOrder < ActiveRecord::Base
   has_many  :payments,    :class_name => 'ShopPayment',   :dependent => :destroy
   has_many  :line_items,  :class_name => 'ShopLineItem',  :dependent => :destroy
   
-  has_many  :addressables,:class_name => 'ShopAddressable', :as => :addresser
-  has_many  :billings,    :through => :addressables,  :source => :address, :source_type => 'ShopAddressBilling',  :uniq => true
-  has_many  :shippings,   :through => :addressables,  :source => :address, :source_type => 'ShopAddressShipping', :uniq => true
-  
+  belongs_to :billing,    :class_name => 'ShopAddress'
+  belongs_to :shipping,   :class_name => 'ShopAddress'
   belongs_to :created_by, :class_name => 'User'
   belongs_to :updated_by, :class_name => 'User'
   belongs_to :customer,   :class_name => 'ShopCustomer', :foreign_key => :shop_customer_id
   
-  accepts_nested_attributes_for :line_items,  :allow_destroy => true, :reject_if => :all_blank
-  accepts_nested_attributes_for :payments,    :allow_destroy => true, :reject_if => :all_blank
+  accepts_nested_attributes_for :line_items,  :reject_if => :all_blank
+  accepts_nested_attributes_for :payments,    :reject_if => :all_blank
+  accepts_nested_attributes_for :billing,     :reject_if => :all_blank
+  accepts_nested_attributes_for :shipping,    :reject_if => :all_blank
   
   def add!(id, quantity = nil, type = nil)
     quantity  ||= 1

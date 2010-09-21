@@ -59,6 +59,7 @@ class Initial < ActiveRecord::Migration
     add_index :shop_addressables, :addresser_id
     
     create_table :shop_addresses do |t|
+      t.string      :email
       t.string      :name
       t.string      :unit
       t.string      :street
@@ -97,6 +98,8 @@ class Initial < ActiveRecord::Migration
       t.text        :status, :default => 'new'
       
       t.references  :shop_customer
+      t.references  :billing
+      t.references  :shipping
       
       t.integer     :created_by
       t.integer     :updated_by
