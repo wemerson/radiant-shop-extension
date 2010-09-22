@@ -22,7 +22,7 @@ module Shop
           def find_or_create_shop_order
             shop_order = nil
             
-            if find_shop_order
+            if find_shop_order and find_shop_order.status != 'paid'
               shop_order = find_shop_order
             else
               shop_order = ShopOrder.create

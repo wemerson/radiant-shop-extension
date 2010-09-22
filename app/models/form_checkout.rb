@@ -3,12 +3,11 @@ class FormCheckout
   
   def create
     @result = {
-      :checkout => {
-        :billing  => false,
-        :shipping => false,
-        :gateway  => false,
-        :card     => false
-      }
+      :billing  => false,
+      :shipping => false,
+      :gateway  => false,
+      :card     => false,
+      :payment  => false
     }
     
     @success= true
@@ -24,7 +23,11 @@ class FormCheckout
       build_gateway
       build_card
       
-      @gateway.purchase(@order.price, @card, @config[:order])
+      purchase
+    end
+    
+    if @result[:payment]
+      @order.update_attribute(:status, 'paid')
     end
     
     @result
@@ -49,8 +52,8 @@ class FormCheckout
         build_shipping_address
       end
       
-      @result[:checkout][:billing]  = @order.billing.present? ? @order.billing : false
-      @result[:checkout][:shipping] = @order.shipping.present? ? @order.shipping : false
+      @result[:billing]  = @order.billing.present? ? @order.billing : false
+      @result[:shipping] = @order.shipping.present? ? @order.shipping : false
       
       unless @order.billing.present? and @order.shipping.present?
         @form.redirect_to = :back
@@ -111,7 +114,7 @@ class FormCheckout
       
       begin
         @gateway = ActiveMerchant::Billing.const_get("#{gateway}Gateway").new(gateway_credentials)
-        @result[:checkout][:gateway] = true
+        @result[:gateway] = true
       end
     end
 
@@ -124,17 +127,26 @@ class FormCheckout
           :year               => card_year,
           :first_name         => card_first_name,
           :last_name          => card_last_name,
-          :verfication_value  => card_verification,
+          :verification_value => card_verification,
           :type               => card_type
         })
         
-        @result[:checkout][:card] = {
-          :valid  => @card.valid?,
-          :name   => "#{card_first_name} #{card_last_name}",
-          :month  => card_month,
-          :year   => card_year,
-          :type   => card_type
+        @result[:card] = {
+          :valid  => @card.valid?
         }
+      end
+    end
+    
+    def purchase
+      result = @gateway.purchase(amount, @card, options)
+      
+      @result[:payment] = {
+        :success  => result.success?,
+        :message  => result.message
+      }
+      
+      unless result.success?
+        @form.redirect_to = :back
       end
     end
     
@@ -192,11 +204,31 @@ class FormCheckout
     end
     
     def card_first_name
-      card_names[0, card_names.length - 1].join(' ')
+      card_names[0, card_names.length - 1].join(' ') if card_names.present?
     end
     
     def card_last_name
-      card_names[-1]
+      card_names[-1] if card_names.present?
+    end
+    
+    def amount
+      result = 0
+      
+      if testing
+        result = 1000
+      else
+        result = (@order.price * 100)
+      end
+      
+      result
+    end
+    
+    def options
+      @config[:options] ||= {}
+      
+      @config[:options][:order_id] = @order.id
+      
+      @config[:options]
     end
     
 end

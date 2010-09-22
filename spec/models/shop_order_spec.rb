@@ -23,6 +23,58 @@ describe ShopOrder do
         shop_orders(:one_item).price.to_f.should === 11.0
         shop_orders(:several_items).price.to_f.should === 96.0
       end
+      
+      describe '#new?' do
+        context 'success' do
+          it 'should return true' do
+            shop_orders(:empty).update_attribute(:status, 'new')
+            shop_orders(:empty).new?.should === true
+          end
+        end
+        context 'failure' do
+          it 'should return false' do
+            shop_orders(:empty).update_attribute(:status, 'paid')
+            shop_orders(:empty).new?.should === false
+
+            shop_orders(:empty).update_attribute(:status, 'shipped')
+            shop_orders(:empty).new?.should === false
+          end
+        end
+      end
+      describe '#paid?' do
+        context 'success' do
+          it 'should return true' do
+            shop_orders(:empty).update_attribute(:status, 'paid')
+            shop_orders(:empty).paid?.should === true
+          end
+        end
+        context 'failure' do
+          it 'should return false' do
+            shop_orders(:empty).update_attribute(:status, 'new')
+            shop_orders(:empty).paid?.should === false
+
+            shop_orders(:empty).update_attribute(:status, 'shipped')
+            shop_orders(:empty).paid?.should === false
+          end
+        end
+      end
+      describe '#shipped?' do
+        context 'success' do
+          it 'should return true' do
+            shop_orders(:empty).update_attribute(:status, 'shipped')
+            shop_orders(:empty).shipped?.should === true
+          end
+        end
+        context 'failure' do
+          it 'should return false' do
+            shop_orders(:empty).update_attribute(:status, 'new')
+            shop_orders(:empty).shipped?.should === false
+
+            shop_orders(:empty).update_attribute(:status, 'paid')
+            shop_orders(:empty).shipped?.should === false
+          end
+        end
+      end
     end
   
     describe 'mutators' do

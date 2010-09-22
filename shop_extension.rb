@@ -50,6 +50,9 @@ class ShopExtension < Radiant::Extension
     Radiant::Config['shop.category_layout'] ||= 'Products'
     Radiant::Config['shop.order_layout']    ||= 'Cart'
     
+    Radiant::Config['shop.cart_thanks_path']||= 'cart/thanks'
+    Radiant::Config['shop.cart_path']       ||= 'cart'
+    
     Radiant::Config['shop.price_unit']      ||= '$'
     Radiant::Config['shop.price_precision'] ||= 2
     Radiant::Config['shop.price_seperator'] ||= '.'

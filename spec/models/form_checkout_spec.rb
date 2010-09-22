@@ -131,8 +131,8 @@ describe FormCheckout do
               @checkout = FormCheckout.new(@form, @page)
               result = @checkout.create
             
-              result[:checkout][:billing][:name].should === 'b_n'
-              result[:checkout][:shipping][:name].should === 's_n'
+              result[:billing][:name].should === 'b_n'
+              result[:shipping][:name].should === 's_n'
             end
           end
           context 'failure' do
@@ -144,8 +144,8 @@ describe FormCheckout do
               @checkout = FormCheckout.new(@form, @page)
               result = @checkout.create
             
-              result[:checkout][:billing].should === false
-              result[:checkout][:shipping].should_not === false
+              result[:billing].should === false
+              result[:shipping].should_not === false
             end
             it 'should set billing to the nil shipping' do
               @data = {
@@ -155,15 +155,15 @@ describe FormCheckout do
               @checkout = FormCheckout.new(@form, @page)
               result = @checkout.create
             
-              result[:checkout][:billing].should_not === false
-              result[:checkout][:shipping].should === result[:checkout][:billing]
+              result[:billing].should_not === false
+              result[:shipping].should === result[:billing]
             end
             it 'should set false to the nil objects' do
               @checkout = FormCheckout.new(@form, @page)
               result = @checkout.create
             
-              result[:checkout][:billing].should === false
-              result[:checkout][:shipping].should === false
+              result[:billing].should === false
+              result[:shipping].should === false
             end
           end
         end
@@ -213,8 +213,12 @@ describe FormCheckout do
             }
             
             @gateway = Object.new
+            @purchase = Object.new
+            stub(@purchase).success? { true }
+            stub(@purchase).message { 'success' }
+            
             mock(ActiveMerchant::Billing::PayWayGateway).new(@form[:config][:checkout][:gateway][:credentials]) { @gateway }
-            stub(@gateway).purchase(@order.price, anything, nil) { true }
+            stub(@gateway).purchase(1000, nil, { :order_id => @order.id}) { @purchase }
           end
           it 'should assign ActiveMerchant to testing mode' do        
             @checkout = FormCheckout.new(@form, @page)
@@ -227,7 +231,7 @@ describe FormCheckout do
             @checkout = FormCheckout.new(@form, @page)
             result = @checkout.create
             
-            result[:checkout][:gateway].should === true
+            result[:gateway].should === true
           end
         end
         
@@ -251,16 +255,15 @@ describe FormCheckout do
             @checkout = FormCheckout.new(@form, @page)
             result = @checkout.create
             
-            result[:checkout][:gateway].should === false
+            result[:gateway].should === false
           end
         end
       end
       
-      context 'card' do
+      context 'card without test' do
         before :each do
           @form[:config] = {
             :checkout   => {
-              :test     => true,
               :gateway  => {
                 :name   => 'PayWay',
                 :credentials => {}
@@ -279,8 +282,11 @@ describe FormCheckout do
           }
           
           @gateway = Object.new
+          @purchase = Object.new
+          stub(@purchase).success? { true }
+          stub(@purchase).message { 'success' }
           mock(ActiveMerchant::Billing::PayWayGateway).new(@form[:config][:checkout][:gateway][:credentials]) { @gateway }
-          stub(@gateway).purchase(@order.price, anything, nil) { true }
+          stub(@gateway).purchase(@order.price * 100, anything, { :order_id => @order.id }) { @purchase }
         end
         context 'configured' do
           before :each do
@@ -293,7 +299,7 @@ describe FormCheckout do
               :year               => 2009,
               :first_name         => 'Mr. Joe',
               :last_name          => 'Bloggs',
-              :verfication_value  => 123,
+              :verification_value => 123,
               :type               => 'visa'
             }) { @card }
           end
@@ -305,7 +311,9 @@ describe FormCheckout do
                 @checkout = FormCheckout.new(@form, @page)
                 result = @checkout.create
                 
-                result[:checkout][:card][:valid].should === true
+                result[:card][:valid].should === true
+                result[:payment][:success].should == true
+                result[:payment][:message].should == 'success'
               end
             end
             context 'invalid' do
@@ -315,7 +323,7 @@ describe FormCheckout do
                 @checkout = FormCheckout.new(@form, @page)
                 result = @checkout.create
                 
-                result[:checkout][:card][:valid].should === false
+                result[:card][:valid].should === false
               end
             end
           end
@@ -325,11 +333,7 @@ describe FormCheckout do
             @checkout = FormCheckout.new(@form, @page)
             result = @checkout.create
             
-            result[:checkout][:card].should == {
-              :name   => 'Mr. Joe Bloggs',
-              :month  => 1,
-              :year   => 2009,
-              :type   => 'visa',
+            result[:card].should == {
               :valid  => true
             }
           end
@@ -339,8 +343,8 @@ describe FormCheckout do
             @checkout = FormCheckout.new(@form, @page)
             result = @checkout.create
             
-            result[:checkout][:card][:number].should === nil
-            result[:checkout][:card][:verification].should === nil
+            result[:card][:number].should === nil
+            result[:card][:verification].should === nil
           end
         end
       end

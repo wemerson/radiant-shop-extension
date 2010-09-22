@@ -69,6 +69,18 @@ class ShopOrder < ActiveRecord::Base
     weight * self.quantity
   end
   
+  def new?
+    self.status === 'new'
+  end
+  
+  def paid?
+    self.status === 'paid'
+  end
+  
+  def shipped?
+    self.status === 'shipped'
+  end
+  
   class << self
     def search(search = nil)
       unless search.blank?
