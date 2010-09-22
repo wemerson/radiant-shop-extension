@@ -315,6 +315,14 @@ describe FormCheckout do
                 result[:payment][:success].should == true
                 result[:payment][:message].should == 'success'
               end
+              it 'should set the order as paid' do              
+                stub(@card).valid? { true }
+                
+                @checkout = FormCheckout.new(@form, @page)
+                result = @checkout.create
+                
+                shop_orders(:one_item).paid?.should === true
+              end
             end
             context 'invalid' do
               it 'should return invalid' do

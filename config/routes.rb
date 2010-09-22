@@ -22,11 +22,12 @@ ActionController::Routing::Routes.draw do |map|
   shop_prefix = Radiant::Config['shop.url_prefix'].blank? ? 'shop' : Radiant::Config['shop.url_prefix']
   map.with_options(:path_prefix => shop_prefix) do |prefix|
     prefix.namespace :shop do |shop|
-      shop.product_search   'search.:format',                   :controller => 'products',   :action => 'index', :conditions => { :method => :post }
-      shop.product_search   'search/:query.:format',            :controller => 'products',   :action => 'index', :conditions => { :method => :get }
-      shop.shop_product     ':handle/:sku.:format',             :controller => 'products',   :action => 'show',  :conditions => { :method => :get }
-      shop.shop_category    ':handle.:format',                  :controller => 'categories', :action => 'show',  :conditions => { :method => :get }
-      shop.shop_categories  'categories',                       :controller => 'categories', :action => 'index', :conditions => { :method => :get }
+      shop.cart_finalize    'finalize',                         :controller => 'orders',    :action => 'finalize', :conditions => { :method => :get }
+      shop.product_search   'search.:format',                   :controller => 'products',  :action => 'index', :conditions => { :method => :post }
+      shop.product_search   'search/:query.:format',            :controller => 'products',  :action => 'index', :conditions => { :method => :get }
+      shop.shop_product     ':handle/:sku.:format',             :controller => 'products',  :action => 'show',  :conditions => { :method => :get }
+      shop.shop_category    ':handle.:format',                  :controller => 'categories',:action => 'show',  :conditions => { :method => :get }
+      shop.shop_categories  'categories',                       :controller => 'categories',:action => 'index', :conditions => { :method => :get }
     
       shop.with_options :path_prefix => "#{shop_prefix}/cart" do |cart|
         cart.resources :line_items, :as => :items, :member => { :destroy => :get }
