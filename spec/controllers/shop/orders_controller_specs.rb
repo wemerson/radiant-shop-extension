@@ -18,6 +18,7 @@ describe Shop::OrdersController do
         
         response.should redirect_to("/#{Radiant::Config['shop.cart_thanks_path']}")
       end
+      it 'should set the session shop_order to nil'
     end
     
     context 'new order' do
@@ -29,6 +30,7 @@ describe Shop::OrdersController do
         
         response.should redirect_to("/#{Radiant::Config['shop.cart_path']}")
       end
+      it 'should not touch the session shop_order'
     end
   end
 
