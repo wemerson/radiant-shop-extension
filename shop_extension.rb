@@ -8,7 +8,7 @@ class ShopExtension < Radiant::Extension
     config.gem 'will_paginate',       :version => '2.3.14'
     config.gem 'radiant-layouts-extension', :version => '0.9.1', :lib => false
 
-    unless ENV["RAILS_ENV"] = "production"
+    unless ENV["RAILS_ENV"] == "production"
       config.gem 'rspec',             :version => '1.3.0'
       config.gem 'rspec-rails',       :version => '1.3.2'
       config.gem 'cucumber',          :verison => '0.8.5'
