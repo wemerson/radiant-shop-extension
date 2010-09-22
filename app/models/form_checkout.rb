@@ -35,14 +35,18 @@ class FormCheckout
     # Assigns a shipping and billing address to the @order
     def build_addresses
       if billing.present?
+        # We're going to create a billing object
         build_billing_address
+      
+        unless shipping.present? and @billing.valid?
+          # We're going to assign shipping to billing
+          @shipping = @billing
+          @order.update_attribute(:shipping_id, @shipping.id)
+        end
       end
       
       if shipping.present?
         build_shipping_address
-      elsif billing.present?
-        @shipping = @billing
-        @order.update_attribute(:shipping_id, @shipping.id)
       end
       
       @result[:checkout][:billing]  = @order.billing.present? ? @order.billing : false
@@ -68,9 +72,11 @@ class FormCheckout
         
       else
         # Create a new address with these attributes
-        @order.update_attributes({ :billing_attributes => billing })
-        @billing = @order.billing
-        
+        @billing = ShopAddress.new(billing)
+        if @billing.save
+          @order.update_attribute(:billing_id, @billing.id)
+        end
+
       end
     end
     
@@ -90,7 +96,7 @@ class FormCheckout
       elsif shipping.values.all?(&:blank?) or shipping == billing
         # We haven't set a shipping, or we have copied billing, so use billing
         @shipping = @billing
-        @order.update_attribute(:shipping_id, @shipping.id)
+        @order.update_attribute(:shipping_id, @billing.id)
         
       else
         # Create a new address with these attributes
