@@ -30,9 +30,7 @@ class FormCheckout
     # Assigns a shipping and billing address to the @order
     def build_addresses
       result    = {}
-      billing   = @data['billing'] # Array of billing attributes
-      shipping  = @data['shipping'] # Array of shipping attributes
-            
+      
       if billing.present?
         # Billing Address
         if billing['id'].present?
@@ -98,12 +96,7 @@ class FormCheckout
 
     # Creates a gateway instance variable based off the form configuration
     def build_gateway
-      @gateway = ActiveMerchant::Billing.const_get("#{gateway_name}Gateway").new(
-        :username => gateway_username,
-        :password => gateway_password,
-        :merchant => gateway_merchant,
-        :pem      => gateway_pem
-      )
+      @gateway = ActiveMerchant::Billing.const_get("#{gateway_name}Gateway").new(gateway)
 
       result = {
         :checkout => {
@@ -114,21 +107,35 @@ class FormCheckout
 
     # Builds an ActiveMerchant card using the submitted card information
     def build_card
-      @card = ActiveMerchant::Billing::CreditCard.new(
-        :number             => card_number,
-        :month              => card_month,
-        :year               => card_year,
-        :first_name         => card_first_name,
-        :last_name          => card_last_name,
-        :verfication_value  => card_verification,
-        :type               => card_type
-      )
-
-      result = {
-        :checkout => {
-          :card => true
+      if card.present?
+        @card = ActiveMerchant::Billing::CreditCard.new(
+          :number             => card_number,
+          :month              => card_month,
+          :year               => card_year,
+          :first_name         => card_first_name,
+          :last_name          => card_last_name,
+          :verfication_value  => card_verification,
+          :type               => card_type
+        )
+        
+        result = {
+          :checkout => {
+            :card => {
+              :valid  => @card.valid?,
+              :name   => "#{card_first_name} #{card_last_name}",
+              :month  => card_month,
+              :year   => card_year,
+              :type   => card_type
+            } 
+          }
         }
-      }
+      else
+        result = {
+          :checkout => {
+            :card => false
+          }
+        }
+      end
     end
     
     def success?
@@ -136,7 +143,23 @@ class FormCheckout
     end
   
     def testing
-      @config[:gateway][:testing].present?
+      @config[:test].present?
+    end
+    
+    def billing
+      billing   = @data['billing'] # Array of billing attributes      
+    end
+    
+    def shipping
+      shipping  = @data['shipping'] # Array of shipping attributes      
+    end
+    
+    def gateway
+      @config[:gateway]
+    end
+    
+    def card
+      @data['card']
     end
     
     def gateway_name

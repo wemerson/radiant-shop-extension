@@ -29,12 +29,13 @@ describe FormCheckout do
   describe '#create' do
     context 'addresses' do
       before :each do
-        @config = <<-CONFIG
-checkout:
-  address:
-    enabled: true
-CONFIG
-        @form[:config] = config_to_symbolized_hash(@config)
+        @form[:config] = {
+          :checkout   => {
+            :address  => {
+              :enabled => true
+            }
+          }
+        }
       end
       
       context 'sending ids' do
@@ -93,8 +94,8 @@ CONFIG
         context 'both billing and shipping sent' do
           it 'should create new addresses' do
             @data = {
-              'billing'   => { :name => 'b_n', :email => 'b_e', :street => 'b_s', :city => 'b_c', :state => 'b_s', :country => 'b_c', :postcode => 'b_p' },
-              'shipping'  => { :name => 's_n', :email => 's_e', :street => 's_s', :city => 's_c', :state => 's_s', :country => 's_c', :postcode => 's_p' }
+              'billing'   => { 'name' => 'b_n', 'email' => 'b_e', 'street' => 'b_s', 'city' => 'b_c', 'state' => 'b_s', 'country' => 'b_c', 'postcode' => 'b_p' },
+              'shipping'  => { 'name' => 's_n', 'email' => 's_e', 'street' => 's_s', 'city' => 's_c', 'state' => 's_s', 'country' => 's_c', 'postcode' => 's_p' }
             }
           
             @checkout = FormCheckout.new(@form, @page)
@@ -107,7 +108,7 @@ CONFIG
         context 'only billing sent' do
           it 'should copy billing to shipping' do
             @data = {
-              'billing'   => { :name => 'b_n', :email => 'b_e', :street => 'b_s', :city => 'b_c', :state => 'b_s', :country => 'b_c', :postcode => 'b_p' }
+              'billing'   => { 'name' => 'b_n', 'email' => 'b_e', 'street' => 'b_s', 'city' => 'b_c', 'state' => 'b_s', 'country' => 'b_c', 'postcode' => 'b_p' }
             }
           
             @checkout = FormCheckout.new(@form, @page)
@@ -123,8 +124,8 @@ CONFIG
         context 'success' do
           it 'should return a success string' do
             @data = {
-              'billing'   => { :name => 'b_n', :email => 'b_e', :street => 'b_s', :city => 'b_c', :state => 'b_s', :country => 'b_c', :postcode => 'b_p' },
-              'shipping'  => { :name => 's_n', :email => 's_e', :street => 's_s', :city => 's_c', :state => 's_s', :country => 's_c', :postcode => 's_p' }
+              'billing'   => { 'name' => 'b_n', 'email' => 'b_e', 'street' => 'b_s', 'city' => 'b_c', 'state' => 'b_s', 'country' => 'b_c', 'postcode' => 'b_p' },
+              'shipping'  => { 'name' => 's_n', 'email' => 's_e', 'street' => 's_s', 'city' => 's_c', 'state' => 's_s', 'country' => 's_c', 'postcode' => 's_p' }
             }
           
             @checkout = FormCheckout.new(@form, @page)
@@ -137,7 +138,7 @@ CONFIG
         context 'failure' do
           it 'should set false to the nil billing' do
             @data = {
-              'shipping'  => { :name => 's_n', :email => 's_e', :street => 's_s', :city => 's_c', :state => 's_s', :country => 's_c', :postcode => 's_p' }
+              'shipping'  => { 'name' => 's_n', 'email' => 's_e', 'street' => 's_s', 'city' => 's_c', 'state' => 's_s', 'country' => 's_c', 'postcode' => 's_p' }
             }
             
             @checkout = FormCheckout.new(@form, @page)
@@ -148,7 +149,7 @@ CONFIG
           end
           it 'should set billing to the nil shipping' do
             @data = {
-              'billing'   => { :name => 'b_n', :email => 'b_e', :street => 'b_s', :city => 'b_c', :state => 'b_s', :country => 'b_c', :postcode => 'b_p' }
+              'billing'   => { 'name' => 'b_n', 'email' => 'b_e', 'street' => 'b_s', 'city' => 'b_c', 'state' => 'b_s', 'country' => 'b_c', 'postcode' => 'b_p' }
             }
             
             @checkout = FormCheckout.new(@form, @page)
@@ -169,18 +170,37 @@ CONFIG
     end
     
     context 'gateway' do
-      before :each do
-        @config = <<-CONFIG
-checkout:
-  gateway:
-    name: PayWay
-    username: 123456
-    password: abcdef
-    merchant: test
-    pem: /var/www/certificate.pem
-CONFIG
-        @form[:config] = config_to_symbolized_hash(@config)
-        @checkout = FormCheckout.new(@form, @page)
+      context 'test' do
+        before :each do
+          @form[:config] = {
+            :checkout   => {
+              :gateway  => {
+                :name     => 'PayWay',
+                :username => 'abcdefgh',
+                :password => '12345678',
+                :pem      => 'REDME'
+              }
+            }
+          }
+          @data = {
+            'card' => { }
+          }
+        end
+        context 'environment variables' do
+          before :each do
+            @form[:config][:checkout][:test] = true
+          end
+          it 'should assign ActiveMerchant to testing mode' do
+            @gateway = Object.new
+            mock(ActiveMerchant::Billing::PayWayGateway).new(anything) { @gateway }
+            stub(@gateway).purchase(@order.price, anything, nil) { true }
+          
+            @checkout = FormCheckout.new(@form, @page)
+            @checkout.create
+          
+            ActiveMerchant::Billing::Base.mode.should === :test
+          end
+        end
       end
     end
     
@@ -252,26 +272,6 @@ CONFIG
       
     end
     
-  end
-  
-  private
-  
-  def config_to_symbolized_hash(config)
-    deep_symbolize_keys YAML::load("--- !map:HashWithIndifferentAccess\n"+config)
-  end
-  
-  def deep_symbolize_keys(item)
-    case item
-    when Hash
-      item.inject({}) do |acc, (k, v)|
-        acc[(k.to_sym rescue k)] = deep_symbolize_keys v
-        acc
-      end
-    when Array
-      item.map { |i| deep_symbolize_keys i }
-    else
-      item
-    end
   end
 
 end
