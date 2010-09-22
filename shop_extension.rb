@@ -29,7 +29,7 @@ class ShopExtension < Radiant::Extension
     end
     
     # Tags
-    Page.send :include, Shop::Tags::Core, Shop::Tags::Cart, Shop::Tags::Category, Shop::Tags::Item, Shop::Tags::Product
+    Page.send :include, Shop::Tags::Core, Shop::Tags::Cart, Shop::Tags::Category, Shop::Tags::Item, Shop::Tags::Product, Shop::Tags::Address
     
     # Model Includes
     Page.send :include, Shop::Models::Page

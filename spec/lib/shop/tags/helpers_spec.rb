@@ -339,4 +339,31 @@ describe Shop::Tags::Helpers do
     end
   end
   
+  describe '#current_address(tag)' do
+    context 'address exists' do
+      it 'should return that billing address' do
+        @billing = Object.new
+        
+        stub(@shop_order).billing { @billing }
+        stub(@locals).shop_order { @shop_order }
+        
+        @attrs['type'] = 'billing'
+        
+        result = Shop::Tags::Helpers.current_address(@tag)
+        result.should == @billing
+      end
+    end
+    context 'address does not exist' do
+      it 'should return nil' do
+        stub(@shop_order).billing { nil }
+        stub(@locals).shop_order { @shop_order }
+        
+        @attrs['type'] = 'billing'
+        
+        result = Shop::Tags::Helpers.current_address(@tag)
+        result.should == nil
+      end
+    end
+  end
+  
 end

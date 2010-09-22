@@ -99,9 +99,9 @@ module Shop
         def current_line_item(tag)
           result = nil
           
-          if !tag.locals.shop_line_item.nil?
+          if tag.locals.shop_line_item.present?
             result  = tag.locals.shop_line_item
-          elsif !tag.locals.shop_product.nil?
+          elsif tag.locals.shop_product.present?
             order   = tag.locals.shop_order
             product = tag.locals.shop_product
             item    = order.line_items.find_by_item_id(product.id)
@@ -110,6 +110,26 @@ module Shop
           end
           
           result
+        end
+        
+        # Return the current address for the current order
+        # @tag['attr]['type'] = the address type (billing|shippin)
+        def current_address(tag)
+          result = nil
+          
+          order = current_order(tag) # we need the current order
+          if order.present? # if it exists
+            begin
+              address = order.send(tag.attr['type']) # Get the address type (order.billing)
+              if address.present? # If that address exists
+                result = address # The result is that address
+              end
+            rescue
+              result = nil # Will catch an incorrect address type being send
+            end
+          end
+          
+          result # Return result
         end
         
       end
