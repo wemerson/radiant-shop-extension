@@ -2,35 +2,38 @@ class FormCheckout
   include Forms::Models::Extension
   
   def create
-    result = {}
+    @result = {
+      :checkout => {
+        :billing  => false,
+        :shipping => false,
+        :gateway  => false,
+        :card     => false
+      }
+    }
     
     @success= true
     @order  = ShopOrder.find(@page.request[:session][:shop_order])
     
-    if @config[:address]
+    if @config[:address].present?
       # If the form was configured for address
-      result.merge! build_addresses
+      build_addresses
     end
     
-    if @config[:gateway]
+    if @config[:gateway].present? and card
       # If the form was configured for gateway
-      ActiveMerchant::Billing::Base.mode = :test if testing
-      
-      result.merge! build_gateway
-      result.merge! build_card
+      build_gateway
+      build_card
       
       @gateway.purchase(@order.price, @card, @config[:order])
     end
     
-    result
+    @result
   end
   
   private
   
     # Assigns a shipping and billing address to the @order
     def build_addresses
-      result    = {}
-      
       if billing.present?
         build_billing_address
       end
@@ -42,18 +45,12 @@ class FormCheckout
         @order.update_attribute(:shipping_id, @shipping.id)
       end
       
-      result  = {
-        :checkout => {          
-          :billing  => @order.billing.present? ? @order.billing : false,
-          :shipping => @order.shipping.present? ? @order.shipping : false
-        }
-      }
+      @result[:checkout][:billing]  = @order.billing.present? ? @order.billing : false
+      @result[:checkout][:shipping] = @order.shipping.present? ? @order.shipping : false
       
       unless @order.billing.present? and @order.shipping.present?
         @form.redirect_to = :back
       end
-      
-      result
     end
     
     def build_billing_address
@@ -104,19 +101,18 @@ class FormCheckout
 
     # Creates a gateway instance variable based off the form configuration
     def build_gateway
-      @gateway = ActiveMerchant::Billing.const_get("#{gateway_name}Gateway").new(gateway)
-
-      result = {
-        :checkout => {
-          :gateway => true
-        }
-      }
+      ActiveMerchant::Billing::Base.mode = :test if testing
+      
+      begin
+        @gateway = ActiveMerchant::Billing.const_get("#{gateway}Gateway").new(gateway_credentials)
+        @result[:checkout][:gateway] = true
+      end
     end
 
     # Builds an ActiveMerchant card using the submitted card information
     def build_card
       if card.present?
-        @card = ActiveMerchant::Billing::CreditCard.new(
+        @card = ActiveMerchant::Billing::CreditCard.new({
           :number             => card_number,
           :month              => card_month,
           :year               => card_year,
@@ -124,24 +120,14 @@ class FormCheckout
           :last_name          => card_last_name,
           :verfication_value  => card_verification,
           :type               => card_type
-        )
+        })
         
-        result = {
-          :checkout => {
-            :card => {
-              :valid  => @card.valid?,
-              :name   => "#{card_first_name} #{card_last_name}",
-              :month  => card_month,
-              :year   => card_year,
-              :type   => card_type
-            } 
-          }
-        }
-      else
-        result = {
-          :checkout => {
-            :card => false
-          }
+        @result[:checkout][:card] = {
+          :valid  => @card.valid?,
+          :name   => "#{card_first_name} #{card_last_name}",
+          :month  => card_month,
+          :year   => card_year,
+          :type   => card_type
         }
       end
     end
@@ -163,60 +149,44 @@ class FormCheckout
     end
     
     def gateway
-      @config[:gateway]
+      @config[:gateway][:name]
+    end
+    
+    def gateway_credentials
+      @config[:gateway][:credentials]
     end
     
     def card
       @data['card']
     end
     
-    def gateway_name
-      @config[:gateway][:name]
-    end
-    
-    def gateway_username
-      @config[:gateway][:username]
-    end
-    
-    def gateway_password
-      @config[:gateway][:password]
-    end
-    
-    def gateway_merchant
-      @config[:gateway][:merchant]
-    end
-    
-    def gateway_pem
-      @config[:gateway][:pem]
-    end
-    
     def card_number
-      @data['card']['number'].gsub('-', '')
+      card['number'].to_s.gsub('-', '').to_i
     end
     
     def card_month
-      @data['card']['month'].to_i
+      card['month'].to_i
     end
     
     def card_year
-      @data['card']['year'].to_i
+      card['year'].to_i
     end
     
     def card_type
-      @data['card']['type']
+      card['type']
     end
     
     def card_verification
-      @data['card']['verification']
+      card['verification']
     end
     
     def card_names
-      return @card_names if @card_names.defined?
+      return @card_names if @card_names.present?
       @card_names = @data['card']['name'].split(' ')
     end
     
     def card_first_name
-      card_names[0, card_names.length - 1]
+      card_names[0, card_names.length - 1].join(' ')
     end
     
     def card_last_name
