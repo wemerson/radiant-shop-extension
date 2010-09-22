@@ -32,49 +32,11 @@ class FormCheckout
       result    = {}
       
       if billing.present?
-        # Billing Address
-        if billing['id'].present?
-          # Use an existing Address and update its values
-          @billing = ShopAddress.find(billing['id'])
-          @billing.update_attributes(billing)
-          @order.update_attribute(:billing_id, @billing.id)
-
-        elsif @order.billing.present?
-          # Use the current billing and update its values
-          @billing = @order.billing
-          @billing.update_attributes(billing)
-          
-        else
-          # Create a new address with these attributes
-          @order.update_attributes({ :billing_attributes => billing })
-          @billing = @order.billing
-          
-        end
+        build_billing_address
       end
       
       if shipping.present?
-        # Shipping Address
-        if shipping['id'].present?
-          # Use an existing Address and update its values
-          @shipping = ShopAddress.find(shipping['id'])
-          @shipping.update_attributes(shipping)
-          @order.update_attribute(:shipping_id, @shipping.id)
-          
-        elsif @order.shipping.present?
-          # Use the current shipping and update its values
-          @shipping = @order.shipping
-          @shipping.update_attributes(shipping)
-          
-        elsif shipping.values.all?(&:blank?) or shipping == billing
-          # We haven't set a shipping, or we have copied billing, so use billing
-          @shipping = @billing
-          @order.update_attribute(:shipping_id, @shipping.id)
-          
-        else
-          # Create a new address with these attributes
-          @order.update_attributes!({ :shipping_attributes => shipping })
-          @shipping = @order.shipping
-        end
+        build_shipping_address
       elsif billing.present?
         @shipping = @billing
         @order.update_attribute(:shipping_id, @shipping.id)
@@ -92,6 +54,52 @@ class FormCheckout
       end
       
       result
+    end
+    
+    def build_billing_address
+      # Billing Address
+      if billing['id'].present?
+        # Use an existing Address and update its values
+        @billing = ShopAddress.find(billing['id'])
+        @billing.update_attributes(billing)
+        @order.update_attribute(:billing_id, @billing.id)
+
+      elsif @order.billing.present?
+        # Use the current billing and update its values
+        @billing = @order.billing
+        @billing.update_attributes(billing)
+        
+      else
+        # Create a new address with these attributes
+        @order.update_attributes({ :billing_attributes => billing })
+        @billing = @order.billing
+        
+      end
+    end
+    
+    def build_shipping_address
+      # Shipping Address
+      if shipping['id'].present?
+        # Use an existing Address and update its values
+        @shipping = ShopAddress.find(shipping['id'])
+        @shipping.update_attributes(shipping)
+        @order.update_attribute(:shipping_id, @shipping.id)
+        
+      elsif @order.shipping.present?
+        # Use the current shipping and update its values
+        @shipping = @order.shipping
+        @shipping.update_attributes(shipping)
+        
+      elsif shipping.values.all?(&:blank?) or shipping == billing
+        # We haven't set a shipping, or we have copied billing, so use billing
+        @shipping = @billing
+        @order.update_attribute(:shipping_id, @shipping.id)
+        
+      else
+        # Create a new address with these attributes
+        @order.update_attributes!({ :shipping_attributes => shipping })
+        @shipping = @order.shipping
+      end
     end
 
     # Creates a gateway instance variable based off the form configuration
