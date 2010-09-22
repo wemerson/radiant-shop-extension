@@ -170,36 +170,33 @@ describe FormCheckout do
     end
     
     context 'gateway' do
-      context 'test' do
-        before :each do
-          @form[:config] = {
-            :checkout   => {
-              :gateway  => {
-                :name     => 'PayWay',
-                :username => 'abcdefgh',
-                :password => '12345678',
-                :pem      => 'REDME'
-              }
+      before :each do
+        @form[:config] = {
+          :checkout   => {
+            :gateway  => {
+              :name     => 'PayWay',
+              :username => 'abcdefgh',
+              :password => '12345678',
+              :pem      => 'REDME'
             }
           }
-          @data = {
-            'card' => { }
-          }
-        end
-        context 'environment variables' do
-          before :each do
-            @form[:config][:checkout][:test] = true
-          end
-          it 'should assign ActiveMerchant to testing mode' do
-            @gateway = Object.new
-            mock(ActiveMerchant::Billing::PayWayGateway).new(anything) { @gateway }
-            stub(@gateway).purchase(@order.price, anything, nil) { true }
+        }
+        @data = {
+          'card' => { }
+        }
+      end
+      context 'environment variables' do
+        it 'should assign ActiveMerchant to testing mode' do
+          @form[:config][:checkout][:test] = true
           
-            @checkout = FormCheckout.new(@form, @page)
-            @checkout.create
-          
-            ActiveMerchant::Billing::Base.mode.should === :test
-          end
+          @gateway = Object.new
+          mock(ActiveMerchant::Billing::PayWayGateway).new(anything) { @gateway }
+          stub(@gateway).purchase(@order.price, anything, nil) { true }
+        
+          @checkout = FormCheckout.new(@form, @page)
+          @checkout.create
+        
+          ActiveMerchant::Billing::Base.mode.should === :test
         end
       end
     end
