@@ -3,12 +3,12 @@ begin
   Jeweler::Tasks.new do |gem|
     gem.name = "radiant-shop-extension"
     gem.summary = %Q{Shop Extension for Radiant CMS}
-    gem.description = %Q{Shop adds an easy to use api for creating products sold in a shop}
+    gem.description = %Q{Radiant Shop is an attempt at a simple but complete store. It includes Products, Categories, Orders and Credit Card Payments}
     gem.email = "dk@dirkkelly.com"
     gem.homepage = "http://github.com/squaretalent/radiant-shop-extension"
     gem.authors = ["Dirk Kelly", "John Barker"]
     gem.add_dependency 'radiant-forms-extension',     '>= 3.1.0'
-    gem.add_dependency 'radiant-images-extension',    '>= 0.1.1'
+    gem.add_dependency 'radiant-images-extension',    '>= 0.2.0'
     gem.add_dependency 'radiant-layouts-extension',   '>= 0.9.1'
     gem.add_dependency 'radiant-settings-extension',  '>= 1.1.1'
     # gem is a Gem::Specification... see http://www.rubygems.org/read/chapter/20 for additional settings
