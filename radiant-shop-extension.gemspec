@@ -122,6 +122,7 @@ Gem::Specification.new do |s|
      "public/stylesheets/sass/admin/extensions/shop/edit.sass",
      "public/stylesheets/sass/admin/extensions/shop/products/edit.sass",
      "public/stylesheets/sass/admin/extensions/shop/products/index.sass",
+     "radiant-shop-extension.gemspec",
      "shop_extension.rb",
      "spec/controllers/admin/shop/categories_controller_spec.rb",
      "spec/controllers/admin/shop/products/images_controller_spec.rb",
