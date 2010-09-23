@@ -15,13 +15,13 @@ describe ShopOrder do
       it 'should calculate a total weight' do
         shop_orders(:empty).weight.should === 0
         shop_orders(:one_item).weight.to_f.should === 31.0
-        shop_orders(:several_items).weight.to_f.should === 276.0
+        shop_orders(:several_items).weight.to_f.should === 92.0
       end
 
       it 'should calculate the total price' do
         shop_orders(:empty).price.should === 0
         shop_orders(:one_item).price.to_f.should === 11.0
-        shop_orders(:several_items).price.to_f.should === 96.0
+        shop_orders(:several_items).price.to_f.should === 32.0
       end
       
       describe '#new?' do
