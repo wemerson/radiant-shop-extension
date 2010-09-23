@@ -88,8 +88,19 @@ class FormCheckout
       if shipping['id'].present?
         # Use an existing Address and update its values
         @shipping = ShopAddress.find(shipping['id'])
-        @shipping.update_attributes(shipping)
-        @order.update_attribute(:shipping_id, @shipping.id)
+        if @shipping == @billing and shipping == billing
+          # We have exactly the same shipping and billing data
+          @shipping = @billing
+          @order.update_attribute(:shipping_id, @billing.id)
+        elsif (shipping.reject!{|k,v|k=='id'}).values.all?(&:blank?)
+          # We have just passed the id and not the data
+          @order.update_attribute(:shipping_id, @shipping.id)
+        elsif @shipping == @billing and shipping != billing
+          # We have conflicting data so create a new address
+          # the id is rejected so we'll get a new address
+          @order.update_attributes!({ :shipping_attributes => shipping })
+          @shipping = @order.shipping
+        end
         
       elsif @order.shipping.present?
         # Use the current shipping and update its values

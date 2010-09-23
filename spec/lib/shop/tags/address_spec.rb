@@ -9,196 +9,186 @@ describe Shop::Tags::Address do
   
   it 'should describe these tags' do
     Shop::Tags::Address.tags.sort.should == [
-      'shop:if_address',
-      'shop:unless_address',
-      'shop:address',
-      'shop:address:name',
-      'shop:address:email',
-      'shop:address:unit',
-      'shop:address:street',
-      'shop:address:city',
-      'shop:address:country',
-      'shop:address:postcode',
+      'shop:cart:address',
+      'shop:cart:address:if_address',
+      'shop:cart:address:unless_address',
+      'shop:cart:address:id',
+      'shop:cart:address:name',
+      'shop:cart:address:email',
+      'shop:cart:address:unit',
+      'shop:cart:address:street',
+      'shop:cart:address:city',
+      'shop:cart:address:state',
+      'shop:cart:address:country',
+      'shop:cart:address:postcode',
     ].sort
   end
   
-  before :all do
-    @page = pages(:home)
-  end
-  
-  before :each do
-    @order = shop_orders(:empty)
-    @billing = shop_addresses(:billing)
-  end
-  
-  describe 'shop:if_address' do
+  context 'inside cart' do
+    before :all do
+      @page = pages(:home)
+    end
+    
     before :each do
+      @order = shop_orders(:one_item)
+      @billing = shop_addresses(:billing)
       mock(Shop::Tags::Helpers).current_order(anything) { @order }
     end
-    context 'success' do
-      it 'should expand' do
-        stub(@order).billing { @billing }
-        
-        tag = %{<r:shop:if_address type='billing'>success</r:shop:if_address>}
-        exp = %{success}
-        
-        @page.should render(tag).as(exp)
-      end
-    end
-    context 'failure' do
-      it 'should not expand' do
-        stub(@order).billing { nil }
-        
-        tag = %{<r:shop:if_address type='billing'>failure</r:shop:if_address>}
-        exp = %{}
-        
-        @page.should render(tag).as(exp)        
-      end
-      it 'should not expand' do
-        stub(@order).billing { @billing }
-        
-        tag = %{<r:shop:if_address type='willing'>failure</r:shop:if_address>}
-        exp = %{}
-        
-        @page.should render(tag).as(exp)        
-      end
-      it 'should not expand' do
-        @order = nil
-        
-        tag = %{<r:shop:if_address type='billing'>failure</r:shop:if_address>}
-        exp = %{}
-        
-        @page.should render(tag).as(exp)        
-      end
-    end
-  end
   
-  describe 'shop:unless_address' do
-    before :each do
-      mock(Shop::Tags::Helpers).current_order(anything) { @order }
-    end
-    context 'success' do
-      it 'should expand' do
-        stub(@order).billing { @billing }
+    describe 'shop:cart:address:if_address' do
+      context 'success' do
+        before :each do
+          mock(Shop::Tags::Helpers).current_address(anything) { @billing }
+        end
+        it 'should expand' do
+          tag = %{<r:shop:cart:address type='billing'><r:if_address>success</r:if_address></r:shop:cart:address>}
+          exp = %{success}
         
-        tag = %{<r:shop:unless_address type='billing'>failure</r:shop:unless_address>}
-        exp = %{}
+          @page.should render(tag).as(exp)
+        end
+      end
+      context 'failure' do
+        before :each do
+          mock(Shop::Tags::Helpers).current_address(anything) { nil }
+        end
+        it 'should not expand' do
+          tag = %{<r:shop:cart:address type='billing'><r:if_address>failure</r:if_address></r:shop:cart:address>}
+          exp = %{}
         
-        @page.should render(tag).as(exp)
+          @page.should render(tag).as(exp)        
+        end
       end
     end
-    context 'failure' do
-      it 'should not expand' do
-        stub(@order).billing { nil }
+  
+    describe 'shop:cart:address:unless_address' do
+      context 'success' do
+        before :each do
+          mock(Shop::Tags::Helpers).current_address(anything) { @billing }
+        end
+        it 'should expand' do
+          stub(@order).billing { @billing }
         
-        tag = %{<r:shop:unless_address type='billing'>success</r:shop:unless_address>}
-        exp = %{success}
+          tag = %{<r:shop:cart:address type='billing'><r:unless_address>failure</r:unless_address></r:shop:cart:address>}
+          exp = %{}
         
-        @page.should render(tag).as(exp)        
+          @page.should render(tag).as(exp)
+        end
       end
-      it 'should not expand' do
-        stub(@order).billing { @billing }
+      context 'failure' do
+        before :each do
+          mock(Shop::Tags::Helpers).current_address(anything) { nil }
+        end
+        it 'should not expand' do
+          stub(@order).billing { nil }
         
-        tag = %{<r:shop:unless_address type='willing'>success</r:shop:unless_address>}
-        exp = %{success}
+          tag = %{<r:shop:cart:address type='billing'><r:unless_address>success</r:unless_address></r:shop:cart:address>}
+          exp = %{success}
         
-        @page.should render(tag).as(exp)        
-      end
-      it 'should not expand' do
-        @order = nil
-        
-        tag = %{<r:shop:unless_address type='billing'>success</r:shop:unless_address>}
-        exp = %{success}
-        
-        @page.should render(tag).as(exp)        
+          @page.should render(tag).as(exp)        
+        end
       end
     end
-  end
 
-  describe 'shop:address' do
-    before :each do
-      mock(Shop::Tags::Helpers).current_order(anything) { @order }
-    end
-    context 'success' do
-      it 'should expand' do
-        stub(@order).billing { @billing }
-        
-        tag = %{<r:shop:address type='billing'>success</r:shop:address>}
-        exp = %{success}
-        
-        @page.should render(tag).as(exp)
+    describe 'shop:address' do
+      context 'no address' do
+        before :each do
+          mock(Shop::Tags::Helpers).current_address(anything) { @billing }
+        end
+        it 'should expand' do
+          tag = %{<r:shop:cart:address type='billing'>success</r:shop:cart:address>}
+          exp = %{success}
+      
+          @page.should render(tag).as(exp)
+        end
+      end
+      context 'address' do
+        before :each do
+          mock(Shop::Tags::Helpers).current_address(anything) { nil }
+        end
+        it 'should expand' do
+          tag = %{<r:shop:cart:address type='billing'>success</r:shop:cart:address>}
+          exp = %{success}
+      
+          @page.should render(tag).as(exp)
+        end
       end
     end
-    context 'failure' do
-      it 'should not expand' do
-        stub(@order).billing { nil }
-        
-        tag = %{<r:shop:address type='billing'>failure</r:shop:address>}
-        exp = %{}
-        
-        @page.should render(tag).as(exp)
-      end
-    end
-  end
   
-  describe 'attributes' do
-    before :each do
-      mock(Shop::Tags::Helpers).current_address(anything) { @billing }
-    end
-    context 'shop:address:name' do
-      it 'should return the name' do
-        tag = %{<r:shop:address type='billing'><r:name /></r:shop:address>}
-        exp = @billing.name
-        
-        @page.should render(tag).as(exp)
+    describe 'attributes' do
+      before :each do
+        mock(Shop::Tags::Helpers).current_address(anything) { @billing }
       end
-    end
-    context 'shop:address:email' do
-      it 'should return the email' do
-        tag = %{<r:shop:address type='billing'><r:email /></r:shop:address>}
-        exp = @billing.email
+      context 'shop:cart:address:id' do
+        it 'should return the id' do
+          tag = %{<r:shop:cart:address type='billing'><r:id /></r:shop:cart:address>}
+          exp = @billing.id.to_s
         
-        @page.should render(tag).as(exp)
+          @page.should render(tag).as(exp)
+        end
       end
-    end
-    context 'shop:address:unit' do
-      it 'should return the unit' do
-        tag = %{<r:shop:address type='billing'><r:unit /></r:shop:address>}
-        exp = @billing.unit
+      context 'shop:cart:address:name' do
+        it 'should return the name' do
+          tag = %{<r:shop:cart:address type='billing'><r:name /></r:shop:cart:address>}
+          exp = @billing.name
         
-        @page.should render(tag).as(exp)
+          @page.should render(tag).as(exp)
+        end
       end
-    end
-    context 'shop:address:street' do
-      it 'should return the street' do
-        tag = %{<r:shop:address type='billing'><r:street /></r:shop:address>}
-        exp = @billing.street
+      context 'shop:cart:address:email' do
+        it 'should return the email' do
+          tag = %{<r:shop:cart:address type='billing'><r:email /></r:shop:cart:address>}
+          exp = @billing.email
         
-        @page.should render(tag).as(exp)
+          @page.should render(tag).as(exp)
+        end
       end
-    end
-    context 'shop:address:city' do
-      it 'should return the city' do
-        tag = %{<r:shop:address type='billing'><r:city /></r:shop:address>}
-        exp = @billing.city
+      context 'shop:cart:address:unit' do
+        it 'should return the unit' do
+          tag = %{<r:shop:cart:address type='billing'><r:unit /></r:shop:cart:address>}
+          exp = @billing.unit
         
-        @page.should render(tag).as(exp)
+          @page.should render(tag).as(exp)
+        end
       end
-    end
-    context 'shop:address:country' do
-      it 'should return the country' do
-        tag = %{<r:shop:address type='billing'><r:country /></r:shop:address>}
-        exp = @billing.country
+      context 'shop:cart:address:street' do
+        it 'should return the street' do
+          tag = %{<r:shop:cart:address type='billing'><r:street /></r:shop:cart:address>}
+          exp = @billing.street
         
-        @page.should render(tag).as(exp)
+          @page.should render(tag).as(exp)
+        end
       end
-    end
-    context 'shop:address:postcode' do
-      it 'should return the postcode' do
-        tag = %{<r:shop:address type='billing'><r:postcode /></r:shop:address>}
-        exp = @billing.postcode
+      context 'shop:cart:address:city' do
+        it 'should return the city' do
+          tag = %{<r:shop:cart:address type='billing'><r:city /></r:shop:cart:address>}
+          exp = @billing.city
         
-        @page.should render(tag).as(exp)
+          @page.should render(tag).as(exp)
+        end
+      end
+      context 'shop:cart:address:state' do
+        it 'should return the city' do
+          tag = %{<r:shop:cart:address type='billing'><r:state /></r:shop:cart:address>}
+          exp = @billing.state
+        
+          @page.should render(tag).as(exp)
+        end
+      end
+      context 'shop:cart:address:country' do
+        it 'should return the country' do
+          tag = %{<r:shop:cart:address type='billing'><r:country /></r:shop:cart:address>}
+          exp = @billing.country
+        
+          @page.should render(tag).as(exp)
+        end
+      end
+      context 'shop:cart:address:postcode' do
+        it 'should return the postcode' do
+          tag = %{<r:shop:cart:address type='billing'><r:postcode /></r:shop:cart:address>}
+          exp = @billing.postcode
+        
+          @page.should render(tag).as(exp)
+        end
       end
     end
   end

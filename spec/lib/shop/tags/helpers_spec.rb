@@ -340,25 +340,37 @@ describe Shop::Tags::Helpers do
   end
   
   describe '#current_address(tag)' do
+    before :each do
+      @attrs['type'] = 'billing'
+    end
     context 'address exists' do
-      it 'should return that billing address' do
+      before :each do
         @billing = Object.new
-        
         stub(@shop_order).billing { @billing }
         stub(@locals).shop_order { @shop_order }
-        
-        @attrs['type'] = 'billing'
-        
-        result = Shop::Tags::Helpers.current_address(@tag)
-        result.should == @billing
+      end
+      context 'tag exists' do
+        it 'should return the address' do
+          stub(@locals).address { @billing }
+          
+          result = Shop::Tags::Helpers.current_address(@tag)
+          result.should == @billing
+        end
+      end
+      context 'tag doesnt exist' do
+        it 'should return that billing address' do
+          stub(@locals).address { nil }
+          
+          result = Shop::Tags::Helpers.current_address(@tag)
+          result.should == @billing
+        end
       end
     end
     context 'address does not exist' do
       it 'should return nil' do
+        stub(@locals).address { nil }
         stub(@shop_order).billing { nil }
         stub(@locals).shop_order { @shop_order }
-        
-        @attrs['type'] = 'billing'
         
         result = Shop::Tags::Helpers.current_address(@tag)
         result.should == nil

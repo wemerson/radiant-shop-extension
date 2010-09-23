@@ -117,15 +117,19 @@ module Shop
         def current_address(tag)
           result = nil
           
-          order = current_order(tag) # we need the current order
-          if order.present? # if it exists
-            begin
-              address = order.send(tag.attr['type']) # Get the address type (order.billing)
-              if address.present? # If that address exists
-                result = address # The result is that address
+          if tag.locals.address.present?
+            result = tag.locals.address
+          else
+            order = current_order(tag) # we need the current order
+            if order.present? # if it exists
+              begin
+                address = order.send(tag.attr['type']) # Get the address type (order.billing)
+                if address.present? # If that address exists
+                  result = address # The result is that address
+                end
+              rescue
+                result = nil # Will catch an incorrect address type being send
               end
-            rescue
-              result = nil # Will catch an incorrect address type being send
             end
           end
           

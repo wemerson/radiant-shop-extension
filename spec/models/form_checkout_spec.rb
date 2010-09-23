@@ -42,8 +42,8 @@ describe FormCheckout do
           context 'both billing and shipping' do
             it 'should assign that address to the order billing and shipping' do
               @data = { 
-                'billing' => { 'id' => shop_addresses(:billing).id },
-                'shipping' => { 'id' => shop_addresses(:shipping).id }
+                'billing'   => { 'id' => shop_addresses(:billing).id },
+                'shipping'  => { 'id' => shop_addresses(:shipping).id }
               }
             
               @checkout = FormCheckout.new(@form, @page)
@@ -109,6 +109,20 @@ describe FormCheckout do
             it 'should copy billing to shipping' do
               @data = {
                 'billing'   => { 'name' => 'b_n', 'email' => 'b_e', 'street' => 'b_s', 'city' => 'b_c', 'state' => 'b_s', 'country' => 'b_c', 'postcode' => 'b_p' }
+              }
+          
+              @checkout = FormCheckout.new(@form, @page)
+              @checkout.create
+          
+              shop_orders(:one_item).billing.name.should  === 'b_n'
+              shop_orders(:one_item).shipping.should === shop_orders(:one_item).billing
+            end
+          end
+          context 'billing sent with same shipping' do
+            it 'should copy billing to shipping' do
+              @data = {
+                'billing'   => { 'id' => shop_addresses(:billing).id, 'name' => 'b_n', 'email' => 'b_e', 'street' => 'b_s', 'city' => 'b_c', 'state' => 'b_s', 'country' => 'b_c', 'postcode' => 'b_p' },
+                'shipping'  => { 'id' => shop_addresses(:billing).id, 'name' => 'b_n', 'email' => 'b_e', 'street' => 'b_s', 'city' => 'b_c', 'state' => 'b_s', 'country' => 'b_c', 'postcode' => 'b_p' }
               }
           
               @checkout = FormCheckout.new(@form, @page)
