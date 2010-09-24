@@ -84,12 +84,15 @@ module Shop
             result  = tag.locals.shop_order
           elsif tag.attr['id']
             result  = ShopOrder.find(tag.attr['id'])
-          elsif tag.locals.page.request.session[:shop_order]
+          elsif tag.locals.page.request.present?
+            session = tag.locals.page.request.session[:shop_order] rescue tag.locals.page.request[:session][:shop_order]
             begin
-              result  = ShopOrder.find(tag.locals.page.request.session[:shop_order])
+              result  = ShopOrder.find(session)
             rescue
-              result  = ShopOrder.create
-              tag.locals.page.request.session[:shop_order] = result.id
+              if session == Object
+                result  = ShopOrder.create
+                tag.locals.page.request.session[:shop_order] = result.id
+              end
             end
           end
           

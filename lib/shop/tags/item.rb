@@ -59,7 +59,7 @@ module Shop
       end
       
       # Output the related elements attributes
-      [:name, :price, :weight].each do |symbol|
+      [:name, :sku, :price, :weight].each do |symbol|
         desc %{ outputs the #{symbol} of the current cart item }
         tag "shop:cart:item:#{symbol}" do |tag|
           tag.locals.shop_line_item.item.send(symbol)

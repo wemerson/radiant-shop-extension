@@ -7,7 +7,8 @@ class FormCheckout
       :shipping => false,
       :gateway  => false,
       :card     => false,
-      :payment  => false
+      :payment  => false,
+      :order    => false
     }
     
     @success= true
@@ -26,8 +27,12 @@ class FormCheckout
       purchase
     end
     
-    if @result[:payment]
+    if @result[:payment] and @result[:payment][:success]
+      build_email
+      
       @order.update_attribute(:status, 'paid')
+      
+      @result[:order] = { :id => @order.id, :status => @order.status }
     end
     
     @result
@@ -145,6 +150,16 @@ class FormCheckout
         @result[:card] = {
           :valid  => @card.valid?
         }
+      end
+    end
+    
+    def build_email
+      if @config[:mail]
+        @form[:config][:mail] = {
+          :recipient  => @order.billing.email,
+          :to         => @order.billing.email,
+        }
+        @form[:config][:mail].merge!(@config[:mail])
       end
     end
     

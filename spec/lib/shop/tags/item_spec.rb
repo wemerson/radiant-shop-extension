@@ -18,6 +18,7 @@ describe Shop::Tags::Item do
       'shop:cart:item:id',
       'shop:cart:item:quantity',
       'shop:cart:item:name',
+      'shop:cart:item:sku',
       'shop:cart:item:link',
       'shop:cart:item:price',
       'shop:cart:item:weight',
@@ -201,6 +202,14 @@ describe Shop::Tags::Item do
             
             tag = %{<r:shop:cart:item:name />}
             expected = %{name}
+            
+            @page.should render(tag).as(expected)
+          end
+          it 'should render <r:sku />' do
+            stub(@shop_line_item).item.stub!.sku { 'sku' }
+            
+            tag = %{<r:shop:cart:item:sku />}
+            expected = %{sku}
             
             @page.should render(tag).as(expected)
           end
