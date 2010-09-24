@@ -36,9 +36,9 @@ class ShopCategory < ActiveRecord::Base
     def search(search)
       unless search.blank?
         queries = []
-        queries << 'LOWER(title) LIKE (:term)'
-        queries << 'LOWER(handle) LIKE (:term)'
-        queries << 'LOWER(description) LIKE (:term)'
+        queries << 'LOWER(shop_categories.name)         LIKE (:term)'
+        queries << 'LOWER(shop_categories.handle)       LIKE (:term)'
+        queries << 'LOWER(shop_categories.description)  LIKE (:term)'
       
         sql = queries.join(" OR ")
         conditions = [sql, {:term => "%#{search.downcase}%" }]
