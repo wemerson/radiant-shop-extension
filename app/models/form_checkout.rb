@@ -28,7 +28,10 @@ class FormCheckout
     end
     
     if @result[:payment] and @result[:payment][:success]
-      build_email
+      if @config[:email].present?
+        # If the form was configured to send a payment email
+        build_email
+      end
       
       @order.update_attribute(:status, 'paid')
       
