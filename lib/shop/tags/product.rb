@@ -15,15 +15,16 @@ module Shop
       end
       
       tag 'shop:products' do |tag|
+        tag.locals.shop_products = Helpers.current_products(tag)
+        
         tag.expand
       end
       
       desc %{ iterates through each product within the scope }
       tag 'shop:products:each' do |tag|
-        content   = ''
-        products  = Helpers.current_products(tag)
+        content = ''
         
-        products.each do |product|
+        tag.locals.shop_products.each do |product|
           tag.locals.shop_product = product
           content << tag.expand
         end
@@ -33,7 +34,8 @@ module Shop
       
       tag 'shop:product' do |tag|
         tag.locals.shop_product = Helpers.current_product(tag)
-        tag.expand unless tag.locals.shop_product.nil?
+        
+        tag.expand if tag.locals.shop_product.present?
       end
       
       [:id, :name, :sku, :slug].each do |symbol|
@@ -50,28 +52,25 @@ module Shop
       
       desc %{ generates a link to the products generated page }
       tag 'shop:product:link' do |tag|
-        product = tag.locals.shop_product
         options = tag.attr.dup
         attributes = options.inject('') { |s, (k, v)| s << %{#{k.downcase}="#{v}" } }.strip
-        attributes = " #{attributes}" unless attributes.empty?
+        attributes = " #{attributes}" if attributes.present?
         
-        text = tag.double? ? tag.expand : product.name
+        text = tag.double? ? tag.expand : tag.locals.shop_product.name
         
-        %{<a href="#{product.slug}"#{attributes}>#{text}</a>}
+        %{<a href="#{tag.locals.shop_product.slug}"#{attributes}>#{text}</a>}
       end
       
       desc %{ outputs the slug to the products generated page }
       tag 'shop:product:slug' do |tag|
-        product = tag.locals.shop_product
-        product.slug unless product.nil?
+        tag.locals.shop_product.slug
       end
       
       desc %{ output price of product }
       tag 'shop:product:price' do |tag|
         attr = tag.attr.symbolize_keys
-        product = tag.locals.shop_product
-                
-        number_to_currency(product.price, 
+        
+        number_to_currency(tag.locals.shop_product.price, 
           :precision  =>(attr[:precision] || Radiant::Config['shop.price_precision']).to_i,
           :unit       => attr[:unit]      || Radiant::Config['shop.price_unit'],
           :separator  => attr[:separator] || Radiant::Config['shop.price_seperator'],
@@ -79,7 +78,7 @@ module Shop
       end
       
       tag 'shop:product:images' do |tag|
-        tag.locals.images = tag.locals.shop_product.images
+        tag.locals.images = tag.locals.shop_product.attachments
         
         tag.expand
       end
@@ -98,7 +97,7 @@ module Shop
       tag 'shop:product:images:each' do |tag|
         content = ''
         
-        tag.locals.shop_product.images.each do |image|
+        tag.locals.images.each do |image|
           tag.locals.image = image
           content << tag.expand
         end

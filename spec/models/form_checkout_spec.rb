@@ -212,7 +212,7 @@ describe FormCheckout do
               :checkout   => {
                 :test     => true,
                 :gateway  => {
-                  :name   => 'PayWay',
+                  :name   => 'Eway',
                   :credentials=> {
                     :username => 'abcdefgh',
                     :password => '12345678',
@@ -231,7 +231,7 @@ describe FormCheckout do
             stub(@purchase).success? { true }
             stub(@purchase).message { 'success' }
             
-            mock(ActiveMerchant::Billing::PayWayGateway).new(@form[:config][:checkout][:gateway][:credentials]) { @gateway }
+            mock(ActiveMerchant::Billing::EwayGateway).new(@form[:config][:checkout][:gateway][:credentials]) { @gateway }
             stub(@gateway).purchase(1000, nil, { :order_id => @order.id}) { @purchase }
           end
           it 'should assign ActiveMerchant to testing mode' do        
@@ -258,8 +258,8 @@ describe FormCheckout do
             }
           end
           
-          it 'should not call PayWayGateway' do
-            dont_allow(ActiveMerchant::Billing::PayWayGateway).new
+          it 'should not call EwayGateway' do
+            dont_allow(ActiveMerchant::Billing::EwayGateway).new
             
             @checkout = FormCheckout.new(@form, @page)
             @checkout.create
@@ -279,7 +279,7 @@ describe FormCheckout do
           @form[:config] = {
             :checkout   => {
               :gateway  => {
-                :name   => 'PayWay',
+                :name   => 'Eway',
                 :credentials => {}
               }
             }
@@ -299,7 +299,7 @@ describe FormCheckout do
           @purchase = Object.new
           stub(@purchase).success? { true }
           stub(@purchase).message { 'success' }
-          mock(ActiveMerchant::Billing::PayWayGateway).new(@form[:config][:checkout][:gateway][:credentials]) { @gateway }
+          mock(ActiveMerchant::Billing::EwayGateway).new(@form[:config][:checkout][:gateway][:credentials]) { @gateway }
           stub(@gateway).purchase(@order.price * 100, anything, { :order_id => @order.id }) { @purchase }
         end
         context 'configured' do

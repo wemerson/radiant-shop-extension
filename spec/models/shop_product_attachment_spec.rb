@@ -34,6 +34,7 @@ describe ShopProductAttachment do
   context 'alias methods' do
     
     before(:each) do
+      stub(AWS::S3::Base).establish_connection!
       @product_image = shop_products(:soft_bread).attachments.first
     end
     

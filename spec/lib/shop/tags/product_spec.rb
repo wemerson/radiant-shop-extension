@@ -2,7 +2,7 @@ require 'spec/spec_helper'
 
 describe Shop::Tags::Product do
   
-  dataset :pages
+  dataset :pages, :shop_products
   
   it 'should describe these tags' do
     Shop::Tags::Product.tags.sort.should == [
@@ -18,313 +18,327 @@ describe Shop::Tags::Product do
       'shop:product:slug',
       'shop:product:description',
       'shop:product:link',
-      'shop:product:if_images',
-      'shop:product:unless_images',
       'shop:product:images',
+      'shop:product:images:if_images',
+      'shop:product:images:unless_images',
       'shop:product:images:each'].sort
+  end
+  
+  before :all do
+    @page     = pages(:home)
   end
 
   before(:each) do
-    product = Object.new
-    stub(product).id { 1 }
+    @product  = shop_products(:soft_bread)
+    @products = [ shop_products(:soft_bread), shop_products(:crusty_bread) ]
     
-    @shop_product   = product
-    @shop_products  = [ product, product, product ]
-    
-    image = Object.new
-    stub(image).id { 1 }
-    
-    @image = image
-    @images = [ image, image, image ]
+    @image    = images(:soft_bread_front)
+    @images   = [ images(:soft_bread_front), images(:soft_bread_back), images(:soft_bread_top) ]
   end
   
   describe '<r:shop:if_products>' do
     context 'success' do
+      before :each do
+        mock(Shop::Tags::Helpers).current_products(anything) { @products }
+      end
+      
       it 'should render' do
-        mock(Shop::Tags::Helpers).current_products(anything) { @shop_products }
-        
         tag = %{<r:shop:if_products>success</r:shop:if_products>}
-        expected = %{success}
-        pages(:home).should render(tag).as(expected)
+        exp = %{success}
+        @page.should render(tag).as(exp)
       end
     end
+    
     context 'failure' do
-      it 'should not render' do
+      before :each do
         mock(Shop::Tags::Helpers).current_products(anything) { [] }
-        
+      end
+      
+      it 'should not render' do
         tag = %{<r:shop:if_products>failure</r:shop:if_products>}
-        expected = %{}
-        pages(:home).should render(tag).as(expected)
+        exp = %{}
+        @page.should render(tag).as(exp)
       end
     end
   end
   
   describe '<r:shop:unless_products>' do
     context 'success' do
-      it 'should render' do
+      before :each do
         mock(Shop::Tags::Helpers).current_products(anything) { [] }
-        
+      end
+      
+      it 'should render' do
         tag = %{<r:shop:unless_products>success</r:shop:unless_products>}
-        expected = %{success}
-        pages(:home).should render(tag).as(expected)
+        exp = %{success}
+        @page.should render(tag).as(exp)
       end
     end
+    
     context 'failure' do
+      before :each do
+        mock(Shop::Tags::Helpers).current_products(anything) { @products }
+      end
+      
       it 'should not render' do
-        mock(Shop::Tags::Helpers).current_products(anything) { @shop_products }
-        
         tag = %{<r:shop:unless_products>failure</r:shop:unless_products>}
-        expected = %{}
-        pages(:home).should render(tag).as(expected)
+        exp = %{}
+        @page.should render(tag).as(exp)
       end
     end
   end
   
   describe '<r:shop:products>' do
-    it 'should render' do
-      tag = %{<r:shop:products>success</r:shop:products>}
-      expected = %{success}
+    context 'no products exist' do
+      before :each do
+        mock(Shop::Tags::Helpers).current_products(anything) { [] }
+      end
       
-      pages(:home).should render(tag).as(expected)
+      it 'should render' do
+        tag = %{<r:shop:products>success</r:shop:products>}
+        exp = %{success}
+      
+        @page.should render(tag).as(exp)
+      end
+    end
+    
+    context 'products exist' do
+      before :each do
+        mock(Shop::Tags::Helpers).current_products(anything) { @products }
+      end
+      
+      it 'should render' do
+        tag = %{<r:shop:products>success</r:shop:products>}
+        exp = %{success}
+      
+        @page.should render(tag).as(exp)
+      end
     end
   end
   
   describe '<r:shop:products:each>' do
     context 'success' do
+      before :each do
+        mock(Shop::Tags::Helpers).current_products(anything) { @products }
+      end
+      
       it 'should not render' do
-        mock(Shop::Tags::Helpers).current_products(anything) { @shop_products }
-        
-        tag = %{<r:shop:products:each>.a.</r:shop:products:each>}
-        expected = %{.a..a..a.}
-        pages(:home).should render(tag).as(expected)
+        tag = %{<r:shop:products:each><r:product:id /></r:shop:products:each>}
+        exp = @products.map{ |p| p.id }.join('')
+        @page.should render(tag).as(exp)
       end      
     end
+    
     context 'failure' do
-      it 'should not render' do
+      before :each do
         mock(Shop::Tags::Helpers).current_products(anything) { [] }
-        
+      end
+      
+      it 'should not render' do
         tag = %{<r:shop:products:each>failure</r:shop:products:each>}
-        expected = %{}
-        pages(:home).should render(tag).as(expected)
+        exp = %{}
+        @page.should render(tag).as(exp)
       end
     end
   end
   
   describe '<r:shop:product>' do
-    context 'success' do
-      it 'should render' do
-        mock(Shop::Tags::Helpers).current_product(anything) { @shop_product }
-        
-        tag = %{<r:shop:product>success</r:shop:product>}
-        expected = %{success}
-        pages(:home).should render(tag).as(expected)
-      end
-    end
-    context 'failure' do
-      it 'should not render' do
-        mock(Shop::Tags::Helpers).current_product(anything) { nil }
-
-        tag = %{<r:shop:product>failure</r:shop:product>}
-        expected = %{}
-        pages(:home).should render(tag).as(expected)
-      end
-    end
-    
-    describe 'simple attributes' do
+    context 'product exists in the context' do
       before :each do
-        mock(Shop::Tags::Helpers).current_product(anything) { @shop_product }
+        mock(Shop::Tags::Helpers).current_product(anything) { @products }
       end
-      it 'should render <r:id />' do
-        stub(@shop_product).id { 1 }
-        
-        tag = %{<r:shop:product:id />}
-        expected = %{1}
-        pages(:home).should render(tag).as(expected)
-      end
-      it 'should render <r:name />' do
-        stub(@shop_product).name { 'name' }
-        
-        tag = %{<r:shop:product:name />}
-        expected = %{name}
-        pages(:home).should render(tag).as(expected)
-      end
-      it 'should render <r:sku />' do
-        stub(@shop_product).sku { 'sku' }
-        
-        tag = %{<r:shop:product:sku />}
-        expected = %{sku}
-        pages(:home).should render(tag).as(expected)
-      end
-      it 'should render <r:slug />' do
-        stub(@shop_product).slug { 'slug' }
-        
-        tag = %{<r:shop:product:slug />}
-        expected = %{slug}
-        pages(:home).should render(tag).as(expected)
+      
+      it 'should render' do
+        tag = %{<r:shop:product>success</r:shop:product>}
+        exp = %{success}
+        @page.should render(tag).as(exp)
       end
     end
     
-    describe '<r:shop:product:description />' do
-      it 'should render a textile filtered result' do
-        mock(Shop::Tags::Helpers).current_product(anything) { @shop_product }
-        stub(@shop_product).description { '*bold*' }
-        
-        tag = %{<r:shop:product:description />}
-        expected = %{<p><strong>bold</strong></p>}
-        pages(:home).should render(tag).as(expected)
+    context 'product does not exist in the context' do
+      before :each do
+        mock(Shop::Tags::Helpers).current_product(anything) { [] }
+      end
+      
+      it 'should not render' do
+        tag = %{<r:shop:product>failure</r:shop:product>}
+        exp = %{}
+        @page.should render(tag).as(exp)
+      end
+    end
+    
+    context '#attributes' do
+      before :each do
+        mock(Shop::Tags::Helpers).current_product(anything) { @product }
+      end
+      
+      describe '<r:id />' do
+        it 'should render the product id' do
+          tag = %{<r:shop:product:id />}
+          exp = @product.id.to_s
+          @page.should render(tag).as(exp)
+        end
+      end
+      describe '<r:name />' do
+        it 'should render the product name' do
+          tag = %{<r:shop:product:name />}
+          exp = @product.name
+          @page.should render(tag).as(exp)
+        end
+      end
+      describe '<r:sku />' do
+        it 'should render the product sku' do
+          tag = %{<r:shop:product:sku />}
+          exp = @product.sku
+          @page.should render(tag).as(exp)
+        end
+      end
+      describe '<r:slug />' do
+        it 'should render the product slug' do
+          tag = %{<r:shop:product:slug />}
+          exp = @product.slug
+          @page.should render(tag).as(exp)
+        end
+      end
+      describe '<r:description />' do
+        it 'should render a textile filtered description' do
+          tag = %{<r:shop:product:description />}
+          exp = TextileFilter.filter(@product.description)
+          @page.should render(tag).as(exp)
+        end
       end
     end
     
     describe '<r:link />' do
       before :each do
-        mock(Shop::Tags::Helpers).current_product(anything) { @shop_product }
+        mock(Shop::Tags::Helpers).current_product(anything) { @product }
       end
       
       context 'standalone' do
-        before :each do          
-          stub(@shop_product).slug { 'slug' }
-          stub(@shop_product).name { 'name' }
-        end
         it 'should render an anchor element' do
           tag = %{<r:shop:product:link />}
-          expected = %{<a href="slug">name</a>}
-          pages(:home).should render(tag).as(expected)
+          exp = %{<a href="#{@product.slug}">#{@product.name}</a>}
+          @page.should render(tag).as(exp)
         end
         it 'should assign attributes' do
           tag = %{<r:shop:product:link title="title" data-title="data-title"/>}
-          expected = %{<a href="slug" data-title="data-title" title="title">name</a>}
-          pages(:home).should render(tag).as(expected)          
+          exp = %{<a href="#{@product.slug}" data-title="data-title" title="title">#{@product.name}</a>}
+          @page.should render(tag).as(exp)
         end
       end
       
       context 'wrapped' do
         it 'should render an anchor element' do
-          stub(@shop_product).slug { 'slug' }
-          
           tag = %{<r:shop:product:link>title</r:shop:product:link>}
-          expected = %{<a href="slug">title</a>}
-          pages(:home).should render(tag).as(expected)
+          exp = %{<a href="#{@product.slug}">title</a>}
+          @page.should render(tag).as(exp)
         end
       end
     end
     
     describe '<r:price />' do
       before :each do
-        mock(Shop::Tags::Helpers).current_product(anything) { @shop_product }
-        stub(@shop_product).price { 1234.34567890 }
+        mock(Shop::Tags::Helpers).current_product(anything) { @product }
+        stub(@product).price { 1234.34567890 }
       end
       
       it 'should render a standard price' do
         tag = %{<r:shop:product:price />}
-        expected = %{$1,234.35}
-        pages(:home).should render(tag).as(expected)
+        exp = %{$1,234.35}
+        @page.should render(tag).as(exp)
       end
       
       it 'should render a high precision price' do
         tag = %{<r:shop:product:price precision="8"/>}
-        expected = %{$1,234.34567890}
-        pages(:home).should render(tag).as(expected)
+        exp = %{$1,234.34567890}
+        @page.should render(tag).as(exp)
       end
       
       it 'should render a custom format' do
         tag = %{<r:shop:product:price unit="%" separator="-" delimiter="+" />}
-        expected = %{%1+234-35}
-        pages(:home).should render(tag).as(expected)
+        exp = %{%1+234-35}
+        @page.should render(tag).as(exp)
       end
     end
     
-    describe '<r:shop:product:if_images>' do
+    describe '<r:shop:product:images:if_images>' do
       before :each do
-        mock(Shop::Tags::Helpers).current_product(anything) { @shop_product }
+        mock(Shop::Tags::Helpers).current_product(anything) { @product }
       end
       
       context 'success' do
         it 'should render' do
-          stub(@shop_product).images { @images }
-
-          tag = %{<r:shop:product:if_images>success</r:shop:product:if_images>}
-          expected = %{success}
-          pages(:home).should render(tag).as(expected)
+          tag = %{<r:shop:product:images:if_images>success</r:shop:product:images:if_images>}
+          exp = %{success}
+          @page.should render(tag).as(exp)
         end
       end
-      
       context 'failure' do
         it 'should not render' do
-          stub(@shop_product).images { [] }
-
-          tag = %{<r:shop:product:if_images>failure</r:shop:product:if_images>}
-          expected = %{}
-          pages(:home).should render(tag).as(expected)
+          @product.images.delete_all
+          
+          tag = %{<r:shop:product:images:if_images>failure</r:shop:product:images:if_images>}
+          exp = %{}
+          @page.should render(tag).as(exp)
         end
       end
     end
 
-    describe '<r:shop:product:unless_images>' do
+    describe '<r:shop:product:images:unless_images>' do
       before :each do
-        mock(Shop::Tags::Helpers).current_product(anything) { @shop_product }
+        mock(Shop::Tags::Helpers).current_product(anything) { @product }
       end
       
       context 'success' do
         it 'should render' do
-          stub(@shop_product).images { [] }
+          @product.images.delete_all
           
-          tag = %{<r:shop:product:unless_images>success</r:shop:product:unless_images>}
-          expected = %{success}
-          pages(:home).should render(tag).as(expected)
+          tag = %{<r:shop:product:images:unless_images>success</r:shop:product:images:unless_images>}
+          exp = %{success}
+          @page.should render(tag).as(exp)
         end
       end
       
       context 'failure' do
         it 'should not render' do
-          stub(@shop_product).images { @images }
-
-          tag = %{<r:shop:product:unless_images>failure</r:shop:product:unless_images>}
-          expected = %{}
-          pages(:home).should render(tag).as(expected)
+          tag = %{<r:shop:product:images:unless_images>failure</r:shop:product:images:unless_images>}
+          exp = %{}
+          @page.should render(tag).as(exp)
         end
       end
     end
     
     describe '<r:shop:product:images>' do
       before :each do
-        mock(Shop::Tags::Helpers).current_product(anything) { @shop_product }
+        mock(Shop::Tags::Helpers).current_product(anything) { @product }
       end
+      
       it 'should render' do
         tag = %{<r:shop:product:images>success</r:shop:product:images>}
-        expected = %{success}
-
-        pages(:home).should render(tag).as(expected)
+        exp = %{success}
+        @page.should render(tag).as(exp)
       end
     end
     
     describe '<r:shop:product:images:each>' do
       before :each do
-        mock(Shop::Tags::Helpers).current_product(anything) { @shop_product }
+        mock(Shop::Tags::Helpers).current_product(anything) { @product }
       end
+      
       context 'success' do
-        before :each do
-          stub(@shop_product).images { @images }
-        end
-        it 'should render' do
-          tag = %{<r:shop:product:images:each>.a.</r:shop:product:images:each>}
-          expected = %{.a..a..a.}
-          
-          pages(:home).should render(tag).as(expected)
-        end
-        it 'should assign the local image' do
+        it 'should assign the local image for each' do
           tag = %{<r:shop:product:images:each><r:image:id /></r:shop:product:images:each>}
-          expected = %{111}
-
-          pages(:home).should render(tag).as(expected)
+          exp =  @product.attachments.map{ |i| i.id }.join('')
+          @page.should render(tag).as(exp)
         end    
       end
       context 'failure' do
         it 'should not render' do
-          stub(@shop_product).images { [] }
+          @product.images.delete_all
           
           tag = %{<r:shop:product:images:each>failure</r:shop:product:images:each>}
-          expected = %{}
-          pages(:home).should render(tag).as(expected)
+          exp = %{}
+          @page.should render(tag).as(exp)
         end
       end
     end
