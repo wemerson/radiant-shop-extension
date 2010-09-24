@@ -28,7 +28,7 @@ class FormCheckout
     end
     
     if @result[:payment] and @result[:payment][:success]
-      if @config[:email].present?
+      if @config[:mail].present?
         # If the form was configured to send a payment email
         build_email
       end

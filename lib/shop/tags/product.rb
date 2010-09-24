@@ -78,18 +78,20 @@ module Shop
           :delimiter  => attr[:delimiter] || Radiant::Config['shop.price_delimiter'])
       end
       
+      tag 'shop:product:images' do |tag|
+        tag.locals.images = tag.locals.shop_product.images
+        
+        tag.expand
+      end
+      
       desc %{ expands if the product has a valid image }
-      tag 'shop:product:if_images' do |tag|
-        tag.expand unless tag.locals.shop_product.images.empty?
+      tag 'shop:product:images:if_images' do |tag|
+        tag.expand if tag.locals.images.present?
       end
       
       desc %{ expands if the product does not have a valid image }
-      tag 'shop:product:unless_images' do |tag|
-        tag.expand if tag.locals.shop_product.images.empty?
-      end
-      
-      tag 'shop:product:images' do |tag|
-        tag.expand
+      tag 'shop:product:images:unless_images' do |tag|
+        tag.expand unless tag.locals.images.present?
       end
       
       desc %{ iterates through each of the products images }

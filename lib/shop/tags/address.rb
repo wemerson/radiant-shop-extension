@@ -13,6 +13,7 @@ module Shop
         Forms::Tags::Helpers.require!(tag,'shop:cart:address','type')
         
         tag.locals.address = Shop::Tags::Helpers.current_address(tag)
+        tag.locals.address_type = tag.attr['type']
         
         tag.expand
       end

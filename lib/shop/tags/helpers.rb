@@ -120,7 +120,7 @@ module Shop
         def current_address(tag)
           result = nil
           
-          if tag.locals.address.present?
+          if tag.locals.address.present? and tag.locals.address_type == tag.attr['type']
             result = tag.locals.address
           else
             order = current_order(tag) # we need the current order
