@@ -2,17 +2,8 @@ class FormCheckout
   include Forms::Models::Extension
   
   def create
-    @result = {
-      :billing  => false,
-      :shipping => false,
-      :gateway  => false,
-      :card     => false,
-      :payment  => false,
-      :order    => false
-    }
-    
-    @success= true
-    @order  = ShopOrder.find(@page.request[:session][:shop_order])
+    build_result
+    @order  = ShopOrder.find(@page.request.session[:shop_order])
     
     if @config[:address].present?
       # If the form was configured for address
@@ -24,13 +15,13 @@ class FormCheckout
       build_gateway
       build_card
       
-      purchase
+      purchase!
     end
     
-    if @result[:payment] and @result[:payment][:success]
+    if success?
       if @config[:mail].present?
         # If the form was configured to send a payment email
-        build_email
+        build_mail
       end
       
       @order.update_attribute(:status, 'paid')
@@ -42,6 +33,18 @@ class FormCheckout
   end
   
   private
+  
+    # This creates the result hash which we will return
+    def build_result
+      @result = {
+        :billing  => false,
+        :shipping => false,
+        :gateway  => false,
+        :card     => false,
+        :payment  => false,
+        :order    => false
+      }
+    end
   
     # Assigns a shipping and billing address to the @order
     def build_addresses
@@ -70,9 +73,9 @@ class FormCheckout
     
     def build_billing_address
       # Billing Address
-      if billing['id'].present?
+      if billing[:id].present?
         # Use an existing Address and update its values
-        @billing = ShopAddress.find(billing['id'])
+        @billing = ShopAddress.find(billing[:id])
         @billing.update_attributes(billing)
         @order.update_attribute(:billing_id, @billing.id)
 
@@ -87,27 +90,30 @@ class FormCheckout
         if @billing.save
           @order.update_attribute(:billing_id, @billing.id)
         end
-
+        
       end
     end
     
     def build_shipping_address
       # Shipping Address
-      if shipping['id'].present?
+      if shipping[:id].present?
         # Use an existing Address and update its values
-        @shipping = ShopAddress.find(shipping['id'])
+        @shipping = ShopAddress.find(shipping[:id])
         if @shipping == @billing and shipping == billing
           # We have exactly the same shipping and billing data
           @shipping = @billing
           @order.update_attribute(:shipping_id, @billing.id)
-        elsif (shipping.reject!{|k,v|k=='id'}).values.all?(&:blank?)
+          
+        elsif (shipping.reject!{|k,v| k == :id }).values.all?(&:blank?)
           # We have just passed the id and not the data
           @order.update_attribute(:shipping_id, @shipping.id)
+          
         elsif @shipping == @billing and shipping != billing
           # We have conflicting data so create a new address
           # the id is rejected so we'll get a new address
           @order.update_attributes!({ :shipping_attributes => shipping })
           @shipping = @order.shipping
+          
         end
         
       elsif @order.shipping.present?
@@ -156,17 +162,15 @@ class FormCheckout
       end
     end
     
-    def build_email
-      if @config[:mail]
-        @form[:config][:mail] = {
-          :recipient  => @order.billing.email,
-          :to         => @order.billing.email,
-        }
-        @form[:config][:mail].merge!(@config[:mail])
-      end
+    def build_mail
+      @form[:extensions][:mail].merge!({
+        :recipient  => @order.billing.email,
+        :to         => @order.billing.email,
+      })
+      @form[:extensions][:mail].merge!(@config[:mail])
     end
     
-    def purchase
+    def purchase!
       result = @gateway.purchase(amount, @card, options)
       
       @result[:payment] = {
@@ -178,21 +182,17 @@ class FormCheckout
         @form.redirect_to = :back
       end
     end
-    
-    def success?
-      @success
-    end
   
     def testing
       @config[:test].present?
     end
     
     def billing
-      billing   = @data['billing'] # Array of billing attributes      
+      billing = @data[:billing] # Array of billing attributes      
     end
     
     def shipping
-      shipping  = @data['shipping'] # Array of shipping attributes      
+      shipping = @data[:shipping] # Array of shipping attributes      
     end
     
     def gateway
@@ -204,32 +204,32 @@ class FormCheckout
     end
     
     def card
-      @data['card']
+      @data[:card]
     end
     
     def card_number
-      card['number'].to_s.gsub('-', '').to_i
+      card[:number].to_s.gsub('-', '').to_i
     end
     
     def card_month
-      card['month'].to_i
+      card[:month].to_i
     end
     
     def card_year
-      card['year'].to_i
+      card[:year].to_i
     end
     
     def card_type
-      card['type']
+      card[:type]
     end
     
     def card_verification
-      card['verification']
+      card[:verification]
     end
     
     def card_names
       return @card_names if @card_names.present?
-      @card_names = @data['card']['name'].split(' ')
+      @card_names = @data[:card][:name].split(' ')
     end
     
     def card_first_name
@@ -256,8 +256,13 @@ class FormCheckout
       @config[:options] ||= {}
       
       @config[:options][:order_id] = @order.id
-      
+      @config[:options].merge!(@data[:options]) if @data[:options].present?
+            
       @config[:options]
+    end
+    
+    def success?
+      @result[:payment] and @result[:payment][:success]
     end
     
 end

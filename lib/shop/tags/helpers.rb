@@ -78,7 +78,7 @@ module Shop
         
         def current_product(tag)
           result = nil
-
+          
           if tag.locals.shop_product.present?
             result = tag.locals.shop_product
             
@@ -87,6 +87,9 @@ module Shop
             
           elsif tag.locals.page.shop_product.present?
             result = tag.locals.page.shop_product
+            
+          else
+            result = ShopProduct.find_by_sku(tag.locals.page.slug)
             
           end
           

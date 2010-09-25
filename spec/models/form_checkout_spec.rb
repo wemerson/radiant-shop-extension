@@ -5,32 +5,21 @@ describe FormCheckout do
   dataset :shop_orders, :pages, :forms, :shop_addresses
   
   before :each do
-    @form = forms(:checkout)
-    @page = pages(:home)
-    @order = shop_orders(:one_item)
-    
+    @form     = forms(:checkout)
+    @order    = shop_orders(:one_item)
+    @page     = pages(:home)    
     @data     = { }
-    @request  = {
-      :session => {
-        :shop_order => @order.id
-      }
-    }
-
+    @request  = OpenStruct.new({
+      :session => { :shop_order => @order.id }
+    });
     stub(@page).data    { @data }
     stub(@page).request { @request }
   end
-  
-  describe '#initialize' do
-    it 'should assign the instance variables' do
-      
-    end
-  end
-  
   describe '#create' do
     context 'addresses' do
       context 'address configured' do
         before :each do
-          @form[:config] = {
+          @form[:extensions] = {
             :checkout   => {
               :address  => {
                 :enabled => true
@@ -42,8 +31,8 @@ describe FormCheckout do
           context 'both billing and shipping' do
             it 'should assign that address to the order billing and shipping' do
               @data = { 
-                'billing'   => { 'id' => shop_addresses(:billing).id },
-                'shipping'  => { 'id' => shop_addresses(:shipping).id }
+                :billing   => { :id => shop_addresses(:billing).id },
+                :shipping  => { :id => shop_addresses(:shipping).id }
               }
             
               @checkout = FormCheckout.new(@form, @page)
@@ -56,7 +45,7 @@ describe FormCheckout do
           context 'just billing' do
             it 'should assign shipping to be billing' do
               @data = {
-                'billing' => { 'id' => shop_addresses(:billing).id }
+                :billing  => { :id => shop_addresses(:billing).id }
               }
             
               @checkout = FormCheckout.new(@form, @page)
@@ -70,37 +59,36 @@ describe FormCheckout do
       
         context 'existing addresses' do
           it 'should keep them assigned and update them' do
-            shop_orders(:one_item).update_attributes({ 
+            @order.update_attributes({ 
               :billing_id   => shop_addresses(:billing).id,
               :shipping_id  => shop_addresses(:shipping).id,
             })
           
             @data = {
-              'billing'   => { 'name' => 'new billing' },
-              'shipping'  => { 'name' => 'new shipping' }
+              :billing  => { :name => 'new billing' },
+              :shipping => { :name => 'new shipping' }
             }
-          
+            
             @checkout = FormCheckout.new(@form, @page)
             @checkout.create
-          
+            
             shop_orders(:one_item).billing.should === shop_addresses(:billing)
             shop_addresses(:billing).name.should  === 'new billing'
             shop_orders(:one_item).shipping.should=== shop_addresses(:shipping)
             shop_addresses(:shipping).name.should === 'new shipping'
           end
         end
-      
+        
         context 'new addresses' do
           context 'both billing and shipping sent' do
             it 'should create new addresses' do
               @data = {
-                'billing'   => { 'name' => 'b_n', 'email' => 'b_e', 'street' => 'b_s', 'city' => 'b_c', 'state' => 'b_s', 'country' => 'b_c', 'postcode' => 'b_p' },
-                'shipping'  => { 'name' => 's_n', 'email' => 's_e', 'street' => 's_s', 'city' => 's_c', 'state' => 's_s', 'country' => 's_c', 'postcode' => 's_p' }
+                :billing  => { :name => 'b_n', :email => 'b_e', :street => 'b_s', :city => 'b_c', :state => 'b_s', :country => 'b_c', :postcode => 'b_p' },
+                :shipping => { :name => 's_n', :email => 's_e', :street => 's_s', :city => 's_c', :state => 's_s', :country => 's_c', :postcode => 's_p' }
               }
-          
+              
               @checkout = FormCheckout.new(@form, @page)
               @checkout.create
-          
               shop_orders(:one_item).billing.name.should  === 'b_n'
               shop_orders(:one_item).shipping.name.should === 's_n'
             end
@@ -108,12 +96,12 @@ describe FormCheckout do
           context 'only billing sent' do
             it 'should copy billing to shipping' do
               @data = {
-                'billing'   => { 'name' => 'b_n', 'email' => 'b_e', 'street' => 'b_s', 'city' => 'b_c', 'state' => 'b_s', 'country' => 'b_c', 'postcode' => 'b_p' }
+                :billing  => { :name => 'b_n', :email => 'b_e', :street => 'b_s', :city => 'b_c', :state => 'b_s', :country => 'b_c', :postcode => 'b_p' }
               }
-          
+              
               @checkout = FormCheckout.new(@form, @page)
               @checkout.create
-          
+              
               shop_orders(:one_item).billing.name.should  === 'b_n'
               shop_orders(:one_item).shipping.should === shop_orders(:one_item).billing
             end
@@ -121,13 +109,13 @@ describe FormCheckout do
           context 'billing sent with same shipping' do
             it 'should copy billing to shipping' do
               @data = {
-                'billing'   => { 'id' => shop_addresses(:billing).id, 'name' => 'b_n', 'email' => 'b_e', 'street' => 'b_s', 'city' => 'b_c', 'state' => 'b_s', 'country' => 'b_c', 'postcode' => 'b_p' },
-                'shipping'  => { 'id' => shop_addresses(:billing).id, 'name' => 'b_n', 'email' => 'b_e', 'street' => 'b_s', 'city' => 'b_c', 'state' => 'b_s', 'country' => 'b_c', 'postcode' => 'b_p' }
+                :billing  => { :name => 'b_n', :email => 'b_e', :street => 'b_s', :city => 'b_c', :state => 'b_s', :country => 'b_c', :postcode => 'b_p' },
+                :shipping => { :name => 'b_n', :email => 'b_e', :street => 'b_s', :city => 'b_c', :state => 'b_s', :country => 'b_c', :postcode => 'b_p' }
               }
-          
+              
               @checkout = FormCheckout.new(@form, @page)
               @checkout.create
-          
+              
               shop_orders(:one_item).billing.name.should  === 'b_n'
               shop_orders(:one_item).shipping.should === shop_orders(:one_item).billing
             end
@@ -138,8 +126,8 @@ describe FormCheckout do
           context 'success' do
             it 'should return a success string' do
               @data = {
-                'billing'   => { 'name' => 'b_n', 'email' => 'b_e', 'street' => 'b_s', 'city' => 'b_c', 'state' => 'b_s', 'country' => 'b_c', 'postcode' => 'b_p' },
-                'shipping'  => { 'name' => 's_n', 'email' => 's_e', 'street' => 's_s', 'city' => 's_c', 'state' => 's_s', 'country' => 's_c', 'postcode' => 's_p' }
+                :billing  => { :name => 'b_n', :email => 'b_e', :street => 'b_s', :city => 'b_c', :state => 'b_s', :country => 'b_c', :postcode => 'b_p' },
+                :shipping => { :name => 's_n', :email => 's_e', :street => 's_s', :city => 's_c', :state => 's_s', :country => 's_c', :postcode => 's_p' }
               }
           
               @checkout = FormCheckout.new(@form, @page)
@@ -152,7 +140,7 @@ describe FormCheckout do
           context 'failure' do
             it 'should set false to the nil billing' do
               @data = {
-                'shipping'  => { 'name' => 's_n', 'email' => 's_e', 'street' => 's_s', 'city' => 's_c', 'state' => 's_s', 'country' => 's_c', 'postcode' => 's_p' }
+                :shipping => { :name => 's_n', :email => 's_e', :street => 's_s', :city => 's_c', :state => 's_s', :country => 's_c', :postcode => 's_p' }
               }
             
               @checkout = FormCheckout.new(@form, @page)
@@ -163,7 +151,7 @@ describe FormCheckout do
             end
             it 'should set billing to the nil shipping' do
               @data = {
-                'billing'   => { 'name' => 'b_n', 'email' => 'b_e', 'street' => 'b_s', 'city' => 'b_c', 'state' => 'b_s', 'country' => 'b_c', 'postcode' => 'b_p' }
+                :billing  => { :name => 'b_n', :email => 'b_e', :street => 'b_s', :city => 'b_c', :state => 'b_s', :country => 'b_c', :postcode => 'b_p' }
               }
             
               @checkout = FormCheckout.new(@form, @page)
@@ -185,7 +173,7 @@ describe FormCheckout do
       
       context 'not configured' do
         before :each do
-          @form[:config] = {
+          @form[:extensions] = {
             :checkout   => {
               :address  => {
                 :enabled => true
@@ -208,7 +196,7 @@ describe FormCheckout do
       context 'merchant' do
         context 'configured' do
           before :each do
-            @form[:config] = {
+            @form[:extensions] = {
               :checkout   => {
                 :test     => true,
                 :gateway  => {
@@ -231,7 +219,7 @@ describe FormCheckout do
             stub(@purchase).success? { true }
             stub(@purchase).message { 'success' }
             
-            mock(ActiveMerchant::Billing::EwayGateway).new(@form[:config][:checkout][:gateway][:credentials]) { @gateway }
+            mock(ActiveMerchant::Billing::EwayGateway).new(@form[:extensions][:checkout][:gateway][:credentials]) { @gateway }
             stub(@gateway).purchase(1000, nil, { :order_id => @order.id}) { @purchase }
           end
           it 'should assign ActiveMerchant to testing mode' do        
@@ -251,7 +239,7 @@ describe FormCheckout do
         
         context 'not configured' do
           before :each do
-            @form[:config] = {
+            @form[:extensions] = {
               :checkout   => {
                 :test     => true
               }
@@ -276,7 +264,7 @@ describe FormCheckout do
       
       context 'card without test' do
         before :each do
-          @form[:config] = {
+          @form[:extensions] = {
             :checkout   => {
               :gateway  => {
                 :name   => 'Eway',
@@ -299,7 +287,7 @@ describe FormCheckout do
           @purchase = Object.new
           stub(@purchase).success? { true }
           stub(@purchase).message { 'success' }
-          mock(ActiveMerchant::Billing::EwayGateway).new(@form[:config][:checkout][:gateway][:credentials]) { @gateway }
+          mock(ActiveMerchant::Billing::EwayGateway).new(@form[:extensions][:checkout][:gateway][:credentials]) { @gateway }
           stub(@gateway).purchase(@order.price * 100, anything, { :order_id => @order.id }) { @purchase }
         end
         context 'configured' do
@@ -329,7 +317,7 @@ describe FormCheckout do
                 result[:payment][:success].should == true
                 result[:payment][:message].should == 'success'
               end
-              it 'should set the order as paid' do              
+              it 'should set the order as paid' do
                 stub(@card).valid? { true }
                 
                 @checkout = FormCheckout.new(@form, @page)
@@ -370,7 +358,79 @@ describe FormCheckout do
           end
         end
       end
-      
     end
+    
+    context 'mail' do
+      context 'addresses set and payment has been made' do
+        before :each do
+          @order.update_attribute(:billing_id, shop_addresses(:billing).id)
+        end
+        context 'checkout mail is configured' do
+          before :each do
+            @form[:extensions] = {
+              :mail     => {
+                :subject=> 'new order',
+                :to     => 'remove@email.com'
+              },
+              :checkout => {
+                :mail   => {
+                  :bcc  => 'email@email.com'
+                }
+              }
+            }
+          end
+          it 'should integrate into the mail extension config' do
+            @checkout = FormCheckout.new(@form, @page)
+            stub(@checkout).success? { true }
+            result = @checkout.create
+          
+            @form[:extensions][:mail][:to].should         === shop_addresses(:billing).email
+            @form[:extensions][:mail][:recipient].should  === shop_addresses(:billing).email
+            @form[:extensions][:mail][:bcc].should        === 'email@email.com'
+            @form[:extensions][:mail][:subject].should    === 'new order'
+          end
+        end
+        context 'checkout mail is not configured' do
+          before :each do
+            @form[:extensions] = {
+              :checkout => {
+              },
+              :mail     => {
+                :subject=> 'new order',
+                :to     => 'remove@email.com'
+              }
+            }
+          end
+          it 'should not modify the mail config' do
+            @checkout = FormCheckout.new(@form, @page)
+            stub(@checkout).success? { true }
+            result = @checkout.create
+            
+            @form[:extensions][:mail][:to].should         === 'remove@email.com'
+            @form[:extensions][:mail][:subject].should    === 'new order'
+          end
+        end
+      end
+      context 'payment was not successful' do
+        before :each do
+          @form[:extensions] = {
+            :checkout => {
+            },
+            :mail     => {
+              :subject=> 'new order',
+              :to     => 'remove@email.com'
+            }
+          }
+        end  
+        it 'should not modify the mail config' do
+          @checkout = FormCheckout.new(@form, @page)
+          result = @checkout.create
+          
+          @form[:extensions][:mail][:to].should         === 'remove@email.com'
+          @form[:extensions][:mail][:subject].should    === 'new order'
+        end
+      end
+    end
+    
   end
 end
