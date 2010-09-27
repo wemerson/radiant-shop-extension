@@ -32,7 +32,7 @@ class Shop::ProductsController < ApplicationController
     if @shop_product = ShopProduct.find(:first, :conditions => { :sku => params[:sku] })
       @shop_category = @shop_product.category unless @shop_product.nil?
     
-      @radiant_layout = @shop_product.layout.name
+      @radiant_layout = @shop_product.layout.name rescue (raise "Couldn't find Layout with id #{@shop_product.layout_id}")
       @title = @shop_product.name
     
       respond_to do |format|

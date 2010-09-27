@@ -13,6 +13,12 @@ namespace :radiant do
         Rake::Task['db:schema:dump'].invoke
       end
       
+      desc "Runs the migration of the Shop extension"
+      task :seed => :environment do
+        load "#{ShopExtension.root}/db/seed.rb"
+      end
+      
+      
       desc "Copies public assets of the Shop to the instance public/ directory."
       task :update => :environment do
         is_svn_or_dir = proc {|path| path =~ /\.svn/ || File.directory?(path) }

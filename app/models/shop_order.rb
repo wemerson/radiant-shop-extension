@@ -1,6 +1,6 @@
 class ShopOrder < ActiveRecord::Base
   
-  has_many  :payments,    :class_name => 'ShopPayment',   :dependent => :destroy
+  has_many  :payments,    :class_name => 'ShopPayment',    :dependent => :destroy
   has_many  :line_items,  :class_name => 'ShopLineItem',  :dependent => :destroy
   
   belongs_to :billing,    :class_name => 'ShopAddress'

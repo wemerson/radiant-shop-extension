@@ -1,10 +1,7 @@
-class CreateForms < ActiveRecord::Migration
-  def self.up
-    # Will only create a layout if it doesn't exist
-    Form.create({
-      :title  => 'AddCartItem',
-      :action => '/shop/cart/items',
-      :body   => <<-CONTENT
+Form.create({
+  :title  => 'AddCartItem',
+  :action => '/shop/cart/items',
+  :body   => <<-CONTENT
 <r:shop>
   <r:product>
     <input type="hidden" name="line_item[item_id]" value="<r:id />" />
@@ -17,12 +14,12 @@ class CreateForms < ActiveRecord::Migration
   </r:product>
 </r:shop>
 CONTENT
-    })
-    
-    Form.create({
-      :title  => 'UpdateCartItem',
-      :action => '/shop/cart/items/x',
-      :body   => <<-CONTENT
+})
+
+Form.create({
+  :title  => 'UpdateCartItem',
+  :action => '/shop/cart/items/x',
+  :body   => <<-CONTENT
 <r:shop:cart>
   <r:item>
     <input type="hidden" name="_method" value="put" />
@@ -36,9 +33,4 @@ CONTENT
   </r:item>
 </r:shop:cart>
 CONTENT
-    })
-  end
-
-  def self.down
-  end
-end
+})

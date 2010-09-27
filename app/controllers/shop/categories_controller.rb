@@ -14,8 +14,6 @@ class Shop::CategoriesController < ApplicationController
   # GET /shop/categories/:query.json                              AJAX and HTML
   #----------------------------------------------------------------------------
   def index
-    attr_hash = { :include  => :products, :only => ShopCategory.params }
-    
     @shop_categories = ShopCategory.search(params[:query])
     
     respond_to do |format|
@@ -30,11 +28,9 @@ class Shop::CategoriesController < ApplicationController
   # GET /shop/:handle.json                                        AJAX and HTML
   #----------------------------------------------------------------------------
   def show
-    attr_hash = { :include  => :products, :only => ShopCategory.params }
-    
     if @shop_category = ShopCategory.find(:first, :conditions => { :handle => params[:handle] })
       @title = @shop_category.name
-      @radiant_layout = @shop_category.layout.name
+      @radiant_layout = @shop_category.layout.name rescue (raise "Couldn't find Layout with id #{@shop_category.layout_id}")
 
       respond_to do |format|
         format.html { render }

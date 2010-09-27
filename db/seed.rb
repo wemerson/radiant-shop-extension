@@ -1,0 +1,1 @@
+Dir[File.dirname(__FILE__) + "/seeds/*.rb"].each {|file| require file }

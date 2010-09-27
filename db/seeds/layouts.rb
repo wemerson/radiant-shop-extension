@@ -1,9 +1,6 @@
-class CreateLayouts < ActiveRecord::Migration
-  def self.up
-    # Will only create a layout if it doesn't exist
-    Layout.create({
-      :name       => 'Application',
-      :content    => <<-CONTENT
+Layout.create({
+  :name       => 'Application',
+  :content    => <<-CONTENT
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
   <head>
@@ -15,11 +12,11 @@ class CreateLayouts < ActiveRecord::Migration
   </body>
 </html>
 CONTENT
-    })
-    
-    Layout.create({
-      :name       => Radiant::Config['shop.product_layout'],
-      :content    => <<-CONTENT
+})
+
+Layout.create({
+  :name       => Radiant::Config['shop.product_layout'],
+  :content    => <<-CONTENT
 <r:inside_layout name='Application'>
   <r:shop:product>
     <div id="shop_product_<r:sku />" class="shop_product">
@@ -49,10 +46,11 @@ CONTENT
   </r:shop:product>
 </r:inside_layout>
 CONTENT
-    })
-    Layout.create({
-      :name => Radiant::Config['shop.category_layout'],
-      :content => <<-CONTENT
+})
+
+Layout.create({
+  :name => Radiant::Config['shop.category_layout'],
+  :content => <<-CONTENT
 <r:inside_layout name='Application'>
   <r:shop:category>
     <div id="shop_category_<r:handle />" class="shop_category">
@@ -81,11 +79,11 @@ CONTENT
   </r:shop:category>
 </r:inside_layout>
 CONTENT
-    })
-    
-    Layout.create({
-      :name => Radiant::Config['shop.order_layout'],
-      :content => <<-CONTENT
+})
+
+Layout.create({
+  :name => Radiant::Config['shop.order_layout'],
+  :content => <<-CONTENT
 <r:inside_layout name='Application'>
   <r:shop:cart>
     <r:if_items>
@@ -110,10 +108,4 @@ CONTENT
   </r:shop:cart>
 </r:inside_layout>
 CONTENT
-    })
-  end
-
-  def self.down
-    # Won't delete content, that would be cruel
-  end
-end
+})

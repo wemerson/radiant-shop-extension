@@ -1,8 +1,6 @@
-class CreateSnippets < ActiveRecord::Migration
-  def self.up
-    Snippet.create({
-      :name     => 'CartOverview',
-      :content  => <<-BEGIN
+Snippet.create({
+  :name     => 'CartOverview',
+  :content  => <<-BEGIN
 <r:shop:cart>
   <r:if_items>
     <span class="quantity"><r:quantity /></span>
@@ -14,9 +12,4 @@ class CreateSnippets < ActiveRecord::Migration
   </r:unless_items>
 </r:shop:cart>
 BEGIN
-    })
-  end
-
-  def self.down
-  end
-end
+})
