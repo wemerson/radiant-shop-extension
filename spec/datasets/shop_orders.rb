@@ -1,11 +1,14 @@
 class ShopOrdersDataset < Dataset::Base
   
-  uses :shop_products
+  uses :shop_products, :shop_customers, :shop_addresses
   
   def load
     create_record :shop_order, :empty
     create_record :shop_order, :one_item
-    create_record :shop_order, :several_items
+    create_record :shop_order, :several_items,
+      :customer => shop_customers(:customer), 
+      :billing  => shop_addresses(:billing),
+      :shipping => shop_addresses(:shipping)
     
     create_record :shop_line_item, :crusty_bread, :item_id => shop_products(:crusty_bread).id, :item_type => 'ShopProduct'
     create_record :shop_line_item, :soft_bread,   :item_id => shop_products(:soft_bread).id, :item_type => 'ShopProduct'

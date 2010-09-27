@@ -57,6 +57,9 @@ class ShopExtension < Radiant::Extension
     Radiant::Config['shop.price_precision'] ||= 2
     Radiant::Config['shop.price_seperator'] ||= '.'
     Radiant::Config['shop.price_delimiter'] ||= ','
+    
+    # Scoped Customer Welcome Page
+    Radiant::Config['scoped.customer.redirect'] = '/cart'
   end
   
 end

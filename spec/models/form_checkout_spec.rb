@@ -27,25 +27,28 @@ describe FormCheckout do
             }
           }
         end
-        context 'sending ids' do
+        context 'sending ids with user logged in' do
+          before :each do
+            login_as :customer
+          end
           context 'both billing and shipping' do
             it 'should assign that address to the order billing and shipping' do
-              @data = { 
-                :billing   => { :id => shop_addresses(:billing).id },
-                :shipping  => { :id => shop_addresses(:shipping).id }
+              @data = {
+                :billing   => { :id => shop_customers(:customer).billings.first.id },
+                :shipping  => { :id => shop_customers(:customer).billings.first.id }
               }
-            
+              
               @checkout = FormCheckout.new(@form, @page)
               @checkout.create
-            
+              
               shop_orders(:one_item).billing.should  === shop_addresses(:billing)
-              shop_orders(:one_item).shipping.should === shop_addresses(:shipping)
+              shop_orders(:one_item).shipping.should === shop_addresses(:billing)
             end
           end
           context 'just billing' do
             it 'should assign shipping to be billing' do
               @data = {
-                :billing  => { :id => shop_addresses(:billing).id }
+                :billing   => { :id => shop_customers(:customer).billings.first.id }
               }
             
               @checkout = FormCheckout.new(@form, @page)
@@ -54,6 +57,39 @@ describe FormCheckout do
               shop_orders(:one_item).billing.should  === shop_addresses(:billing)
               shop_orders(:one_item).shipping.should === shop_addresses(:billing)
             end
+          end
+        end
+        context 'sending ids without customer logged in' do
+          context 'both billing and shipping' do
+            it 'it should not assign those addresses' do
+              @data = { 
+                :billing   => { :id => shop_addresses(:billing).id },
+                :shipping  => { :id => shop_addresses(:shipping).id }
+              }
+            
+              @checkout = FormCheckout.new(@form, @page)
+              @checkout.create
+            
+              shop_orders(:one_item).billing.should  be_nil
+              shop_orders(:one_item).shipping.should be_nil
+            end
+          end
+        end
+        context 'sending ids as a bad customer' do
+          before :each do
+            login_as :bad_customer
+          end
+          it 'should not assign those addresses' do
+            @data = { 
+              :billing   => { :id => shop_addresses(:billing).id },
+              :shipping  => { :id => shop_addresses(:shipping).id }
+            }
+          
+            @checkout = FormCheckout.new(@form, @page)
+            @checkout.create
+          
+            shop_orders(:one_item).billing.should  be_nil
+            shop_orders(:one_item).shipping.should be_nil
           end
         end
       
@@ -121,7 +157,7 @@ describe FormCheckout do
             end
           end
         end
-      
+        
         context 'result string' do
           context 'success' do
             it 'should return a success string' do
@@ -129,12 +165,12 @@ describe FormCheckout do
                 :billing  => { :name => 'b_n', :email => 'b_e', :street => 'b_s', :city => 'b_c', :state => 'b_s', :country => 'b_c', :postcode => 'b_p' },
                 :shipping => { :name => 's_n', :email => 's_e', :street => 's_s', :city => 's_c', :state => 's_s', :country => 's_c', :postcode => 's_p' }
               }
-          
+              
               @checkout = FormCheckout.new(@form, @page)
               result = @checkout.create
-            
-              result[:billing][:name].should === 'b_n'
-              result[:shipping][:name].should === 's_n'
+              
+              result[:billing].should === true
+              result[:shipping].should === true
             end
           end
           context 'failure' do
@@ -225,7 +261,7 @@ describe FormCheckout do
           it 'should assign ActiveMerchant to testing mode' do        
             @checkout = FormCheckout.new(@form, @page)
             @checkout.create
-        
+            
             ActiveMerchant::Billing::Base.mode.should === :test
           end
           
@@ -274,9 +310,9 @@ describe FormCheckout do
           }
           @data = {
             'card' => { 
-              'number'        => 1234123412341234,
+              'number'        => '1234123412341234',
               'name'          => 'Mr. Joe Bloggs',
-              'verification'  => 123,
+              'verification'  => '123',
               'month'         => 1,
               'year'          => 2009,
               'type'          => 'visa'
@@ -296,12 +332,12 @@ describe FormCheckout do
             stub(@card).valid? { true }
             
             mock(ActiveMerchant::Billing::CreditCard).new({
-              :number             => 1234123412341234,
+              :number             => '1234123412341234',
               :month              => 1,
               :year               => 2009,
               :first_name         => 'Mr. Joe',
               :last_name          => 'Bloggs',
-              :verification_value => 123,
+              :verification_value => '123',
               :type               => 'visa'
             }) { @card }
           end
@@ -313,16 +349,15 @@ describe FormCheckout do
                 @checkout = FormCheckout.new(@form, @page)
                 result = @checkout.create
                 
-                result[:card][:valid].should === true
-                result[:payment][:success].should == true
-                result[:payment][:message].should == 'success'
+                result[:card].should    === true
+                result[:payment].should === true
+                result[:message].should === 'success'
               end
               it 'should set the order as paid' do
                 stub(@card).valid? { true }
                 
                 @checkout = FormCheckout.new(@form, @page)
                 result = @checkout.create
-                
                 shop_orders(:one_item).paid?.should === true
               end
             end
@@ -333,28 +368,9 @@ describe FormCheckout do
                 @checkout = FormCheckout.new(@form, @page)
                 result = @checkout.create
                 
-                result[:card][:valid].should === false
+                result[:card].should === false
               end
             end
-          end
-          it 'should return relevant details' do
-            stub(@card).valid? { true }
-            
-            @checkout = FormCheckout.new(@form, @page)
-            result = @checkout.create
-            
-            result[:card].should == {
-              :valid  => true
-            }
-          end
-          it 'should not return sensitive details' do
-            stub(@card).valid? { true }
-            
-            @checkout = FormCheckout.new(@form, @page)
-            result = @checkout.create
-            
-            result[:card][:number].should === nil
-            result[:card][:verification].should === nil
           end
         end
       end

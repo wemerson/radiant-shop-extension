@@ -1,6 +1,6 @@
 class ShopOrder < ActiveRecord::Base
   
-  has_many  :payments,    :class_name => 'ShopPayment',    :dependent => :destroy
+  has_one   :payment,     :class_name => 'ShopPayment',   :dependent => :destroy
   has_many  :line_items,  :class_name => 'ShopLineItem',  :dependent => :destroy
   
   belongs_to :billing,    :class_name => 'ShopAddress'
@@ -10,7 +10,6 @@ class ShopOrder < ActiveRecord::Base
   belongs_to :customer,   :class_name => 'ShopCustomer', :foreign_key => :shop_customer_id
   
   accepts_nested_attributes_for :line_items,  :reject_if => :all_blank
-  accepts_nested_attributes_for :payments,    :reject_if => :all_blank
   accepts_nested_attributes_for :billing,     :reject_if => :all_blank
   accepts_nested_attributes_for :shipping,    :reject_if => :all_blank
   
@@ -74,7 +73,7 @@ class ShopOrder < ActiveRecord::Base
   end
   
   def paid?
-    self.status === 'paid'
+    self.payment.amount === self.price
   end
   
   def shipped?
