@@ -14,13 +14,14 @@ describe Shop::Tags::Responses do
   end
   
   context 'responses' do
-  
+    
     before :each do
-      mock_forms_response
-      @page     = pages(:home)
+      mock_page_with_request_and_data
+      mock_response
+      
       @checkout = valid_form_checkout_request_and_response
     end
-  
+    
     describe '<r:response:checkout>' do
       context 'checkout exists' do
         before :each do
@@ -29,8 +30,8 @@ describe Shop::Tags::Responses do
         it 'should expand' do
           tag = %{<r:response:checkout>success</r:response:checkout>}
           exp = %{success}
-        
-          @page.should render(tag).as(exp)
+          
+          pages(:home).should render(tag).as(exp)
         end
       end
       context 'checkout does not exist' do
@@ -38,7 +39,7 @@ describe Shop::Tags::Responses do
           tag = %{<r:response:checkout>failure</r:response:checkout>}
           exp = %{}
         
-          @page.should render(tag).as(exp)
+          pages(:home).should render(tag).as(exp)
         end
       end
     end
@@ -52,7 +53,7 @@ describe Shop::Tags::Responses do
           tag = %{<r:response:checkout:payment>success</r:response:checkout:payment>}
           exp = %{success}
         
-          @page.should render(tag).as(exp)
+          pages(:home).should render(tag).as(exp)
         end
       end
       context 'payment failure' do
@@ -63,7 +64,7 @@ describe Shop::Tags::Responses do
           tag = %{<r:response:checkout:payment>success</r:response:checkout:payment>}
           exp = %{success}
           
-          @page.should render(tag).as(exp)
+          pages(:home).should render(tag).as(exp)
         end
       end
     end
@@ -77,7 +78,7 @@ describe Shop::Tags::Responses do
           tag = %{<r:response:checkout:payment:if_success>success</r:response:checkout:payment:if_success>}
           exp = %{success}
           
-          @page.should render(tag).as(exp)
+          pages(:home).should render(tag).as(exp)
         end
       end
       context 'payment failure' do
@@ -88,7 +89,7 @@ describe Shop::Tags::Responses do
           tag = %{<r:response:checkout:payment:if_success>failure</r:response:checkout:payment:if_success>}
           exp = %{}
           
-          @page.should render(tag).as(exp)
+          pages(:home).should render(tag).as(exp)
         end
       end
     end

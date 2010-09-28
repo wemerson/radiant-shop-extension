@@ -67,7 +67,19 @@ CONFIG
   end
   
   helpers do
-    def mock_forms_response
+    def mock_page_with_request_and_data
+      @page     = pages(:home)
+      
+      @request  = OpenStruct.new({
+        :session => {}
+      })
+      @data     = {}
+      
+      stub(@page).data    { @data }
+      stub(@page).request { @request }
+    end
+    
+    def mock_response
       @response = OpenStruct.new({
         :result => {
           :results => {}
@@ -93,35 +105,32 @@ CONFIG
       
       mock.instance_of(ActiveMerchant::Billing::CreditCard).valid? { true }
       
-      page = OpenStruct.new({
-        :data => {
-          :card => { 
-            :number       => '1',
-            :name         => 'Mr. Joe Bloggs',
-            :verification => '123',
-            :month        => 1,
-            :year         => 2012,
-            :type         => 'visa'
-          },
-          :billing => {
-            :id           => shop_addresses(:billing).id
-          },
-          :shipping => {
-            :id           => shop_addresses(:shipping).id
-          },
-          :options => {
-            :address => {
-              :address1     => 'address',
-              :zip          => 'zip'
-            }
-          }
+      @data = {
+        :card => { 
+          :number       => '1',
+          :name         => 'Mr. Joe Bloggs',
+          :verification => '123',
+          :month        => 1,
+          :year         => 2012,
+          :type         => 'visa'
         },
-        :request => OpenStruct.new({
-          :session => { :shop_order => order.id }
-        })
-      })
+        :billing => {
+          :id           => shop_addresses(:billing).id
+        },
+        :shipping => {
+          :id           => shop_addresses(:shipping).id
+        },
+        :options => {
+          :address => {
+            :address1     => 'address',
+            :zip          => 'zip'
+          }
+        }
+      }
       
-      @checkout = FormCheckout.new(form, page)
+      @request.session = { :shop_order => order.id }
+      
+      @checkout = FormCheckout.new(form, @page)
     end
   end
   
