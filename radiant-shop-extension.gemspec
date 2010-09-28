@@ -5,11 +5,11 @@
 
 Gem::Specification.new do |s|
   s.name = %q{radiant-shop-extension}
-  s.version = "0.9.3"
+  s.version = "0.10.0"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Dirk Kelly", "John Barker"]
-  s.date = %q{2010-09-24}
+  s.date = %q{2010-09-28}
   s.description = %q{Radiant Shop is an attempt at a simple but complete store. It includes Products, Categories, Orders and Credit Card Payments}
   s.email = %q{dk@dirkkelly.com}
   s.extra_rdoc_files = [
@@ -44,7 +44,6 @@ Gem::Specification.new do |s|
      "app/models/shop_line_item.rb",
      "app/models/shop_order.rb",
      "app/models/shop_payment.rb",
-     "app/models/shop_payment_method.rb",
      "app/models/shop_product.rb",
      "app/models/shop_product_attachment.rb",
      "app/models/shop_product_page.rb",
@@ -64,7 +63,23 @@ Gem::Specification.new do |s|
      "app/views/admin/shop/categories/index/_category.html.haml",
      "app/views/admin/shop/categories/new.html.haml",
      "app/views/admin/shop/categories/remove.html.haml",
+     "app/views/admin/shop/customers/edit.html.haml",
+     "app/views/admin/shop/customers/edit/_fields.html.haml",
+     "app/views/admin/shop/customers/edit/_head.html.haml",
+     "app/views/admin/shop/customers/edit/_meta.html.haml",
+     "app/views/admin/shop/customers/edit/_parts.html.haml",
+     "app/views/admin/shop/customers/edit/_popups.html.haml",
+     "app/views/admin/shop/customers/edit/meta/_login.html.haml",
+     "app/views/admin/shop/customers/edit/meta/_password.html.haml",
+     "app/views/admin/shop/customers/edit/meta/_password_confirmation.html.haml",
+     "app/views/admin/shop/customers/edit/parts/_address.html.haml",
+     "app/views/admin/shop/customers/edit/parts/_addresses.html.haml",
+     "app/views/admin/shop/customers/edit/parts/_orders.html.haml",
      "app/views/admin/shop/customers/index.html.haml",
+     "app/views/admin/shop/customers/index/_bottom.html.haml",
+     "app/views/admin/shop/customers/index/_customer.html.haml",
+     "app/views/admin/shop/customers/new.html.haml",
+     "app/views/admin/shop/customers/remove.html.haml",
      "app/views/admin/shop/orders/index.html.haml",
      "app/views/admin/shop/products/edit.html.haml",
      "app/views/admin/shop/products/edit/_fields.html.haml",
@@ -95,17 +110,23 @@ Gem::Specification.new do |s|
      "config/shop_cart.yml",
      "cucumber.yml",
      "db/migrate/20100311053701_initial.rb",
-     "db/migrate/20100520033059_create_layouts.rb",
-     "db/migrate/20100903122123_create_forms.rb",
-     "db/migrate/20100908063639_create_snippets.rb",
+     "db/migrate/20100927041219_remove_payment_methods.rb",
+     "db/migrate/20100927041624_change_payments_add_gateway.rb",
+     "db/migrate/20100927140446_change_payment_add_card_type_card_number.rb",
+     "db/seed.rb",
+     "db/seeds/forms.rb",
+     "db/seeds/layouts.rb",
+     "db/seeds/snippets.rb",
      "features/support/env.rb",
      "features/support/paths.rb",
      "lib/shop/controllers/application_controller.rb",
      "lib/shop/controllers/site_controller.rb",
+     "lib/shop/interface/customers.rb",
      "lib/shop/interface/products.rb",
      "lib/shop/models/image.rb",
      "lib/shop/models/page.rb",
      "lib/shop/tags/address.rb",
+     "lib/shop/tags/card.rb",
      "lib/shop/tags/cart.rb",
      "lib/shop/tags/category.rb",
      "lib/shop/tags/core.rb",
@@ -120,6 +141,7 @@ Gem::Specification.new do |s|
      "public/javascripts/admin/extensions/shop/products/edit.js",
      "public/javascripts/admin/extensions/shop/products/index.js",
      "public/stylesheets/sass/admin/extensions/shop/edit.sass",
+     "public/stylesheets/sass/admin/extensions/shop/index.sass",
      "public/stylesheets/sass/admin/extensions/shop/products/edit.sass",
      "public/stylesheets/sass/admin/extensions/shop/products/index.sass",
      "radiant-shop-extension.gemspec",
@@ -136,6 +158,7 @@ Gem::Specification.new do |s|
      "spec/datasets/images.rb",
      "spec/datasets/shop_addresses.rb",
      "spec/datasets/shop_categories.rb",
+     "spec/datasets/shop_customers.rb",
      "spec/datasets/shop_line_items.rb",
      "spec/datasets/shop_orders.rb",
      "spec/datasets/shop_products.rb",
@@ -143,12 +166,14 @@ Gem::Specification.new do |s|
      "spec/lib/shop/models/image_spec.rb",
      "spec/lib/shop/models/page_spec.rb",
      "spec/lib/shop/tags/address_spec.rb",
+     "spec/lib/shop/tags/card_spec.rb",
      "spec/lib/shop/tags/cart_spec.rb",
      "spec/lib/shop/tags/category_spec.rb",
      "spec/lib/shop/tags/core_spec.rb",
      "spec/lib/shop/tags/helpers_spec.rb",
      "spec/lib/shop/tags/item_spec.rb",
      "spec/lib/shop/tags/product_spec.rb",
+     "spec/lib/shop/tags/responses_spec.rb",
      "spec/matchers/comparison.rb",
      "spec/matchers/render_matcher.rb",
      "spec/models/form_checkout_spec.rb",
@@ -194,6 +219,7 @@ Gem::Specification.new do |s|
      "spec/datasets/images.rb",
      "spec/datasets/shop_addresses.rb",
      "spec/datasets/shop_categories.rb",
+     "spec/datasets/shop_customers.rb",
      "spec/datasets/shop_line_items.rb",
      "spec/datasets/shop_orders.rb",
      "spec/datasets/shop_products.rb",
@@ -201,12 +227,14 @@ Gem::Specification.new do |s|
      "spec/lib/shop/models/image_spec.rb",
      "spec/lib/shop/models/page_spec.rb",
      "spec/lib/shop/tags/address_spec.rb",
+     "spec/lib/shop/tags/card_spec.rb",
      "spec/lib/shop/tags/cart_spec.rb",
      "spec/lib/shop/tags/category_spec.rb",
      "spec/lib/shop/tags/core_spec.rb",
      "spec/lib/shop/tags/helpers_spec.rb",
      "spec/lib/shop/tags/item_spec.rb",
      "spec/lib/shop/tags/product_spec.rb",
+     "spec/lib/shop/tags/responses_spec.rb",
      "spec/matchers/comparison.rb",
      "spec/matchers/render_matcher.rb",
      "spec/models/form_checkout_spec.rb",
@@ -225,17 +253,20 @@ Gem::Specification.new do |s|
     s.specification_version = 3
 
     if Gem::Version.new(Gem::VERSION) >= Gem::Version.new('1.2.0') then
+      s.add_runtime_dependency(%q<radiant>, [">= 0.9.1"])
       s.add_runtime_dependency(%q<radiant-forms-extension>, [">= 3.1.0"])
       s.add_runtime_dependency(%q<radiant-images-extension>, [">= 0.2.0"])
       s.add_runtime_dependency(%q<radiant-layouts-extension>, [">= 0.9.1"])
       s.add_runtime_dependency(%q<radiant-settings-extension>, [">= 1.1.1"])
     else
+      s.add_dependency(%q<radiant>, [">= 0.9.1"])
       s.add_dependency(%q<radiant-forms-extension>, [">= 3.1.0"])
       s.add_dependency(%q<radiant-images-extension>, [">= 0.2.0"])
       s.add_dependency(%q<radiant-layouts-extension>, [">= 0.9.1"])
       s.add_dependency(%q<radiant-settings-extension>, [">= 1.1.1"])
     end
   else
+    s.add_dependency(%q<radiant>, [">= 0.9.1"])
     s.add_dependency(%q<radiant-forms-extension>, [">= 3.1.0"])
     s.add_dependency(%q<radiant-images-extension>, [">= 0.2.0"])
     s.add_dependency(%q<radiant-layouts-extension>, [">= 0.9.1"])
