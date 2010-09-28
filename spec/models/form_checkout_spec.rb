@@ -187,6 +187,16 @@ describe FormCheckout do
           result[:card].should    === true
           result[:payment].should === true
         end
+        
+        it 'should assign a payment object' do
+          mock.instance_of(ActiveMerchant::Billing::CreditCard).valid? { true }
+          @checkout = FormCheckout.new(@form, @page)
+          result = @checkout.create
+          
+          @order.payment.card_number.should === "XXXX-XXXX-XXXX-1"
+          @order.payment.card_type.should   === @data[:card][:type]
+          @order.payment.amount.should      === @order.price
+        end
       end
       
       context 'configured incorrectly' do
@@ -207,6 +217,8 @@ describe FormCheckout do
             result[:gateway].should === false
             result[:card].should    === false
             result[:payment].should === false
+            
+            @order.payment.should be_nil
           end
         end
         
@@ -221,6 +233,8 @@ describe FormCheckout do
             result[:gateway].should === true
             result[:card].should    === false
             result[:payment].should === false
+            
+            @order.payment.should be_nil
           end
         end
         
@@ -234,6 +248,8 @@ describe FormCheckout do
             result[:gateway].should === true
             result[:card].should    === false
             result[:payment].should === false
+            
+            @order.payment.should be_nil
           end
         end
       end

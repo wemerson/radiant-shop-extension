@@ -18,16 +18,17 @@ class FormCheckout
       if @result[:gateway] and @result[:card]
         purchase! # Use @card to pay through @gateway
       end
-    end
     
-    # We have a paid for order with a billing address
-    if success?
-      # The form was configured to send a payment email
-      if mail.present?
-        configure_invoice_mail # Create some configuration variables for mailing
+      # We have a paid for order with a billing address
+      if success?
+        # The form was configured to send a payment email
+        if mail.present?
+          configure_invoice_mail # Create some configuration variables for mailing
+        end
+      else
+        @form.redirect_to = :back
       end
     end
-    
     @result
   end
   
@@ -41,8 +42,8 @@ class FormCheckout
     def create_result_object
       @result = {
         :order    => @order.id, # We return the order id so the thank you screen has access to it
-        :billing  => false,
-        :shipping => false,
+        :billing  => @order.billing.present?,
+        :shipping => @order.shipping.present?,
         :payment  => false,
         :card     => false,
         :gateway  => false,
@@ -205,8 +206,6 @@ class FormCheckout
       
       if result.success?
         create_payment
-      else
-        @form.redirect_to = :back
       end
     end
     
@@ -259,7 +258,7 @@ class FormCheckout
     
     # Returns the last 4 card number digits (1234)
     def card_number_secure
-      card_number[-4,4]
+      @card.display_number
     end
     
     # Returns card month (02)

@@ -99,6 +99,31 @@ describe Shop::Tags::Responses do
       end
     end
     
+    describe '<r:response:payment:unless_success>' do
+      before :each do
+        @response.result[:results][:checkout] = @checkout.create
+      end
+      context 'payment failure' do
+        before :each do
+          @response.result[:results][:checkout][:payment] = false
+        end
+        it 'should expand' do
+          tag = %{<r:response:checkout:payment:unless_success>success</r:response:checkout:payment:unless_success>}
+          exp = %{success}
+          
+          pages(:home).should render(tag).as(exp)
+        end
+      end
+      context 'payment success' do
+        it 'should not expand' do
+          tag = %{<r:response:checkout:payment:unless_success>failure</r:response:checkout:payment:unless_success>}
+          exp = %{}
+          
+          pages(:home).should render(tag).as(exp)
+        end
+      end
+    end
+    
   end
 
 end
