@@ -1,10 +1,7 @@
 ActionController::Routing::Routes.draw do |map|
   
   map.namespace :admin do |admin|
-    admin.namespace :shop, :member => { :remove => :get } do |shop|
-      
-      shop.resources :customers
-      
+    admin.namespace :shop, :member => { :remove => :get } do |shop|      
       shop.resources :categories, :collection => { :sort => :put }, :member => { :products => :get } do |category|
         category.resources :products, :only => :new
       end

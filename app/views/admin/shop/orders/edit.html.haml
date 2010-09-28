@@ -1,0 +1,13 @@
+- @page_title = @shop_order.status + ' - ' + default_page_title
+
+- render_region :main do |main|
+  - main.header do
+    %h1
+      = @shop_order.price
+      = render 'admin/shop/orders/edit/head'
+  - main.form do
+    - form_for :shop_order, @shop_order, :url => admin_shop_order_path(@shop_order), :html => {:method => :put, :multipart => true, :id => 'edit_shop_order', 'data-onsubmit_status'=>"Saving Changes&#8230;"} do |f|
+      = render :partial => 'admin/shop/orders/edit/fields', :locals => { :f => f }
+  - main.popups do
+    #popups
+      = render 'admin/shop/orders/edit/popups'

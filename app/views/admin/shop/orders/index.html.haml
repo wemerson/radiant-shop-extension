@@ -1,33 +1,10 @@
-Add Order
-- form_for [:admin, @shop_order] do |f|
-  %p
-    = f.label :customer, 'Customer:'
-    = f.select :customer_id, ShopCustomer.scoped_by_access('front').all.collect {|c| [c.name, c.id]}
-  %p
-    = f.label :email, 'Status:'
-    = f.text_field :status
+- @page_title = t('orders') + ' - ' + default_page_title
 
-  %p
-    - f.fields_for :line_items do |li_f|
-      = li_f.label :product
-      = li_f.select :shop_product_id, ShopProduct.all.collect {|p| [p.title, p.id]}
-      = li_f.label :quantity
-      = li_f.text_field :quantity
+.outset
 
-      - unless li_f.object.new_record?
-        <%= li_f.check_box '_delete'
-        <%= li_f.label '_delete', 'Remove'
+  #orders_map.map
+    %ul#orders
+      = render :partial => '/admin/shop/orders/index/order', :collection => @shop_orders
 
-  %p
-    = f.submit "Save"
-    
-
-- if @shop_orders.empty?
-  %p There are no customers.
-- else
-  %form
-    - @shop_orders.each do |order|
-      %p
-        = order.balance
-        = order.customer.name if order.customer
-        = link_to "Delete Order", "/admin/shop/orders/#{order.id}", :confirm => "Are you sure?", :method => :delete, :style => "color: blue;"
+  #actions
+    = render :partial => '/admin/shop/orders/index/bottom'

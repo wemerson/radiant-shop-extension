@@ -17,11 +17,12 @@ class ShopExtension < Radiant::Extension
     
     # View Hooks
     unless defined? admin.products
-      Radiant::AdminUI.send :include, Shop::Interface::Products, Shop::Interface::Customers
+      Radiant::AdminUI.send :include, Shop::Interface::Products, Shop::Interface::Customers, Shop::Interface::Orders
       
-      admin.products    = Radiant::AdminUI.load_default_shop_products_regions
-      admin.categories  = Radiant::AdminUI.load_default_shop_categories_regions
-      admin.customers   = Radiant::AdminUI.load_default_shop_customers_regions
+      admin.products  = Radiant::AdminUI.load_default_shop_products_regions
+      admin.categories= Radiant::AdminUI.load_default_shop_categories_regions
+      admin.customers = Radiant::AdminUI.load_default_shop_customers_regions
+      admin.orders    = Radiant::AdminUI.load_default_shop_orders_regions
     end
     
     if admin.respond_to? :page
@@ -41,8 +42,10 @@ class ShopExtension < Radiant::Extension
     SiteController.send :include, Shop::Controllers::SiteController
     
     # Tabs3
+    
     tab "Shop" do
-      add_item "Products", "/admin/shop"
+      add_item "Orders", "/admin/shop/orders"
+      add_item "Products", "/admin/shop/products"
       add_item "Customers", "/admin/shop/customers"
     end
     
