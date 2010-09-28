@@ -2,7 +2,7 @@
   - @shop_customer.orders.each do |order|
     %li.order
       %h3
-        = number_to_currency(order.price)
+        = link_to number_to_currency(order.price), edit_admin_shop_order_path(order)
         = distance_of_time_in_words Time.now, order.updated_at
         ago
       %h4

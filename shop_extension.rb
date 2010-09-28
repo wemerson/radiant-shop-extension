@@ -44,8 +44,8 @@ class ShopExtension < Radiant::Extension
     # Tabs3
     
     tab "Shop" do
-      add_item "Orders", "/admin/shop/orders"
       add_item "Products", "/admin/shop/products"
+      add_item "Orders", "/admin/shop/orders"
       add_item "Customers", "/admin/shop/customers"
     end
     
