@@ -16,10 +16,15 @@ describe Shop::Tags::Responses do
   context 'responses' do
     
     before :each do
+      login_as :customer
+      @order = shop_orders(:several_items)
+      
       mock_page_with_request_and_data
       mock_response
       
-      @checkout = valid_form_checkout_request_and_response
+      mock.instance_of(ActiveMerchant::Billing::CreditCard).valid? { true }
+      mock_valid_form_checkout_request
+      @checkout = FormCheckout.new(@form, @page)
     end
     
     describe '<r:response:checkout>' do

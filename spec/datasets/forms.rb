@@ -88,22 +88,20 @@ CONFIG
       mock(Forms::Tags::Responses).current(anything,anything) { @response }
     end
     
-    def valid_form_checkout_request_and_response
-      login_as :customer
-      
-      form   = forms(:checkout)
-      order  = shop_orders(:several_items)
-      
-      form[:extensions] = {
+    def mock_valid_form_checkout_request
+      @form   = forms(:checkout)
+      @form[:extensions] = {
         :checkout   => {
           :test     => true,
           :gateway  => {
             :name   => 'Bogus'
-          }
+          },
+          :mail     => {
+            :subject=> 'new order',
+            :bcc    => 'orders@example.com'
+          },
         }
       }
-      
-      mock.instance_of(ActiveMerchant::Billing::CreditCard).valid? { true }
       
       @data = {
         :card => { 
@@ -115,22 +113,34 @@ CONFIG
           :type         => 'visa'
         },
         :billing => {
-          :id           => shop_addresses(:billing).id
+          :id           => shop_addresses(:billing).id,
+          :name         => shop_addresses(:billing).name,
+          :email        => shop_addresses(:billing).email,
+          :street       => shop_addresses(:billing).street,
+          :city         => shop_addresses(:billing).city,
+          :state        => shop_addresses(:billing).state,
+          :country      => shop_addresses(:billing).country,
+          :postcode     => shop_addresses(:billing).postcode
         },
         :shipping => {
-          :id           => shop_addresses(:shipping).id
+          :id           => shop_addresses(:shipping).id,
+          :name         => shop_addresses(:shipping).name,
+          :email        => shop_addresses(:shipping).email,
+          :street       => shop_addresses(:shipping).street,
+          :city         => shop_addresses(:shipping).city,
+          :state        => shop_addresses(:shipping).state,
+          :country      => shop_addresses(:shipping).country,
+          :postcode     => shop_addresses(:shipping).postcode
         },
         :options => {
           :address => {
-            :address1     => 'address',
-            :zip          => 'zip'
+            :address1   => 'address',
+            :zip        => 'zip'
           }
         }
       }
       
-      @request.session = { :shop_order => order.id }
-      
-      @checkout = FormCheckout.new(form, @page)
+      @request.session = { :shop_order => @order.id }
     end
   end
   

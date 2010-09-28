@@ -7,10 +7,6 @@ class ShopCustomer < User
   
   accepts_nested_attributes_for :orders, :allow_destroy => true
   
-  def addresses
-    (billings || shippings)
-  end
-  
   def first_name
     self.name.split(' ')[0]
   end

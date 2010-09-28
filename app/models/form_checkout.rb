@@ -11,11 +11,13 @@ class FormCheckout
     create_order_addresses # Create @order.billing and @order.shipping
     
     # If the form was configured for gateway and we have a billing address
-    if gateway.present? and card.present?
+    if gateway.present?
       prepare_gateway # Create the @gateway object
-      prepare_credit_card # Create the @card object
+      prepare_credit_card if card.present?# Create the @card object
       
-      purchase! # Use @card to pay through @gateway
+      if @result[:gateway] and @result[:card]
+        purchase! # Use @card to pay through @gateway
+      end
     end
     
     # We have a paid for order with a billing address
@@ -39,9 +41,9 @@ class FormCheckout
     def create_result_object
       @result = {
         :order    => @order.id, # We return the order id so the thank you screen has access to it
-        :billing  => @order.billing.present?,
-        :shipping => @order.shipping.present?,
-        :payment  => @order.payment.present?,
+        :billing  => false,
+        :shipping => false,
+        :payment  => false,
         :card     => false,
         :gateway  => false,
         :message  => nil,
@@ -54,9 +56,9 @@ class FormCheckout
         # We're going to create a billing object
         create_order_billing_address
         
-        if shipping.nil? and @order.billing.valid?
-          # We're going to assign shipping to billing
-          @shipping = @order.billing
+        # We're going to assign shipping to billing because they didn't send shipping
+        if !shipping.present? and @billing.present?
+          @shipping = @billing
           @order.update_attribute(:shipping_id, @shipping.id)
         end
       end
@@ -76,11 +78,10 @@ class FormCheckout
     # Attaches a billing address to the order (and current customer)
     def create_order_billing_address
       # Billing Address
-      
       if billing[:id]
         begin
           # Use an existing Address and update its values
-          @billing = current_customer.addresses.find(billing[:id])
+          @billing = current_customer.billings.find(billing[:id])
           @billing.update_attributes(billing)
           @order.update_attribute(:billing_id, @billing.id)
         rescue
@@ -100,6 +101,7 @@ class FormCheckout
         end
         
       end
+      
     end
     
     # Attaches a shipping address to the order (and current customer)
@@ -109,7 +111,7 @@ class FormCheckout
       if shipping[:id]
         # Use an existing Address and update its values
         begin
-          @shipping = current_customer.addresses.find(shipping[:id])
+          @shipping = current_customer.shippings.find(shipping[:id])
           if @shipping == @billing and shipping == billing
             # We have exactly the same shipping and billing data
             @shipping = @billing
@@ -172,19 +174,17 @@ class FormCheckout
     
     # Builds an ActiveMerchant card using the submitted card information
     def prepare_credit_card
-      if card.present?
-        @card = ActiveMerchant::Billing::CreditCard.new({
-          :number             => card_number,
-          :month              => card_month,
-          :year               => card_year,
-          :first_name         => card_first_name,
-          :last_name          => card_last_name,
-          :verification_value => card_verification,
-          :type               => card_type
-        })
-        
-        @result[:card] = @card.valid?
-      end
+      @card = ActiveMerchant::Billing::CreditCard.new({
+        :number             => card_number,
+        :month              => card_month,
+        :year               => card_year,
+        :first_name         => card_first_name,
+        :last_name          => card_last_name,
+        :verification_value => card_verification,
+        :type               => card_type
+      })
+      
+      @result[:card] = @card.valid?
     end
     
     # Sets up mail to send an invoice to the billing email address
