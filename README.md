@@ -1,8 +1,11 @@
 # Radiant Shop
 
 ps: [wiki](http://github.com/squaretalent/radiant-shop-extension/wiki)
+
 pps: heavily under development means "it might not work out of the box after every commit"
+
 ppps: I am working on the wiki as quickly as I can, but specs are more important at this point in time
+
 pppps: love heart
 
 ## Checkout
