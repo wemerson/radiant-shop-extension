@@ -1,0 +1,33 @@
+- render_region :top
+
+- render_region :form do |form|
+  - form.name do
+    %p.title
+      %label{:for => 'shop_customer_name'}= t('name')
+      = f.text_field :name, :class => 'textbox', :maxlenth => 255
+    
+  - form.email do
+    %p.title
+      %label{:for => 'shop_customer_email'}= t('email')
+      = f.text_field :email, :class => 'textbox', :maxlenth => 255
+  
+  - form.meta do
+    = render :partial => '/admin/shop/customers/edit/meta', :locals => { :f => f }
+    
+  - form.parts do 
+    #tab_control
+      #tabs.tabs
+        #tab_toolbar
+      #pages.pages
+        = hidden_field_tag 'page_part_index_field' #important
+        = render :partial => '/admin/shop/customers/edit/parts', :locals => { :f => f }
+    
+- render_region :bottom do |bottom|
+  - bottom.buttons do
+    %p.buttons{:style=>"clear: left"}
+      = save_model_button(@shop_customer)
+      = save_model_and_continue_editing_button(@shop_customer)
+      = t('or')
+      = link_to t('cancel'), admin_shop_customers_path
+  - bottom.timestamp do
+    = updated_stamp @shop_customer

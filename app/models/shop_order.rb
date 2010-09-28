@@ -1,5 +1,7 @@
 class ShopOrder < ActiveRecord::Base
   
+  default_scope :order => 'shop_orders.updated_at ASC'
+  
   has_one   :payment,     :class_name => 'ShopPayment',   :dependent => :destroy
   has_many  :line_items,  :class_name => 'ShopLineItem',  :dependent => :destroy
   

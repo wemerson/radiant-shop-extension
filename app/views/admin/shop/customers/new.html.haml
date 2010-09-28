@@ -1,0 +1,11 @@
+- render_region :main do |main|
+  - main.header do
+    %h1
+      = @shop_customer.name
+      = render 'admin/shop/customers/edit/head'
+  - main.form do
+    - form_for :shop_customer, :url => admin_shop_customers_path, :html => {:id => 'new_shop_customer', :multipart => true, 'data-onsubmit_status'=>"Creating Customer&#8230;"} do |f|
+      = render :partial => 'admin/shop/customers/edit/fields', :locals => { :f => f }
+  - main.popups do
+    #popups
+      = render 'admin/shop/customers/edit/popups'

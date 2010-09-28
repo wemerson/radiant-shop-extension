@@ -17,10 +17,11 @@ class ShopExtension < Radiant::Extension
     
     # View Hooks
     unless defined? admin.products
-      Radiant::AdminUI.send :include, Shop::Interface::Products
+      Radiant::AdminUI.send :include, Shop::Interface::Products, Shop::Interface::Customers
       
       admin.products    = Radiant::AdminUI.load_default_shop_products_regions
       admin.categories  = Radiant::AdminUI.load_default_shop_categories_regions
+      admin.customers   = Radiant::AdminUI.load_default_shop_customers_regions
     end
     
     if admin.respond_to? :page
@@ -42,6 +43,7 @@ class ShopExtension < Radiant::Extension
     # Tabs3
     tab "Shop" do
       add_item "Products", "/admin/shop"
+      add_item "Customers", "/admin/shop/customers"
     end
     
     # Ensure there is always a shop prefix, otherwise we'll lose admin and pages

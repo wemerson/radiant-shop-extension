@@ -1,0 +1,29 @@
+%ul#orders
+  - @shop_customer.orders.each do |order|
+    %li.order
+      %h3
+        = number_to_currency(order.price)
+        = distance_of_time_in_words Time.now, order.updated_at
+        ago
+      %h4
+        = order.line_items.count
+        = order.line_items.count == 1 ? 'item' : 'items'
+        = "(#{order.status})"
+      
+      %br
+      
+      %h4 Billing
+      %span.billing= render :partial => '/admin/shop/customers/edit/parts/address', :locals => { :address => order.billing }
+      
+      %h4 Shipping
+      %span.shipping= render :partial => '/admin/shop/customers/edit/parts/address', :locals => { :address => order.shipping }
+      
+      %h4 Payment
+      %span.payment
+        - if order.paid?
+          = order.payment.card_number
+          = order.payment.card_type
+        - else
+          This order hasn't been paid for yet
+      
+      %hr

@@ -1,0 +1,4 @@
+- @parts.each do |part|
+  .page{:id => "customer_page_#{part}", 'data-caption'=>h(part)}
+    .part{:id => "customer_part_#{part}"}
+      = render :partial => "admin/shop/customers/edit/parts/#{part}", :locals => { :f => f }
