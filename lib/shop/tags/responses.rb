@@ -14,19 +14,19 @@ module Shop
       # Expand if there is a checkout payment response
       desc %{ Expand if there is a checkout payment response }
       tag 'response:checkout:payment' do |tag|
-        tag.expand if tag.locals.response_checkout[:payment].present?
+        tag.expand
       end
       
       # Expand if the payment was successful
       desc %{ Expand if the payment was successful }
       tag 'response:checkout:payment:if_success' do |tag|
-        tag.expand if tag.locals.response_checkout[:payment][:success]
+        tag.expand if tag.locals.response_checkout[:payment]
       end
       
       # Expand if the payment was not successful
       desc %{ Expand if the payment was not successful }
       tag 'response:checkout:payment:unless_success' do |tag|
-        tag.expand unless tag.locals.response_checkout[:payment][:success]
+        tag.expand unless tag.locals.response_checkout[:payment]
       end
       
     end

@@ -189,6 +189,7 @@ class FormCheckout
     
     # Sets up mail to send an invoice to the billing email address
     def configure_invoice_mail
+      @form[:extensions][:mail] ||= {}
       @form[:extensions][:mail].merge!({
         :recipient  => @order.billing.email,
         :to         => @order.billing.email,
