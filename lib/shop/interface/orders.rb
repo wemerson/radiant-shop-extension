@@ -14,7 +14,7 @@ module Shop
             returning OpenStruct.new do |orders|
               orders.edit = Radiant::AdminUI::RegionSet.new do |edit|
                 edit.main.concat %w{header form popups}
-                edit.form.concat %w{}
+                edit.form.concat %w{ meta parts}
                 edit.bottom.concat %w{buttons timestamp}
               end
               orders.new = orders.edit

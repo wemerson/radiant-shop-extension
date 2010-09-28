@@ -9,29 +9,31 @@ class Admin::Shop::OrdersController < Admin::ResourceController
   before_filter :assets_edit,   :only => [ :edit, :update ]
   
   private
-
+  
     def config_global
       @meta     ||= []
       @buttons  ||= []
       @parts    ||= []
       @popups   ||= []
     end
-
+    
     def config_new
     end
-
+    
     def config_edit
+      @parts    << 'items'
+      @parts    << 'addresses'
     end
-
+    
     def assets_global
       include_stylesheet 'admin/extensions/shop/edit'
       include_stylesheet 'admin/extensions/shop/index'
     end
-
+    
     def assets_index
     end
-
+    
     def assets_edit
     end
-
+    
 end
