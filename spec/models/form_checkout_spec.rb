@@ -240,14 +240,20 @@ describe FormCheckout do
                   :credentials=> {
                     :username => 'abcdefgh',
                     :password => '12345678',
-                    :pem      => 'README',
                     :merchant => 'test'
                   }
                 }
               }
             }
             @data = {
-              'card' => { }
+              :card => { 
+                :number       => '1234123412341234',
+                :name         => 'Mr. Joe Bloggs',
+                :verification => '123',
+                :month        => 1,
+                :year         => 2009,
+                :type         => 'visa'
+              }
             }
             
             @gateway = Object.new
@@ -256,9 +262,9 @@ describe FormCheckout do
             stub(@purchase).message { 'success' }
             
             mock(ActiveMerchant::Billing::EwayGateway).new(@form[:extensions][:checkout][:gateway][:credentials]) { @gateway }
-            stub(@gateway).purchase(1000, nil, { :order_id => @order.id}) { @purchase }
+            stub(@gateway).purchase(1000, anything, { :order_id => @order.id}) { @purchase }
           end
-          it 'should assign ActiveMerchant to testing mode' do        
+          it 'should assign ActiveMerchant to testing mode' do
             @checkout = FormCheckout.new(@form, @page)
             @checkout.create
             
@@ -309,13 +315,13 @@ describe FormCheckout do
             }
           }
           @data = {
-            'card' => { 
-              'number'        => '1234123412341234',
-              'name'          => 'Mr. Joe Bloggs',
-              'verification'  => '123',
-              'month'         => 1,
-              'year'          => 2009,
-              'type'          => 'visa'
+            :card => { 
+              :number       => '1234123412341234',
+              :name         => 'Mr. Joe Bloggs',
+              :verification => '123',
+              :month        => 1,
+              :year         => 2009,
+              :type         => 'visa'
             }
           }
           

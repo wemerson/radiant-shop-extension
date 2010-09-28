@@ -27,51 +27,58 @@ describe ShopOrder do
       describe '#new?' do
         context 'success' do
           it 'should return true' do
-            shop_orders(:empty).update_attribute(:status, 'new')
-            shop_orders(:empty).new?.should === true
+            shop_orders(:one_item).update_attribute(:status, 'new')
+            shop_orders(:one_item).new?.should === true
           end
         end
         context 'failure' do
           it 'should return false' do
-            shop_orders(:empty).update_attribute(:status, 'paid')
-            shop_orders(:empty).new?.should === false
+            shop_orders(:one_item).update_attribute(:status, 'paid')
+            shop_orders(:one_item).new?.should === false
 
-            shop_orders(:empty).update_attribute(:status, 'shipped')
-            shop_orders(:empty).new?.should === false
-          end
-        end
-      end
-      describe '#paid?' do
-        context 'success' do
-          it 'should return true' do
-            shop_orders(:empty).update_attribute(:status, 'paid')
-            shop_orders(:empty).paid?.should === true
-          end
-        end
-        context 'failure' do
-          it 'should return false' do
-            shop_orders(:empty).update_attribute(:status, 'new')
-            shop_orders(:empty).paid?.should === false
-
-            shop_orders(:empty).update_attribute(:status, 'shipped')
-            shop_orders(:empty).paid?.should === false
+            shop_orders(:one_item).update_attribute(:status, 'shipped')
+            shop_orders(:one_item).new?.should === false
           end
         end
       end
       describe '#shipped?' do
         context 'success' do
           it 'should return true' do
-            shop_orders(:empty).update_attribute(:status, 'shipped')
-            shop_orders(:empty).shipped?.should === true
+            shop_orders(:one_item).update_attribute(:status, 'shipped')
+            shop_orders(:one_item).shipped?.should === true
           end
         end
         context 'failure' do
           it 'should return false' do
-            shop_orders(:empty).update_attribute(:status, 'new')
-            shop_orders(:empty).shipped?.should === false
+            shop_orders(:one_item).update_attribute(:status, 'new')
+            shop_orders(:one_item).shipped?.should === false
 
-            shop_orders(:empty).update_attribute(:status, 'paid')
-            shop_orders(:empty).shipped?.should === false
+            shop_orders(:one_item).update_attribute(:status, 'paid')
+            shop_orders(:one_item).shipped?.should === false
+          end
+        end
+      end
+      describe '#paid?' do
+        context 'success' do
+          it 'should return true' do
+            payment = ShopPayment.create({
+              :amount       => shop_orders(:one_item).price,
+              :card_number  => '1234',
+              :card_type    => 'visa',
+              :gateway      => 'Eway',
+              :order        => shop_orders(:one_item)
+            })
+            shop_orders(:one_item).update_attribute(:status, 'paid')
+            shop_orders(:one_item).paid?.should === true
+          end
+        end
+        context 'failure' do
+          it 'should return false' do
+            shop_orders(:one_item).update_attribute(:status, 'new')
+            shop_orders(:one_item).paid?.should === false
+
+            shop_orders(:one_item).update_attribute(:status, 'shipped')
+            shop_orders(:one_item).paid?.should === false
           end
         end
       end

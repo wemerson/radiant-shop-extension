@@ -73,7 +73,8 @@ class ShopOrder < ActiveRecord::Base
   end
   
   def paid?
-    self.payment.amount === self.price
+    return false unless self.payment.present?
+    self.payment.amount === self.price and self.status === 'paid'
   end
   
   def shipped?

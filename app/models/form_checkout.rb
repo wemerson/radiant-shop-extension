@@ -1,6 +1,8 @@
 class FormCheckout
   include Forms::Models::Extension
   
+  attr_accessor :config, :data, :result, :gateway, :card, :billing, :shipping
+  
   def create
     find_current_order # locate the @order object
     
@@ -162,6 +164,8 @@ class FormCheckout
         :card_type  => card_type,
         :card_number=> card_number_secure
       })
+      
+      @order.update_attribute(:status, 'paid')
       
       @result[:payment] = payment.save
     end
