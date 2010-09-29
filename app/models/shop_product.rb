@@ -1,27 +1,23 @@
 class ShopProduct < ActiveRecord::Base
   
+  default_scope             :joins => :category, :order => 'shop_categories.position, shop_products.position ASC'
+    
   belongs_to  :created_by,  :class_name => 'User'
   belongs_to  :updated_by,  :class_name => 'User'
-  belongs_to  :category,    :class_name => 'ShopCategory', :foreign_key => :shop_category_id
+  belongs_to  :category,    :class_name => 'ShopCategory'
   
-  has_many    :line_items,  :class_name => 'ShopLineItem', :as => :item, :dependent => :destroy
-  has_many    :orders,      :class_name => 'ShopOrder', :through => :line_items
-  has_many    :attachments, :class_name => 'ShopProductAttachment'
-  has_many    :images,      :through => :attachments,  :uniq => true
-  
-  default_scope             :joins => :category, :order => 'shop_categories.position, shop_products.position ASC'
+  has_many    :line_items,  :class_name => 'ShopLineItem',          :foreign_key  => :item_id,      :dependent => :destroy
+  has_many    :orders,      :class_name => 'ShopOrder',             :through      => :line_items,   :uniq => true
+  has_many    :attachments, :class_name => 'ShopProductAttachment', :foreign_key  => :product_id
+  has_many    :images,      :class_name => 'Image',                 :through      => :attachments,  :uniq => true
   
   before_validation         :set_sku, :filter_sku
-  
-  validates_presence_of     :name, :sku, :category
-  
-  validates_uniqueness_of   :name, :scope => 'shop_category_id'
-  
+  validates_presence_of     :name,    :sku,     :category
+  validates_uniqueness_of   :name,    :scope => :category_id
   validates_uniqueness_of   :sku
+  validates_numericality_of :price,   :greater_than => 0.00,    :allow_nil => true,     :precisions => 2
   
-  validates_numericality_of :price, :greater_than => 0.00, :allow_nil => true, :precisions => 2
-  
-  acts_as_list              :scope =>  :shop_category
+  acts_as_list              :scope =>  :category
   
   def slug
     "/#{self.slug_prefix}/#{self.category.handle}/#{self.sku}"

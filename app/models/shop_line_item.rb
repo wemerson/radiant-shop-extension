@@ -1,11 +1,10 @@
 class ShopLineItem < ActiveRecord::Base
   
-  belongs_to :order,      :class_name => 'ShopOrder', :foreign_key => :shop_order_id
-  belongs_to :item,       :polymorphic => true
-  
-  validates_uniqueness_of :item_id, :scope => [ :shop_order_id, :item_type ]
+  belongs_to :order,      :class_name   => 'ShopOrder'
+  belongs_to :item,       :polymorphic  => true
   
   before_validation       :adjust_quantity
+  validates_uniqueness_of :item_id, :scope => [ :order_id, :item_type ]
   
   def price
     item.price.to_f * self.quantity.to_f

@@ -1,9 +1,10 @@
 class ShopCustomer < User
+  
   include Scoped::Models::User::Scoped
   
-  has_many  :orders,        :class_name => 'ShopOrder'
-  has_many  :billings,      :through => :orders
-  has_many  :shippings,     :through => :orders
+  has_many  :orders,    :class_name => 'ShopOrder', :foreign_key => :customer_id
+  has_many  :billings,  :through    => :orders
+  has_many  :shippings, :through    => :orders
   
   accepts_nested_attributes_for :orders, :allow_destroy => true
   

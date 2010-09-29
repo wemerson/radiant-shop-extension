@@ -1,19 +1,17 @@
 class ShopCategory < ActiveRecord::Base
   
-  default_scope :order => 'position ASC'
+  default_scope :order => 'shop_categories.position ASC'
   
   belongs_to  :created_by,      :class_name => 'User'
   belongs_to  :updated_by,      :class_name => 'User'
-  belongs_to  :layout
+  belongs_to  :layout,          :class_name => 'Layout'
   belongs_to  :product_layout,  :class_name => 'Layout'
   
-  has_many    :products,        :class_name => 'ShopProduct', :dependent => :destroy
+  has_many    :products,        :class_name => 'ShopProduct', :foreign_key => :category_id, :dependent => :destroy
   
-  before_validation :set_handle, :filter_handle, :set_layouts
-  
-  validates_presence_of :name, :handle
-  
-  validates_uniqueness_of :name, :handle
+  before_validation             :set_handle, :filter_handle, :set_layouts
+  validates_presence_of         :name, :handle
+  validates_uniqueness_of       :name, :handle
   
   acts_as_list
 

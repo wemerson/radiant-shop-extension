@@ -60,7 +60,7 @@ class FormCheckout
         # We're going to assign shipping to billing because they didn't send shipping
         if !shipping.present? and @billing.present?
           @shipping = @billing
-          @order.update_attribute(:shipping_id, @shipping.id)
+          @order.update_attribute(:shipping, @shipping)
         end
       end
       
@@ -84,7 +84,7 @@ class FormCheckout
           # Use an existing Address and update its values
           @billing = current_customer.billings.find(billing[:id])
           @billing.update_attributes(billing)
-          @order.update_attribute(:billing_id, @billing.id)
+          @order.update_attribute(:billing, @billing)
         rescue
           # We cant find that address for that user
         end
@@ -98,7 +98,7 @@ class FormCheckout
         # Create a new address with these attributes
         @billing = ShopAddress.new(billing)
         if @billing.save
-          @order.update_attribute(:billing_id, @billing.id)
+          @order.update_attribute(:billing, @billing)
         end
         
       end
@@ -116,11 +116,11 @@ class FormCheckout
           if @shipping == @billing and shipping == billing
             # We have exactly the same shipping and billing data
             @shipping = @billing
-            @order.update_attribute(:shipping_id, @billing.id)
+            @order.update_attribute(:shipping, @billing)
             
           elsif (shipping.reject!{|k,v| k == :id }).values.all?(&:blank?)
             # We have just passed the id and not the data
-            @order.update_attribute(:shipping_id, @shipping.id)
+            @order.update_attribute(:shipping, @shipping)
             
           elsif @shipping == @billing and shipping != billing
             # We have conflicting data so create a new address
@@ -140,7 +140,7 @@ class FormCheckout
       elsif shipping.values.all?(&:blank?) or shipping == billing
         # We haven't set a shipping, or we have copied billing, so use billing
         @shipping = @billing
-        @order.update_attribute(:shipping_id, @billing.id)
+        @order.update_attribute(:shipping, @billing)
       
       else
         # Create a new address with these attributes

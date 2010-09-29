@@ -1,7 +1,7 @@
 class ShopAddress < ActiveRecord::Base
   
-  has_many :shipping_orders,  :class_name => 'ShopOrder', :foreign_key => :shipping_id
-  has_many :billing_orders,   :class_name => 'ShopOrder', :foreign_key => :billing_id
+  has_many :billings,   :class_name => 'ShopOrder', :foreign_key => :billing_id
+  has_many :shippings,  :class_name => 'ShopOrder', :foreign_key => :shipping_id
   
   validates_presence_of :name
   validates_presence_of :street

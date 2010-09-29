@@ -10,11 +10,11 @@ describe ShopProductAttachment do
     end
       
     it 'should have a product id' do
-      @product_image.shop_product_id.should === shop_products(:soft_bread).id
+      @product_image.product.should === shop_products(:soft_bread)
     end
     
     it 'should have an image id' do
-      @product_image.image_id.should === images(:soft_bread_front).id
+      @product_image.image.should === images(:soft_bread_front)
     end
     
     it 'should have a position' do

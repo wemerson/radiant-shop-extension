@@ -2,14 +2,14 @@ class ShopOrder < ActiveRecord::Base
   
   default_scope :order => 'shop_orders.updated_at DESC'
   
-  has_one   :payment,     :class_name => 'ShopPayment',   :dependent => :destroy
-  has_many  :line_items,  :class_name => 'ShopLineItem',  :dependent => :destroy
+  has_one   :payment,     :class_name => 'ShopPayment',   :foreign_key => :order_id,  :dependent => :destroy
+  has_many  :line_items,  :class_name => 'ShopLineItem',  :foreign_key => :order_id,  :dependent => :destroy
   
   belongs_to :billing,    :class_name => 'ShopAddress'
   belongs_to :shipping,   :class_name => 'ShopAddress'
   belongs_to :created_by, :class_name => 'User'
   belongs_to :updated_by, :class_name => 'User'
-  belongs_to :customer,   :class_name => 'ShopCustomer', :foreign_key => :shop_customer_id
+  belongs_to :customer,   :class_name => 'ShopCustomer'
   
   accepts_nested_attributes_for :line_items,  :reject_if => :all_blank
   accepts_nested_attributes_for :billing,     :reject_if => :all_blank
