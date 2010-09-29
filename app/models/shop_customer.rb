@@ -9,11 +9,27 @@ class ShopCustomer < User
   accepts_nested_attributes_for :orders, :allow_destroy => true
   
   def first_name
-    self.name.split(' ')[0]
+    name = ''
+    
+    names = self.name.split(' ')
+    if names.length > 1
+      name = names[0, names.length-1].join(' ') 
+    else
+      name = names.join(' ')
+    end
+    
+    name
   end
   
   def last_name
-    self.name.split(' ')[1]
+    name = ''
+    
+    names = self.name.split(' ')
+    if names.length > 1
+      name = names[-1]
+    end
+    
+    name
   end
   
 end

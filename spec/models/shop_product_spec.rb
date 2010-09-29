@@ -40,7 +40,7 @@ describe ShopProduct do
   describe 'validation' do
     
     it 'should require a name and category' do
-      @product = ShopProduct.new()
+      @product = ShopProduct.new
       @product.valid? == false
       
       @product.name = "name"

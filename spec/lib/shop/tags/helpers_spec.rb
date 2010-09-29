@@ -2,7 +2,7 @@ require 'spec/spec_helper'
 
 describe Shop::Tags::Helpers do
   
-  dataset :pages, :shop_products, :shop_orders, :shop_addresses
+  dataset :pages, :shop_products, :shop_orders, :shop_addresses, :shop_line_items
   
   before :all do
     @page = pages(:home)
@@ -293,7 +293,7 @@ describe Shop::Tags::Helpers do
   
   describe '#current_line_item' do
     before :each do
-      @item = shop_line_items(:crusty_bread)
+      @item = shop_line_items(:one)
     end
     
     context 'existing line item' do
@@ -338,7 +338,7 @@ describe Shop::Tags::Helpers do
     context 'current_order exists and has billing' do
       before :each do
         @order = shop_orders(:one_item)
-        @order.update_attribute(:billing_id, @address.id)
+        @order.update_attribute(:billing, @address)
         @tag.locals.shop_order = @order
       end
       it 'should return the order billing address' do

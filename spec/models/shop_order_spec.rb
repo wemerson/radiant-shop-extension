@@ -2,26 +2,26 @@ require 'spec/spec_helper'
 
 describe ShopOrder do
 
-  dataset :shop_orders, :shop_line_items, :shop_products
+  dataset :shop_orders, :shop_line_items, :shop_products, :shop_payments
 
   context 'instance' do
     describe 'accessors' do
       it 'should return the total items' do
-        shop_orders(:empty).quantity.should === 0
-        shop_orders(:one_item).quantity.should === 1
-        shop_orders(:several_items).quantity.should === 3
+        shop_orders(:empty).quantity.should         === shop_orders(:empty).line_items.sum(:quantity)
+        shop_orders(:one_item).quantity.should      === shop_orders(:one_item).line_items.sum(:quantity)
+        shop_orders(:several_items).quantity.should === shop_orders(:several_items).line_items.sum(:quantity)
       end
 
       it 'should calculate a total weight' do
-        shop_orders(:empty).weight.should === 0
-        shop_orders(:one_item).weight.to_f.should === 31.0
-        shop_orders(:several_items).weight.to_f.should === 92.0
+        shop_orders(:empty).weight.should           === lambda{ weight = 0; shop_orders(:empty).line_items.map { |l| weight += l.weight }; weight }.call
+        shop_orders(:one_item).weight.should        === lambda{ weight = 0; shop_orders(:one_item).line_items.map { |l| weight += l.weight }; weight }.call
+        shop_orders(:several_items).weight.should   === lambda{ weight = 0; shop_orders(:several_items).line_items.map { |l| weight += l.weight }; weight }.call
       end
 
       it 'should calculate the total price' do
-        shop_orders(:empty).price.should === 0
-        shop_orders(:one_item).price.to_f.should === 11.0
-        shop_orders(:several_items).price.to_f.should === 32.0
+        shop_orders(:empty).price.should            === lambda{ price = 0; shop_orders(:empty).line_items.map { |l| price += l.price }; price }.call
+        shop_orders(:one_item).price.should         === lambda{ price = 0; shop_orders(:one_item).line_items.map { |l| price += l.price }; price }.call
+        shop_orders(:several_items).price.should    === lambda{ price = 0; shop_orders(:several_items).line_items.map { |l| price += l.price }; price }.call
       end
       
       describe '#new?' do
@@ -61,24 +61,32 @@ describe ShopOrder do
       describe '#paid?' do
         context 'success' do
           it 'should return true' do
-            payment = ShopPayment.create({
-              :amount       => shop_orders(:one_item).price,
-              :card_number  => '1234',
-              :card_type    => 'visa',
-              :gateway      => 'Eway',
-              :order        => shop_orders(:one_item)
-            })
-            shop_orders(:one_item).update_attribute(:status, 'paid')
-            shop_orders(:one_item).paid?.should === true
+            shop_orders(:several_items).update_attribute(:status, 'paid')
+            
+            shop_orders(:several_items).payment.should  === shop_payments(:visa)
+            shop_orders(:several_items).paid?.should    === true
           end
         end
         context 'failure' do
-          it 'should return false' do
-            shop_orders(:one_item).update_attribute(:status, 'new')
-            shop_orders(:one_item).paid?.should === false
-
-            shop_orders(:one_item).update_attribute(:status, 'shipped')
-            shop_orders(:one_item).paid?.should === false
+          describe 'status is not paid' do
+            it 'should return false' do
+              shop_orders(:several_items).update_attribute(:status, 'new')
+              shop_orders(:several_items).paid?.should === false
+            end
+          end
+          describe 'payment is nil' do
+            it 'should return false' do
+              shop_orders(:several_items).update_attribute(:status, 'paid')
+              shop_orders(:several_items).payment = nil
+              shop_orders(:several_items).paid?.should === false
+            end
+          end
+          describe 'payment amount doesnt match' do
+            it 'should return false' do
+              shop_orders(:several_items).update_attribute(:status, 'paid')
+              shop_orders(:several_items).payment.update_attribute(:amount, 11.00)
+              shop_orders(:several_items).paid?.should === false
+            end
           end
         end
       end
@@ -88,123 +96,121 @@ describe ShopOrder do
       describe '#add!' do   
         context 'item not in cart' do
           before :each do
-            @shop_order = shop_orders(:empty)
-            @shop_product = shop_products(:crusty_bread)
+            @order = shop_orders(:empty)
+            @product = shop_products(:crusty_bread)
           end
           context 'no quantity or type passed' do
             it 'should assign a default type and default quantity' do
-              @shop_order.add!(@shop_product.id)
+              @order.add!(@product.id)
               
-              @shop_order.line_items.count.should == 1
-              @shop_order.line_items.first.item_type.should === 'ShopProduct'
-              @shop_order.line_items.first.quantity.should === 1
-              @shop_order.line_items.first.item.should === @shop_product
+              @order.line_items.count.should           === 1
+              @order.line_items.first.item_type.should === 'ShopProduct'
+              @order.line_items.first.quantity.should  === 1
+              @order.line_items.first.item.should      === @product
             end
           end
           context 'quantity passed' do
             it 'should assign the default type and new quantity' do
-              @shop_order.add!(@shop_product.id, 2)
+              @order.add!(@product.id, 2)
               
-              @shop_order.line_items.count.should === 1
-              @shop_order.line_items.first.item_type.should === 'ShopProduct'
-              @shop_order.line_items.first.quantity.should === 2
-              @shop_order.line_items.first.item.should === @shop_product              
+              @order.line_items.count.should           === 1
+              @order.line_items.first.item_type.should === 'ShopProduct'
+              @order.line_items.first.quantity.should  === 2
+              @order.line_items.first.item.should      === @product              
             end
           end
           context 'type and quantity passed' do
             it 'should assign the new type and new quantity' do
-              @shop_order.add!(@shop_product.id, 2, 'ShopPackage')
+              @order.add!(@product.id, 2, 'ShopPackage')
               
-              @shop_order.line_items.count.should === 1
-              @shop_order.quantity.should === 2
-              @shop_order.line_items.first.item_type.should === 'ShopPackage'
+              @order.line_items.count.should           === 1
+              @order.quantity.should                   === 2
+              @order.line_items.first.item_type.should === 'ShopPackage'
             end
           end
         end
         context 'item in cart' do
           before :each do
-            @shop_order = shop_orders(:one_item)
-            @shop_line_item = shop_orders(:one_item).line_items.first
+            @order = shop_orders(:empty)
+            @line_item = shop_line_items(:one)
           end
           context 'no quantity or type passed' do
             it 'should assign a default type and default quantity' do
-              @shop_order.add!(@shop_line_item.id)
+              @order.add!(@line_item.id)
               
-              @shop_order.line_items.count.should === 1
-              @shop_order.quantity.should === 2
+              @order.line_items.count.should === 1
+              @order.quantity.should         === 1
             end
           end
           context 'quantity passed' do
             it 'should assign the default type and new quantity' do
-              @shop_order.add!(@shop_line_item.id, 2)
+              @order.add!(@line_item.id, 2)
               
-              @shop_order.line_items.count.should === 1
-              @shop_order.quantity.should === 3
+              @order.line_items.count.should === 1
+              @order.quantity.should         === 2
             end
           end
         end
       end
       describe '#update!' do
-        before :each do
-          @shop_order = shop_orders(:one_item)
-          @shop_line_item = shop_orders(:one_item).line_items.first
-        end
         context 'quantity not set' do
-          it 'should assign a quantity of 1' do
-            @shop_order.update!(@shop_line_item.id)
+          before :each do
+            @order = shop_orders(:one_item)
+            @line_item = shop_line_items(:one)
+          end
+          it 'should not update the item' do
+            @order.update!(@line_item.id)
             
-            @shop_order.line_items.count.should === 1
-            @shop_order.quantity.should === 1
+            @order.quantity.should === 1
           end
         end
         context 'quantity set' do
+          before :each do
+            @order = shop_orders(:one_item)
+            @line_item = shop_line_items(:one)
+          end
           context 'quantity > 0' do
             it 'should assign that quantity' do
-              @shop_order.update!(@shop_line_item.id, 1)
-              @shop_order.quantity.should === 1
+              @order.update!(@line_item.id, 1)
+              @order.quantity.should === 1
               
-              @shop_order.update!(@shop_line_item.id, 2)
-              @shop_order.quantity.should === 2
+              @order.update!(@line_item.id, 2)
+              @order.quantity.should === 2
               
-              @shop_order.update!(@shop_line_item.id, 100)
-              @shop_order.quantity.should === 100
+              @order.update!(@line_item.id, 100)
+              @order.quantity.should === 100
             end
           end
           context 'quantity <= 0' do
             it 'should remove that item for 0' do
-              @shop_order.update!(@shop_line_item.id, 0)
-              @shop_order.quantity.should === 0
-              @shop_order.line_items.count.should === 0          
+              @order.update!(@line_item.id, 0)
+              @order.quantity.should === 0         
             end
             it 'should remove that item for -1' do
-              @shop_order.update!(@shop_line_item.id, -1)
-              @shop_order.quantity.should === 0
-              @shop_order.line_items.count.should === 0
+              @order.update!(@line_item.id, -1)
+              @order.quantity.should === 0
             end
             it 'should remove that item for -100' do
-              @shop_order.update!(@shop_line_item.id, -100)
-              @shop_order.quantity.should === 0
-              @shop_order.line_items.count.should === 0
+              @order.update!(@line_item.id, -100)
+              @order.quantity.should === 0
             end
           end
         end
       end
       describe '#remove!' do
         it 'should remove the item' do
-          @shop_order = shop_orders(:several_items)
+          @order = shop_orders(:several_items)
+          items = @order.line_items.count
           
-          @shop_order.remove!(@shop_order.line_items.first.id)
-          @shop_order.quantity.should === 2
-          @shop_order.line_items.count.should === 2
+          @order.remove!(@order.line_items.first.id)
+          @order.line_items.count.should === items - 1
         end
       end
       describe '#clear!' do
         it 'should remove all items' do
-          @shop_order = shop_orders(:several_items)
-          
-          @shop_order.clear!
-          @shop_order.quantity.should === 0
-          @shop_order.line_items.count.should === 0
+          @order = shop_orders(:several_items)
+          @order.clear!
+          @order.quantity.should === 0
         end
       end
     end
@@ -218,7 +224,7 @@ describe ShopOrder do
           
           old = ShopOrder.first
           old.update_attribute(:status, 'paid')
-        
+          
           results = ShopOrder.search('new')
           results.count.should === count - 1
         end

@@ -1,8 +1,6 @@
 class ShopAddressesDataset < Dataset::Base
   def load
-    
     # TODO Investigate why inflectors are breaking here
-    
     create_record :shop_addresss, :billing,
       :name   => 'Billing Address',
       :email  => 'billing@address.com',
@@ -21,7 +19,6 @@ class ShopAddressesDataset < Dataset::Base
       :city   => 'Shipvilles',
       :state  => 'SH',
       :country=> 'Shippington',
-      :postcode=> '5678'
-            
+      :postcode=> '1234'
   end
 end

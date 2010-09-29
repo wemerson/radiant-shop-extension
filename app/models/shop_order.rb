@@ -16,6 +16,8 @@ class ShopOrder < ActiveRecord::Base
   accepts_nested_attributes_for :shipping,    :reject_if => :all_blank
   
   def add!(id, quantity = nil, type = nil)
+    result = true
+    
     quantity  ||= 1
     type      ||= 'ShopProduct'
     
@@ -28,10 +30,12 @@ class ShopOrder < ActiveRecord::Base
       self.line_items.create!({:item_id => id, :item_type => type, :quantity => quantity})
     end
     
-    true
+    result
   end
   
   def update!(id, quantity = 1)
+    result = true
+    
     quantity = quantity.to_i
     if quantity <= 0
       remove!(id)
@@ -40,7 +44,7 @@ class ShopOrder < ActiveRecord::Base
       line_item.update_attribute(:quantity, quantity)
     end
     
-    true
+    result
   end
   
   def remove!(id)
