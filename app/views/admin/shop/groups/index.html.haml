@@ -1,0 +1,10 @@
+- @page_title = t('groups') + ' - ' + default_page_title
+
+.outset
+
+  #groups_map.map
+    %ul#groups
+      = render :partial => '/admin/shop/groups/index/group', :collection => @shop_groups
+
+  #actions
+    = render :partial => '/admin/shop/groups/index/foot'

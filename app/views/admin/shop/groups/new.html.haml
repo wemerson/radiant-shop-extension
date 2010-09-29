@@ -1,0 +1,11 @@
+- @page_title = t('new_group')
+
+- render_region :main do |main|
+  - main.head do
+    = render 'admin/shop/groups/edit/head'
+
+  - main.popups do
+    = render 'admin/shop/groups/edit/popups'
+
+  - main.form do
+    = render 'admin/shop/groups/edit/form'

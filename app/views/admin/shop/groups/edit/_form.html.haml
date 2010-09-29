@@ -1,0 +1,13 @@
+- form_for [:admin, @shop_group], :html => {'data-onsubmit_status'=>"Saving Changes&#8230;"} do |f|
+  - render_region :form do |form|  
+    - form.inputs do
+      = render :partial => '/admin/shop/groups/edit/inputs',  :locals => { :f => f }
+  
+    - form.meta do
+      = render :partial => '/admin/shop/groups/edit/meta',    :locals => { :f => f }
+  
+    - form.parts do
+      = render :partial => '/admin/shop/groups/edit/parts',   :locals => { :f => f }
+    
+    - form.foot do
+      = render :partial => 'admin/shop/groups/edit/foot',     :locals => { :f => f }

@@ -18,7 +18,7 @@ class Admin::Shop::GroupsController < Admin::ResourceController
       @popups   ||= []
       
       @inputs   << 'name'
-      @inputs   << 'description'
+      @parts    << 'description'
     end
     
     def config_new
