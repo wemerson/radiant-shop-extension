@@ -5,6 +5,9 @@ class ShopProductAttachment < ActiveRecord::Base
   belongs_to    :product,   :class_name => 'ShopProduct'
   belongs_to    :image
   
+  belongs_to  :created_by,  :class_name => 'User'
+  belongs_to  :updated_by,  :class_name => 'User'
+  
   acts_as_list  :scope =>   :product
   
   def url(*params)

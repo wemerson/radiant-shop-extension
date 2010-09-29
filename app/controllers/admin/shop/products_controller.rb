@@ -40,8 +40,8 @@ class Admin::Shop::ProductsController < Admin::ResourceController
       
       @shop_products.each_with_index do |id, index|
         ShopProduct.find(id).update_attributes!({
-          :position           => index+1,
-          :shop_category_id   => @shop_category.id
+          :position     => index+1,
+          :category_id  => @shop_category.id
         })
       end
       

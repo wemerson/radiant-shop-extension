@@ -25,7 +25,7 @@ describe ShopVariant do
     end
     context 'options' do
       it 'should require' do
-        @variant.options = nil
+        @variant.options_json = nil
         @variant.valid?.should  === false
       end
     end
