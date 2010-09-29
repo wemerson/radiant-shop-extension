@@ -86,7 +86,6 @@ describe ShopProduct do
     it 'should have an array of images' do
       @product.attachments.class.should == Array
       @product.images.class.should      == Array
-      @product.images.length.should     === 3
       @product.images.length.should     === @product.attachments.length
     end
     

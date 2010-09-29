@@ -1,6 +1,6 @@
 class ShopProductsDataset < Dataset::Base  
 
-  uses :shop_categories, :images
+  uses :shop_categories
 
   def load
     categories = {
@@ -20,16 +20,6 @@ class ShopProductsDataset < Dataset::Base
           :category => shop_categories(category)
       end
     end
-    
-    shop_products(:soft_bread).images = [
-      images(:soft_bread_front),
-      images(:soft_bread_back),
-      images(:soft_bread_top)
-    ]
-    
-    shop_products(:crusty_bread).images << images(:crusty_bread_front)
-    
-    shop_products(:warm_bread).images << images(:warm_bread_front)
   end
   
 end

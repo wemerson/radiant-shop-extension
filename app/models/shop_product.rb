@@ -13,6 +13,7 @@ class ShopProduct < ActiveRecord::Base
   has_many    :groupings,   :class_name => 'ShopGrouping',          :foreign_key  => :product_id
   has_many    :groups,      :class_name => 'ShopGroup',             :through      => :groupings,    :uniq => true
   has_many    :related,     :class_name => 'ShopProduct',           :through      => :groupings,    :uniq => true
+  has_many    :variants,    :class_name => 'ShopProductVariant',    :foreign_key  => :product_id,   :dependent => :destroy
   
   before_validation         :set_sku, :filter_sku
   validates_presence_of     :name,    :sku,     :category

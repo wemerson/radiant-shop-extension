@@ -1,11 +1,11 @@
 require 'spec/spec_helper'
 
 #
-# Tests for shop order page model extensions
+# Tests for image model extensions
 #
 describe Shop::Models::Image do
   
-  dataset :images, :shop_products
+  dataset :shop_products, :shop_product_attachments
   
   before :each do
     @image = images(:soft_bread_front)
@@ -13,8 +13,8 @@ describe Shop::Models::Image do
   
   context 'relationships' do
     
-    describe 'belongs_to :shop_category' do
-      it 'should accept and return a shop_category object' do
+    describe 'product' do
+      it 'should accept and return a product object' do
         @shop_product = shop_products(:soft_bread)
         
         @image.shop_products << @shop_product

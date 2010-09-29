@@ -1,7 +1,8 @@
 require 'spec/spec_helper'
 
 describe ShopProductAttachment do
-  dataset :shop_products
+  
+  dataset :shop_products, :shop_product_attachments
   
   context 'attributes' do
   

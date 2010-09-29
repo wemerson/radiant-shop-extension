@@ -2,7 +2,7 @@ require 'spec/spec_helper'
 
 describe Shop::Tags::Product do
   
-  dataset :pages, :shop_products
+  dataset :pages, :shop_products, :shop_product_attachments
   
   it 'should describe these tags' do
     Shop::Tags::Product.tags.sort.should == [
