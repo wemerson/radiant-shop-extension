@@ -13,16 +13,15 @@ module Shop
           def load_default_shop_orders_regions
             returning OpenStruct.new do |orders|
               orders.edit = Radiant::AdminUI::RegionSet.new do |edit|
-                edit.main.concat %w{header form popups}
-                edit.form.concat %w{ meta parts}
-                edit.bottom.concat %w{buttons timestamp}
+                edit.main.concat %w{head form popups}
+                edit.form.concat %w{inputs meta parts foot}
+                edit.foot.concat %w{buttons timestamp}
               end
               orders.new = orders.edit
               orders.index = Radiant::AdminUI::RegionSet.new do |index|
-                index.top
-                index.thead.concat %w{ price status updated customer }
-                index.order.concat %w{ price status updated customer }
-                index.bottom.concat %w{ }
+                index.head.concat %w{price status updated customer}
+                index.body.concat %w{price status updated customer}
+                index.foot.concat %w{}
               end
               orders.remove = orders.index
             end

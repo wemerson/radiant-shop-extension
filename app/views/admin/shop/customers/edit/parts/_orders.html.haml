@@ -12,12 +12,16 @@
       
       %br
       
-      %h4 Billing
-      %span.billing= render :partial => '/admin/shop/customers/edit/parts/address', :locals => { :address => order.billing }
+      - if order.billing.present?
+        %h4 Billing
+        %span.billing= render :partial => '/admin/shop/customers/edit/parts/address', :locals => { :address => order.billing }
       
-      %h4 Shipping
-      %span.shipping= render :partial => '/admin/shop/customers/edit/parts/address', :locals => { :address => order.shipping }
-      
+        %h4 Shipping
+        %span.shipping= render :partial => '/admin/shop/customers/edit/parts/address', :locals => { :address => order.shipping }
+      - else
+        %h4 No Addresses
+        The customer hasn't assigned any addresses to this order yet
+        
       %h4 Payment
       %span.payment
         - if order.paid?

@@ -25,7 +25,7 @@ module Shop
             if find_shop_order and find_shop_order.status != 'paid'
               shop_order = find_shop_order
             else
-              shop_order = ShopOrder.create
+              shop_order = ShopOrder.create({ :customer_id => (current_user.id rescue nil) })
               request.session[:shop_order] = shop_order.id
             end
             

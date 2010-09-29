@@ -10,7 +10,12 @@ ActionController::Routing::Routes.draw do |map|
         product.resources :images, :controller => 'products/images', :collection => { :sort => :put }, :only => [ :index, :create, :destroy]
       end
       
+      shop.resources :variants
+      
+      shop.resources :groups
+      
       shop.resources :customers
+      
       shop.resources :orders
     end
 

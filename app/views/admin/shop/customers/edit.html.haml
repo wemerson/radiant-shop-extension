@@ -1,13 +1,11 @@
-- @page_title = @shop_customer.name + ' - ' + default_page_title
+- @page_title = @shop_customer.name
 
 - render_region :main do |main|
-  - main.header do
-    %h1
-      = @shop_customer.name
-      = render 'admin/shop/customers/edit/head'
-  - main.form do
-    - form_for :shop_customer, @shop_customer, :url => admin_shop_customer_path(@shop_customer), :html => {:method => :put, :multipart => true, :id => 'edit_shop_customer', 'data-onsubmit_status'=>"Saving Changes&#8230;"} do |f|
-      = render :partial => 'admin/shop/customers/edit/fields', :locals => { :f => f }
+  - main.head do
+    = render 'admin/shop/customers/edit/head'
+
   - main.popups do
-    #popups
-      = render 'admin/shop/customers/edit/popups'
+    = render 'admin/shop/customers/edit/popups'
+
+  - main.form do
+    = render 'admin/shop/customers/edit/form'

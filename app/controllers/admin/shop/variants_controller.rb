@@ -1,5 +1,6 @@
-class Admin::Shop::OrdersController < Admin::ResourceController
-  model_class ShopOrder
+class Admin::Shop::VariantsController < Admin::ResourceController
+  
+  model_class ShopVariant
 
   before_filter :config_global
   before_filter :config_new,    :only => [ :new, :create ]
@@ -16,15 +17,15 @@ class Admin::Shop::OrdersController < Admin::ResourceController
       @buttons  ||= []
       @parts    ||= []
       @popups   ||= []
+      
+      @inputs   << 'name'
+      @inputs   << 'options'
     end
     
     def config_new
     end
     
     def config_edit
-      @parts    << 'items'
-      @parts    << 'addresses'if @shop_order.billing.present?
-      @parts    << 'customer' if @shop_order.customer.present?
     end
     
     def assets_global

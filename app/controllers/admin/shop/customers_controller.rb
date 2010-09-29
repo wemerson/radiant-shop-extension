@@ -11,10 +11,14 @@ class Admin::Shop::CustomersController < Admin::ResourceController
   private
     
     def config_global
+      @inputs   ||= []
       @meta     ||= []
       @buttons  ||= []
       @parts    ||= []
       @popups   ||= []
+      
+      @inputs   << 'name'
+      @inputs   << 'email'
     end
     
     def config_new
