@@ -20,15 +20,15 @@ var Shop = Class.create({
   
   
   CategoriesSort: function() {
-    Sortable.create('shop_categories', {
+    Sortable.create('categories', {
       overlap: 'vertical',
       only: 'category',
-      handle: 'handle',
+      handle: 'move',
       onUpdate: function() {
         new Ajax.Request('/admin/shop/categories/sort', {
           method: 'put',
           parameters: {
-            'categories':Sortable.serialize('shop_categories')
+            'categories':Sortable.serialize('categories')
           }
         })
       }
@@ -45,7 +45,7 @@ var Shop = Class.create({
       Sortable.create(category, {
         overlap: 'vertical',
         only: 'product',
-        handle: 'handle',
+        handle: 'move',
         dropOnEmpty: true,
         hoverclass: 'hover',
         containment: categories,

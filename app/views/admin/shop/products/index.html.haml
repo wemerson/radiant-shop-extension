@@ -2,9 +2,9 @@
 
 .outset
 
-  #products_map
-    %ul#shop_categories
+  #products_map.map
+    %ul#categories
       = render :partial => '/admin/shop/categories/index/category', :collection => @shop_categories
 
   #actions
-    = render :partial => '/admin/shop/products/index/bottom'
+    = render :partial => '/admin/shop/products/index/foot'

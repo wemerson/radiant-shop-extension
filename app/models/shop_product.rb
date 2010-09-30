@@ -35,6 +35,10 @@ class ShopProduct < ActiveRecord::Base
     Image.all - self.images
   end
   
+  def variant_options
+    self.category.variant.options if self.category.variant.present?
+  end
+  
   def slug_prefix
     Radiant::Config['shop.url_prefix']
   end

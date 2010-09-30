@@ -1,12 +1,11 @@
-- @page_title = @shop_category.name + ' - ' + default_page_title
+- @page_title = @shop_category.name
 
 - render_region :main do |main|
-  - main.edit_header do
-    %h1
-      = @shop_category.name
-      = render :partial => 'admin/shop/categories/edit/head'
-  - main.edit_form do
-    - form_for :shop_category, @shop_category, :url => admin_shop_category_path(@shop_category), :html => {:method => :put, :multipart => true, :id => 'edit_shop_category', 'data-onsubmit_status'=>"Saving Changes&#8230;"} do |f|
-      = render :partial => 'admin/shop/categories/edit/fields', :object => f
-  - main.edit_popups do
-    = render :partial => 'admin/shop/categories/edit/popup'
+  - main.head do
+    = render 'admin/shop/categories/edit/head'
+
+  - main.popups do
+    = render 'admin/shop/categories/edit/popups'
+
+  - main.form do
+    = render 'admin/shop/categories/edit/form'

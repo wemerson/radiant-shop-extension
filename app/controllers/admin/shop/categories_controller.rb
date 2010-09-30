@@ -47,7 +47,7 @@ class Admin::Shop::CategoriesController < Admin::ResourceController
     error   = 'Could not sort Categories.'
     
     begin  
-      @shop_categories = CGI::parse(params[:categories])["shop_categories[]"]
+      @shop_categories = CGI::parse(params[:categories])["categories[]"]
 
       @shop_categories.each_with_index do |id, index|
         ShopCategory.find(id).update_attributes!({:position => index+1})
@@ -174,24 +174,25 @@ class Admin::Shop::CategoriesController < Admin::ResourceController
 private
   
   def config_global
+    @inputs   ||= []
     @meta     ||= []
     @buttons  ||= []
     @parts    ||= []
     @popups   ||= []
+    
+    @inputs   << 'name'
+    
+    @meta     << 'handle'
+    @meta     << 'layouts'
+    @meta     << 'variant'
+    
+    @parts    << 'description'
   end
   
   def config_new
-    @meta  << 'layouts'
-    @meta  << 'handle'
-    
-    @parts << 'description'
   end
   
   def config_edit
-    @meta  << 'layouts'
-    @meta  << 'handle'
-    
-    @parts << 'description'
   end
   
   def assets_global

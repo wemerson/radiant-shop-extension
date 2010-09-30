@@ -26,7 +26,7 @@ class Admin::Shop::GroupsController < Admin::ResourceController
     
     def config_edit
       @parts    << 'products'
-      @popups   << 'available_products'
+      @popups   << 'browse_products'
     end
     
     def assets_global

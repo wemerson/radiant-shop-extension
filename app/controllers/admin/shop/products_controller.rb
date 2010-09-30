@@ -36,7 +36,7 @@ class Admin::Shop::ProductsController < Admin::ResourceController
     
     begin
       @shop_category = ShopCategory.find(params[:category_id])
-      @shop_products = CGI::parse(params[:products])["shop_category_#{params[:category_id]}_products[]"]
+      @shop_products = CGI::parse(params[:products])["category_#{params[:category_id]}_products[]"]
       
       @shop_products.each_with_index do |id, index|
         ShopProduct.find(id).update_attributes!({
@@ -167,24 +167,25 @@ class Admin::Shop::ProductsController < Admin::ResourceController
 private
   
   def config_global
+    @inputs   ||= []
     @meta     ||= []
     @buttons  ||= []
     @parts    ||= []
     @popups   ||= []
+    
+    @inputs   << 'name'
+    @inputs   << 'price'
+    
+    @meta     << 'sku'
+    @meta     << 'category'
+    
+    @parts    << 'description'
   end
   
   def config_new
-    @meta  << 'category'
-    @meta  << 'sku'
-    
-    @parts << 'description'
   end
   
   def config_edit
-    @meta  << 'category'
-    @meta  << 'sku'
-    
-    @parts << 'description'
     @parts << 'images'
     
     @buttons << 'browse_images'
@@ -199,14 +200,18 @@ private
   end
   
   def assets_index
+    include_stylesheet 'admin/extensions/shop/index'
+    include_stylesheet 'admin/extensions/shop/products/index'
+    
     include_javascript 'admin/dragdrop'
     include_javascript 'admin/extensions/shop/products/index'
-    include_stylesheet 'admin/extensions/shop/products/index'
   end
   
   def assets_edit
-    include_javascript 'admin/dragdrop'
+    include_stylesheet 'admin/extensions/shop/edit'
     include_stylesheet 'admin/extensions/shop/products/edit'
+    
+    include_javascript 'admin/dragdrop'
     include_javascript 'admin/extensions/shop/products/edit'
   end
   

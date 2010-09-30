@@ -1,14 +1,11 @@
-- @page_title = @shop_product.name + ' - ' + default_page_title
+- @page_title = @shop_product.name
 
 - render_region :main do |main|
-  - main.edit_header do
-    %h1
-      = @shop_product.name
-      = render 'admin/shop/products/edit/head'
-  - main.edit_form do
-    - form_for :shop_product, @shop_product, :url => admin_shop_product_path(@shop_product), :html => {:method => :put, :multipart => true, :id => 'edit_shop_product', 'data-onsubmit_status'=>"Saving Changes&#8230;"} do |f|
-      = f.hidden_field :id
-      = render :partial => 'admin/shop/products/edit/fields', :object => f
-  - main.edit_popups do
-    #popups
-      = render 'admin/shop/products/edit/popup'
+  - main.head do
+    = render 'admin/shop/products/edit/head'
+
+  - main.popups do
+    = render 'admin/shop/products/edit/popups'
+
+  - main.form do
+    = render 'admin/shop/products/edit/form'
