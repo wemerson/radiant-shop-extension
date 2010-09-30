@@ -1,4 +1,10 @@
 class FixRelationshipForeignKeys < ActiveRecord::Migration
+  class ShopProduct < ActiveRecord::Base; end
+  class ShopProductAttachment < ActiveRecord::Base; end
+  class ShopLineItem < ActiveRecord::Base; end
+  class ShopOrder < ActiveRecord::Base; end
+  class ShopPayment < ActiveRecord::Base; end
+    
   def self.up
     # Product - Category
     add_column  :shop_products, :category_id, :integer
