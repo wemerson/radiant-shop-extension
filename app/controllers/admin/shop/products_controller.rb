@@ -183,20 +183,23 @@ private
   end
   
   def config_new
+    @parts    << 'variant_options'
   end
   
   def config_edit
-    @parts << 'images'
+    @parts    << 'images'
+    @parts    << 'variants'
     
-    @buttons << 'browse_images'
-    @buttons << 'new_image'
+    @buttons  << 'browse_images'
+    @buttons  << 'new_image'
+    @buttons  << 'new_variant'
     
-    @popups  << 'browse_images'
-    @popups  << 'new_image'
+    @popups   << 'browse_images'
+    @popups   << 'new_image'
+    @popups   << 'new_variant'
   end
   
   def assets_global
-    include_stylesheet 'admin/extensions/shop/edit'
   end
   
   def assets_index
@@ -204,6 +207,7 @@ private
     include_stylesheet 'admin/extensions/shop/products/index'
     
     include_javascript 'admin/dragdrop'
+    include_javascript 'admin/extensions/shop/edit'
     include_javascript 'admin/extensions/shop/products/index'
   end
   
@@ -212,6 +216,7 @@ private
     include_stylesheet 'admin/extensions/shop/products/edit'
     
     include_javascript 'admin/dragdrop'
+    include_javascript 'admin/extensions/shop/edit'
     include_javascript 'admin/extensions/shop/products/edit'
   end
   

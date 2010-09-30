@@ -48,7 +48,10 @@ en:
   browse_images: "Browse Images"
   caption: "Caption"
   price: "Price"
-  sku: "SKU"
+  sku: "sku"
+  variant: "Variant"
+  new_variant: "New Variant"
+  price_variation: "Price Variation"
   text:
     remove_customer:
       warning: "Deleting a customer is irreversible and will also delete their orders and addresses, make sure you're sure."

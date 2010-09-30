@@ -1,60 +1,55 @@
-var ShopProducts = {}
-
 document.observe("dom:loaded", function() {
-  shop = new Shop()
-  shop.ProductsInitialize()
-  
-  Event.addBehavior({
-    // empty
-  })
+  shop_product_index = new ShopProductIndex();
+  shop_product_index.initialize();
 })
 
-var Shop = Class.create({
+var ShopProductIndex = Class.create({
   
-  ProductsInitialize: function() {
-    if($('products_map')) {
-     this.ProductsSort()
-     this.CategoriesSort()
-    }
+  initialize: function() {
+    this.sortCategories();
+    this.sortProducts();
   },
   
-  
-  CategoriesSort: function() {
+  sortCategories: function() {
+    var route = shop.getRoute('sort_admin_shop_categories_path');
+    
     Sortable.create('categories', {
-      overlap: 'vertical',
-      only: 'category',
-      handle: 'move',
+      overlap:    'vertical',
+      only:       'category',
+      handle:     'move',
       onUpdate: function() {
-        new Ajax.Request('/admin/shop/categories/sort', {
+        new Ajax.Request(route, {
           method: 'put',
           parameters: {
-            'categories':Sortable.serialize('categories')
+            'categories':   Sortable.serialize('categories')
           }
         })
       }
     })
   },
   
-  ProductsSort: function() {
-    var categories = Array()
-    $$('li.category').each(function(el, i) {
-      categories[i] = $(el).id + '_products'
+  sortProducts: function() {
+    var route = shop.getRoute('sort_admin_shop_products_path');
+    
+    var categories = new Array();
+    $$('li.category').each(function(el) {
+      categories.push($(el).id + '_products');
     })
     
     categories.each(function(category) { 
       Sortable.create(category, {
-        overlap: 'vertical',
-        only: 'product',
-        handle: 'move',
-        dropOnEmpty: true,
-        hoverclass: 'hover',
-        containment: categories,
+        overlap:      'vertical',
+        only:         'product',
+        handle:       'move',
+        dropOnEmpty:  true,
+        hoverclass:   'hover',
+        containment:  categories,
         onUpdate: function() {
-          new Ajax.Request('/admin/shop/products/sort', {
-            method: 'put',
+          new Ajax.Request(route, {
+            method:   'put',
             parameters: {
-              'category_id': $(category).readAttribute('data-id'),
-              'products':Sortable.serialize(category)
+              'category_id':  $(category).readAttribute('data-id'),
+              'products':     Sortable.serialize(category)
             }
           })
         }.bind(this)

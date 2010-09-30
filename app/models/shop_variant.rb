@@ -12,8 +12,8 @@ class ShopVariant < ActiveRecord::Base
   def options
     options = {}
     if self.options_json.present?
-      result = ActiveSupport::JSON.decode(self.options_json)
-      result = Forms::Config.deep_symbolize_keys(options)
+      options = ActiveSupport::JSON.decode(self.options_json)
+      options = Forms::Config.deep_symbolize_keys(options)
     end
     options
   end

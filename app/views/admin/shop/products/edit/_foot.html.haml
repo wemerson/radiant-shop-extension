@@ -8,6 +8,9 @@
   - foot.timestamp do
     = updated_stamp @shop_product
     
-#routes
-  = hidden_field_tag 'admin_shop_product_images_path',      admin_shop_product_images_path(@shop_product)
-  = hidden_field_tag 'sort_admin_shop_product_images_path', sort_admin_shop_product_images_path(@shop_product)
+:javascript
+  if(typeof(ROUTES) === 'undefined') ROUTES = new Array();
+  
+  ROUTES['admin_shop_product_images_path']        = "#{admin_shop_product_images_path(@shop_product)}";
+  ROUTES['admin_shop_product_image_path']         = "#{admin_shop_product_image_path(@shop_product, ':id')}";
+  ROUTES['sort_admin_shop_product_images_path']   = "#{sort_admin_shop_product_images_path(@shop_product)}";

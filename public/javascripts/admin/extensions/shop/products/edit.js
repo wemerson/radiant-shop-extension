@@ -1,43 +1,29 @@
-var ShopProductAssets = {}
-
 document.observe("dom:loaded", function() {
-  shop = new Shop()
-  shop.ProductInitialize()
+  shop_product_edit = new ShopProductEdit();
+  shop_product_edit.initialize();
   
   Event.addBehavior({
-    '#browse_images_popup_close:click' : function(e) { shop.ImageClose() },
-    '#new_image_popup_close:click' : function(e) { shop.ImageClose() },
-    
-    '#image_form:submit' : function(e) { shop.ImageSubmit() },
-    
-    '#browse_images_popup .image:click' : function(e) { shop.ProductImageCreate($(this)) },
-    '#product_attachments .delete:click' : function(e) { shop.ProductImageDestroy($(this).up('.image')) }
-  })
-})
-
-ShopProductAssets.List = Behavior.create({
-  
-  onclick: function() { 
-    shop.ProductImageCreate(this.element)
-  }
-  
+    '#image_form:submit'                  : function(e) { shop_product_edit.imageSubmit() },
+    '#browse_images_popup .image:click'   : function(e) { shop_product_edit.imageAttach($(this)) },
+    '#product_attachments .delete:click'  : function(e) { shop_product_edit.imageRemove($(this).up('.image')) }
+  });
 });
 
-var Shop = Class.create({
+var ShopProductEdit = Class.create({
   
-  ProductInitialize: function() {
-    if($('shop_product_id')) {
-      this.ProductImagesSort()
-    }
+  initialize: function() {
+    this.imagesSort();
   },
   
-  ProductImagesSort: function() {
+  imagesSort: function() {
+    var route = shop.getRoute('sort_admin_shop_product_images_path');
+    
     Sortable.create('product_attachments', {
       constraint: false, 
       overlap: 'horizontal',
       containment: ['product_attachments'],
       onUpdate: function(element) {
-        new Ajax.Request(urlify($('sort_admin_shop_product_images_path').value), {
+        new Ajax.Request(route, {
           method: 'put',
           parameters: {
             'product_id': $('shop_product_id').value,
@@ -48,68 +34,56 @@ var Shop = Class.create({
     })
   },
   
-  ProductImageCreate: function(element) {
-    showStatus('Adding Image...')
-    element.hide()
-    new Ajax.Request(urlify($('admin_shop_product_images_path').value), {
+  imageAttach: function(element) {
+    var route = shop.getRoute('admin_shop_product_images_path');
+    
+    showStatus('Adding Image...');
+    element.hide();
+    
+    new Ajax.Request(route, {
       method: 'post',
       parameters: {
         'product_id' : $('shop_product_id').value,
         'attachment[image_id]' : element.getAttribute('data-image_id')
       },
       onSuccess: function(data) {
-        // Insert item into list, re-call events
-        $('product_attachments').insert({ 'bottom' : data.responseText})
-        shop.ProductImagesSort()
-        element.remove()
-        hideStatus()
+        $('attachments').insert({ 'bottom' : data.responseText});
+        shop_product_edit.imagesSort();
+        element.remove();
       }.bind(element),
       onFailure: function() {
-        element.show()
-        hideStatus()
+        element.show();
+      },
+      onComplete: function() {
+        hideStatus();        
       }
     });
   },
   
-  ProductImageDestroy: function(element) {
+  imageRemove: function(element) {
+    var attachment_id = element.readAttribute('data-attachment_id');
+    var route         = shop.getRoute('admin_shop_product_image_path', 'js', attachment_id);
+    
     showStatus('Removing Image...');
     element.hide();
-    new Ajax.Request(urlify($('admin_shop_product_images_path').value, element.readAttribute('data-attachment_id')), { 
+    
+    new Ajax.Request(route, { 
       method: 'delete',
       onSuccess: function(data) {
         $('images').insert({ 'bottom' : data.responseText })
-        element.remove()
-        hideStatus()
-      }.bind(this),
+        element.remove();
+      }.bind(element),
       onFailure: function(data) {
         element.show();
-        hideStatus();
-      }.bind(this)
+      }.bind(element),
+      onComplete: function() {
+        hideStatus();        
+      }
     });
   },
   
-  ImageSubmit: function() {
-    showStatus('Uploading Image...')
-  },
-  
-  ImageClose: function() {
-    Element.closePopup('new_image_popup')
-    Element.closePopup('browse_images_popup')
-    
-    $$('.clearable').each(function(input) {
-      input.value = ''
-    })
+  imageSubmit: function() {
+    showStatus('Uploading Image...');
   }
   
-})
-
-function urlify(route, id) {
-  var url = route
-  if ( id !== undefined ) {
-    url += '/' + id
-  }
-  
-  url += '.js?' + new Date().getTime()
-  
-  return url
-}
+});

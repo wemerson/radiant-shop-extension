@@ -36,7 +36,7 @@ class ShopProduct < ActiveRecord::Base
   end
   
   def variant_options
-    self.category.variant.options if self.category.variant.present?
+    self.category.variant.options
   end
   
   def slug_prefix

@@ -2,3 +2,9 @@
   - render_region :foot do |foot|
     - foot.add do
       %li= link_to image('plus') + " " + t("add_category"), new_admin_shop_category_path
+      
+:javascript
+  if(typeof(ROUTES) === 'undefined') ROUTES = new Array();
+
+  ROUTES['sort_admin_shop_categories_path'] = "#{sort_admin_shop_categories_path}";
+  ROUTES['sort_admin_shop_products_path']   = "#{sort_admin_shop_products_path}";

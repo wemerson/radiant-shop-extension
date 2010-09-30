@@ -3,16 +3,16 @@
 .popup_content
   - form_for :image, :url => admin_shop_product_images_path(@shop_product.id), :html => { :method => "post", :multipart => true, :id => 'image_form' } do |f|
     %ol
-      %li.image_title
+      %li.title
         = f.label :title, t('name')
         = f.text_field :title, :class => 'clearable'
-      %li.image_caption
+      %li.caption
         = f.label :caption, t('caption')
         = f.text_field :caption, :class => 'clearable'
-      %li.image_file
+      %li.file
         = f.file_field :asset, :class => 'clearable'
     
-      %li.image_submit
+      %li.submit
         = f.submit 'Create'
 
 %a#new_image_popup_close.close{ :href => '#new_image_popup' }
