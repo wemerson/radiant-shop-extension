@@ -3,6 +3,8 @@ class ShopVariant < ActiveRecord::Base
   belongs_to  :created_by,  :class_name => 'User'
   belongs_to  :updated_by,  :class_name => 'User'
   
+  has_many    :categories,  :class_name => 'ShopCategory', :foreign_key => 'variant_id'
+  
   validates_presence_of   :name
   validates_uniqueness_of :name
   validates_presence_of   :options_json

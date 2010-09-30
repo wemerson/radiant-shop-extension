@@ -8,6 +8,10 @@ class ShopVariantsDataset < Dataset::Base
     create_record :shop_variants, :milk_states,
       :name         => 'milk states',
       :options_json => ActiveSupport::JSON.encode([ 'cold', 'warm', 'sour' ])
+      
+    create_record :shop_variants, :salad_states,
+      :name         => 'milk states',
+      :options_json => ActiveSupport::JSON.encode([ 'fresh', 'wilted' ])
   end
   
 end

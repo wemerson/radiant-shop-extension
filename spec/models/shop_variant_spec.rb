@@ -2,16 +2,28 @@ require 'spec/spec_helper'
 
 describe ShopVariant do
   
-  dataset :shop_variants
+  dataset :shop_variants, :shop_categories
 
   describe 'relationships' do
-    # empty
+    before :each do
+      @variant = shop_variants(:bread_states)
+    end
+    context 'categories' do
+      before :each do
+        @breads = shop_categories(:bread)
+      end
+      it 'should have many' do
+        @variant.categories << @breads
+        @variant.categories.include?(@breads).should === true
+      end
+    end
   end
   
   describe 'validations' do
     before :each do
       @variant = shop_variants(:bread_states)
     end
+    
     context 'name' do
       it 'should require' do
         @variant.name = nil
@@ -23,6 +35,7 @@ describe ShopVariant do
         @other.valid?.should    === false
       end
     end
+    
     context 'options' do
       it 'should require' do
         @variant.options_json = nil

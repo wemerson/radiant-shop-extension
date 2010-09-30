@@ -6,6 +6,7 @@ class ShopCategory < ActiveRecord::Base
   belongs_to  :updated_by,      :class_name => 'User'
   belongs_to  :layout,          :class_name => 'Layout'
   belongs_to  :product_layout,  :class_name => 'Layout'
+  belongs_to  :variant,         :class_name => 'ShopVariant'
   
   has_many    :products,        :class_name => 'ShopProduct', :foreign_key => :category_id, :dependent => :destroy
   
