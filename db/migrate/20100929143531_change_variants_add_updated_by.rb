@@ -6,7 +6,7 @@ class ChangeVariantsAddUpdatedBy < ActiveRecord::Migration
     add_column :shop_variants,  :updated_at,      :datetime
     
     add_column :shop_groups,    :created_by_id,   :integer
-    add_column :shop_groups,    :created_by_id,   :integer
+    add_column :shop_groups,    :updated_by_id,   :integer
     add_column :shop_groups,    :created_at,      :datetime
     add_column :shop_groups,    :updated_at,      :datetime
   end
