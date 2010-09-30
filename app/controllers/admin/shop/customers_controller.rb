@@ -19,19 +19,16 @@ class Admin::Shop::CustomersController < Admin::ResourceController
       
       @inputs   << 'name'
       @inputs   << 'email'
+      
+      @meta     << 'login'
+      @meta     << 'password'
+      @meta     << 'password_confirmation'
     end
     
     def config_new
-      @meta  << 'login'
-      @meta  << 'password'
-      @meta  << 'password_confirmation'
     end
     
     def config_edit
-      @meta  << 'login'
-      @meta  << 'password'
-      @meta  << 'password_confirmation'
-      
       @parts << 'orders'
       @parts << 'addresses'
     end

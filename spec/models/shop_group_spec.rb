@@ -25,5 +25,14 @@ describe ShopGroup do
       end
     end
   end
+  
+  describe '#available_products' do
+    before :each do
+      @group = shop_groups(:breakfast)
+    end
+    it 'should return available_products' do
+      @group.available_products.should === (ShopProduct.all - @group.products)
+    end
+  end
 
 end

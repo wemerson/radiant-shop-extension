@@ -3,6 +3,7 @@ class Admin::Shop::VariantsController < Admin::ResourceController
   model_class ShopVariant
 
   before_filter :config_global
+  before_filter :config_index,  :only => [ :index ]
   before_filter :config_new,    :only => [ :new, :create ]
   before_filter :config_edit,   :only => [ :edit, :update ]
   before_filter :assets_global
@@ -20,6 +21,11 @@ class Admin::Shop::VariantsController < Admin::ResourceController
       
       @inputs   << 'name'
       @inputs   << 'options'
+    end
+    
+    def config_index
+      @buttons  << 'variant_templates'
+      @buttons  << 'product_groups'
     end
     
     def config_new

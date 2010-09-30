@@ -34,11 +34,41 @@ describe ShopProductVariant do
       end
     end
     context 'price' do
-      it 'should require' do
+      it 'should not require' do
         @product_variant.price = nil
-        @product_variant.valid?.should === false
+        @product_variant.valid?.should === true
       end
     end
+  end
+  
+  describe '#price' do
+    before :each do
+      @product_variant = shop_product_variants(:mouldy_crusty_bread)
+    end
+    context 'positive price' do
+      before :each do
+        @product_variant.price = 100.00
+      end
+      it 'should return the product price plus the variant price' do
+        @product_variant.price.to_f.should === (@product_variant.product.price.to_f + 100.00)
+      end
+    end
+    context 'negative price' do
+      before :each do
+        @product_variant.price = -100.00
+      end
+      it 'should return the product price plus the variant price' do
+        @product_variant.price.to_f.should === (@product_variant.product.price.to_f - 100.00)
+      end
+    end
+  end
+  
+  describe '#sku' do
+    it 'should be written'
+  end
+  
+  describe '#sku' do
+    it 'should be written'
   end
   
 end

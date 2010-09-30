@@ -2,7 +2,10 @@ class Admin::Shop::ProductsController < Admin::ResourceController
   
   model_class ShopProduct
   
+  helper :shop_product
+  
   before_filter :config_global
+  before_filter :config_index,  :only => [ :index ]
   before_filter :config_new,    :only => [ :new, :create ]
   before_filter :config_edit,   :only => [ :edit, :update ]
   before_filter :assets_global
@@ -180,22 +183,28 @@ private
     @meta     << 'category'
     
     @parts    << 'description'
+    @parts    << 'variants'
+  end
+  
+  def config_index
+    @buttons  << 'variant_templates'
+    @buttons  << 'product_groups'
   end
   
   def config_new
-    @parts    << 'variant_options'
   end
   
   def config_edit
     @parts    << 'images'
-    @parts    << 'variants'
     
     @buttons  << 'browse_images'
     @buttons  << 'new_image'
+    @buttons  << 'browse_templates'
     @buttons  << 'new_variant'
     
     @popups   << 'browse_images'
     @popups   << 'new_image'
+    @popups   << 'browse_templates'
     @popups   << 'new_variant'
   end
   

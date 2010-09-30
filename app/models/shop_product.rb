@@ -21,6 +21,8 @@ class ShopProduct < ActiveRecord::Base
   validates_uniqueness_of   :sku
   validates_numericality_of :price,   :greater_than => 0.00,    :allow_nil => true,     :precisions => 2
   
+  accepts_nested_attributes_for :variants
+  
   acts_as_list              :scope =>  :category
   
   def slug
@@ -33,10 +35,6 @@ class ShopProduct < ActiveRecord::Base
   
   def available_images
     Image.all - self.images
-  end
-  
-  def variant_options
-    self.category.variant.options
   end
   
   def slug_prefix

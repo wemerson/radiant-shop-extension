@@ -1,0 +1,6 @@
+%li.template
+  .wrapper
+    %span.name= template.name
+    %ul.options
+      - template.options.each do |option|
+        %li.option= option

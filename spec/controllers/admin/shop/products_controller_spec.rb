@@ -75,8 +75,8 @@ describe Admin::Shop::ProductsController do
   describe '#sort' do
     before :each do
       @products = [
-        'shop_category_1_products[]=2',
-        'shop_category_1_products[]=1'
+        'category_1_products[]=2',
+        'category_1_products[]=1'
       ].join('&')
     end
     

@@ -8,7 +8,7 @@ ActionController::Routing::Routes.draw do |map|
       
       shop.resources :products, :except => :new, :collection => { :sort => :put } do |product|
         product.resources :images,    :controller => 'products/images',   :collection => { :sort => :put }, :only => [ :index, :create, :destroy]
-        product.resources :variants,  :controller => 'products/variants', :collection => { :sort => :put }, :only => [ :create, :destroy]
+        product.resources :variants,  :controller => 'products/variants', :only => [ :create, :destroy]
       end
       
       shop.resources :variants

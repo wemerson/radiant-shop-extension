@@ -35,7 +35,7 @@ class ShopExtension < Radiant::Extension
     end
     
     # Tags
-    Page.send :include, Shop::Tags::Core, Shop::Tags::Cart, Shop::Tags::Category, Shop::Tags::Item, Shop::Tags::Product, Shop::Tags::Address, Shop::Tags::Responses, Shop::Tags::Card
+    Page.send :include, Shop::Tags::Core, Shop::Tags::Cart, Shop::Tags::Category, Shop::Tags::Item, Shop::Tags::Product, Shop::Tags::Address, Shop::Tags::Responses, Shop::Tags::Card, Shop::Tags::Variant
     
     # Model Includes
     Page.send :include, Shop::Models::Page
@@ -48,11 +48,9 @@ class ShopExtension < Radiant::Extension
     # Tabs3
     
     tab "Shop" do
-      add_item "Products",  "/admin/shop"
-      add_item "Variants",  "/admin/shop/variants"
-      add_item "Groups",    "/admin/shop/groups"
-      add_item "Orders",    "/admin/shop/orders"
-      add_item "Customers", "/admin/shop/customers"
+      add_item "Products",      "/admin/shop"
+      add_item "Orders",        "/admin/shop/orders"
+      add_item "Customers",     "/admin/shop/customers"
     end
     
     # Ensure there is always a shop prefix, otherwise we'll lose admin and pages

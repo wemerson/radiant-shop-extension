@@ -125,8 +125,8 @@ describe Admin::Shop::CategoriesController do
   describe '#sort' do
     before :each do
       @categories = [
-        'shop_categories[]=2',
-        'shop_categories[]=1'
+        'categories[]=2',
+        'categories[]=1'
       ].join('&')
     end
     

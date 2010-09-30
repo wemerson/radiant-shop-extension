@@ -8,4 +8,8 @@ class ShopGroup < ActiveRecord::Base
   
   validates_presence_of :name
   
+  def available_products
+    ShopProduct.all - self.products
+  end
+  
 end

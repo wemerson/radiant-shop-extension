@@ -2,6 +2,9 @@
 
 .outset
 
+  #head{ :class => "#{@buttons.empty? ? 'min' : 'full'}"}
+    = render :partial => '/admin/shop/groups/index/head'
+
   #groups_map.map
     %ul#groups
       = render :partial => '/admin/shop/groups/index/group', :collection => @shop_groups

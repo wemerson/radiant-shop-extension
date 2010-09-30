@@ -19,7 +19,7 @@ module Shop
               end
               orders.new = orders.edit
               orders.index = Radiant::AdminUI::RegionSet.new do |index|
-                index.head.concat %w{price status updated customer}
+                index.head.concat %w{buttons}
                 index.body.concat %w{price status updated customer}
                 index.foot.concat %w{}
               end

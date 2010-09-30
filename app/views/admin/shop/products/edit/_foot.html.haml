@@ -7,10 +7,13 @@
       = link_to t('cancel'), admin_shop_products_path
   - foot.timestamp do
     = updated_stamp @shop_product
-    
-:javascript
-  if(typeof(ROUTES) === 'undefined') ROUTES = new Array();
+
+- unless @shop_product.new_record?
+  :javascript
+    if(typeof(ROUTES) === 'undefined') ROUTES = new Array();
   
-  ROUTES['admin_shop_product_images_path']        = "#{admin_shop_product_images_path(@shop_product)}";
-  ROUTES['admin_shop_product_image_path']         = "#{admin_shop_product_image_path(@shop_product, ':id')}";
-  ROUTES['sort_admin_shop_product_images_path']   = "#{sort_admin_shop_product_images_path(@shop_product)}";
+    ROUTES['admin_shop_product_images_path']        = "#{admin_shop_product_images_path(@shop_product)}";
+    ROUTES['sort_admin_shop_product_images_path']   = "#{sort_admin_shop_product_images_path(@shop_product)}";
+  
+    ROUTES['admin_shop_product_image_path']         = "#{admin_shop_product_image_path(@shop_product, ':id')}";
+    ROUTES['admin_shop_product_variant_path']       = "#{admin_shop_product_variant_path(@shop_product, ':id')}";

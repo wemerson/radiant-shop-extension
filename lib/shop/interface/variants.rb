@@ -19,7 +19,7 @@ module Shop
               end
               variants.new = variants.edit
               variants.index = Radiant::AdminUI::RegionSet.new do |index|
-                index.head.concat %w{name modify}
+                index.head.concat %w{buttons}
                 index.body.concat %w{name modify}
                 index.foot.concat %w{add}
               end
