@@ -40,7 +40,7 @@ class Admin::Shop::Products::VariantsController < Admin::ResourceController
           flash[:notice] = notice
           redirect_to edit_admin_shop_product_path(@shop_product)
         }
-        format.js   { render :partial => '/admin/shop/products/edit/shared/variant', :locals => { :variant => @shop_product_variant } }
+        format.js   { render :text  => notice, :status => :ok }
       end
     else
       respond_to do |format|

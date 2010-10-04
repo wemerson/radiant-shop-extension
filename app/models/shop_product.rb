@@ -25,16 +25,26 @@ class ShopProduct < ActiveRecord::Base
   
   acts_as_list              :scope =>  :category
   
+  def apply_variant_template(variant)
+    variant.options.all? do |variant|
+      variants.new(:name => variant).save
+    end
+  end
+  
+  def customers
+    line_items.map(&:customer).flatten.compact.uniq
+  end
+  
   def slug
-    "/#{self.slug_prefix}/#{self.category.handle}/#{self.sku}"
+    "/#{slug_prefix}/#{category.handle}/#{sku}"
   end
   
   def layout
-    self.category.product_layout
+    category.product_layout
   end
   
   def available_images
-    Image.all - self.images
+    Image.all - images
   end
   
   def slug_prefix
@@ -56,7 +66,7 @@ class ShopProduct < ActiveRecord::Base
         conditions = []
       end
       
-      self.all({ :conditions => conditions })
+      all({ :conditions => conditions })
     end
     
     def attrs
@@ -72,17 +82,25 @@ class ShopProduct < ActiveRecord::Base
     
   end
   
+  class << self
+    
+    def to_sku_or_handle(name)
+      name.downcase.gsub(/[^-a-z0-9~\s\.:;+=_]/, '').strip.gsub(/[\s\.:;=+~]+/, '_')
+    end
+    
+  end
+  
 private
   
   def set_sku
-    unless self.name.nil?
-      self.sku = self.name if self.sku.nil? or self.sku.empty?
+    unless name.nil?
+      self.sku = name if sku.nil? or sku.empty?
     end
   end
   
   def filter_sku
-    unless self.name.nil?
-      self.sku = self.sku.downcase.gsub(/[^-a-z0-9~\s\.:;+=_]/, '').strip.gsub(/[\s\.:;=+~]+/, '_')
+    unless name.nil?
+      self.sku = ShopProduct.to_sku_or_handle(sku)
     end
   end
   

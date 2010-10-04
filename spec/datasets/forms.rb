@@ -89,7 +89,7 @@ CONFIG
     end
     
     def mock_valid_form_checkout_request
-      @form   = forms(:checkout)
+      @form = forms(:checkout)
       @form[:extensions] = {
         :checkout   => {
           :test     => true,
@@ -112,6 +112,27 @@ CONFIG
           :year         => 2012,
           :type         => 'visa'
         },
+        :options => {
+          :address => {
+            :address1   => 'address',
+            :zip        => 'zip'
+          }
+        }
+      }
+      
+      @request.session = { :shop_order => @order.id }
+    end
+    
+    def mock_valid_form_address_request
+      @form = forms(:checkout)
+      @form[:extensions] = {
+        :address    => {
+          :billing  => true,
+          :shipping => true
+        }
+      }
+      
+      @data = {
         :billing => {
           :id           => shop_addresses(:billing).id,
           :name         => shop_addresses(:billing).name,
@@ -131,15 +152,9 @@ CONFIG
           :state        => shop_addresses(:shipping).state,
           :country      => shop_addresses(:shipping).country,
           :postcode     => shop_addresses(:shipping).postcode
-        },
-        :options => {
-          :address => {
-            :address1   => 'address',
-            :zip        => 'zip'
-          }
         }
       }
-      
+
       @request.session = { :shop_order => @order.id }
     end
   end

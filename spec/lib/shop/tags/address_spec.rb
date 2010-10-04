@@ -30,7 +30,7 @@ describe Shop::Tags::Address do
     end
     
     before :each do
-      @order = shop_orders(:one_item)
+      @order = shop_orders(:several_items)
       @billing = shop_addresses(:billing)
       mock(Shop::Tags::Helpers).current_order(anything) { @order }
     end
@@ -81,8 +81,8 @@ describe Shop::Tags::Address do
         it 'should not expand' do
           stub(@order).billing { nil }
         
-          tag = %{<r:shop:cart:address type='billing'><r:unless_address>success</r:unless_address></r:shop:cart:address>}
-          exp = %{success}
+          tag = %{<r:shop:cart:address type='billing'><r:unless_address>failure</r:unless_address></r:shop:cart:address>}
+          exp = %{}
         
           @page.should render(tag).as(exp)        
         end

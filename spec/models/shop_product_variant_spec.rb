@@ -64,11 +64,22 @@ describe ShopProductVariant do
   end
   
   describe '#sku' do
-    it 'should be written'
+    before :each do
+      @product_variant = shop_product_variants(:mouldy_crusty_bread)
+      stub(@product_variant).name { 'mouldy and yucky'}
+    end
+    it 'should return a concatenation of its name and products sku' do
+      @product_variant.sku.should === "#{@product_variant.product.sku}-mouldy_and_yucky"
+    end
   end
   
   describe '#sku' do
-    it 'should be written'
+    before :each do
+      @product_variant = shop_product_variants(:mouldy_crusty_bread)
+    end
+    it 'should return its products slug' do
+      @product_variant.slug.should === @product_variant.product.slug
+    end
   end
   
 end

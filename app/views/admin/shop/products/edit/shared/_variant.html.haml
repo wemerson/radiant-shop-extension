@@ -1,17 +1,10 @@
-- if defined? vf
-  %li.variant{ :id => "product_#{@shop_product.id}_variant_#{vf.object.id}", :'data-variant_id' => vf.object.id }
-    %span.name
-      = vf.text_field :name
-    %span.price
-      = vf.label :price, t('price_variation')
-      = vf.text_field :price, :value => input_currency(vf.object.read_attribute(:price))
-    %span.price
-      = "(#{number_to_currency(vf.object.price)})"
-    %span.actions
-      %span.delete
-- else
-  %li.variant{ :id => "product_#{variant.product.id}_variant_#{variant.id}" }
-    %span.name
-      = variant.name
-    %span.price
-      = number_to_currency variant.price
+%li.variant{ :id => "product_#{@shop_product.id}_variant_#{vf.object.id}", :'data-variant_id' => vf.object.id }
+  %span.name
+    = vf.text_field :name
+  %span.price
+    = vf.label :price, t('price_variation')
+    = vf.text_field :price, :value => input_currency(vf.object.read_attribute(:price))
+  %span.price
+    = "(#{number_to_currency(vf.object.price)})"
+  %span.actions
+    %span.delete

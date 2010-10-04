@@ -64,21 +64,20 @@ class ShopCategory < ActiveRecord::Base
 private
   
   def set_handle
-    unless self.name.nil?
-      self.handle = self.name if self.handle.nil? or self.handle.empty?
+    unless name.nil?
+      self.handle = name if handle.nil? or handle.empty?
     end
   end
   
   def filter_handle
     unless self.name.nil?
-      self.handle = self.handle.downcase.gsub(/[^-a-z0-9~\s\.:;+=_]/, '').strip.gsub(/[\s\.:;=+~]+/, '_')
+      self.handle = ShopProduct.to_sku_or_handle(handle)
     end
-    self.handle.downcase
   end
   
   def set_layouts
-    self.layout         = Layout.find_by_name(Radiant::Config['shop.category_layout']) if self.layout.nil?
-    self.product_layout = Layout.find_by_name(Radiant::Config['shop.product_layout']) if self.product_layout.nil?
+    self.layout         = Layout.find_by_name(Radiant::Config['shop.category_layout']) if layout.nil?
+    self.product_layout = Layout.find_by_name(Radiant::Config['shop.product_layout'])  if product_layout.nil?
   end
   
 end

@@ -196,6 +196,7 @@ private
   
   def config_edit
     @parts    << 'images'
+    @parts    << 'customers'
     
     @buttons  << 'browse_images'
     @buttons  << 'new_image'

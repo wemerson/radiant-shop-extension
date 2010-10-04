@@ -1,50 +1,65 @@
 require 'spec/spec_helper'
 
 describe Shop::ProductsController do
-  before(:each) do
-    @shop_product = ShopProduct.new
-    @shop_category = ShopCategory.new
-    
-    stub(@shop_product).sku { 'a' }
-    stub(@shop_product).name { 'Bob' }
-    stub(@shop_product).category { @shop_category }
-    
-    stub(@shop_category).handle { 'b' }
-    stub(@shop_category).product_layout.stub!.name { 'Layout' }
-    
-    @shop_products = [ @shop_product ]
-  end
+
+  dataset :shop_products
   
-  describe '#index' do
-    it 'should expose products list' do
-      mock(ShopProduct).search(nil) { @shop_products }
-      get :index
-      
-      response.should be_success
-      assigns(:shop_products).should === @shop_products
+  describe 'index' do
+    context 'no query' do
+      it 'should expose products list' do
+        get :index
+        
+        response.should be_success
+        assigns(:shop_products).should  === ShopProduct.all
+        assigns(:radiant_layout).should === Radiant::Config['shop.category_layout']
+      end
+    end
+    
+    context 'query' do
+      before :each do
+        @product = shop_products(:crusty_bread)
+      end
+      it 'should expose a subgroup' do
+        get :index, :query => @product.sku
+        
+        response.should be_success        
+        assigns(:shop_products).should === ShopProduct.search(@product.sku)
+      end
     end
   end
   
   describe '#show' do
-    it 'should expose product' do
-      mock(ShopProduct).find(:first, :conditions => { :sku => @shop_product.sku }) { @shop_product }
-      
-      get :show, :sku => @shop_product.sku, :handle => @shop_category.handle
-      
-      response.should be_success
-      assigns(:shop_product).should === @shop_product
-      assigns(:shop_category).should == @shop_product.category
-      assigns(:radiant_layout).should == 'Layout'
-      assigns(:title).should === 'Bob'
+    before :each do
+      @product = shop_products(:crusty_bread)
+    end
+    context 'product exists' do
+      it 'should expose product' do
+        get :show, :handle => @product.category.handle, :sku => @product.sku
+        
+        response.should be_success
+        assigns(:shop_product).should   === @product
+        assigns(:title).should          === @product.name
+        assigns(:radiant_layout).should === @product.layout.name
+      end
     end
     
-    it 'should return 404 if product empty' do
-      mock(ShopProduct).find(:first, :conditions => { :sku => @shop_product.sku }) { false }
+    context 'product does not exist' do
+      it 'should return 404' do
+        get :show, :handle => @product.category.handle, :sku => 'does not exist'
       
-      get :show, :sku => @shop_product.sku, :handle => @shop_category.handle
-            
-      response.should render_template('site/not_found')
-      response.should_not be_success
+        response.should render_template('site/not_found')
+      end
+    end
+    
+    context 'incorrect category for product' do
+      it 'should expose product' do
+        get :show, :handle => 'does not exist', :sku => @product.sku
+        
+        response.should be_success
+        assigns(:shop_product).should   === @product
+        assigns(:title).should          === @product.name
+        assigns(:radiant_layout).should === @product.layout.name
+      end
     end
   end
   

@@ -10,21 +10,21 @@ class ShopProductVariant < ActiveRecord::Base
   
   # Returns the price of the variant plus the product price
   def price
-    price = self.product.price
-    if self.read_attribute(:price).present?
-      price = self.read_attribute(:price) + self.product.price
+    price = product.price
+    if read_attribute(:price).present?
+      price = read_attribute(:price) + product.price
     end
     price
   end
   
   # Returns a mixed sku of product and variant name
   def sku
-    
+    %{#{product.sku}-#{ShopProduct.to_sku_or_handle(name)}}
   end
   
-  # Returns link to product
-  def link
-    
+  # Returns slug of the product
+  def slug
+    product.slug
   end
   
 end

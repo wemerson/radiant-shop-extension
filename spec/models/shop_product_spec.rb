@@ -2,7 +2,7 @@ require 'spec/spec_helper'
 
 describe ShopProduct do
   
-  dataset :shop_products
+  dataset :shop_products, :shop_variants
   
   before(:each) do
     @product = shop_products(:soft_bread)
@@ -89,6 +89,33 @@ describe ShopProduct do
       @product.images.length.should     === @product.attachments.length
     end
     
+  end
+  
+  describe '#apply_variant_template' do
+    before :each do
+      @variant = shop_variants(:milk_states)
+    end
+    context 'successfully attached variant template' do
+      it 'should return true' do
+        result = @product.apply_variant_template(@variant)
+        result.should be_true
+      end
+    end
+    context 'could not attach variant template' do
+      before :each do
+        mock.instance_of(ShopProductVariant).save { false }
+      end
+      it 'should return false' do
+        result = @product.apply_variant_template(@variant)
+        result.should be_false
+      end
+    end
+  end
+  
+  describe '#customers' do
+    it 'should return a map of customers based on line_items' do
+      @product.customers.should == @product.line_items.map(&:customers).flatten.uniq
+    end
   end
   
   describe '#slug' do
