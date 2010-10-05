@@ -2,6 +2,6 @@
 
 %ul#available_products
   - @shop_package.available_products.each do |product|
-    = render :partial => 'admin/shop/packages/edit/product', :locals => { :product => product }
+    = render :partial => 'admin/shop/packages/edit/shared/product', :locals => { :product => product }
 
 %a#browse_products_popup_close.close{ :href => '#' }

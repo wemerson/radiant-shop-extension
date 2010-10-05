@@ -1,18 +1,11 @@
-- @page_title = @shop_package.name + ' - ' + default_page_title
+- @page_title = @shop_package.name
 
 - render_region :main do |main|
   - main.head do
-    %h1
-      = @shop_package.name
-      = render '/admin/shop/packages/edit/head'
-  - main.form do
-    - form_for :shop_package, @shop_package, :url => admin_shop_package_path(@shop_package), :html => {:method => :put, :multipart => true, :id => 'edit_shop_package', 'data-onsubmit_status'=>"Saving Changes&#8230;"} do |f|
-      = f.hidden_field :id
-      
-      = render :partial => '/admin/shop/packages/edit/fields', :object => f
+    = render 'admin/shop/packages/edit/head'
+
   - main.popups do
-    = render :partial => 'admin/shop/packages/edit/popup'
-      
-      
-= hidden_field_tag 'admin_shop_package_packings_path', admin_shop_package_packings_path(@shop_package)
-= hidden_field_tag 'sort_admin_shop_package_packings_path', sort_admin_shop_package_packings_path(@shop_package)
+    = render 'admin/shop/packages/edit/popups'
+
+  - main.form do
+    = render 'admin/shop/packages/edit/form'

@@ -2,9 +2,12 @@
 
 .outset
 
-  #packages_map
-    %ul#shop_packages
-      = render :partial => '/admin/shop/packages/package', :collection => @shop_packages
+  #head{ :class => "#{@buttons.empty? ? 'min' : 'full'}"}
+    = render :partial => '/admin/shop/packages/index/head'
+
+  #packages_map.map
+    %ul#packages
+      = render :partial => '/admin/shop/packages/index/package', :collection => @shop_packages
 
   #actions
-    = render '/admin/shop/packages/index/bottom'
+    = render :partial => '/admin/shop/packages/index/foot'

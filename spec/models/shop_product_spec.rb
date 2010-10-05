@@ -103,7 +103,7 @@ describe ShopProduct do
     end
     context 'could not attach variant template' do
       before :each do
-        mock.instance_of(ShopProductVariant).save { false }
+        mock.instance_of(ShopProductVariant).save! { raise ActiveRecord::RecordNotSaved }
       end
       it 'should return false' do
         result = @product.apply_variant_template(@variant)

@@ -2,7 +2,7 @@ class Admin::Shop::ProductsController < Admin::ResourceController
   
   model_class ShopProduct
   
-  helper :shop_product
+  helper :shop
   
   before_filter :config_global
   before_filter :config_index,  :only => [ :index ]

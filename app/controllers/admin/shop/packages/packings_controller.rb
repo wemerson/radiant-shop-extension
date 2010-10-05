@@ -41,7 +41,7 @@ class Admin::Shop::Packages::PackingsController < Admin::ResourceController
       @shop_packing.save!
       
       respond_to do |format|
-        format.js { render :partial => 'admin/shop/packages/edit/product', :locals => { :product => @shop_packing.product, :packing => @shop_packing } }
+        format.js { render :partial => 'admin/shop/packages/edit/shared/product', :locals => { :product => @shop_packing.product, :packing => @shop_packing } }
       end
     rescue Exception => e
       error = e
@@ -78,7 +78,7 @@ class Admin::Shop::Packages::PackingsController < Admin::ResourceController
       @shop_packing.destroy
       
       respond_to do |format|
-        format.js { render :partial => 'admin/shop/packages/edit/product', :locals => { :product => @shop_product } }
+        format.js { render :partial => 'admin/shop/packages/edit/shared/product', :locals => { :product => @shop_product } }
       end
     rescue Exception => e
       error = e

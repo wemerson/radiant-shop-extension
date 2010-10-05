@@ -4,15 +4,18 @@
       - body.move do
         %span.move.attribute
       - body.icon do
-        %a{ :href => edit_admin_shop_product_path(product), :name => product.name}
+        - link_to [:edit_admin, product], :class => 'icon' do
           - unless product.attachments.empty?
-            %img{:src => product.attachments.first.image.url(:preview), :class => 'icon'}
+            = image_tag product.attachments.first.image.url(:preview)
       - body.name do
         %span.name.attribute
-          = link_to product.name, edit_admin_shop_product_path(product)
+          - link_to [:edit_admin, product] do
+            = number_to_currency(product.price)
+            = product.name
       - body.sku do
         %span.sku.attribute
           = product.sku
       - body.modify do
         .modify
-          %span.remove= link_to t('remove'), remove_admin_shop_product_url(product)
+          %span.remove
+            = link_to t('remove'), [:remove_admin, product]

@@ -2,6 +2,7 @@ class Admin::Shop::OrdersController < Admin::ResourceController
   model_class ShopOrder
 
   before_filter :config_global
+  before_filter :config_index,  :only => [ :index ]
   before_filter :config_new,    :only => [ :new, :create ]
   before_filter :config_edit,   :only => [ :edit, :update ]
   before_filter :assets_global
@@ -16,6 +17,13 @@ class Admin::Shop::OrdersController < Admin::ResourceController
       @buttons  ||= []
       @parts    ||= []
       @popups   ||= []
+    end
+    
+    def config_index
+      @buttons  << 'shipped'
+      @buttons  << 'paid'
+      @buttons  << 'new'
+      @buttons  << 'all'
     end
     
     def config_new

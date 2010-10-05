@@ -105,7 +105,7 @@ describe Admin::Shop::Packages::PackingsController do
 
           response.should be_success
           assigns(:shop_packing).should === @shop_packing
-          response.should render_template('admin/shop/packages/edit/_product')
+          response.should render_template('admin/shop/packages/edit/shared/_product')
         end
       end
     end
@@ -179,7 +179,7 @@ describe Admin::Shop::Packages::PackingsController do
           delete :destroy, :package_id => 1, :id => 1, :format => 'js'
           
           response.should be_success
-          response.should render_template('admin/shop/packages/edit/_product')
+          response.should render_template('admin/shop/packages/edit/shared/_product')
         end
       end
     end

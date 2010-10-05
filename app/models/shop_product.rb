@@ -26,9 +26,11 @@ class ShopProduct < ActiveRecord::Base
   acts_as_list              :scope =>  :category
   
   def apply_variant_template(variant)
-    variant.options.all? do |variant|
-      variants.new(:name => variant).save
+    result = true
+    variant.options.each do |variant|
+      variants.new(:name => variant).save! rescue (result = false)
     end
+    result
   end
   
   def customers

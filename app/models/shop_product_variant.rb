@@ -1,9 +1,10 @@
 class ShopProductVariant < ActiveRecord::Base
   
-  belongs_to :product, :class_name => 'ShopProduct', :foreign_key => 'product_id'
+  belongs_to :product, :class_name => 'ShopProduct', :foreign_key => :product_id
   
-  validates_presence_of :product
-  validates_presence_of :name
+  validates_presence_of   :product
+  validates_presence_of   :name
+  validates_uniqueness_of :name, :scope => :product_id
   
   belongs_to :created_by, :class_name => 'User'
   belongs_to :updated_by, :class_name => 'User'

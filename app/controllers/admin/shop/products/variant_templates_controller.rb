@@ -3,7 +3,7 @@ class Admin::Shop::Products::VariantTemplatesController < Admin::ResourceControl
   model_class ShopVariant
   
   def update
-    error = 'Could not attach Variants to Product.'
+    error = 'Could not attach all Variants to Product.'
     
     @shop_product = ShopProduct.find(params[:product_id])
     
