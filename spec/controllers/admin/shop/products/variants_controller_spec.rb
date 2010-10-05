@@ -20,9 +20,6 @@ describe Admin::Shop::Products::VariantsController do
         before :each do
           post :create, :product_id => @product.id, :shop_product_variant => { }
         end
-        it 'should assign flash notice' do
-          flash.now[:notice].should_not be_nil
-        end
         it 'should redirect to product path' do
           response.should redirect_to(edit_admin_shop_product_path(@product))
         end
@@ -75,9 +72,6 @@ describe Admin::Shop::Products::VariantsController do
       context 'html' do
         before :each do
           delete :destroy, :product_id => @product.id, :id => @product_variant.id
-        end
-        it 'should assign flash notice' do
-          flash.now[:notice].should_not be_nil
         end
         it 'should redirect to product path' do
           response.should redirect_to(edit_admin_shop_product_path(@product_variant.product))

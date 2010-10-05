@@ -28,10 +28,9 @@ describe Admin::Shop::CategoriesController do
         get :index, :search => 'search'
       end
       
-      it 'should not assign an error or notice and redirect to shop_products path' do
+      it 'should not assign an error and redirect to shop_products path' do
         response.should redirect_to(admin_shop_products_path)
         flash.now[:error].should be_nil
-        flash.now[:notice].should be_nil
       end
       
       it 'should assign the shop_product_images instance variable' do
@@ -196,7 +195,6 @@ describe Admin::Shop::CategoriesController do
         context 'html' do
           it 'should assign a notice and redirect to admin_shop_products_path path' do
             put :sort, :categories => @categories
-            flash.now[:notice].should === 'Categories successfully sorted.'
             response.should redirect_to(admin_shop_products_path)
           end
         end
@@ -266,14 +264,12 @@ describe Admin::Shop::CategoriesController do
         context 'not continue' do
           it 'should assign a notice and redirect to edit_shop_product path' do
             post :create, :shop_category => {}
-            flash.now[:notice].should === 'Category created successfully.'
             response.should redirect_to(admin_shop_categories_path)
           end
         end
         context 'continue' do
           it 'should assign a notice and redirect to edit_shop_product path' do
             post :create, :shop_category => {}, :continue => true
-            flash.now[:notice].should === 'Category created successfully.'
             response.should redirect_to(edit_admin_shop_category_path(@shop_category))
           end
         end
@@ -342,14 +338,12 @@ describe Admin::Shop::CategoriesController do
         context 'not continue' do
           it 'should assign a notice and redirect to edit_shop_product path' do
             put :update, :id => @shop_category.id, :shop_category => {}
-            flash.now[:notice].should === 'Category updated successfully.'
             response.should redirect_to(admin_shop_categories_path)
           end
         end
         context 'continue' do
           it 'should assign a notice and redirect to edit_shop_product path' do
             put :update, :id => @shop_category.id, :shop_category => {}, :continue => true
-            flash.now[:notice].should === 'Category updated successfully.'
             response.should redirect_to(edit_admin_shop_category_path(@shop_category))
           end
         end
@@ -417,7 +411,6 @@ describe Admin::Shop::CategoriesController do
       context 'html' do
         it 'should assign a flash notice and redirect to shop_categories path' do
           delete :destroy, :id => 1
-          flash.now[:notice].should === 'Category deleted successfully.'
           response.should redirect_to(admin_shop_categories_path)
         end
       end

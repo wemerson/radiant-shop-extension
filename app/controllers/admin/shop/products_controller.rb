@@ -50,7 +50,6 @@ class Admin::Shop::ProductsController < Admin::ResourceController
       
       respond_to do |format|
         format.html {
-          flash[:notice] = notice
           redirect_to admin_shop_products_path
         }
           format.js   { render  :text => notice, :status => :ok }
@@ -82,8 +81,7 @@ class Admin::Shop::ProductsController < Admin::ResourceController
       @shop_product.save!
       
       respond_to do |format|
-        format.html { 
-          flash[:notice] = notice
+        format.html {
           redirect_to edit_admin_shop_product_path(@shop_product) if params[:continue]
           redirect_to admin_shop_products_path unless params[:continue]
         }
@@ -115,8 +113,7 @@ class Admin::Shop::ProductsController < Admin::ResourceController
       @shop_product.update_attributes!(params[:shop_product])
 
       respond_to do |format|
-        format.html { 
-          flash[:notice] = notice
+        format.html {
           redirect_to edit_admin_shop_product_path(@shop_product) if params[:continue]
           redirect_to admin_shop_products_path unless params[:continue]
         }
@@ -148,8 +145,7 @@ class Admin::Shop::ProductsController < Admin::ResourceController
       @shop_product.destroy
       
       respond_to do |format|
-        format.html { 
-          flash[:notice] = notice
+        format.html {
           redirect_to admin_shop_products_path 
         }
         format.js   { render  :text => notice, :status => :ok }

@@ -34,7 +34,7 @@ describe Admin::Shop::Packages::PackingsController do
           put :sort, :package_id => 1, :format => 'js'
           
           response.should_not be_success
-          response.body.should === "You have a nil object when you didn't expect it!\nYou might have expected an instance of Array.\nThe error occurred while evaluating nil.split"
+          response.body.should === "Could not sort products."
         end
       end
     end
@@ -50,7 +50,7 @@ describe Admin::Shop::Packages::PackingsController do
             put :sort, :package_id => 1, :packings => @packings, :format => 'js'
             
             response.should_not be_success
-            response.body.should === 'ActiveRecord::RecordNotSaved'
+            response.body.should === 'Could not sort products.'
           end
         end
       end
@@ -88,7 +88,7 @@ describe Admin::Shop::Packages::PackingsController do
         it 'should return error notice and failure status' do
           post :create, :package_id => 1, :product_id => 1, :format => 'js'
           
-          response.body.should === 'ActiveRecord::RecordNotSaved'
+          response.body.should === 'Could not attach product.'
           response.should_not be_success
         end
       end
@@ -125,7 +125,7 @@ describe Admin::Shop::Packages::PackingsController do
           put :update, :package_id => 1, :id => 1, :quantity => 1, :format => 'js'
           
           response.should_not be_success
-          response.body.should === 'ActiveRecord::RecordNotSaved'
+          response.body.should === 'Could not update Product Quantity.'
         end
       end
     end
@@ -164,7 +164,7 @@ describe Admin::Shop::Packages::PackingsController do
           delete :destroy, :package_id => 1, :id => 1, :format => 'js'
           
           response.should_not be_success
-          response.body.should === 'ActiveRecord::RecordNotFound'          
+          response.body.should === 'Could not remove product.'
         end
       end
     end

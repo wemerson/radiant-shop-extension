@@ -3,6 +3,7 @@ class Admin::Shop::Packages::PackingsController < Admin::ResourceController
   
   def sort
     notice = 'Products successfully sorted.'
+    error  = 'Could not sort products.'
     
     begin  
       @shop_packings = CGI::parse(params[:packings])["package_products[]"]
@@ -13,14 +14,12 @@ class Admin::Shop::Packages::PackingsController < Admin::ResourceController
       
       respond_to do |format|
         format.html {
-          flash[:notice] = notice
           redirect_to admin_shop_packages_path
         }
         format.js   { render  :text => notice, :status => :ok }
         format.json { render  :json => { :notice => notice }, :status => :ok }
       end
-    rescue Exception => e
-      error = e
+    rescue
       respond_to do |format|
         format.html {
           flash[:error] = error
@@ -34,6 +33,7 @@ class Admin::Shop::Packages::PackingsController < Admin::ResourceController
   
   def create
     notice = 'Product successfully attached.'
+    error  = 'Could not attach product.'
     
     begin
       @shop_packing.package = ShopPackage.find(params[:package_id])
@@ -43,8 +43,7 @@ class Admin::Shop::Packages::PackingsController < Admin::ResourceController
       respond_to do |format|
         format.js { render :partial => 'admin/shop/packages/edit/shared/product', :locals => { :product => @shop_packing.product, :packing => @shop_packing } }
       end
-    rescue Exception => e
-      error = e
+    rescue
       respond_to do |format|
         format.js   { render :text  => error, :status => :unprocessable_entity }
       end
@@ -53,14 +52,14 @@ class Admin::Shop::Packages::PackingsController < Admin::ResourceController
   
   def update
     notice = 'Product Quantity successfully updated.'
+    error  = 'Could not update Product Quantity.'
     
     begin
       @shop_packing.update_attributes!({ :quantity => params[:quantity] })
       respond_to do |format|
         format.js   { render :text  => notice, :status => :ok }
       end
-    rescue Exception => e
-      error = e
+    rescue
       respond_to do |format|
         format.js   { render :text  => error, :status => :unprocessable_entity }
       end
@@ -69,7 +68,8 @@ class Admin::Shop::Packages::PackingsController < Admin::ResourceController
   end
   
   def destroy
-    notice = 'Product successfully removed.'    
+    notice = 'Product successfully removed.'
+    error  = 'Could not remove product.'
     
     begin
       @shop_product = @shop_packing.product
@@ -80,8 +80,7 @@ class Admin::Shop::Packages::PackingsController < Admin::ResourceController
       respond_to do |format|
         format.js { render :partial => 'admin/shop/packages/edit/shared/product', :locals => { :product => @shop_product } }
       end
-    rescue Exception => e
-      error = e
+    rescue
       respond_to do |format|
         format.js   { render :text  => error, :status => :unprocessable_entity }
       end

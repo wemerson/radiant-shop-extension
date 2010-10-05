@@ -146,9 +146,8 @@ describe Admin::Shop::ProductsController do
         end
         
         context 'html' do
-          it 'should assign a notice and redirect to admin_shop_products_path path' do
+          it 'should redirect to admin_shop_products_path path' do
             put :sort, :products => @products, :category_id => 1
-            flash.now[:notice].should === 'Products successfully sorted.'
             response.should redirect_to(admin_shop_products_path)
           end
         end
@@ -215,16 +214,14 @@ describe Admin::Shop::ProductsController do
       
       context 'html' do
         context 'not continue' do
-          it 'should assign a notice and redirect to edit_shop_product path' do
+          it 'should redirect to edit_shop_product path' do
             post :create, :shop_product => {}
-            flash.now[:notice].should === 'Product created successfully.'
             response.should redirect_to(admin_shop_products_path)
           end
         end
         context 'continue' do
-          it 'should assign a notice and redirect to edit_shop_product path' do
+          it 'should redirect to edit_shop_product path' do
             post :create, :shop_product => {}, :continue => true
-            flash.now[:notice].should === 'Product created successfully.'
             response.should redirect_to(edit_admin_shop_product_path(@shop_product))
           end
         end
@@ -291,16 +288,14 @@ describe Admin::Shop::ProductsController do
       
       context 'html' do
         context 'not continue' do
-          it 'should assign a notice and redirect to edit_shop_product path' do
+          it 'should redirect to edit_shop_product path' do
             put :update, :id => @shop_product.id, :shop_product => {}
-            flash.now[:notice].should === 'Product updated successfully.'
             response.should redirect_to(admin_shop_products_path)
           end
         end
         context 'continue' do
-          it 'should assign a notice and redirect to edit_shop_product path' do
+          it 'should redirect to edit_shop_product path' do
             put :update, :id => @shop_product.id, :shop_product => {}, :continue => true
-            flash.now[:notice].should === 'Product updated successfully.'
             response.should redirect_to(edit_admin_shop_product_path(@shop_product))
           end
         end
@@ -366,9 +361,8 @@ describe Admin::Shop::ProductsController do
       end
       
       context 'html' do
-        it 'should assign a flash notice and redirect to shop_products path' do
+        it 'should redirect to shop_products path' do
           delete :destroy, :id => 1
-          flash.now[:notice].should === 'Product deleted successfully.'
           response.should redirect_to(admin_shop_products_path)
         end
       end
