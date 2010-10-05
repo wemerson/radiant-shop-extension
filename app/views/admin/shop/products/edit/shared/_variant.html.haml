@@ -2,9 +2,9 @@
   %span.name
     = vf.text_field :name
   %span.price
-    = vf.label :price, t('price_variation')
+    = vf.label :price, '$'
     = vf.text_field :price, :value => input_currency(vf.object.read_attribute(:price))
-  %span.price
+  %span.value
     = "(#{number_to_currency(vf.object.price)})"
   %span.actions
     %span.delete
