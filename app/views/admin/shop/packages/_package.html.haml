@@ -1,0 +1,11 @@
+%li.package{:id => "shop_package_#{package.id}", :'data-id' => package.id}
+  .attributes
+    - render_region :package do |region|
+      - region.name do
+        %a{ :href => edit_admin_shop_package_path(package), :name => package.name}
+          - if !package.products.empty? and !package.products.first.attachments.empty?
+            %img{:src => package.products.first.attachments.first.image.url(:preview), :class => 'icon'}
+        %span.name.attribute= link_to package.name, edit_admin_shop_package_path(package)
+      - region.modify do
+        .modify
+          %span.remove= link_to t('remove'), remove_admin_shop_package_path(package)

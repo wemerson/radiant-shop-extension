@@ -10,9 +10,9 @@ class ShopProduct < ActiveRecord::Base
   has_many    :orders,      :class_name => 'ShopOrder',             :through      => :line_items,   :uniq => true
   has_many    :attachments, :class_name => 'ShopProductAttachment', :foreign_key  => :product_id
   has_many    :images,      :class_name => 'Image',                 :through      => :attachments,  :uniq => true
-  has_many    :groupings,   :class_name => 'ShopGrouping',          :foreign_key  => :product_id
-  has_many    :groups,      :class_name => 'ShopGroup',             :through      => :groupings,    :uniq => true
-  has_many    :related,     :class_name => 'ShopProduct',           :through      => :groupings,    :uniq => true
+  has_many    :packings,    :class_name => 'ShopPacking',           :foreign_key  => :product_id,   :dependent => :destroy
+  has_many    :packages,    :class_name => 'ShopPackage',           :through      => :packings,     :source => :package
+  has_many    :related,     :class_name => 'ShopProduct',           :through      => :packings,     :source => :item,       :uniq => true
   has_many    :variants,    :class_name => 'ShopProductVariant',    :foreign_key  => :product_id,   :dependent => :destroy
   
   before_validation         :set_sku, :filter_sku

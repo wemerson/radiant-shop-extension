@@ -1,0 +1,10 @@
+- render_region :main do |main|
+  - main.head do
+    %h1
+      = t('new_package')
+      = render '/admin/shop/packages/edit/head'
+  - main.form do
+    - form_for :shop_package, @shop_package, :url => admin_shop_packages_path, :html => {:id => 'new_shop_package', :multipart => true, 'data-onsubmit_status'=>"Creating Package&#8230;"} do |f|
+      = render :partial => 'admin/shop/packages/edit/fields', :object => f
+  - main.popups do
+    = render :partial => 'admin/shop/packages/edit/popup'

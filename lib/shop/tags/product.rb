@@ -73,7 +73,7 @@ module Shop
         number_to_currency(tag.locals.shop_product.price, 
           :precision  =>(attr[:precision] || Radiant::Config['shop.price_precision']).to_i,
           :unit       => attr[:unit]      || Radiant::Config['shop.price_unit'],
-          :separator  => attr[:separator] || Radiant::Config['shop.price_seperator'],
+          :separator  => attr[:separator] || Radiant::Config['shop.price_separator'],
           :delimiter  => attr[:delimiter] || Radiant::Config['shop.price_delimiter'])
       end
       

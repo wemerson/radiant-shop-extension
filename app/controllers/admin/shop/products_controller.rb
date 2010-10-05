@@ -187,8 +187,9 @@ private
   end
   
   def config_index
-    @buttons  << 'variant_templates'
-    @buttons  << 'product_groups'
+    @buttons  << 'packages'
+    @buttons  << 'variants'
+    @buttons  << 'discounts'
   end
   
   def config_new

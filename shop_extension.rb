@@ -11,22 +11,22 @@ class ShopExtension < Radiant::Extension
   UserActionObserver.instance.send :add_observer!, ShopProduct
   UserActionObserver.instance.send :add_observer!, ShopCategory
   UserActionObserver.instance.send :add_observer!, ShopOrder
-  UserActionObserver.instance.send :add_observer!, ShopGroup
   UserActionObserver.instance.send :add_observer!, ShopProductAttachment
   UserActionObserver.instance.send :add_observer!, ShopProductVariant
   UserActionObserver.instance.send :add_observer!, ShopVariant
+  UserActionObserver.instance.send :add_observer!, ShopPackage
   
   def activate    
     # View Hooks
     unless defined? admin.products
-      Radiant::AdminUI.send :include, Shop::Interface::Products, Shop::Interface::Customers, Shop::Interface::Orders, Shop::Interface::Variants, Shop::Interface::Groups
-      
-      admin.products  = Radiant::AdminUI.load_default_shop_products_regions
+      Radiant::AdminUI.send :include, Shop::Interface::Categories, Shop::Interface::Customers, Shop::Interface::Orders, Shop::Interface::Packages, Shop::Interface::Products, Shop::Interface::Variants
+
       admin.categories= Radiant::AdminUI.load_default_shop_categories_regions
       admin.customers = Radiant::AdminUI.load_default_shop_customers_regions
       admin.orders    = Radiant::AdminUI.load_default_shop_orders_regions
+      admin.packages  = Radiant::AdminUI.load_default_shop_packages_regions      
+      admin.products  = Radiant::AdminUI.load_default_shop_products_regions
       admin.variants  = Radiant::AdminUI.load_default_shop_variants_regions
-      admin.groups    = Radiant::AdminUI.load_default_shop_groups_regions
     end
     
     if admin.respond_to? :page
@@ -35,7 +35,7 @@ class ShopExtension < Radiant::Extension
     end
     
     # Tags
-    Page.send :include, Shop::Tags::Core, Shop::Tags::Cart, Shop::Tags::Category, Shop::Tags::Item, Shop::Tags::Product, Shop::Tags::Address, Shop::Tags::Responses, Shop::Tags::Card, Shop::Tags::Variant
+    Page.send :include, Shop::Tags::Core, Shop::Tags::Address, Shop::Tags::Card, Shop::Tags::Cart, Shop::Tags::Category, Shop::Tags::Item, Shop::Tags::Package, Shop::Tags::Product, Shop::Tags::Responses, Shop::Tags::Variant
     
     # Model Includes
     Page.send :include, Shop::Models::Page
@@ -59,12 +59,11 @@ class ShopExtension < Radiant::Extension
     Radiant::Config['shop.category_layout'] ||= 'Products'
     Radiant::Config['shop.order_layout']    ||= 'Cart'
     
-    Radiant::Config['shop.cart_thanks_path']||= 'cart/thanks'
-    Radiant::Config['shop.cart_path']       ||= 'cart'
-    
     Radiant::Config['shop.price_unit']      ||= '$'
     Radiant::Config['shop.price_precision'] ||= 2
-    Radiant::Config['shop.price_seperator'] ||= '.'
+    Radiant::Config['shop.price_
+      
+      separator'] ||= '.'
     Radiant::Config['shop.price_delimiter'] ||= ','
     
     # Scoped Customer Welcome Page
