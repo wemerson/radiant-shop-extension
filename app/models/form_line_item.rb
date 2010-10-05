@@ -5,8 +5,8 @@ class FormLineItem
   #   process: add|update|remove
   
   def create
-    find_current_order
     @result ||= {}
+    find_or_create_current_order
     
     case process
     when 'add'
@@ -23,8 +23,13 @@ class FormLineItem
   protected
     
   # Uses the page session data to find the current order
-  def find_current_order
-    @order  = ShopOrder.find(@page.request.session[:shop_order])
+  def find_or_create_current_order
+    begin
+      @order = ShopOrder.find(@page.request.session[:shop_order])
+    rescue
+      @order = ShopOrder.create
+      @result[:session] = { :shop_order => @order.id }
+    end
     @order.update_attribute(:customer_id, (current_customer.id rescue nil)) # either assign it to a user, or don't
   end
   

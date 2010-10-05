@@ -212,16 +212,39 @@ describe Shop::Tags::Helpers do
   
   describe '#current_product' do
     before :each do
-      @product = shop_products(:soft_bread)
+      @product    = shop_products(:soft_bread)
+      @line_item  = shop_line_items(:one)
     end
     
     context 'product previously set' do
       before :each do
         @tag.locals.shop_product = @product
       end
-      it 'should return the product attached to the page' do
+      it 'should return the product in that context' do
         result = Shop::Tags::Helpers.current_product(@tag)
         result.should == @product
+      end
+    end
+    
+    context 'line item previously set' do
+      context 'for product' do
+        before :each do
+          @tag.locals.shop_line_item = @line_item
+        end
+        it 'should return the product of the line item' do
+          result = Shop::Tags::Helpers.current_product(@tag)
+          result.should == @line_item.item
+        end
+      end
+      context 'not for product' do
+        before :each do
+          @line_item.item_type = 'ShopOther'
+          @tag.locals.shop_line_item = @line_item
+        end
+        it 'should not return the product' do
+          result = Shop::Tags::Helpers.current_product(@tag)
+          result.should be_nil
+        end
       end
     end
 
@@ -286,6 +309,41 @@ describe Shop::Tags::Helpers do
       it 'should return nil' do
         result = Shop::Tags::Helpers.current_order(@tag)
         result.should be_nil
+      end
+    end
+    
+  end
+  
+  describe '#current_line_items' do
+    before :each do
+      @order = shop_orders(:several_items)
+      @tag.locals.shop_order = @order
+    end
+    
+    context 'line items previously set' do
+      before :each do
+        @tag.locals.shop_line_items = [@order.line_items.first]
+      end
+      it 'should return the order' do
+        result = Shop::Tags::Helpers.current_line_items(@tag)
+        result.should == [@order.line_items.first]
+      end
+    end
+    
+    context 'key and value sent' do
+      before :each do
+        @tag.attr = { 'key' => 'id', 'value' => @order.line_items.first.id }
+      end
+      it 'should return the matching order' do
+        result = Shop::Tags::Helpers.current_line_items(@tag)
+        result.should == [@order.line_items.first]
+      end
+    end
+    
+    context 'nothing available to find the items' do
+      it 'should return the current orders items' do
+        result = Shop::Tags::Helpers.current_line_items(@tag)
+        result.should == @order.line_items
       end
     end
     

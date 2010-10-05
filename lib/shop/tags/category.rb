@@ -44,7 +44,7 @@ module Shop
         elsif tag.locals.page.shop_category_id == tag.locals.shop_category.id
           # A category page which is using this category
           tag.expand
-        elsif tag.locals.shop_product
+        elsif tag.locals.shop_product.present?
           # A product page
           if tag.locals.shop_product.category == tag.locals.shop_category
             # Where the products category is this category

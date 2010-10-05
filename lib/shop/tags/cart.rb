@@ -4,23 +4,23 @@ module Shop
       include Radiant::Taggable
       include ActionView::Helpers::NumberHelper
       
-      # Expand if a user has started a cart
-      desc %{ Expand if a user has started a cart }
-      tag 'shop:if_cart' do |tag|
-        tag.expand if Helpers.current_order(tag)
-      end
-      
-      # Expand unless a user has started a cart
-      desc %{ Expand unless a user has started a cart }
-      tag 'shop:unless_cart' do |tag|
-        tag.expand unless Helpers.current_order(tag)
-      end
-      
       # Expand the shopping cart instance
       # @param [Integer] id Id of the shopping cart (ShopOrder)
       tag 'shop:cart' do |tag|
         tag.locals.shop_order = Helpers.current_order(tag)
-        tag.expand unless tag.locals.shop_order.nil?
+        tag.expand
+      end
+      
+      # Expand if a user has started a cart
+      desc %{ Expand if a user has started a cart }
+      tag 'shop:cart:if_cart' do |tag|
+        tag.expand if tag.locals.shop_order.present?
+      end
+      
+      # Expand unless a user has started a cart
+      desc %{ Expand unless a user has started a cart }
+      tag 'shop:cart:unless_cart' do |tag|
+        tag.expand unless tag.locals.shop_order.present?
       end
       
       # Display the cart id / status

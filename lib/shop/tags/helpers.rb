@@ -82,6 +82,9 @@ module Shop
           if tag.locals.shop_product.present?
             result = tag.locals.shop_product
             
+          elsif tag.locals.shop_line_item.present? and tag.locals.shop_line_item.item_type === 'ShopProduct'
+            result = tag.locals.shop_line_item.item
+            
           elsif tag.attr['key'] and tag.attr['value']
             result = ShopProduct.first(:conditions => { tag.attr['key'].downcase.to_sym => tag.attr['value'] })
             
@@ -109,6 +112,20 @@ module Shop
             session = tag.locals.page.request.session[:shop_order]
             result  = ShopOrder.find(session)
             
+          end
+          
+          result
+        end
+        
+        def current_line_items(tag)
+          result = nil
+          
+          if tag.locals.shop_line_items.present?
+            result = tag.locals.shop_line_items
+          elsif tag.attr['key'] and tag.attr['value']
+            result = tag.locals.shop_order.line_items.all(:conditions => { tag.attr['key'].downcase.to_sym => tag.attr['value'] })
+          else
+            result = tag.locals.shop_order.line_items
           end
           
           result

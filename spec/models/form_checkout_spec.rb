@@ -7,9 +7,7 @@ describe FormCheckout do
   before :each do
     mock_page_with_request_and_data
   end
-  describe '#create' do   
-    it 'should have a spec for the finalize setting the sohp_order id'
-     
+  describe '#create' do
     context 'gateway' do
       context 'order has no billing' do
         before :each do
@@ -62,6 +60,14 @@ describe FormCheckout do
           @order.payment.card_number.should === "XXXX-XXXX-XXXX-1"
           @order.payment.card_type.should   === @data[:card][:type]
           @order.payment.amount.should      === @order.price
+        end
+        
+        it 'should assign session shop_order to nil' do
+          mock.instance_of(ActiveMerchant::Billing::CreditCard).valid? { true }
+          @checkout = FormCheckout.new(@form, @page)
+          result = @checkout.create
+          
+          result[:session][:shop_order].should be_nil
         end
       end
       
