@@ -1,6 +1,6 @@
 class ShopCategory < ActiveRecord::Base
   
-  #default_scope :joins => :page, :order => 'pages.position ASC'
+  default_scope :joins => :page, :order => 'pages.position ASC'
   
   belongs_to  :page,            :dependent => :destroy
   belongs_to  :created_by,      :class_name => 'User'
