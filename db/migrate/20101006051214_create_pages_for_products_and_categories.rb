@@ -22,6 +22,7 @@ class CreatePagesForProductsAndCategories < ActiveRecord::Migration
           :status_id  => 100,
           :parent_id  => Radiant::Config['shop.root_page_id'],
           :class_name => 'ShopCategoryPage',
+          :published_at => Time.now,
           :parts      => [PagePart.create(
             :name     => 'description',
             :content  => p.description
@@ -39,6 +40,7 @@ class CreatePagesForProductsAndCategories < ActiveRecord::Migration
           :status_id  => 100,
           :parent_id  => ShopCategory.find(p.category_id).page_id,
           :class_name => 'ShopProductPage',
+          :published_at => Time.now,
           :parts      => [PagePart.create(
             :name     => 'description',
             :content  => p.description
