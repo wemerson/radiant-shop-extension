@@ -21,7 +21,7 @@ class CreatePagesForProductsAndCategories < ActiveRecord::Migration
           :breadcrumb => p.handle,
           :status_id  => 100,
           :parent_id  => Radiant::Config['shop.root_page_id'],
-          :class_name => 'ShopProductPage',
+          :class_name => 'ShopCategoryPage',
           :parts      => [PagePart.create(
             :name     => 'description',
             :content  => p.description
