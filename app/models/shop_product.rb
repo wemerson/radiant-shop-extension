@@ -32,11 +32,11 @@ class ShopProduct < ActiveRecord::Base
   end
   
   def name
-    page.title rescue read_attribute(:name)
+    page.title
   end
   
   def sku
-    page.slug rescue read_attribute(:sku)
+    ShopProduct.to_slug(page.url)
   end
   
   def slug
@@ -81,8 +81,8 @@ class ShopProduct < ActiveRecord::Base
   
   class << self
     
-    def to_sku_or_handle(name)
-      name.downcase.gsub(/[^-a-z0-9~\s\.:;+=_]/, '').strip.gsub(/[\s\.:;=+~]+/, '_')
+    def to_slug(name)
+      name.downcase.strip.gsub(/^(\/)(.*)(\/)$/, '\2').gsub(/[\s\.:;=+~]+/, '_').gsub(/\//, '-')
     end
     
   end
@@ -90,7 +90,7 @@ class ShopProduct < ActiveRecord::Base
   protected
   
   def assign_slug
-    self.page.slug = ShopProduct.to_sku_or_handle(page.title) unless page.slug.present?
+    self.page.slug = ShopProduct.to_slug(page.title) unless page.slug.present?
   end
   
   def assign_breadcrumb

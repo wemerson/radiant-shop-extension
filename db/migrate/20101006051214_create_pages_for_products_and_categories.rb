@@ -64,7 +64,6 @@ class CreatePagesForProductsAndCategories < ActiveRecord::Migration
     remove_column :shop_categories, :description
     remove_column :shop_categories, :layout_id
     remove_column :shop_categories, :position
-    remove_column :shop_categories, :product_layout_id
     remove_column :shop_categories, :is_active
   end
 

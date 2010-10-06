@@ -1,7 +1,7 @@
 class ShopCategory < ActiveRecord::Base
   
-  default_scope :joins => 'JOIN pages AS page ON page.id = shop_categories.page_id JOIN pages AS parent ON parent.id = page.parent_id',
-    :order => 'page.position, parent.position ASC'
+  default_scope :joins => 'JOIN pages AS page ON page.id = shop_categories.page_id JOIN pages AS parent ON page.parent_id = parent.id',
+    :order => 'parent.position, page.position ASC'
   
   belongs_to  :page,            :dependent => :destroy
   belongs_to  :created_by,      :class_name => 'User'
@@ -25,7 +25,7 @@ class ShopCategory < ActiveRecord::Base
   end
   
   def handle
-    page.slug
+    ShopProduct.to_slug(page.url)
   end
   
   def slug
@@ -71,7 +71,7 @@ class ShopCategory < ActiveRecord::Base
   protected
   
   def assign_slug
-    self.page.slug = ShopProduct.to_sku_or_handle(page.title) unless page.slug.present?
+    self.page.slug = ShopProduct.to_slug(page.title) unless page.slug.present?
   end
   
   def assign_breadcrumb
