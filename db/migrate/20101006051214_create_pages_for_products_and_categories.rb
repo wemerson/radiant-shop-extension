@@ -2,7 +2,7 @@ class CreatePagesForProductsAndCategories < ActiveRecord::Migration
   
   class ShopProduct < ActiveRecord::Base
     belongs_to :page
-    
+    belongs_to :category, :class_name => 'ShopCategory', :foreign_key => :category_id
     accepts_nested_attributes_for :page
   end
   
@@ -13,19 +13,20 @@ class CreatePagesForProductsAndCategories < ActiveRecord::Migration
   end
   
   def self.up    
-    ShopCategory.all.each do |p|
-      p.update_attributes(
+    ShopCategory.all.each do |c|
+      c.update_attributes(
         :page => Page.create(
-          :title      => p.name,
-          :slug       => p.handle,
-          :breadcrumb => p.handle,
+          :title      => c.name,
+          :slug       => c.handle,
+          :breadcrumb => c.handle,
           :status_id  => 100,
           :parent_id  => Radiant::Config['shop.root_page_id'],
+          :layout_id  => c.layout_id,
           :class_name => 'ShopCategoryPage',
           :published_at => Time.now,
           :parts      => [PagePart.create(
             :name     => 'description',
-            :content  => p.description
+            :content  => c.description
           )]
         )
       )
@@ -39,6 +40,7 @@ class CreatePagesForProductsAndCategories < ActiveRecord::Migration
           :breadcrumb => p.sku,
           :status_id  => 100,
           :parent_id  => ShopCategory.find(p.category_id).page_id,
+          :layout_id  => p.category.product_layout_id,
           :class_name => 'ShopProductPage',
           :published_at => Time.now,
           :parts      => [PagePart.create(

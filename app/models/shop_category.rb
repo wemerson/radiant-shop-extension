@@ -1,6 +1,7 @@
 class ShopCategory < ActiveRecord::Base
   
-  default_scope :joins => :page, :order => 'pages.position ASC'
+  default_scope :joins => 'JOIN pages AS page ON page.id = shop_categories.page_id JOIN pages AS parent ON parent.id = page.parent_id',
+    :order => 'page.position, parent.position ASC'
   
   belongs_to  :page,            :dependent => :destroy
   belongs_to  :created_by,      :class_name => 'User'
