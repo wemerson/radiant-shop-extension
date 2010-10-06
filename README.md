@@ -30,3 +30,7 @@ pppps: love heart
       config.gem 'webrat',            :version => '0.7.1'
       config.gem 'rr',                :version => '0.10.11'
     end        
+    
+# Migrating in Development
+
+    rm db/development.sqlite3.db; rake db:migrate; rake radiant:extensions:scoped:migrate; rake radiant:extensions:settings:migrate; rake radiant:extensions:drag:migrate; rake radiant:extensions:forms:migrate; rake radiant:extensions:images:migrate; rake radiant:extensions:shop:migrate; rake radiant:extensions:shop_mg:migrate; rake radiant:extensions:export:load;

@@ -2,8 +2,8 @@ class ShopPacking < ActiveRecord::Base
   
   default_scope :order => 'shop_packings.position ASC'
   
-  belongs_to :package, :class_name => 'ShopPackage', :foreign_key => :shop_package_id
-  belongs_to :product, :class_name => 'ShopProduct', :foreign_key => :shop_product_id
+  belongs_to :package, :class_name => 'ShopPackage', :foreign_key => :package_id
+  belongs_to :product, :class_name => 'ShopProduct', :foreign_key => :product_id
   
   before_validation :set_quantity
   

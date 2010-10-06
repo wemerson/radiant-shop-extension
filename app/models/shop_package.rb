@@ -3,11 +3,11 @@ class ShopPackage < ActiveRecord::Base
   belongs_to  :created_by,  :class_name => 'User'
   belongs_to  :updated_by,  :class_name => 'User'
   
-  has_many    :packings, :class_name => 'ShopPacking', :dependent => :destroy
-  has_many    :products, :class_name => 'ShopProduct', :through => :packings
+  has_many    :packings, :class_name => 'ShopPacking',      :foreign_key  => :package_id, :dependent => :destroy
+  has_many    :products, :class_name => 'ShopProduct',      :foreign_key  => :product_id, :through => :packings
   
-  has_many    :line_items,  :class_name => 'ShopLineItem', :as => :item
-  has_many    :orders,      :class_name => 'ShopOrder', :through => :line_items
+  has_many    :line_items,  :class_name => 'ShopLineItem',  :as => :item
+  has_many    :orders,      :class_name => 'ShopOrder',     :through => :line_items
   
   before_validation         :set_sku, :filter_sku
   

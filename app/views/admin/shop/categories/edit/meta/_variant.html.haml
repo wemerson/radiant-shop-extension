@@ -1,5 +1,0 @@
-%tr
-  %th.label
-    %label{:for=>"shop_category[layout]"}= t('variant')
-  %td.field
-    = f.collection_select :variant_id, ShopVariant.all, :id, :name, :include_blank => 'No Variant...'

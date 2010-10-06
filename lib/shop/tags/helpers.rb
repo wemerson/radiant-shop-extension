@@ -42,9 +42,6 @@ module Shop
           elsif tag.locals.page.shop_product.present?
             result = tag.locals.page.shop_product.category
             
-          else
-            result = ShopCategory.find_by_handle(tag.locals.page.slug)
-            
           end
           
           result
@@ -58,9 +55,6 @@ module Shop
             
           elsif tag.locals.shop_category.present?
             result = tag.locals.shop_category.products
-                        
-          elsif tag.locals.page.send(:params).has_key? 'query'
-            result = ShopProduct.search(tag.locals.page.params['query'])
             
           elsif tag.attr['key'] and tag.attr['value']
             result = ShopProduct.all(:conditions => { tag.attr['key'].downcase.to_sym => tag.attr['value'] })
@@ -90,9 +84,6 @@ module Shop
             
           elsif tag.locals.page.shop_product.present?
             result = tag.locals.page.shop_product
-            
-          else
-            result = ShopProduct.find_by_sku(tag.locals.page.slug)
             
           end
           

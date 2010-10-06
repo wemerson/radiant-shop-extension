@@ -1,1 +1,4 @@
-~ f.text_area :description, :class => "textarea large", :style => "width: 100%"
+- f.fields_for :page do |pf|
+  - pf.fields_for :parts do |pfp|
+    = pfp.hidden_field :name, :value => 'Description'
+    ~ pfp.text_area :content, :class => "textarea large", :style => "width: 100%"

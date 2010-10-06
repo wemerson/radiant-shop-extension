@@ -7,15 +7,13 @@ class Admin::Shop::CategoriesController < Admin::ResourceController
   before_filter :config_edit,   :only => [ :edit, :update ]
   before_filter :assets_global
   
-  before_filter :set_layouts,   :only => [ :new ]
+  before_filter :set_layouts_and_page,   :only => [ :new ]
   
   # GET /admin/shop/products/categories
   # GET /admin/shop/products/categories.js
   # GET /admin/shop/products/categories.json                      AJAX and HTML
   #----------------------------------------------------------------------------
   def index
-    @shop_categories = ShopCategory.search(params[:search])
-    
     respond_to do |format|
       format.html { redirect_to admin_shop_products_path }
       format.js   { render :partial => '/admin/shop/categories/index/category', :collection => @shop_categories }
@@ -50,7 +48,9 @@ class Admin::Shop::CategoriesController < Admin::ResourceController
       @shop_categories = CGI::parse(params[:categories])["categories[]"]
 
       @shop_categories.each_with_index do |id, index|
-        ShopCategory.find(id).update_attributes!({:position => index+1})
+        ShopCategory.find(id).page.update_attributes!(
+          :position  => index+1
+        )
       end
       
       respond_to do |format|
@@ -87,13 +87,14 @@ class Admin::Shop::CategoriesController < Admin::ResourceController
       
       respond_to do |format|
         format.html {
-          redirect_to edit_admin_shop_category_path(@shop_category) if params[:continue]
+          redirect_to [:edit_admin, @shop_category] if params[:continue]
           redirect_to admin_shop_categories_path unless params[:continue]
         }
         format.js   { render :partial => '/admin/shop/categories/index/category', :locals => { :product => @shop_category } }
         format.json { render :json    => @shop_category.to_json(ShopCategory.params) }
       end
-    rescue
+    rescue Exception => e
+      raise e.inspect
       respond_to do |format|
         format.html { 
           flash[:error] = error
@@ -179,7 +180,7 @@ private
     
     @meta     << 'handle'
     @meta     << 'layouts'
-    @meta     << 'variant'
+    @meta     << 'page'
     
     @parts    << 'description'
   end
@@ -194,8 +195,12 @@ private
     include_stylesheet 'admin/extensions/shop/edit'
   end
   
-  def set_layouts
-    @shop_category.layout = Layout.find_by_name(Radiant::Config['shop.category_layout'])
+  def set_layouts_and_page
+    @shop_category.page = Page.new(
+      :layout_id  => Layout.find_by_name(Radiant::Config['shop.layout_category']).id,
+      :parent_id  => Radiant::Config['shop.root_page_id'],
+      :parts      => [PagePart.new]
+    )
     @shop_category.product_layout = Layout.find_by_name(Radiant::Config['shop.product_layout'])
   end
   

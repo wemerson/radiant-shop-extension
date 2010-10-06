@@ -1,33 +1,39 @@
 class ShopCategory < ActiveRecord::Base
   
-  default_scope :order => 'shop_categories.position ASC'
+  #default_scope :joins => :page, :order => 'pages.position ASC'
   
+  belongs_to  :page,            :dependent => :destroy
   belongs_to  :created_by,      :class_name => 'User'
   belongs_to  :updated_by,      :class_name => 'User'
   belongs_to  :layout,          :class_name => 'Layout'
   belongs_to  :product_layout,  :class_name => 'Layout'
   belongs_to  :variant,         :class_name => 'ShopVariant'
   
-  has_many    :products,        :class_name => 'ShopProduct', :foreign_key => :category_id, :dependent => :destroy
+  before_validation             :assign_slug, :assign_breadcrumb
   
-  before_validation             :set_handle, :filter_handle, :set_layouts
-  validates_presence_of         :name, :handle
-  validates_uniqueness_of       :name, :handle
+  accepts_nested_attributes_for :page
   
-  acts_as_list
-
-  def custom=(values)
-    values.each do |key, value|
-      self.json_field_set(key, value)
-    end
+  validates_presence_of         :page
+  
+  def products
+    page.children.map(&:shop_product) rescue nil
+  end
+  
+  def name
+    page.title rescue read_attribute(:name)
+  end
+  
+  def handle
+    page.slug
   end
   
   def slug
-    "/#{self.slug_prefix}/#{self.handle}"
+    warn "[DEPRECATION] `slug` is deprecated.  Please use `url` instead."
+    page.url
   end
   
-  def slug_prefix
-    Radiant::Config['shop.url_prefix']
+  def url
+    page.url
   end
   
   class << self
@@ -35,10 +41,10 @@ class ShopCategory < ActiveRecord::Base
     def search(search)
       unless search.blank?
         queries = []
-        queries << 'LOWER(shop_categories.name)         LIKE (:term)'
-        queries << 'LOWER(shop_categories.handle)       LIKE (:term)'
+        #queries << 'LOWER(shop_categories.name)         LIKE (:term)'
+        #queries << 'LOWER(shop_categories.handle)       LIKE (:term)'
         queries << 'LOWER(shop_categories.description)  LIKE (:term)'
-      
+        
         sql = queries.join(" OR ")
         conditions = [sql, {:term => "%#{search.downcase}%" }]
       else
@@ -61,23 +67,14 @@ class ShopCategory < ActiveRecord::Base
     
   end
   
-private
+  protected
   
-  def set_handle
-    unless name.nil?
-      self.handle = name if handle.nil? or handle.empty?
-    end
+  def assign_slug
+    self.page.slug = ShopProduct.to_sku_or_handle(page.title) unless page.slug.present?
   end
   
-  def filter_handle
-    unless self.name.nil?
-      self.handle = ShopProduct.to_sku_or_handle(handle)
-    end
-  end
-  
-  def set_layouts
-    self.layout         = Layout.find_by_name(Radiant::Config['shop.category_layout']) if layout.nil?
-    self.product_layout = Layout.find_by_name(Radiant::Config['shop.product_layout'])  if product_layout.nil?
+  def assign_breadcrumb
+    self.page.breadcrumb = page.slug
   end
   
 end

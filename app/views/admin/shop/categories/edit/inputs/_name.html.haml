@@ -1,3 +1,4 @@
-%p.title
-  %label{:for => 'shop_category_name'}= t('name')
-  = f.text_field :name, :class => 'textbox', :maxlenth => 255
+- f.fields_for :page do |pf|
+  %p.title
+    = pf.label :title, t('name')
+    = pf.text_field :title, :class => 'textbox', :maxlenth => 255

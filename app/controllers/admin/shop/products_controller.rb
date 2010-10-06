@@ -12,7 +12,7 @@ class Admin::Shop::ProductsController < Admin::ResourceController
   before_filter :assets_index,  :only => [ :index ]
   before_filter :assets_edit,   :only => [ :edit, :update ]
   
-  before_filter :set_category,  :only => [ :new ]
+  before_filter :set_layout_and_page,  :only => [ :new ]
   
   # GET /admin/shop/products
   # GET /admin/shop/products.js
@@ -20,7 +20,6 @@ class Admin::Shop::ProductsController < Admin::ResourceController
   #----------------------------------------------------------------------------
   def index
     @shop_categories = ShopCategory.all
-    @shop_products = ShopProduct.search(params[:search])
     
     respond_to do |format|
       format.html { render :index }
@@ -42,10 +41,10 @@ class Admin::Shop::ProductsController < Admin::ResourceController
       @shop_products = CGI::parse(params[:products])["category_#{params[:category_id]}_products[]"]
       
       @shop_products.each_with_index do |id, index|
-        ShopProduct.find(id).update_attributes!({
-          :position     => index+1,
-          :category_id  => @shop_category.id
-        })
+        ShopProduct.find(id).page.update_attributes!(
+          :position  => index+1,
+          :parent_id => @shop_category.page.id
+        )
       end
       
       respond_to do |format|
@@ -176,6 +175,7 @@ private
     @inputs   << 'price'
     
     @meta     << 'sku'
+    @meta     << 'page'
     @meta     << 'category'
     
     @parts    << 'description'
@@ -227,8 +227,14 @@ private
     include_javascript 'admin/extensions/shop/products/edit'
   end
   
-  def set_category
-    @shop_product.category = ShopCategory.find(params[:category_id])
+  def set_layout_and_page
+    @shop_category = ShopCategory.find(params[:category_id])
+    @shop_product.page = Page.new(
+      :parent_id  => @shop_category.page_id,
+      :layout_id  => @shop_category.product_layout_id,
+      :parts      => [PagePart.new]
+    )
   end
+  
   
 end

@@ -26,15 +26,4 @@ ActionController::Routing::Routes.draw do |map|
     admin.resources :shops, :as => 'shop', :only => [ :index ]
   end
   
-  # Maps the following routes within a prefix scope of either the configured shop.url_prefix or shop
-  shop_prefix = Radiant::Config['shop.url_prefix'].blank? ? 'shop' : Radiant::Config['shop.url_prefix']
-  map.with_options(:path_prefix => shop_prefix) do |prefix|
-    prefix.namespace :shop do |shop|
-      shop.resources        :products, :only => [ :index ]
-      shop.resources        :categories, :only => [ :index ]
-      shop.shop_product     ':handle/:sku.:format',             :controller => 'products',  :action => 'show',  :conditions => { :method => :get }
-      shop.shop_category    ':handle.:format',                  :controller => 'categories',:action => 'show',  :conditions => { :method => :get }
-    end
-  end
-  
 end

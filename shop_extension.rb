@@ -29,10 +29,10 @@ class ShopExtension < Radiant::Extension
       admin.variants  = Radiant::AdminUI.load_default_shop_variants_regions
     end
     
-    if admin.respond_to? :page
-      admin.page.edit.add :layout_row, 'shop_category'
-      admin.page.edit.add :layout_row, 'shop_product' 
-    end
+    # if admin.respond_to? :page
+    #   admin.page.edit.add :layout_row, 'shop_category'
+    #   admin.page.edit.add :layout_row, 'shop_product' 
+    # end
     
     # Tags
     Page.send :include, Shop::Tags::Core, Shop::Tags::Address, Shop::Tags::Card, Shop::Tags::Cart, Shop::Tags::Category, Shop::Tags::Item, Shop::Tags::Package, Shop::Tags::Product, Shop::Tags::Responses, Shop::Tags::Variant
@@ -53,17 +53,14 @@ class ShopExtension < Radiant::Extension
       add_item "Customers",     "/admin/shop/customers"
     end
     
-    # Ensure there is always a shop prefix, otherwise we'll lose admin and pages
-    Radiant::Config['shop.url_prefix'] = Radiant::Config['shop.url_prefix'].blank? ? 'shop' : Radiant::Config['shop.url_prefix']
-    Radiant::Config['shop.product_layout']  ||= 'Product'
-    Radiant::Config['shop.category_layout'] ||= 'Products'
-    Radiant::Config['shop.order_layout']    ||= 'Cart'
+    Radiant::Config['shop.root_page_id']    ||= (Page.first(:conditions => { :slug => 'shop'}).id rescue (Page.first.id rescue nil))
+    
+    Radiant::Config['shop.layout_product']  ||= 'Product'
+    Radiant::Config['shop.layout_category'] ||= 'Products'
     
     Radiant::Config['shop.price_unit']      ||= '$'
     Radiant::Config['shop.price_precision'] ||= 2
-    Radiant::Config['shop.price_
-      
-      separator'] ||= '.'
+    Radiant::Config['shop.price_separator'] ||= '.'
     Radiant::Config['shop.price_delimiter'] ||= ','
     
     # Scoped Customer Welcome Page
