@@ -19,7 +19,7 @@ class CreatePagesForProductsAndCategories < ActiveRecord::Migration
           :title      => p.name,
           :slug       => p.handle,
           :breadcrumb => p.handle,
-          :status     => 100,
+          :status_id  => 100,
           :parent_id  => Radiant::Config['shop.root_page_id'],
           :class_name => 'ShopProductPage',
           :parts      => [PagePart.create(
@@ -36,7 +36,7 @@ class CreatePagesForProductsAndCategories < ActiveRecord::Migration
           :title      => p.name,
           :slug       => p.sku,
           :breadcrumb => p.sku,
-          :status     => 100,
+          :status_id  => 100,
           :parent_id  => ShopCategory.find(p.category_id).page_id,
           :class_name => 'ShopProductPage',
           :parts      => [PagePart.create(
