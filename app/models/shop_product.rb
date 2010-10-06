@@ -82,7 +82,7 @@ class ShopProduct < ActiveRecord::Base
   class << self
     
     def to_slug(name)
-      name.downcase.strip.gsub(/^(\/)(.*)(\/)$/, '\2').gsub(/[\s\.:;=+~]+/, '_').gsub(/\//, '-')
+      name.downcase.strip.gsub(/^\/#{Radiant::Config['shop.root_page_slug']}/,'').gsub(/^(\/*)(.*)(\/)$/,'\2').gsub(/[\s\.:;=+~]+/,'_').gsub(/\//,'-')
     end
     
   end

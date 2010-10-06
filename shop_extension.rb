@@ -54,6 +54,7 @@ class ShopExtension < Radiant::Extension
     end
     
     Radiant::Config['shop.root_page_id']    ||= (Page.first(:conditions => { :slug => 'shop'}).id rescue (Page.first.id rescue nil))
+    Radiant::Config['shop.root_page_slug']  ||= 'shop'
     
     Radiant::Config['shop.layout_product']  ||= 'Product'
     Radiant::Config['shop.layout_category'] ||= 'Products'
