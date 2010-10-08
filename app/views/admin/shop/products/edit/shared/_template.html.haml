@@ -1,5 +1,5 @@
 %li.template
-  .wrapper
+  - link_to admin_shop_product_variant_template_path(@shop_product, template), :method => :put, :class => 'wrapper' do
     %span.name= template.name
     %ul.options
       - template.options.each do |option|

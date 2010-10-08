@@ -6,7 +6,7 @@ module Shop
       # Expand if the address has been assigned to the order
       desc %{
         Expand if an address has been assigned to the order
-      
+        
         @type@ = (billing)|(shipping)
       }
       tag 'shop:cart:address' do |tag|
@@ -21,13 +21,13 @@ module Shop
       # Expand if an address has been assigned to the order
       desc %{ Expand if an address has been assigned to the order }
       tag 'shop:cart:address:if_address' do |tag|
-        tag.expand if tag.locals.address.present?
+        tag.expand if tag.locals.address.name.present? rescue nil
       end
       
       # Expand if an address has not been assigned to the order
       desc %{ Expand if an address has not been assigned to the order }
       tag 'shop:cart:address:unless_address' do |tag|
-        tag.expand unless tag.locals.address.present?
+        tag.expand unless tag.locals.address.name.present? rescue nil
       end
       
       [:id, :name, :email, :unit, :street, :city, :state, :country, :postcode].each do |method|

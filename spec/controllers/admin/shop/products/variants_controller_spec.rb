@@ -20,9 +20,6 @@ describe Admin::Shop::Products::VariantsController do
         before :each do
           post :create, :product_id => @product.id, :shop_product_variant => { }
         end
-        it 'should assign flash notice' do
-          flash.now[:notice].should_not be_nil
-        end
         it 'should redirect to product path' do
           response.should redirect_to(edit_admin_shop_product_path(@product))
         end
@@ -76,9 +73,6 @@ describe Admin::Shop::Products::VariantsController do
         before :each do
           delete :destroy, :product_id => @product.id, :id => @product_variant.id
         end
-        it 'should assign flash notice' do
-          flash.now[:notice].should_not be_nil
-        end
         it 'should redirect to product path' do
           response.should redirect_to(edit_admin_shop_product_path(@product_variant.product))
         end
@@ -88,7 +82,7 @@ describe Admin::Shop::Products::VariantsController do
           delete :destroy, :product_id => @product.id, :id => @product_variant.id, :format => 'js'
         end
         it 'should render the partial' do
-          response.should render_template('/admin/shop/products/edit/shared/_variant')
+          response.should be_success
         end
       end
     end

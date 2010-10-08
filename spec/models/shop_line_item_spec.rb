@@ -2,7 +2,7 @@ require 'spec/spec_helper'
 
 describe ShopLineItem do
   
-  dataset :shop_line_items
+  dataset :shop_line_items, :shop_products
 
   it 'should calculate a weight' do
     shop_line_items(:one).weight.should === (shop_line_items(:one).item.weight * shop_line_items(:one).quantity).to_f

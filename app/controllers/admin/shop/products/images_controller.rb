@@ -36,8 +36,8 @@ class Admin::Shop::Products::ImagesController < Admin::ResourceController
   # PUT /admin/shop/products/1/images/sort.json                   AJAX and HTML
   #----------------------------------------------------------------------------
   def sort
-    error  = 'Could not sort Images.'
     notice = 'Successfully sorted Images.'
+    error  = 'Could not sort Images.'
     attr_hash =  ShopProductAttachment.params
         
     begin
@@ -50,7 +50,6 @@ class Admin::Shop::Products::ImagesController < Admin::ResourceController
       
       respond_to do |format|
         format.html {
-          flash[:notice] = notice
           redirect_to edit_admin_shop_product_path(@shop_product)
         }
         format.js   { render :partial => '/admin/shop/products/edit/shared/image', :collection => @shop_product.images }
@@ -90,7 +89,6 @@ class Admin::Shop::Products::ImagesController < Admin::ResourceController
       
       respond_to do |format|
         format.html {
-          flash[:notice] = notice
           redirect_to edit_admin_shop_product_path(@shop_product)
         }
         format.js   { render :partial => '/admin/shop/products/edit/shared/image', :locals => { :image => @shop_product_attachment } }
@@ -123,7 +121,6 @@ class Admin::Shop::Products::ImagesController < Admin::ResourceController
       
       respond_to do |format|
         format.html {
-          flash[:notice] = notice
           redirect_to edit_admin_shop_product_path(@shop_product)
         }
         format.js   { render :partial => '/admin/shop/products/edit/shared/image', :locals => { :excerpt => @image } }

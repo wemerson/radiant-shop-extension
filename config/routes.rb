@@ -7,13 +7,16 @@ ActionController::Routing::Routes.draw do |map|
       end
       
       shop.resources :products, :except => :new, :collection => { :sort => :put } do |product|
-        product.resources :images,    :controller => 'products/images',   :collection => { :sort => :put }, :only => [ :index, :create, :destroy]
-        product.resources :variants,  :controller => 'products/variants', :only => [ :create, :destroy]
+        product.resources :images,            :controller => 'products/images',   :collection => { :sort => :put }, :only => [:index, :create, :destroy]
+        product.resources :variants,          :controller => 'products/variants', :only => [ :create, :destroy]
+        product.resources :variant_templates, :controller => 'products/variant_templates', :only => [ :update ]
+      end
+      
+      shop.resources :packages, :member => { :remove => :get } do |packages|
+        packages.resources :packings,         :controller => 'packages/packings', :collection => { :sort => :put }, :only => [:create, :update, :destroy]
       end
       
       shop.resources :variants
-      
-      shop.resources :groups
       
       shop.resources :customers
       
@@ -21,23 +24,6 @@ ActionController::Routing::Routes.draw do |map|
     end
 
     admin.resources :shops, :as => 'shop', :only => [ :index ]
-  end
-  
-  # Maps the following routes within a prefix scope of either the configured shop.url_prefix or shop
-  shop_prefix = Radiant::Config['shop.url_prefix'].blank? ? 'shop' : Radiant::Config['shop.url_prefix']
-  map.with_options(:path_prefix => shop_prefix) do |prefix|
-    prefix.namespace :shop do |shop|
-      shop.cart_finalize    'finalize',                         :controller => 'orders',    :action => 'finalize', :conditions => { :method => :get }
-      shop.product_search   'search.:format',                   :controller => 'products',  :action => 'index', :conditions => { :method => :post }
-      shop.product_search   'search/:query.:format',            :controller => 'products',  :action => 'index', :conditions => { :method => :get }
-      shop.shop_product     ':handle/:sku.:format',             :controller => 'products',  :action => 'show',  :conditions => { :method => :get }
-      shop.shop_category    ':handle.:format',                  :controller => 'categories',:action => 'show',  :conditions => { :method => :get }
-      shop.shop_categories  'categories',                       :controller => 'categories',:action => 'index', :conditions => { :method => :get }
-    
-      shop.with_options :path_prefix => "#{shop_prefix}/cart" do |cart|
-        cart.resources :line_items, :as => :items, :member => { :destroy => :get }
-      end
-    end
   end
   
 end

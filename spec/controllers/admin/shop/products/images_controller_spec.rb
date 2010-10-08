@@ -56,10 +56,9 @@ describe Admin::Shop::Products::ImagesController do
           get :index, :product_id => @shop_product.id
         end
         
-        it 'should not assign an error or notice and redirect to edit_shop_product path' do
+        it 'should not assign an error and redirect to edit_shop_product path' do
           response.should redirect_to(edit_admin_shop_product_path(@shop_product))
           flash.now[:error].should be_nil
-          flash.now[:notice].should be_nil
         end
         
         it 'should assign the shop_product_images instance variable' do
@@ -153,9 +152,8 @@ describe Admin::Shop::Products::ImagesController do
           put :sort, :product_id => @shop_product.id, :attachments => @attachments
         end
         
-        it 'should assign a notice and redirect to edit_shop_product path' do
+        it 'should redirect to edit_shop_product path' do
           response.should redirect_to(edit_admin_shop_product_path(@shop_product))
-          flash.now[:notice].should_not be_nil
         end
         
         it 'should have ordered the images based on input' do
@@ -273,9 +271,8 @@ describe Admin::Shop::Products::ImagesController do
           end
           
           context 'html' do
-            it 'should assign a notice and redirect to edit_shop_product path' do
+            it 'should redirect to edit_shop_product path' do
               post :create, :product_id => @shop_product.id, :image => 'FileObject'
-              flash.now[:notice].should_not be_nil
               response.should redirect_to(edit_admin_shop_product_path(@shop_product))
             end
           end
@@ -373,9 +370,8 @@ describe Admin::Shop::Products::ImagesController do
           end
           
           context 'html' do
-            it 'should assign a notice and redirect to edit_shop_product path' do
+            it 'should redirect to edit_shop_product path' do
               post :create, :product_id => @shop_product.id, :attachment => { :image_id => '1' }
-              flash.now[:notice].should_not be_nil
               response.should redirect_to(edit_admin_shop_product_path(@shop_product))
             end
           end
@@ -447,9 +443,8 @@ describe Admin::Shop::Products::ImagesController do
         end
         
         context 'html' do
-          it 'should assign a notice and redirect to edit_shop_product path' do
+          it 'should redirect to edit_shop_product path' do
             delete :destroy, :id => @image.id, :product_id => @shop_product.id
-            flash.now[:notice].should_not be_nil
             response.should redirect_to(edit_admin_shop_product_path(@shop_product))
           end
         end

@@ -18,33 +18,50 @@ class ShopOrder < ActiveRecord::Base
   def add!(id, quantity = nil, type = nil)
     result = true
     
-    quantity  ||= 1
-    type      ||= 'ShopProduct'
-    
-    if self.line_items.exists?({:item_id => id, :item_type => type})
-      line_item = self.line_items.first(:conditions => {:item_id => id, :item_type => type})
-      quantity  = line_item.quantity + quantity.to_i
+    begin
+      line_item = line_items.find(id)
+      quantity = line_item.quantity + quantity.to_i
       
-      self.update!(line_item.id, quantity)
-    else
-      self.line_items.create!({:item_id => id, :item_type => type, :quantity => quantity})
+      modify!(id,quantity)
+    rescue
+      quantity  ||= 1
+      type      ||= 'ShopProduct'
+      
+      if line_items.exists?({:item_id => id, :item_type => type})
+        line_item = line_items.first(:conditions => {:item_id => id, :item_type => type})
+        quantity  = line_item.quantity + quantity.to_i
+      
+        modify!(line_item.id, quantity)
+      else
+        line_items.create!({:item_id => id, :item_type => type, :quantity => quantity})
+      end
     end
     
     result
   end
   
-  def update!(id, quantity = 1)
-    result = true
-    
+  def add(*attrs)
+    add!(*attrs)
+    true
+  rescue ActiveRecord::RecordInvalid, ActiveRecord::RecordNotSaved
+    false
+  end
+  
+  def modify!(id, quantity = 1)
     quantity = quantity.to_i
     if quantity <= 0
       remove!(id)
     else
-      line_item = self.line_items.find(id)
-      line_item.update_attribute(:quantity, quantity)
+      line_item = line_items.find(id)
+      line_item.update_attributes! :quantity => quantity
     end
-    
-    result
+  end
+  
+  def modify(*attrs)
+    modify!(*attrs)
+    true
+  rescue ActiveRecord::RecordNotFound, ActiveRecord::RecordInvalid, ActiveRecord::RecordNotSaved
+    false
   end
   
   def remove!(id)
@@ -52,6 +69,13 @@ class ShopOrder < ActiveRecord::Base
     line_item.destroy
     
     true
+  end
+  
+  def remove(*attrs)
+    remove!(*attrs)
+    true
+  rescue ActiveRecord::RecordNotFound
+    false
   end
   
   def clear!

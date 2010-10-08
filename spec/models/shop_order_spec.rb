@@ -2,7 +2,7 @@ require 'spec/spec_helper'
 
 describe ShopOrder do
 
-  dataset :shop_orders, :shop_line_items, :shop_products, :shop_payments
+  dataset :shop_orders, :shop_line_items, :shop_products, :shop_packages, :shop_payments
 
   context 'instance' do
     describe 'accessors' do
@@ -121,7 +121,7 @@ describe ShopOrder do
           end
           context 'type and quantity passed' do
             it 'should assign the new type and new quantity' do
-              @order.add!(@product.id, 2, 'ShopPackage')
+              @order.add!(shop_packages(:all_bread).id, 2, 'ShopPackage')
               
               @order.line_items.count.should           === 1
               @order.quantity.should                   === 2
@@ -131,8 +131,8 @@ describe ShopOrder do
         end
         context 'item in cart' do
           before :each do
-            @order = shop_orders(:empty)
-            @line_item = shop_line_items(:one)
+            @order      = shop_orders(:one_item)
+            @line_item  = @order.line_items.first
           end
           context 'no quantity or type passed' do
             it 'should assign a default type and default quantity' do
@@ -147,19 +147,19 @@ describe ShopOrder do
               @order.add!(@line_item.id, 2)
               
               @order.line_items.count.should === 1
-              @order.quantity.should         === 2
+              @order.quantity.should         === 3
             end
           end
         end
       end
-      describe '#update!' do
+      describe '#modify!' do
         context 'quantity not set' do
           before :each do
             @order = shop_orders(:one_item)
-            @line_item = shop_line_items(:one)
+            @line_item = @order.line_items.first
           end
           it 'should not update the item' do
-            @order.update!(@line_item.id)
+            @order.modify!(@line_item.id)
             
             @order.quantity.should === 1
           end
@@ -167,31 +167,31 @@ describe ShopOrder do
         context 'quantity set' do
           before :each do
             @order = shop_orders(:one_item)
-            @line_item = shop_line_items(:one)
+            @line_item = @order.line_items.first
           end
           context 'quantity > 0' do
             it 'should assign that quantity' do
-              @order.update!(@line_item.id, 1)
+              @order.modify!(@line_item.id, 1)
               @order.quantity.should === 1
               
-              @order.update!(@line_item.id, 2)
+              @order.modify!(@line_item.id, 2)
               @order.quantity.should === 2
               
-              @order.update!(@line_item.id, 100)
+              @order.modify!(@line_item.id, 100)
               @order.quantity.should === 100
             end
           end
           context 'quantity <= 0' do
             it 'should remove that item for 0' do
-              @order.update!(@line_item.id, 0)
+              @order.modify!(@line_item.id, 0)
               @order.quantity.should === 0         
             end
             it 'should remove that item for -1' do
-              @order.update!(@line_item.id, -1)
+              @order.modify!(@line_item.id, -1)
               @order.quantity.should === 0
             end
             it 'should remove that item for -100' do
-              @order.update!(@line_item.id, -100)
+              @order.modify!(@line_item.id, -100)
               @order.quantity.should === 0
             end
           end

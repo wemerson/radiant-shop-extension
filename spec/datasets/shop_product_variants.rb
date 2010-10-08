@@ -12,6 +12,11 @@ class ShopProductVariantsDataset < Dataset::Base
       :name     => 'fresh',
       :price    => 2.50,
       :product  => shop_products(:crusty_bread)
+      
+    create_record :shop_product_variants, :royal_soft_bread,
+      :name     => 'royal',
+      :price    => 2.50,
+      :product  => shop_products(:soft_bread)
   end
   
 end

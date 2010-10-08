@@ -1,84 +1,82 @@
 class ShopCategory < ActiveRecord::Base
   
-  default_scope :order => 'shop_categories.position ASC'
+  default_scope :joins => 'JOIN pages AS page ON page.id = shop_categories.page_id JOIN pages AS parent ON page.parent_id = parent.id',
+    :order => 'parent.position, page.position ASC'
   
+  belongs_to  :page,            :dependent => :destroy
   belongs_to  :created_by,      :class_name => 'User'
   belongs_to  :updated_by,      :class_name => 'User'
-  belongs_to  :layout,          :class_name => 'Layout'
   belongs_to  :product_layout,  :class_name => 'Layout'
-  belongs_to  :variant,         :class_name => 'ShopVariant'
   
-  has_many    :products,        :class_name => 'ShopProduct', :foreign_key => :category_id, :dependent => :destroy
+  before_validation             :assign_slug, :assign_breadcrumb
   
-  before_validation             :set_handle, :filter_handle, :set_layouts
-  validates_presence_of         :name, :handle
-  validates_uniqueness_of       :name, :handle
+  accepts_nested_attributes_for :page
   
-  acts_as_list
-
-  def custom=(values)
-    values.each do |key, value|
-      self.json_field_set(key, value)
-    end
-  end
+  validates_presence_of         :page
   
-  def slug
-    "/#{self.slug_prefix}/#{self.handle}"
-  end
+  # Returns the title of the product's page
+  def name; page.title; end
   
-  def slug_prefix
-    Radiant::Config['shop.url_prefix']
-  end
+  # Returns the url of the page formatted as an sku
+  def handle; ShopProduct.to_sku(page.url); end
+  
+  # Returns the content of the product's page's description part
+  def description; page.parts.find_by_name('description').content end
+  
+  # Returns products through the pages children
+  def products; page.children.map(&:shop_product); end
+  
+  # Returns the url of the page
+  def url; page.url;  end
+  
+  # Returns the page slug
+  def slug; page.slug; end
+  
+  # Overloads the base to_json to return what we want
+  def to_json(*attrs); super self.class.params; end
   
   class << self
-  
-    def search(search)
-      unless search.blank?
-        queries = []
-        queries << 'LOWER(shop_categories.name)         LIKE (:term)'
-        queries << 'LOWER(shop_categories.handle)       LIKE (:term)'
-        queries << 'LOWER(shop_categories.description)  LIKE (:term)'
-      
-        sql = queries.join(" OR ")
-        conditions = [sql, {:term => "%#{search.downcase}%" }]
-      else
-        conditions = []
+    
+    # Sorts a group of categories based on their ID and position in an array
+    def sort(*category_ids)
+      category_ids.each_with_index do |id, index|
+        ShopCategory.find(id).page.update_attributes!(
+          :position  => index+1
+        )
       end
-      
-      all({ :conditions => conditions })
     end
     
+    # Returns attributes attached to the category
     def attrs
-      [ :id, :handle, :description, :created_at, :updated_at ]
+      [ :id, :product_layout_id, :page_id, :created_at, :updated_at ]
     end
     
+    # Returns methods with usefuly information
+    def methds
+      [ :name, :description, :handle, :url, :created_at, :updated_at ]
+    end
+    
+    # Returns a custom hash of attributes on the category
     def params
-      {
-        :include  => { :products => { :only => ShopProduct.attrs } },
-        :only     => ShopCategory.attrs
-      }
+      { :only => self.attrs, :methods => self.methds }
     end
     
   end
   
-private
+  protected
   
-  def set_handle
-    unless self.name.nil?
-      self.handle = self.name if self.handle.nil? or self.handle.empty?
+  # Assigns a slug to a page if its not set
+  def assign_slug
+    if page.present?
+      self.page.slug = ShopProduct.to_sku(page.slug.present? ? page.slug : page.title)
     end
   end
   
-  def filter_handle
-    unless self.name.nil?
-      self.handle = self.handle.downcase.gsub(/[^-a-z0-9~\s\.:;+=_]/, '').strip.gsub(/[\s\.:;=+~]+/, '_')
+  # Assigns a breadcrumb to the page if its not set
+  def assign_breadcrumb
+    if page.present?
+      self.page.breadcrumb = ShopProduct.to_sku(page.breadcrumb.present? ? page.breadcrumb : page.slug)
     end
-    self.handle.downcase
-  end
-  
-  def set_layouts
-    self.layout         = Layout.find_by_name(Radiant::Config['shop.category_layout']) if self.layout.nil?
-    self.product_layout = Layout.find_by_name(Radiant::Config['shop.product_layout']) if self.product_layout.nil?
   end
   
 end

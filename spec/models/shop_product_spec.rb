@@ -1,134 +1,214 @@
 require 'spec/spec_helper'
 
 describe ShopProduct do
+  dataset :shop_products, :shop_line_items
   
-  dataset :shop_products
-  
-  before(:each) do
-    @product = shop_products(:soft_bread)
-    @products = [
-      shop_products(:soft_bread),
-      shop_products(:crusty_bread),
-      shop_products(:warm_bread)
-    ]
-  end
-  
-  describe 'attributes' do
-    
-    it 'should have a name' do
-      @product.name.should == 'soft bread'
+  describe 'relationships' do
+    before :each do
+      @product = shop_products(:crusty_bread)
     end
     
-    it 'should have an sku' do
-      @product.sku.should == 'soft_bread'
+    it 'should have a page Page' do
+      @product.page.is_a?(Page).should be_true
     end
     
-    it 'should have a position' do
-      @product.position.should == 1
+    it 'should have a created_by User' do
+      @product.created_by = users(:customer)
+      @product.created_by.is_a?(User).should be_true
     end
     
-    it 'should have a price' do
-      @product.price.should === 10.00
+    it 'should have a updated_by User' do
+      @product.updated_by = users(:customer)
+      @product.updated_by.is_a?(User).should be_true
     end
     
-    it 'should have a category' do
-      @product.category.class.should == ShopCategory
+    it 'should have many line_items' do
+      @product.line_items.is_a?(Array).should be_true
     end
     
-  end
-  
-  describe 'validation' do
-    
-    it 'should require a name and category' do
-      @product = ShopProduct.new
-      @product.valid? == false
-      
-      @product.name = "name"
-      @product.valid? == false
-      @product.name = nil
-      
-      @product.category = shop_categories(:bread)
-      @product.valid? == false
-
-      @product.name = "name"
-      @product.valid? == true
+    it 'should have many orders' do
+      @product.orders.is_a?(Array).should be_true
     end
     
-    it 'should validate but not require the price' do
-      @product = ShopProduct.new({ :name => 'bread', :category => shop_categories(:bread) })
-      @product.valid? == true
-      
-      @product.price = "asdas"
-      @product.valid? == false
-      
-      @product.price = "-999.99"
-      @product.valid? == false
-      
-      @product.price = "9.99.99"
-      @product.valid? == false
-      
-      @product.price = "0.00"
-      @product.valid? == false
-      
-      @product.price = "0.01"
-      @product.valid? == true
-      
-      @product.price = "999999.99"
-      @product.valid? == true
+    it 'should have many attachments' do
+      @product.attachments.is_a?(Array).should be_true
     end
     
-    it 'should generate a valid sku on validation' do
-      @product = ShopProduct.new({ :name => 'dark_ _:_;_=_+_._~_toasted', :category => shop_categories(:bread) })
-      @product.valid?     === true
-      @product.sku.should === 'dark_______________toasted'
+    it 'should have many images' do
+      @product.images.is_a?(Array).should be_true
     end
     
-    it 'should have an array of images' do
-      @product.attachments.class.should == Array
-      @product.images.class.should      == Array
-      @product.images.length.should     === @product.attachments.length
+    it 'should have many packings' do
+      @product.packings.is_a?(Array).should be_true
     end
     
-  end
-  
-  describe '#slug' do
-    it 'should return a generated slug' do
-      product     = ShopProduct.new
-      product.sku = 'product'
-      stub(product).category.stub!.handle { 'category' }
-      
-      product.slug.should === %{/#{Radiant::Config['shop.url_prefix']}/category/product}
+    it 'should have many packages' do
+      @product.packages.is_a?(Array).should be_true
+    end
+    
+    it 'should have many related' do
+      @product.related.is_a?(Array).should be_true
+    end
+    
+    it 'should have many variants' do
+      @product.variants.is_a?(Array).should be_true
     end
   end
   
-  describe '#layout' do
-    it 'should return the layout defined by its category' do
-      @product.layout.should === @product.category.product_layout
+  describe 'validations' do
+    before :each do
+      @product = shop_products(:crusty_bread)
     end
-  end
-  
-  describe '#available_images' do
-    it 'should return all the Images minus its own' do
-      @images = Image.all - @product.images
-      
-      @product.available_images.should === @images
-    end
-  end
-  
-  describe '#slug_prefix' do
-    it 'should return the configured shop.url_prefix' do
-      @product.slug_prefix.should === Radiant::Config['shop.url_prefix']
-    end
-  end
-  
-  context 'Class Methods' do
     
-    describe '#attrs' do
-      it 'should have a set of standard parameters' do
-        ShopProduct.attrs.should === [ :id, :name, :price, :sku, :description, :created_at, :updated_at ]
+    context 'page' do
+      it 'should require a page' do
+        @product.page = nil
+        @product.valid?.should be_false
+      end
+    end 
+    
+    context 'price' do
+      it 'should require a numerical price' do
+        @product.price = 'failure'
+        @product.valid?.should be_false
+      end
+      
+      it 'should require a positive price' do
+        @product.price = -99.99
+        @product.valid?.should be_false
+      end
+    end
+  end
+  
+  describe 'methods' do
+    before :each do
+      @product = shop_products(:crusty_bread)
+    end
+    
+    context '#name' do
+      it 'should return page title' do
+        @product.name.should === @product.page.title
       end
     end
     
+    context '#sku' do
+      it 'should return a handle formatted url' do
+        @product.sku.should === ShopProduct.to_sku(@product.page.url)
+      end
+    end
+    
+    context '#category' do
+      it 'should return page title' do
+        @product.category.should === @product.page.parent.shop_category
+      end
+    end
+    
+    context '#category_id' do
+      it 'should return page title' do
+        @product.category_id.should === @product.page.parent.shop_category.id
+      end
+    end
+    
+    context '#description' do
+      it 'should return page title' do
+        @product.description.should === "*#{@product.name}*"
+      end
+    end
+        
+    context 'url' do
+      it 'should return a standard url path' do
+        @product.url.should === @product.page.url
+      end
+    end
+    
+    context 'customers' do
+      it 'should return a collection of customers' do
+        @product.customers.first.should === @product.line_items.first.customer
+      end
+    end
+    
+    context 'customer_ids' do
+      it 'should return a collection of customer_ids' do
+        @product.customer_ids.first.should === @product.line_items.first.customer.id
+      end
+    end
+    
+    context 'image_ids' do
+      it 'should return a collection of customer_ids' do
+        @product.image_ids.first.should === @product.images.first.id
+      end
+    end
+    
+    context 'available_images' do
+      it 'should return a collection of customer_ids' do
+        @product.available_images.should === (Image.all - @product.images)
+      end
+    end
+    
+    context 'slug' do
+      it 'should return the page slug' do
+        @product.slug.should === @product.page.slug
+      end
+    end
+    
+    context 'to_json' do
+      it 'should overload standard to_json' do
+        pending 'not sure how to write this'
+        # @category.to_json.should === ShopCategory.params
+      end
+    end
+    
+  end
+  
+  describe 'filters' do
+    before :each do
+      @product = shop_products(:crusty_bread)
+    end
+    
+    context 'handle' do
+      context 'slug' do
+        it 'should generate on validation' do
+          @product.page.slug = 'delicious_ _:_;_=_+_._~_bread'
+          @product.valid?
+          @product.page.slug.should === 'delicious_______________bread'
+        end
+      end
+      context 'breadcrumb' do
+        context 'has not been set' do
+          it 'should generate from the slug on validation' do
+            @product.page.slug = 'delicious_ _:_;_=_+_._~_bread'
+            @product.page.breadcrumb = nil
+            @product.valid?
+            @product.page.breadcrumb.should === 'delicious_______________bread'          
+          end
+        end
+        context 'has been set' do
+          it 'should generate on validation' do
+            @product.page.breadcrumb = 'delicious_ _:_;_=_+_._~_bread'
+            @product.valid?
+            @product.page.breadcrumb.should === 'delicious_______________bread'
+          end        
+        end
+      end
+    end
+  end
+  
+  describe '#attrs' do
+    it 'should return attribute set' do
+      ShopProduct.attrs.should === [ :id, :price, :page_id, :created_at, :updated_at ]
+    end
+  end
+  
+  describe '#methds' do
+    it 'should return method set' do
+      ShopProduct.methds.should === [ :category_id, :name, :description, :handle, :url, :customer_ids, :image_ids, :created_at, :updated_at ]
+    end
+  end
+  
+  describe '#params' do
+    it 'should return parameter set' do
+      ShopProduct.params.should === { :only => ShopProduct.attrs, :methods => ShopProduct.methds }
+    end
   end
   
 end

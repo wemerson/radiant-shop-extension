@@ -1,0 +1,7 @@
+%ul
+  - render_region :foot do |foot|
+    - foot.add do
+      %li= link_to image('plus') + " " + t("add_package"), new_admin_shop_package_path
+      
+:javascript
+  if(typeof(ROUTES) === 'undefined') ROUTES = new Array();

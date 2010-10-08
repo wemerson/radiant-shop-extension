@@ -2,22 +2,21 @@ module Shop
   module Tags
     module Product
       include Radiant::Taggable
-      include ActionView::Helpers::NumberHelper
-      
-      desc %{ expands if there are products within the context }
-      tag 'shop:if_products' do |tag|
-        tag.expand unless Helpers.current_products(tag).empty?
-      end
-      
-      desc %{ expands if there are no products within the context }
-      tag 'shop:unless_products' do |tag|
-        tag.expand if Helpers.current_products(tag).empty?
-      end
       
       tag 'shop:products' do |tag|
         tag.locals.shop_products = Helpers.current_products(tag)
         
         tag.expand
+      end
+      
+      desc %{ expands if there are products within the context }
+      tag 'shop:products:if_products' do |tag|
+        tag.expand unless tag.locals.shop_products.empty?
+      end
+      
+      desc %{ expands if there are no products within the context }
+      tag 'shop:products:unless_products' do |tag|
+        tag.expand if tag.locals.shop_products.empty?
       end
       
       desc %{ iterates through each product within the scope }
@@ -70,11 +69,7 @@ module Shop
       tag 'shop:product:price' do |tag|
         attr = tag.attr.symbolize_keys
         
-        number_to_currency(tag.locals.shop_product.price, 
-          :precision  =>(attr[:precision] || Radiant::Config['shop.price_precision']).to_i,
-          :unit       => attr[:unit]      || Radiant::Config['shop.price_unit'],
-          :separator  => attr[:separator] || Radiant::Config['shop.price_seperator'],
-          :delimiter  => attr[:delimiter] || Radiant::Config['shop.price_delimiter'])
+        Helpers.currency(tag.locals.shop_product.price,attr)
       end
       
       tag 'shop:product:images' do |tag|
