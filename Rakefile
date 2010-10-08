@@ -8,7 +8,7 @@ begin
     gem.homepage = "http://github.com/squaretalent/radiant-shop-extension"
     gem.authors = ["Dirk Kelly", "John Barker"]
     gem.add_dependency 'radiant',                     '>= 0.9.1'
-    gem.add_dependency 'radiant-forms-extension',     '>= 3.1.0'
+    gem.add_dependency 'radiant-forms-extension',     '>= 3.1.1'
     gem.add_dependency 'radiant-images-extension',    '>= 0.2.0'
     gem.add_dependency 'radiant-layouts-extension',   '>= 0.9.1'
     gem.add_dependency 'radiant-settings-extension',  '>= 1.1.1'
