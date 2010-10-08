@@ -7,7 +7,7 @@ class ShopPacking < ActiveRecord::Base
   
   before_validation :set_quantity
   
-  validates_uniqueness_of :shop_product_id, :scope => :shop_package_id
+  validates_uniqueness_of :product_id, :scope => :package_id
   
   def value
     self.product.price.to_f * self.quantity

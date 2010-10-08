@@ -12,7 +12,7 @@ class ShopProduct < ActiveRecord::Base
   has_many    :images,      :class_name => 'Image',                 :through      => :attachments,  :uniq      => true
   has_many    :packings,    :class_name => 'ShopPacking',           :foreign_key  => :product_id
   has_many    :packages,    :class_name => 'ShopPackage',           :foreign_key  => :package_id,   :through   => :packings, :source => :package
-  has_many    :related,     :class_name => 'ShopProduct',           :through      => :packings,     :source    => :item,     :uniq => true
+  has_many    :related,     :class_name => 'ShopProduct',           :through      => :packings,     :source    => :product,  :uniq => true
   has_many    :variants,    :class_name => 'ShopProductVariant',    :foreign_key  => :product_id,   :dependent => :destroy
   
   before_validation             :assign_slug, :assign_breadcrumb
@@ -23,31 +23,43 @@ class ShopProduct < ActiveRecord::Base
   accepts_nested_attributes_for :page
   accepts_nested_attributes_for :variants
   
-  def category
-    page.parent.shop_category
-  end
+  # Returns the title of the product's page
+  def name; page.title; end
   
-  def description
-    page.parts.first.content
-  end
+  # Returns the url of the page formatted as an sku
+  def sku; self.class.to_sku(url) end
   
-  def name
-    page.title
-  end
+  # Returns category through the pages parent
+  def category; page.parent.shop_category; end
   
-  def sku
-    ShopProduct.to_slug(page.url)
-  end
+  # Returns id of category
+  def category_id; category.id; end
   
-  def slug
-    warn "[DEPRECATION] `slug` is deprecated.  Please use `url` instead."
-    page.url
-  end
+  # Returns the content of the product's page's description part
+  def description; page.parts.find_by_name('description').content rescue nil; end
   
-  def url
-    page.url
-  end
+  # Returns the url of the page
+  def url; page.url; end
   
+  # Returns the customers of this product
+  def customers; line_items.map(&:customer).flatten.compact.uniq; end
+  
+  # Returns an array of customer ids
+  def customer_ids; customers.map(&:id); end
+  
+  # Returns an array of image ids
+  def image_ids; images.map(&:id); end
+  
+  # Returns images not attached to product
+  def available_images; Image.all - images; end
+  
+  # Returns the page slug
+  def slug; page.slug; end
+  
+  # Overloads the base to_json to return what we want
+  def to_json(*attrs); super self.class.params; end
+  
+  # Applies an array of variant names as product_variants
   def apply_variant_template(variant)
     result = true
     variant.options.each do |variant|
@@ -56,45 +68,58 @@ class ShopProduct < ActiveRecord::Base
     result
   end
   
-  def customers
-    line_items.map(&:customer).flatten.compact.uniq
-  end
-  
-  def available_images
-    Image.all - images
-  end
-  
   class << self
     
+    # Sorts products within a category
+    def sort(category_id, *product_ids)
+      parent_id = ShopCategory.find(category_id).page_id
+      
+      product_ids.each_with_index do |id, index|
+        ShopProduct.find(id).page.update_attributes!(
+          :position  => index+1,
+          :parent_id => parent_id
+        )
+      end
+    end
+    
+    # Returns attributes attached to the product
     def attrs
-      [ :id, :name, :price, :sku, :description, :created_at, :updated_at ]
+      [ :id, :price, :page_id, :created_at, :updated_at ]
     end
     
+    # Returns methods with usefuly information
+    def methds
+      [ :category_id, :name, :description, :handle, :url, :customer_ids, :image_ids, :created_at, :updated_at ]
+    end
+    
+    # Returns a custom hash of attributes on the product
     def params
-      {
-        :include  => { :category => { :only => ShopCategory.attrs } },
-        :only     => ShopProduct.attrs
-      }
+      { :only  => self.attrs, :methods => self.methds }
     end
     
-  end
-  
-  class << self
-    
-    def to_slug(name)
-      name.downcase.strip.gsub(/^\/#{Radiant::Config['shop.root_page_slug']}/,'').gsub(/^(\/*)(.*)(\/)$/,'\2').gsub(/[\s\.:;=+~]+/,'_').gsub(/\//,'-')
+    # Converts a url to a pretty sku and removes the shop prefix /shop/page/category/product page-category-product
+    def to_sku(url)
+      if url.present?
+        url.downcase.strip.gsub(/^\/#{Radiant::Config['shop.root_page_slug']}/,'').gsub(/^(\/*)(.*)(\/)$/,'\2').gsub(/[\s\.:;=+~]+/,'_').gsub(/\//,'-')
+      end
     end
     
   end
   
   protected
   
+  # Assigns a slug to a page if its not set
   def assign_slug
-    self.page.slug = ShopProduct.to_slug(page.title) unless page.slug.present?
+    if page.present?
+      self.page.slug = ShopProduct.to_sku(page.slug.present? ? page.slug : page.title)
+    end
   end
   
+  # Assigns a breadcrumb to the page if its not set
   def assign_breadcrumb
-    self.page.breadcrumb = page.slug
+    if page.present?
+      self.page.breadcrumb = ShopProduct.to_sku(page.breadcrumb.present? ? page.breadcrumb : page.slug)
+    end
   end
   
 end

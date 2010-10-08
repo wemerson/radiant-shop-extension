@@ -15,6 +15,7 @@ class ShopCategoriesDataset < Dataset::Base
       create_record :page, category,
         :title      => category.to_s,
         :slug       => category.to_s,
+        :breadcrumb => category.to_s,
         :parent     => Page.first,
         :class_name => 'ShopCategoryPage',
         :layout     => layouts(:category)

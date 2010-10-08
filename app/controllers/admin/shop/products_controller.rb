@@ -24,7 +24,7 @@ class Admin::Shop::ProductsController < Admin::ResourceController
     respond_to do |format|
       format.html { render :index }
       format.js   { render :partial => '/admin/shop/products/index/product', :collection => @shop_products }
-      format.json { render :json    => @shop_products.to_json(ShopProduct.params) }
+      format.json { render :json    => @shop_products.to_json }
     end
   end
   
@@ -34,25 +34,17 @@ class Admin::Shop::ProductsController < Admin::ResourceController
   #----------------------------------------------------------------------------
   def sort
     notice = 'Products successfully sorted.'
-    error = 'Could not sort Products.'
+    error  = 'Could not sort Products.'
     
     begin
-      @shop_category = ShopCategory.find(params[:category_id])
-      @shop_products = CGI::parse(params[:products])["category_#{params[:category_id]}_products[]"]
-      
-      @shop_products.each_with_index do |id, index|
-        ShopProduct.find(id).page.update_attributes!(
-          :position  => index+1,
-          :parent_id => @shop_category.page.id
-        )
-      end
+      ShopProduct.sort(params[:category_id], CGI::parse(params[:products])["category_#{params[:category_id]}_products[]"])
       
       respond_to do |format|
         format.html {
           redirect_to admin_shop_products_path
         }
-          format.js   { render  :text => notice, :status => :ok }
-          format.json { render  :json => { :notice => notice }, :status => :ok }
+        format.js   { render  :text => notice, :status => :ok }
+        format.json { render  :json => { :notice => notice }, :status => :ok }
       end
     rescue
       respond_to do |format|
@@ -84,8 +76,8 @@ class Admin::Shop::ProductsController < Admin::ResourceController
           redirect_to edit_admin_shop_product_path(@shop_product) if params[:continue]
           redirect_to admin_shop_products_path unless params[:continue]
         }
-        format.js   { render  :partial  => '/admin/shop/products/index/product', :locals => { :excerpt => @shop_product } }
-        format.json { render  :json     => @shop_product.to_json(ShopProduct.params) }
+        format.js   { render :partial => '/admin/shop/products/index/product', :locals => { :excerpt => @shop_product } }
+        format.json { render :json    => @shop_product.to_json }
       end
     rescue
       respond_to do |format|
@@ -93,8 +85,8 @@ class Admin::Shop::ProductsController < Admin::ResourceController
           flash[:error] = error
           render :new
         }
-        format.js   { render  :text => error, :status => :unprocessable_entity }
-        format.json { render  :json => { :error => error }, :status => :unprocessable_entity }
+        format.js   { render :text => error, :status => :unprocessable_entity }
+        format.json { render :json => { :error => error }, :status => :unprocessable_entity }
       end
     end
   end
@@ -117,7 +109,7 @@ class Admin::Shop::ProductsController < Admin::ResourceController
           redirect_to admin_shop_products_path unless params[:continue]
         }
         format.js   { render  :partial  => '/admin/shop/products/index/product', :locals => { :product => @shop_product } }
-        format.json { render  :json     => @shop_product.to_json(ShopProduct.params) }
+        format.json { render  :json     => @shop_product.to_json }
       end
     rescue
       respond_to do |format|
@@ -138,27 +130,15 @@ class Admin::Shop::ProductsController < Admin::ResourceController
   #----------------------------------------------------------------------------
   def destroy
     notice = 'Product deleted successfully.'
-    error = 'Could not delete Product.'
     
-    begin
-      @shop_product.destroy
-      
-      respond_to do |format|
-        format.html {
-          redirect_to admin_shop_products_path 
-        }
-        format.js   { render  :text => notice, :status => :ok }
-        format.json { render  :json => { :notice => notice }, :status => :ok }
-      end
-    rescue
-      respond_to do |format|
-        format.html {
-          flash[:error] = error
-          render :remove
-        }
-        format.js   { render  :text => error, :status => :unprocessable_entity }
-        format.json { render  :json => { :error => error }, :status => :unprocessable_entity }
-      end
+    @shop_product.destroy
+    
+    respond_to do |format|
+      format.html {
+        redirect_to admin_shop_products_path 
+      }
+      format.js   { render  :text => notice, :status => :ok }
+      format.json { render  :json => { :notice => notice }, :status => :ok }
     end
   end
   

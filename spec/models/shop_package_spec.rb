@@ -55,7 +55,7 @@ describe ShopPackage do
     end
     
     it 'should generate a valid sku on validation' do
-      @package = ShopProduct.new({ :name => 'dark_ _:_;_=_+_._~_toasted' })
+      @package = ShopPackage.new({ :name => "dark_ _:_;_=_+_._~_toasted" })
       
       @package.valid?     === true
       @package.sku.should === 'dark_______________toasted'

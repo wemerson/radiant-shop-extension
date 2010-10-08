@@ -35,7 +35,7 @@ class ShopExtension < Radiant::Extension
     # end
     
     # Tags
-    Page.send :include, Shop::Tags::Core, Shop::Tags::Address, Shop::Tags::Card, Shop::Tags::Cart, Shop::Tags::Category, Shop::Tags::Item, Shop::Tags::Package, Shop::Tags::Product, Shop::Tags::Responses, Shop::Tags::Variant
+    Page.send :include, Shop::Tags::Core, Shop::Tags::Address, Shop::Tags::Card, Shop::Tags::Cart, Shop::Tags::Category, Shop::Tags::Item, Shop::Tags::Package, Shop::Tags::Product, Shop::Tags::ProductVariant, Shop::Tags::Responses
     
     # Model Includes
     Page.send :include, Shop::Models::Page

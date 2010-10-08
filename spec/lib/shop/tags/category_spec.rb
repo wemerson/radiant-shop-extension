@@ -69,35 +69,20 @@ describe Shop::Tags::Category do
     before :each do
       mock(Shop::Tags::Helpers).current_category(anything) { @category }
     end
-    context 'generated page' do
+    context 'this categories page' do
       it 'should expand' do
-        page = pages(:home)
-        stub(page).slug { @category.handle }
-        
         tag = %{<r:shop:category:if_current>success</r:shop:category:if_current>}
         exp =  %{success}
         
-        page.should render(tag).as(exp)
+        @category.page.should render(tag).as(exp)
       end
     end
-    context 'custom page' do
+    context 'categories product page' do
       it 'should expand' do
-        @page.shop_category_id = @category.id
-        
         tag = %{<r:shop:category:if_current>success</r:shop:category:if_current>}
         exp =  %{success}
         
-        @page.should render(tag).as(exp)
-      end
-    end
-    context 'product page' do
-      it 'should expand' do
-        @page.shop_product_id = @category.products.first.id
-        
-        tag = %{<r:shop:product><r:category:if_current>success</r:category:if_current></r:shop:product>}
-        exp =  %{success}
-        
-        @page.should render(tag).as(exp)
+        @category.products.first.page.should render(tag).as(exp)
       end
     end
     context 'failure' do
@@ -138,17 +123,13 @@ describe Shop::Tags::Category do
       
       @page.should render(tag).as(exp)
     end
-  end
-  
-  describe '<r:description />' do
-    it 'should render a textile filtered result' do
-      mock(Shop::Tags::Helpers).current_category(anything) { @category }
-      @category.description = '*bold*'
-      
-      tag = %{<r:shop:category:description />}
-      exp = %{<p><strong>bold</strong></p>}
-      
-      @page.should render(tag).as(exp)
+    describe '<r:description />' do
+      it 'should render a textile filtered result' do
+        tag = %{<r:shop:category:description />}
+        exp = TextileFilter.filter(@category.description)
+
+        @page.should render(tag).as(exp)
+      end
     end
   end
   

@@ -20,7 +20,7 @@ class ShopProductVariant < ActiveRecord::Base
   
   # Returns a mixed sku of product and variant name
   def sku
-    %{#{product.sku}-#{ShopProduct.to_sku_or_handle(name)}}
+    %{#{product.sku}-#{ShopProduct.to_sku(name)}}
   end
   
   # Returns slug of the product

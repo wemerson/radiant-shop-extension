@@ -2,7 +2,7 @@ require 'spec/spec_helper'
 
 describe Shop::Tags::Helpers do
   
-  dataset :pages, :shop_products, :shop_orders, :shop_addresses, :shop_line_items
+  dataset :pages, :shop_products, :shop_product_variants, :shop_orders, :shop_addresses, :shop_line_items
   
   before :all do
     @page = pages(:home)
@@ -26,6 +26,16 @@ describe Shop::Tags::Helpers do
     before :each do
       @category   = shop_categories(:bread)
     end
+
+    context 'parent sent' do
+      before :each do
+        @tag.attr = { 'parent' => @category.page.parent.slug }
+      end
+      it 'should return the matching categories' do
+        result = Shop::Tags::Helpers.current_categories(@tag)
+        result.should == @category.page.parent.children.map(&:shop_category)
+      end
+    end
     
     context 'categories previously set' do
       before :each do
@@ -37,33 +47,10 @@ describe Shop::Tags::Helpers do
       end
     end
     
-    context 'search query sent to page' do
-      before :each do
-        @tag.locals.page.params = { 'query' => @category.handle }
-      end
-      it 'should return matching categories' do
-        result = Shop::Tags::Helpers.current_categories(@tag)
-        result.should == [@category]
-      end
-    end
-    
-    context 'key and value sent' do
-      before :each do
-        @tag.attr = { 'key' => 'handle', 'value' => @category.handle }
-      end
-      it 'should return the matching categories' do
-        result = Shop::Tags::Helpers.current_categories(@tag)
-        result.should == [@category]
-      end
-    end
-    
     context 'nothing additional sent' do
-      before :each do
-        mock(ShopCategory).all { [@category] }
-      end
       it 'should return all categories in the database' do
         result = Shop::Tags::Helpers.current_categories(@tag)
-        result.should == [@category]
+        result.should == ShopCategory.all
       end
     end
   end
@@ -72,6 +59,26 @@ describe Shop::Tags::Helpers do
     before :each do
       @category = shop_categories(:bread)
       @product  = shop_categories(:bread).products.first
+    end
+
+    context 'name sent' do
+      before :each do
+        @tag.attr = { 'name' => @category.name }
+      end
+      it 'should return the matching category' do
+        result = Shop::Tags::Helpers.current_category(@tag)
+        result.should == @category
+      end
+    end
+    
+    context 'handle sent' do
+      before :each do
+        @tag.attr = { 'handle' => @category.slug }
+      end
+      it 'should return the matching category' do
+        result = Shop::Tags::Helpers.current_category(@tag)
+        result.should == @category
+      end
     end
     
     context 'category previously set' do
@@ -93,32 +100,12 @@ describe Shop::Tags::Helpers do
         result.should == @category
       end
     end
-
-    context 'key and value sent' do
-      before :each do
-        @tag.attr = { 'key' => 'handle', 'value' => @category.handle }
-      end
-      it 'should return the matching categories' do
-        result = Shop::Tags::Helpers.current_category(@tag)
-        result.should == @category
-      end
-    end
     
     context 'the current page has a product attached to it' do
       before :each do
         @tag.locals.page.shop_product = @product
       end
       it 'should return the category of the product attached to the page' do
-        result = Shop::Tags::Helpers.current_category(@tag)
-        result.should == @category
-      end
-    end
-    
-    context 'the current page slug matches the category handle' do
-      before :each do
-        @tag.locals.page.slug = @category.handle
-      end
-      it 'should return the category with that handle' do
         result = Shop::Tags::Helpers.current_category(@tag)
         result.should == @category
       end
@@ -148,7 +135,17 @@ describe Shop::Tags::Helpers do
       @product  = shop_products(:soft_bread)
       @category = shop_categories(:bread)
     end
-
+    
+    context 'category sent' do
+      before :each do
+        @tag.attr = { 'category' => @product.category.page.slug }
+      end
+      it 'should return the matching products' do
+        result = Shop::Tags::Helpers.current_products(@tag)
+        result.should == @product.page.parent.children.map(&:shop_product)
+      end
+    end
+    
     context 'products previously set' do
       before :each do
         @tag.locals.shop_products = [ @product ]
@@ -179,26 +176,6 @@ describe Shop::Tags::Helpers do
       end
     end
     
-    context 'search query sent to page' do
-      before :each do
-        @tag.locals.page.params = { 'query' => @product.sku }
-      end
-      it 'should return matching products' do
-        result = Shop::Tags::Helpers.current_products(@tag)
-        result.should == [@product]
-      end
-    end
-    
-    context 'key and value sent' do
-      before :each do
-        @tag.attr = { 'key' => 'sku', 'value' => @product.sku }
-      end
-      it 'should return the matching products' do
-        result = Shop::Tags::Helpers.current_products(@tag)
-        result.should == [@product]
-      end
-    end
-    
     context 'nothing additional sent' do
       before :each do
         mock(ShopProduct).all { [@product] }
@@ -214,6 +191,30 @@ describe Shop::Tags::Helpers do
     before :each do
       @product    = shop_products(:soft_bread)
       @line_item  = shop_line_items(:one)
+    end
+    
+    context 'name sent' do
+      before :each do
+        @tag.attr = { 'name' => @product.name }
+      end
+      it 'should return the matching product' do
+        result = Shop::Tags::Helpers.current_product(@tag)
+        result.should == @product
+      end
+    end
+    
+    context 'sku sent' do
+      before :each do
+        @tag.attr = { 'sku' => @product.slug }
+      end
+      it 'should return the matching product' do
+        result = Shop::Tags::Helpers.current_product(@tag)
+        result.should == @product
+      end
+    end
+    
+    context 'sku not unique' do
+      it 'should use the full slug not the single product url'
     end
     
     context 'product previously set' do
@@ -245,16 +246,6 @@ describe Shop::Tags::Helpers do
           result = Shop::Tags::Helpers.current_product(@tag)
           result.should be_nil
         end
-      end
-    end
-
-    context 'key and value sent' do
-      before :each do
-        @tag.attr = { 'key' => 'sku', 'value' => @product.sku }
-      end
-      it 'should return the matching categories' do
-        result = Shop::Tags::Helpers.current_product(@tag)
-        result.should == @product
       end
     end
     
@@ -418,6 +409,50 @@ describe Shop::Tags::Helpers do
     context 'no order exists' do
       it 'should return nil' do
         result = Shop::Tags::Helpers.current_address(@tag)
+        result.should be_nil
+      end
+    end
+  end
+  
+  describe '#current_product_variants' do
+    before :each do
+      @product = shop_products(:crusty_bread)
+    end
+    
+    context 'existing product variant' do
+      it 'should return that existing line item' do
+        @tag.locals.shop_product = @product
+        
+        result = Shop::Tags::Helpers.current_product_variants(@tag)
+        result.should == @product.variants
+      end
+    end
+    
+    context 'nothing sent or available' do
+      it 'should return nil' do
+        result = Shop::Tags::Helpers.current_product_variants(@tag)
+        result.should be_nil
+      end
+    end
+  end
+  
+  describe '#current_product_variant' do
+    before :each do
+      @variant = shop_product_variants(:mouldy_crusty_bread)
+    end
+    
+    context 'existing product variant' do
+      it 'should return that existing variant' do
+        @tag.locals.shop_product_variant = @variant
+        
+        result = Shop::Tags::Helpers.current_product_variant(@tag)
+        result.should == @variant
+      end
+    end
+    
+    context 'nothing sent or available' do
+      it 'should return nil' do
+        result = Shop::Tags::Helpers.current_product_variant(@tag)
         result.should be_nil
       end
     end

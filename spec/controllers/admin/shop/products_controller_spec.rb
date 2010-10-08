@@ -2,71 +2,45 @@ require 'spec/spec_helper'
 
 describe Admin::Shop::ProductsController do
   
-  dataset :users
+  dataset :users, :shop_categories, :shop_products
     
   before(:each) do
     login_as  :admin
     
-    @shop_category = ShopCategory.new
-    @shop_categories = [ @shop_category ]
-    
-    @shop_product = ShopProduct.new
-    @shop_products = [ @shop_product ]
-    
-    stub(@shop_category).id { 1 }
-    stub(@shop_product).id { 1 }
-    stub(@shop_product).products { @shop_products }
+    @product  = shop_products(:crusty_bread)
+    @products = @product.category.products
   end
   
   describe '#index' do
-    before :each do
-      mock(ShopCategory).all { @shop_categories }
-      mock(ShopProduct).find(:all) { @shop_products } # Resource Controller
-      mock(ShopProduct).search('search') { @shop_products }
-    end
-    
     context 'html' do
-      before :each do
-        get :index, :search => 'search'
-      end
-      
       it 'should render index' do
+        get :index
+        
         response.should render_template(:index)
       end
       
-      it 'should assign the shop_products and shop_categories instance variables' do
-        assigns(:shop_products).should === @shop_products
-        assigns(:shop_categories).should === @shop_categories
+      it 'should also assign shop_categories' do
+        get :index
+        
+        assigns(:shop_categories).should == ShopCategory.all
       end
     end
     
     context 'js' do
-      before :each do
-        get :index, :search => 'search', :format => 'js'
-      end
-      
       it 'should render the collection partial and success status' do
+        get :index, :format => 'js'
+        
         response.should be_success
         response.should render_template('/admin/shop/products/index/_product')
-      end
-      
-      it 'should assign the shop_products instance variable' do
-        assigns(:shop_products).should === @shop_products
       end
     end
     
     context 'json' do
-      before :each do
-        get :index, :search => 'search', :format => 'json'
-      end
-      
       it 'should return a json object of the array and success status' do
+        get :index, :format => 'json'
+        
         response.should be_success
-        response.body.should === @shop_products.to_json(ShopProduct.params)
-      end
-      
-      it 'should assign the shop_product_images instance variable' do
-        assigns(:shop_products).should === @shop_products
+        response.body.should === assigns(:shop_products).to_json
       end
     end
     
@@ -74,16 +48,18 @@ describe Admin::Shop::ProductsController do
   
   describe '#sort' do
     before :each do
-      @products = [
-        'category_1_products[]=2',
-        'category_1_products[]=1'
+      @params = [
+        "category_#{@product.category.id}_products[]=2",
+        "category_#{@product.category.id}_products[]=1",
+        "category_#{@product.category.id}_products[]=0"
       ].join('&')
     end
     
     context 'products are not passed' do
       context 'html' do
         it 'should assign an error and redirect to admin_shop_products_path path' do
-          put :sort
+          put :sort, :category_id => @product.category.id
+          
           flash.now[:error].should_not be_nil
           response.should redirect_to(admin_shop_products_path)
         end
@@ -91,7 +67,8 @@ describe Admin::Shop::ProductsController do
       
       context 'js' do
         it 'should return an error string and failure status' do
-          put :sort, :format => 'js'
+          put :sort, :category_id => @product.category.id, :format => 'js'
+          
           response.should_not be_success
           response.body.should === 'Could not sort Products.'
         end
@@ -99,7 +76,8 @@ describe Admin::Shop::ProductsController do
       
       context 'json' do
         it 'should return a json error object and failure status' do
-          put :sort, :format => 'json'
+          put :sort, :category_id => @product.category.id, :format => 'json'
+          
           response.should_not be_success
           JSON.parse(response.body)['error'].should === 'Could not sort Products.'
         end
@@ -107,17 +85,14 @@ describe Admin::Shop::ProductsController do
     end
     
     context 'products are passed' do
-      before :each do
-        mock(ShopCategory).find('1') { @shop_category }
-      end
       context 'could not sort' do
         before :each do
-          mock(ShopProduct).find('2').stub!.update_attributes!(anything) { raise 'No Sorting' }
+          mock(ShopProduct).sort(@product.category.id.to_s, anything) { raise ActiveRecord::RecordNotFound }
         end
         
         context 'html' do
           it 'should assign an error and redirect to admin_shop_products_path path' do
-            put :sort, :products => @products, :category_id => 1
+            put :sort, :products => @params, :category_id => @product.category.id
             flash.now[:error].should === 'Could not sort Products.'
             response.should redirect_to(admin_shop_products_path)
           end
@@ -125,7 +100,7 @@ describe Admin::Shop::ProductsController do
         
         context 'js' do
           it 'should return an error string and failure status' do
-            put :sort, :products => @products, :category_id => 1, :format => 'js'
+            put :sort, :products => @params, :category_id => @product.category.id, :format => 'js'
             response.should_not be_success
             response.body.should === 'Could not sort Products.'
           end
@@ -133,7 +108,7 @@ describe Admin::Shop::ProductsController do
         
         context 'json' do
           it 'should return a json error object and failure status' do
-            put :sort, :products => @products, :category_id => 1, :format => 'json'
+            put :sort, :products => @params, :category_id => @product.category.id, :format => 'json'
             response.should_not be_success
             JSON.parse(response.body)['error'].should === 'Could not sort Products.'
           end
@@ -142,19 +117,20 @@ describe Admin::Shop::ProductsController do
       
       context 'successfully sorted' do
         before :each do
-          mock(ShopProduct).find(anything).times(2).stub!.update_attributes!(anything) { true }
+          mock(ShopProduct).sort(@product.category.id.to_s, anything) { true }
         end
         
         context 'html' do
           it 'should redirect to admin_shop_products_path path' do
-            put :sort, :products => @products, :category_id => 1
+            put :sort, :products => @params, :category_id => @product.category.id
             response.should redirect_to(admin_shop_products_path)
           end
         end
         
         context 'js' do
           it 'should return success string and success status' do
-            put :sort, :products => @products, :category_id => 1, :format => 'js'
+            put :sort, :products => @params, :category_id => @product.category.id, :format => 'js'
+            
             response.should be_success
             response.body.should === 'Products successfully sorted.'
           end
@@ -162,7 +138,8 @@ describe Admin::Shop::ProductsController do
         
         context 'json' do
           it 'should return a json success object and success status' do
-            put :sort, :products => @products, :category_id => 1, :format => 'json'
+            put :sort, :products => @params, :category_id => @product.category.id, :format => 'json'
+            
             response.should be_success
             JSON.parse(response.body)['notice'].should === 'Products successfully sorted.'
           end
@@ -172,12 +149,7 @@ describe Admin::Shop::ProductsController do
   end
   
   describe '#create' do
-    context 'product could not be created' do
-      before :each do
-        mock(ShopProduct).new()   { @shop_product }
-        stub(@shop_product).save! { raise ActiveRecord::RecordNotSaved }
-      end
-      
+    context 'product could not be created' do      
       context 'html' do
         it 'should assign a flash error and render new' do
           post :create, :shop_product => {}
@@ -208,57 +180,61 @@ describe Admin::Shop::ProductsController do
 
     context 'product successfully created' do
       before :each do
-        mock(ShopProduct).new()   { @shop_product }
-        stub(@shop_product).save! { true }
+        @params = {
+          :page_attributes => { 
+            :title     => 'name', 
+            :parent_id => @product.category.page.id,
+            :parts_attributes => [{
+              :name    => 'description',
+              :content => '*name*' 
+            }]
+          }, 
+          :price => 11.11
+        }
       end
-      
       context 'html' do
         context 'not continue' do
           it 'should redirect to edit_shop_product path' do
-            post :create, :shop_product => {}
+            post :create, :shop_product => @params
+
             response.should redirect_to(admin_shop_products_path)
           end
         end
         context 'continue' do
           it 'should redirect to edit_shop_product path' do
-            post :create, :shop_product => {}, :continue => true
-            response.should redirect_to(edit_admin_shop_product_path(@shop_product))
+            post :create, :shop_product => @params, :continue => true
+            
+            response.should redirect_to(edit_admin_shop_product_path(assigns(:shop_product)))
           end
         end
       end
       
       context 'js' do
         it 'should render the collection partial and success status' do
-          post :create, :shop_product => {}, :format => 'js'
+          post :create, :shop_product => @params, :format => 'js'
+          
           response.should be_success
-          assigns(:shop_product).should === @shop_product
           response.should render_template('/admin/shop/products/index/_product')
         end
       end
       
       context 'json' do
         it 'should render the json object and redirect to json show' do
-          post :create ,:shop_product => {}, :format => 'json'
+          post :create ,:shop_product => @params, :format => 'json'
+          
           response.should be_success
-          response.body.should === @shop_product.to_json(ShopProduct.params)
+          response.body.should === assigns(:shop_product).to_json
         end
       end
     end
   end
   
   describe '#update' do
-    before :each do
-      mock(ShopProduct).find('1') { @shop_product }
-    end
-    
     context 'could not update' do
-      before :each do
-        stub(@shop_product).update_attributes!({}) { raise ActiveRecord::RecordNotSaved }
-      end
-      
       context 'html' do
         it 'should assign a flash error and render edit' do
-          put :update, :id => @shop_product.id, :shop_product => {}        
+          put :update, :id => @product.id, :shop_product => { :title => 'failure' }
+          
           response.should render_template(:edit)
           flash.now[:error].should === 'Could not update Product.'
         end
@@ -266,7 +242,7 @@ describe Admin::Shop::ProductsController do
       
       context 'js' do
         it 'should render the error and failure status' do
-          put :update, :id => @shop_product.id, :shop_product => {}, :format => 'js'
+          put :update, :id => @product.id, :shop_product => { :title => 'failure' }, :format => 'js'
           response.should_not be_success
           response.body.should === 'Could not update Product.'
         end
@@ -274,36 +250,32 @@ describe Admin::Shop::ProductsController do
       
       context 'json' do
         it 'should assign an error json object and failure status' do
-          put :update, :id => @shop_product.id, :shop_product => {}, :format => 'json'
+          put :update, :id => @product.id, :shop_product => { :title => 'failure' }, :format => 'json'
           response.should_not be_success
           JSON.parse(response.body)['error'].should === 'Could not update Product.'
         end
       end
     end
     
-    context 'successfully updated' do
-      before :each do
-        stub(@shop_product).update_attributes!({}) { true }
-      end
-      
+    context 'successfully updated' do      
       context 'html' do
         context 'not continue' do
           it 'should redirect to edit_shop_product path' do
-            put :update, :id => @shop_product.id, :shop_product => {}
+            put :update, :id => @product.id, :shop_product => { :page_attributes => { :title => 'success', :parent_id => @product.category.page.id } }
             response.should redirect_to(admin_shop_products_path)
           end
         end
         context 'continue' do
           it 'should redirect to edit_shop_product path' do
-            put :update, :id => @shop_product.id, :shop_product => {}, :continue => true
-            response.should redirect_to(edit_admin_shop_product_path(@shop_product))
+            put :update, :id => @product.id, :shop_product => { :page_attributes => { :title => 'success', :parent_id => @product.category.page.id } }, :continue => true
+            response.should redirect_to(edit_admin_shop_product_path(assigns(:shop_product)))
           end
         end
       end
       
       context 'js' do
         it 'should render the partial and success status' do
-          put :update, :id => @shop_product.id, :shop_product => {}, :format => 'js'
+          put :update, :id => @product.id, :shop_product => { :page_attributes => { :title => 'success', :parent_id => @product.category.page.id } }, :format => 'js'
           response.should be_success
           response.should render_template('/admin/shop/products/index/_product')
         end
@@ -311,65 +283,30 @@ describe Admin::Shop::ProductsController do
       
       context 'json' do
         it 'should assign the json object and success status' do
-          put :update, :id => @shop_product.id, :shop_product => {}, :format => 'json'
+          put :update, :id => @product.id, :shop_product => { :page_attributes => { :title => 'success', :parent_id => @product.category.page.id } }, :format => 'json'
+          
           response.should be_success
-          response.body.should === @shop_product.to_json(ShopProduct.params)
+          response.body.should === assigns(:shop_product).to_json(ShopProduct.params)
         end
       end
     end
   end
 
   describe '#destroy' do
-    before :each do
-      mock(ShopProduct).find('1') { @shop_product }
-    end
-    
-    context 'product not destroyed' do
-      before :each do
-        stub(@shop_product).destroy { raise ActiveRecord::RecordNotFound }
-      end
-      
-      context 'html' do
-        it 'should assign a flash error and render remove' do
-          delete :destroy, :id => 1
-          flash.now[:error].should === 'Could not delete Product.'
-          response.should render_template(:remove)
-        end
-      end
-      
-      context 'js' do
-        it 'should render an error and failure status' do
-          delete :destroy, :id => 1, :format => 'js'
-          response.body.should === 'Could not delete Product.'
-          response.should_not be_success
-        end
-      end
-      
-      context 'json' do
-        it 'should render an error and failure status' do
-          delete :destroy, :id => 1, :format => 'json'
-          JSON.parse(response.body)['error'].should === 'Could not delete Product.'
-          response.should_not be_success
-        end
-      end
-      
-    end
-    
     context 'product successfully destroyed' do
-      before :each do
-        stub(@shop_product).destroy { true }
-      end
       
       context 'html' do
         it 'should redirect to shop_products path' do
-          delete :destroy, :id => 1
+          delete :destroy, :id => @product.id
+          
           response.should redirect_to(admin_shop_products_path)
         end
       end
       
       context 'js' do
         it 'should render success message and success status' do
-          delete :destroy, :id => 1, :format => 'js'
+          delete :destroy, :id => @product.id, :format => 'js'
+          
           response.body.should === 'Product deleted successfully.'
           response.should be_success
         end
@@ -377,7 +314,8 @@ describe Admin::Shop::ProductsController do
       
       context 'json' do
         it 'should return a success json object and success status' do
-          delete :destroy, :id => 1, :format => 'json'
+          delete :destroy, :id => @product.id, :format => 'json'
+          
           JSON.parse(response.body)['notice'].should === 'Product deleted successfully.'
           response.should be_success
         end

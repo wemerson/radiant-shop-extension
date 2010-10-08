@@ -6,9 +6,9 @@ describe Shop::Tags::Product do
   
   it 'should describe these tags' do
     Shop::Tags::Product.tags.sort.should == [
-      'shop:if_products',
-      'shop:unless_products',
       'shop:products',
+      'shop:products:if_products',
+      'shop:products:unless_products',      
       'shop:products:each',
       'shop:product',
       'shop:product:id',
@@ -36,58 +36,6 @@ describe Shop::Tags::Product do
     @images   = [ images(:soft_bread_front), images(:soft_bread_back), images(:soft_bread_top) ]
   end
   
-  describe '<r:shop:if_products>' do
-    context 'success' do
-      before :each do
-        mock(Shop::Tags::Helpers).current_products(anything) { @products }
-      end
-      
-      it 'should render' do
-        tag = %{<r:shop:if_products>success</r:shop:if_products>}
-        exp = %{success}
-        @page.should render(tag).as(exp)
-      end
-    end
-    
-    context 'failure' do
-      before :each do
-        mock(Shop::Tags::Helpers).current_products(anything) { [] }
-      end
-      
-      it 'should not render' do
-        tag = %{<r:shop:if_products>failure</r:shop:if_products>}
-        exp = %{}
-        @page.should render(tag).as(exp)
-      end
-    end
-  end
-  
-  describe '<r:shop:unless_products>' do
-    context 'success' do
-      before :each do
-        mock(Shop::Tags::Helpers).current_products(anything) { [] }
-      end
-      
-      it 'should render' do
-        tag = %{<r:shop:unless_products>success</r:shop:unless_products>}
-        exp = %{success}
-        @page.should render(tag).as(exp)
-      end
-    end
-    
-    context 'failure' do
-      before :each do
-        mock(Shop::Tags::Helpers).current_products(anything) { @products }
-      end
-      
-      it 'should not render' do
-        tag = %{<r:shop:unless_products>failure</r:shop:unless_products>}
-        exp = %{}
-        @page.should render(tag).as(exp)
-      end
-    end
-  end
-  
   describe '<r:shop:products>' do
     context 'no products exist' do
       before :each do
@@ -111,6 +59,58 @@ describe Shop::Tags::Product do
         tag = %{<r:shop:products>success</r:shop:products>}
         exp = %{success}
       
+        @page.should render(tag).as(exp)
+      end
+    end
+  end
+  
+  describe '<r:shop:products:if_products>' do
+    context 'success' do
+      before :each do
+        mock(Shop::Tags::Helpers).current_products(anything) { @products }
+      end
+      
+      it 'should render' do
+        tag = %{<r:shop:products:if_products>success</r:shop:products:if_products>}
+        exp = %{success}
+        @page.should render(tag).as(exp)
+      end
+    end
+    
+    context 'failure' do
+      before :each do
+        mock(Shop::Tags::Helpers).current_products(anything) { [] }
+      end
+      
+      it 'should not render' do
+        tag = %{<r:shop:products:if_products>failure</r:shop:products:if_products>}
+        exp = %{}
+        @page.should render(tag).as(exp)
+      end
+    end
+  end
+  
+  describe '<r:shop:unless_products>' do
+    context 'success' do
+      before :each do
+        mock(Shop::Tags::Helpers).current_products(anything) { [] }
+      end
+      
+      it 'should render' do
+        tag = %{<r:shop:products:unless_products>success</r:shop:products:unless_products>}
+        exp = %{success}
+        @page.should render(tag).as(exp)
+      end
+    end
+    
+    context 'failure' do
+      before :each do
+        mock(Shop::Tags::Helpers).current_products(anything) { @products }
+      end
+      
+      it 'should not render' do
+        tag = %{<r:shop:products:unless_products>failure</r:shop:products:unless_products>}
+        exp = %{}
         @page.should render(tag).as(exp)
       end
     end
@@ -204,6 +204,7 @@ describe Shop::Tags::Product do
         it 'should render a textile filtered description' do
           tag = %{<r:shop:product:description />}
           exp = TextileFilter.filter(@product.description)
+          
           @page.should render(tag).as(exp)
         end
       end
@@ -247,6 +248,8 @@ describe Shop::Tags::Product do
         exp = %{$1,234.35}
         @page.should render(tag).as(exp)
       end
+      
+      it 'should not be testing precision here'
       
       it 'should render a high precision price' do
         tag = %{<r:shop:product:price precision="8"/>}

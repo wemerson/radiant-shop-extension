@@ -53,12 +53,8 @@ module Shop
         tag "shop:package:#{symbol}" do |tag|
           attr    = tag.attr.symbolize_keys
           package = tag.locals.shop_package
-                
-          number_to_currency(package.send(symbol), 
-            :precision  =>(attr[:precision] || Radiant::Config['shop.price_precision']).to_i,
-            :unit       => attr[:unit]      || Radiant::Config['shop.price_unit'],
-            :separator  => attr[:separator] || Radiant::Config['shop.price_separator'],
-            :delimiter  => attr[:delimiter] || Radiant::Config['shop.price_delimiter'])
+          
+          Helpers.currency(package.send(symbol),attr)
         end
       end
       

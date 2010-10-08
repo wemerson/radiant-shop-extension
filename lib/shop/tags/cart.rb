@@ -37,11 +37,7 @@ module Shop
         attr = tag.attr.symbolize_keys
         order = tag.locals.shop_order
         
-        number_to_currency(order.price.to_f, 
-          :precision  =>(attr[:precision] || Radiant::Config['shop.price_precision']).to_i,
-          :unit       => attr[:unit]      || Radiant::Config['shop.price_unit'],
-          :separator  => attr[:separator] || Radiant::Config['shop.price_separator'],
-          :delimiter  => attr[:delimiter] || Radiant::Config['shop.price_delimiter'])
+        Helpers.currency(order.price,attr)
       end
       
     end

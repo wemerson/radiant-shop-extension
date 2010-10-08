@@ -9,7 +9,7 @@ class ShopPackage < ActiveRecord::Base
   has_many    :line_items,  :class_name => 'ShopLineItem',  :as => :item
   has_many    :orders,      :class_name => 'ShopOrder',     :through => :line_items
   
-  before_validation         :set_sku, :filter_sku
+  before_validation         :assign_sku
   
   validates_presence_of     :name, :sku
   
@@ -17,56 +17,58 @@ class ShopPackage < ActiveRecord::Base
   
   validates_numericality_of :price, :greater_than => 0.00, :allow_nil => true, :precisions => 2
   
+  # Returns the products not attached to the category
+  def available_products; ShopProduct.all - self.products; end
+  
+  # Returns the slug of the first product
+  def slug; products.first.slug; end
+
+  # Overloads the base to_json to return what we want
+  def to_json(*attrs); super self.class.params; end
+  
+  # Returns the aggregate value of the products in the package
   def value
     value = 0
     self.packings.map { |pkg| value += (pkg.product.price.to_f * pkg.quantity) }
     value
   end
   
+  # Returns the aggregate weight of the products in the package
   def weight
     weight = 0
     self.packings.map { |pkg| weight += (pkg.product.weight.to_f * pkg.quantity) }
     weight
   end
   
-  def available_products
-    ShopProduct.find(:all, :joins => :category, :order => 'shop_categories.position, shop_products.position ASC') - self.products
-  end
-  
-  def slug
-    products.first.slug
-  end
-  
   class << self
     
+    # Returns attributes attached to the product
     def attrs
       [ :id, :name, :price, :sku, :description, :created_at, :updated_at ]
     end
     
+    # Returns methods with usefuly information
+    def methds
+      []
+    end
+    
+    # Returns the objects to include
+    def inclde
+      [ :category, :products ]
+    end
+    
+    # Returns a custom hash of attributes on the product
     def params
-      {
-        :include  => { 
-          :category => { :only => ShopCategory.attrs },
-          :products => { :only => ShopProduct.attrs }
-        },
-        :only     => ShopPackage.attrs
-      }
+      { :only  => self.attrs, :methods => self.methds, :include => self.inclde }
     end
     
   end
     
 private
 
-  def set_sku
-    unless self.name.nil?
-      self.sku = self.name if self.sku.nil? or self.sku.empty?
-    end
-  end
-
-  def filter_sku
-    unless self.name.nil?
-      self.sku = self.sku.downcase.gsub(/[^-a-z0-9~\s\.:;+=_]/, '').strip.gsub(/[\s\.:;=+~]+/, '_')
-    end
+  # Assigns an sku based off the name
+  def assign_sku
+    self.sku = ShopProduct.to_sku(sku.present? ? sku : name)
   end
   
 end
