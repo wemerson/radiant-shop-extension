@@ -4,8 +4,7 @@ class ShopExtension < Radiant::Extension
   url "http://github.com/squaretalent/radiant-shop-extension"
   
   extension_config do |config|
-    config.gem 'activemerchant',            :version => '1.7.3',    :lib => 'active_merchant'
-    config.gem 'will_paginate',             :version => '2.3.14'
+    config.gem 'activemerchant', :lib => 'active_merchant'
   end
   
   UserActionObserver.instance.send :add_observer!, ShopProduct
