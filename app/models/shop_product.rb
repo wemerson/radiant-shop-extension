@@ -36,7 +36,7 @@ class ShopProduct < ActiveRecord::Base
   def category_id; category.id; end
   
   # Returns the content of the product's page's description part
-  def description; page.parts.find_by_name('description').content rescue nil; end
+  def description; page.parts.find_by_name('description').content rescue ''; end
   
   # Returns the url of the page
   def url; page.url; end
@@ -71,7 +71,7 @@ class ShopProduct < ActiveRecord::Base
   class << self
     
     # Sorts products within a category
-    def sort(category_id, *product_ids)
+    def sort(category_id, product_ids)
       parent_id = ShopCategory.find(category_id).page_id
       
       product_ids.each_with_index do |id, index|

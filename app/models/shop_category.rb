@@ -21,7 +21,7 @@ class ShopCategory < ActiveRecord::Base
   def handle; ShopProduct.to_sku(page.url); end
   
   # Returns the content of the product's page's description part
-  def description; page.parts.find_by_name('description').content end
+  def description; page.parts.find_by_name('description').content; rescue ''; end
   
   # Returns products through the pages children
   def products; page.children.map(&:shop_product); end
@@ -38,7 +38,7 @@ class ShopCategory < ActiveRecord::Base
   class << self
     
     # Sorts a group of categories based on their ID and position in an array
-    def sort(*category_ids)
+    def sort(category_ids)
       category_ids.each_with_index do |id, index|
         ShopCategory.find(id).page.update_attributes!(
           :position  => index+1

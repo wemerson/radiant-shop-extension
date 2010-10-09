@@ -3,17 +3,29 @@ puts "Seed Shop Forms";
 # Add Cart Item
 
 Form.create({
-  :title  => 'AddCartItem',
-  :action => '/shop/cart/items',
+  :title  => 'CartAddProduct',
+  :action => '/shop/cart', # Redirects to the cart listing
   :body   => <<-BODY
 <r:shop:product>
   <input type="hidden" name="line_item[item_id]" value="<r:id />" />
-  <!-- Your Customisation Below -->
+  <input type="hidden" name="line_item[item_type]" value="ShopProduct" />
   
-  <r:form:text name='line_item[quantity]' value="1" /> <!-- Amount of items to add -->
-  <input type="submit" name="add_to_cart" id="add_to_cart_<r:id />" value="Add To Cart" />
+  <input type="hidden" name="line_item[quantity]" value="1" />
+  <input type="submit" name="add_to_cart" id="add_to_cart_<r:id />" value="Buy Now" />
+</r:shop:product>
+BODY
+})
+
+Form.create({
+  :title  => 'CartAddProductVariant',
+  :action => '/shop/cart', # Redirects to the cart listing
+  :body   => <<-BODY
+<r:shop:product>
+  <input type="hidden" name="line_item[item_id]" value="<r:id />" />
+  <input type="hidden" name="line_item[item_type]" value="ShopProduct" />
   
-  <!-- Your Customisation Above -->
+  <input type="hidden" name="line_item[quantity]" value="1" />
+  <input type="submit" name="add_to_cart" id="add_to_cart_<r:id />" value="Buy Now" />
 </r:shop:product>
 BODY
 })
@@ -21,19 +33,18 @@ BODY
 # Update Cart Item
 
 Form.create({
-  :title  => 'UpdateCartItem',
-  :action => '/shop/cart/items/x',
+  :title  => 'CartUpdateItem',
+  :action => '',
   :body   => <<-BODY
-<r:shop:cart:item>
-  <input type="hidden" name="_method" value="put" />
-  <input type="hidden" name="line_item[id]" value="<r:id />" />
-  <!-- Your Customisation Below -->
-  
-  <input type="text" name="line_item[quantity]" value="<r:quantity />" />
-  <input type="submit" name="add_to_cart" id="update_<r:id />" value="Update" />
-  
-  <!-- Your Customisation Above -->
-</r:shop:cart:item>
+<r:shop:cart>
+  <r:item>
+    <input type="hidden" name="_method" value="put" />
+    <input type="hidden" name="line_item[id]" value="<r:item:id />" />
+    
+    <input type="text" name="line_item[quantity]" value="<r:quantity />" />
+    <input type="submit" name="add_to_cart" id="update_<r:id />" value="Update" />
+  </r:item>
+</r:shop:cart>
 BODY
 })
 
