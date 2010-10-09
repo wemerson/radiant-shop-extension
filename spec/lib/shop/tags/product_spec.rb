@@ -218,12 +218,12 @@ describe Shop::Tags::Product do
       context 'standalone' do
         it 'should render an anchor element' do
           tag = %{<r:shop:product:link />}
-          exp = %{<a href="#{@product.slug}">#{@product.name}</a>}
+          exp = %{<a href="#{@product.url}">#{@product.name}</a>}
           @page.should render(tag).as(exp)
         end
         it 'should assign attributes' do
           tag = %{<r:shop:product:link title="title" data-title="data-title"/>}
-          exp = %{<a href="#{@product.slug}" data-title="data-title" title="title">#{@product.name}</a>}
+          exp = %{<a href="#{@product.url}" data-title="data-title" title="title">#{@product.name}</a>}
           @page.should render(tag).as(exp)
         end
       end
@@ -231,7 +231,7 @@ describe Shop::Tags::Product do
       context 'wrapped' do
         it 'should render an anchor element' do
           tag = %{<r:shop:product:link>title</r:shop:product:link>}
-          exp = %{<a href="#{@product.slug}">title</a>}
+          exp = %{<a href="#{@product.url}">title</a>}
           @page.should render(tag).as(exp)
         end
       end

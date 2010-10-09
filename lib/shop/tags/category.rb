@@ -3,19 +3,19 @@ module Shop
     module Category
       include Radiant::Taggable
       
+      tag 'shop:categories' do |tag|
+        tag.locals.shop_categories = Helpers.current_categories(tag)
+        tag.expand
+      end
+      
       desc %{ expands if there are shop categories within the context }
-      tag 'shop:if_categories' do |tag|
-        tag.expand if Helpers.current_categories(tag).present?
+      tag 'shop:categories:if_categories' do |tag|
+        tag.expand if tag.locals.shop_categories.present?
       end
       
       desc %{ expands if there are not shop categories within the context }
-      tag 'shop:unless_categories' do |tag|
-        tag.expand unless Helpers.current_categories(tag).present?
-      end
-      
-      tag 'shop:categories' do |tag|
-        tag.locals.shop_categories = Helpers.current_categories(tag)
-        tag.expand if tag.locals.shop_categories.present?
+      tag 'shop:categories:unless_categories' do |tag|
+        tag.expand if tag.locals.shop_categories.empty?
       end
       
       desc %{ iterates through each product category }
@@ -73,7 +73,7 @@ module Shop
         
         text = tag.double? ? tag.expand : category.name
         
-        %{<a href="#{category.slug}"#{attributes}>#{text}</a>}
+        %{<a href="#{category.url}"#{attributes}>#{text}</a>}
       end
       
     end

@@ -29,11 +29,6 @@ class ShopExtension < Radiant::Extension
       admin.variants  = Radiant::AdminUI.load_default_shop_variants_regions
     end
     
-    # if admin.respond_to? :page
-    #   admin.page.edit.add :layout_row, 'shop_category'
-    #   admin.page.edit.add :layout_row, 'shop_product' 
-    # end
-    
     # Tags
     Page.send :include, Shop::Tags::Core, Shop::Tags::Address, Shop::Tags::Card, Shop::Tags::Cart, Shop::Tags::Category, Shop::Tags::Item, Shop::Tags::Package, Shop::Tags::Product, Shop::Tags::ProductVariant, Shop::Tags::Responses
     

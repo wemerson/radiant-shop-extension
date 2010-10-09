@@ -57,7 +57,7 @@ module Shop
         
         text = tag.double? ? tag.expand : tag.locals.shop_product.name
         
-        %{<a href="#{tag.locals.shop_product.slug}"#{attributes}>#{text}</a>}
+        %{<a href="#{tag.locals.shop_product.url}"#{attributes}>#{text}</a>}
       end
       
       desc %{ outputs the slug to the products generated page }
