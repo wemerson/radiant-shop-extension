@@ -9,7 +9,7 @@ begin
     gem.authors = ["Dirk Kelly", "John Barker"]
     gem.add_dependency 'radiant',                     '>= 0.9.1'
     gem.add_dependency 'radiant-forms-extension',     '>= 3.1.1'
-    gem.add_dependency 'radiant-images-extension',    '>= 0.3.1'
+    gem.add_dependency 'radiant-images-extension',    '>= 0.3.2'
     gem.add_dependency 'radiant-layouts-extension',   '>= 0.9.1'
     gem.add_dependency 'radiant-settings-extension',  '>= 1.1.1'
     # gem is a Gem::Specification... see http://www.rubygems.org/read/chapter/20 for additional settings
