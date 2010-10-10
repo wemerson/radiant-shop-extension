@@ -1,0 +1,9 @@
+- type = product.class.to_s == "ShopProduct" ? "product" : "discountable"
+- product_id = product.class.to_s == "ShopProduct" ? product.id : product.discounted_id
+- discountable_id = product.class.to_s == "ShopProduct" ? nil : product.id
+
+%li.product{:id => "#{type}_#{product.id}", :'data-product_id' => product_id, :'data-discountable_id' => discountable_id }
+  %span.name= truncate(product.name, 30, '...')
+  %span.slug= product.slug
+  .actions
+    %span.delete

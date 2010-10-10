@@ -25,6 +25,14 @@ describe ShopCategory do
     it 'should have a product_layout Layout' do
       @category.product_layout.is_a?(Layout).should be_true
     end
+    
+    it 'should have many discountables' do
+      @category.discountables.is_a?(Array).should be_true
+    end
+    
+    it 'should have many discounts' do
+      @category.discounts.is_a?(Array).should be_true
+    end
   end
   
   describe 'validations' do

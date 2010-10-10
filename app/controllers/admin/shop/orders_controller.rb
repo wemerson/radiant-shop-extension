@@ -20,10 +20,10 @@ class Admin::Shop::OrdersController < Admin::ResourceController
     end
     
     def config_index
-      @buttons  << 'shipped'
-      @buttons  << 'paid'
-      @buttons  << 'new'
-      @buttons  << 'all'
+      # @buttons  << 'all'
+      # @buttons  << 'new'
+      # @buttons  << 'shipped'
+      # @buttons  << 'paid'
     end
     
     def config_new

@@ -20,9 +20,9 @@ module Shop
             end
             packages.new = packages.edit
             packages.index = Radiant::AdminUI::RegionSet.new do |index|
-              index.head.concat %w{buttons}
+              index.head.concat %w{}
               index.body.concat %w{name modify}
-              index.foot.concat %w{add}
+              index.foot.concat %w{buttons}
             end
             packages.remove = packages.index
           end

@@ -1,0 +1,3 @@
+%ul.products
+  - @shop_discount.products.each do |product|
+    = render :partial => 'admin/shop/discounts/edit/shared/product', :locals => { :category => product }

@@ -8,6 +8,9 @@ class ShopCategory < ActiveRecord::Base
   belongs_to  :updated_by,      :class_name => 'User'
   belongs_to  :product_layout,  :class_name => 'Layout'
   
+  has_many  :discountables, :class_name => 'ShopDiscountable',      :foreign_key  => :discounted_id
+  has_many    :discounts,   :class_name => 'ShopDiscount',          :through      => :discountables
+  
   before_validation             :assign_slug, :assign_breadcrumb
   
   accepts_nested_attributes_for :page

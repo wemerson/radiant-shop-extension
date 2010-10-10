@@ -1,4 +1,5 @@
 %ul
   - render_region :foot do |foot|
-    - foot.add do
-      %li= link_to image('plus') + " " + t("add_variant"), new_admin_shop_variant_path
+    - foot.buttons do
+      - @buttons.each do |button|
+        %li= render :partial => "admin/shop/variants/index/buttons/#{button}"

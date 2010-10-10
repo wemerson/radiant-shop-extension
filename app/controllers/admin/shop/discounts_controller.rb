@@ -7,6 +7,7 @@ class Admin::Shop::DiscountsController < Admin::ResourceController
   before_filter :config_new,    :only => [ :new, :create ]
   before_filter :config_edit,   :only => [ :edit, :update ]
   before_filter :assets_global, :except => [ :remove, :destroy ]
+  before_filter :assets_edit,   :only => [ :edit, :update ]
   
   private
   
@@ -19,9 +20,7 @@ class Admin::Shop::DiscountsController < Admin::ResourceController
     end
     
     def config_index
-      @buttons  << 'packages'
-      @buttons  << 'variants'
-      @buttons  << 'discounts'
+      @buttons  << 'new_discount'
     end
     
     def config_new
@@ -30,25 +29,34 @@ class Admin::Shop::DiscountsController < Admin::ResourceController
       @inputs   << 'code'
       
       @meta     << 'start'
-      @meta     << 'end'
-      
-      @parts    << 'categories'
+      @meta     << 'finish'
     end
     
     def config_edit
+      @buttons  << 'browse_categories'
+      @buttons  << 'browse_products'
+      
       @inputs   << 'name'
       @inputs   << 'amount'
       @inputs   << 'code'
       
       @meta     << 'start'
-      @meta     << 'end'
+      @meta     << 'finish'
       
       @parts    << 'categories'
+      @parts    << 'products'
+      
+      @popups   << 'browse_categories'
+      @popups   << 'browse_products'
     end
     
     def assets_global
       include_stylesheet 'admin/extensions/shop/edit'
       include_stylesheet 'admin/extensions/shop/index'
+    end
+    
+    def assets_edit
+      include_javascript 'admin/extensions/shop/edit'
     end
     
 end

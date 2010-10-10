@@ -11,6 +11,11 @@ class ShopDiscountsDataset < Dataset::Base
       :code   => '5pcoff',
       :amount => 10.00
       
+    create_record :shop_discounts, :one_percent,
+      :name   => 'one percent',
+      :code   => '1pcoff',
+      :amount => 1.00
+      
   end
   
 end

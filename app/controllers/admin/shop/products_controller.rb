@@ -163,9 +163,8 @@ private
   end
   
   def config_index
-    @buttons  << 'packages'
+    @buttons  << 'add_category'
     @buttons  << 'variants'
-    @buttons  << 'discounts'
   end
   
   def config_new

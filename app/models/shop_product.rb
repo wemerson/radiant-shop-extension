@@ -14,6 +14,8 @@ class ShopProduct < ActiveRecord::Base
   has_many    :packages,    :class_name => 'ShopPackage',           :foreign_key  => :package_id,   :through   => :packings, :source => :package
   has_many    :related,     :class_name => 'ShopProduct',           :through      => :packings,     :source    => :product,  :uniq => true
   has_many    :variants,    :class_name => 'ShopProductVariant',    :foreign_key  => :product_id,   :dependent => :destroy
+  has_many  :discountables, :class_name => 'ShopDiscountable',      :foreign_key  => :discounted_id
+  has_many    :discounts,   :class_name => 'ShopDiscount',          :through      => :discountables
   
   before_validation             :assign_slug, :assign_breadcrumb
   validates_presence_of         :page
@@ -22,6 +24,8 @@ class ShopProduct < ActiveRecord::Base
   
   accepts_nested_attributes_for :page
   accepts_nested_attributes_for :variants
+  
+  after_create                  :assign_discounts
   
   # Returns the title of the product's page
   def name; page.title; end
@@ -119,6 +123,13 @@ class ShopProduct < ActiveRecord::Base
   def assign_breadcrumb
     if page.present?
       self.page.breadcrumb = ShopProduct.to_sku(page.breadcrumb.present? ? page.breadcrumb : page.slug)
+    end
+  end
+  
+  # Assigns discounts based off categories discounts
+  def assign_discounts
+    category.discounts.each do |discount|      
+      ShopDiscountable.create(:discount => discount, :discounted => self)
     end
   end
   

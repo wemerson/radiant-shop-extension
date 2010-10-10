@@ -1,30 +1,30 @@
 module Shop
   module Interface
-    module Orders
+    module Discounts
       
       def self.included(base)
         base.send :include, InstanceMethods
       end
       
       module InstanceMethods
-        attr_accessor :orders
+        attr_accessor :discounts
         
         protected
 
-        def load_default_shop_orders_regions
-          returning OpenStruct.new do |orders|
-            orders.edit = Radiant::AdminUI::RegionSet.new do |edit|
+        def load_default_shop_discounts_regions
+          returning OpenStruct.new do |discounts|
+            discounts.edit = Radiant::AdminUI::RegionSet.new do |edit|
               edit.main.concat %w{head form popups}
               edit.form.concat %w{inputs meta parts foot}
               edit.foot.concat %w{buttons timestamp}
             end
-            orders.new = orders.edit
-            orders.index = Radiant::AdminUI::RegionSet.new do |index|
+            discounts.new = discounts.edit
+            discounts.index = Radiant::AdminUI::RegionSet.new do |index|
               index.head.concat %w{}
-              index.body.concat %w{price status updated customer}
+              index.body.concat %w{name code amount modify}
               index.foot.concat %w{buttons}
             end
-            orders.remove = orders.index
+            discounts.remove = discounts.index
           end
         end
       end

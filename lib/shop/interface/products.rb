@@ -20,11 +20,11 @@ module Shop
             end
             products.new = products.edit
             products.index = Radiant::AdminUI::RegionSet.new do |index|
-              index.head.concat     %w{buttons}
+              index.head.concat     %w{}
               index.category.concat %w{move name handle modify}
               index.products.concat %w{body}
               index.product.concat  %w{move icon name sku modify}
-              index.foot.concat     %w{add}
+              index.foot.concat     %w{buttons}
             end
             products.remove = products.index
           end

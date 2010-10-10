@@ -2,7 +2,7 @@ require 'spec/spec_helper'
 
 describe ShopDiscount do
   
-  dataset :shop_discounts, :shop_categories
+  dataset :shop_discounts, :shop_products
 
   describe 'validations' do
     before :each do
@@ -57,6 +57,56 @@ describe ShopDiscount do
         @discount.discountables.create(:discounted => @bread)
         @discount.categories.include?(@bread).should === true
       end
+    end
+  end
+  
+  describe '#available_categories' do
+    before :each do
+      @discount = shop_discounts(:ten_percent)
+    end
+    it 'should return all categories minus its own' do
+      @discount.available_categories.should === ShopCategory.all - @discount.categories
+    end
+  end
+  
+  describe '#available_products' do
+    before :each do
+      @discount = shop_discounts(:ten_percent)
+    end
+    it 'should return all products minus its own' do
+      @discount.available_products.should === ShopProduct.all - @discount.products
+    end
+  end
+  
+  describe '#add_category' do
+    before :each do
+      @discount = shop_discounts(:one_percent)
+      @category = shop_categories(:milk)
+    end
+    it 'should assign the category to the discount' do
+      @discount.add_category(@category)
+      @discount.categories.include?(@category).should === true
+    end
+    it 'should assign the products to that category' do
+      @discount.add_category(@category)
+      @discount.products.should === @category.products
+    end
+  end
+  
+  describe '#remove_category' do
+    before :each do
+      @discount = shop_discounts(:one_percent)
+      @category = shop_categories(:milk)
+    end
+    it 'should remove the category to the discount' do
+      @discount.add_category(@category)
+      @discount.remove_category(@category)
+      @discount.categories.include?(@category).should === false
+    end
+    it 'should remove the products of that category' do
+      @discount.add_category(@category)
+      @discount.remove_category(@category)
+      @discount.products.should be_empty
     end
   end
   

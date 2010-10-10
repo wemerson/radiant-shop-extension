@@ -2,12 +2,12 @@
 
 .outset
 
-  #head{ :class => "#{@buttons.empty? ? 'min' : 'full'}"}
+  #head.min
     = render :partial => '/admin/shop/discounts/index/head'
 
   #discounts_map.map
     %ul#discounts
-      = render :partial => '/admin/shop/discounts/index/variant', :collection => @shop_variants
+      = render :partial => '/admin/shop/discounts/index/discount', :collection => @shop_discounts
 
   #actions
     = render :partial => '/admin/shop/discounts/index/foot'

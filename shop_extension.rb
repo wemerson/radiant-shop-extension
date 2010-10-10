@@ -7,21 +7,24 @@ class ShopExtension < Radiant::Extension
     config.gem 'activemerchant', :lib => 'active_merchant'
   end
   
-  UserActionObserver.instance.send :add_observer!, ShopProduct
   UserActionObserver.instance.send :add_observer!, ShopCategory
+  UserActionObserver.instance.send :add_observer!, ShopDiscount
   UserActionObserver.instance.send :add_observer!, ShopOrder
+  UserActionObserver.instance.send :add_observer!, ShopPackage
+  UserActionObserver.instance.send :add_observer!, ShopProduct
   UserActionObserver.instance.send :add_observer!, ShopProductAttachment
+  UserActionObserver.instance.send :add_observer!, ShopDiscountable
   UserActionObserver.instance.send :add_observer!, ShopProductVariant
   UserActionObserver.instance.send :add_observer!, ShopVariant
-  UserActionObserver.instance.send :add_observer!, ShopPackage
   
   def activate    
     # View Hooks
     unless defined? admin.products
-      Radiant::AdminUI.send :include, Shop::Interface::Categories, Shop::Interface::Customers, Shop::Interface::Orders, Shop::Interface::Packages, Shop::Interface::Products, Shop::Interface::Variants
+      Radiant::AdminUI.send :include, Shop::Interface::Categories, Shop::Interface::Customers, Shop::Interface::Discounts, Shop::Interface::Orders, Shop::Interface::Packages, Shop::Interface::Products, Shop::Interface::Variants
 
       admin.categories= Radiant::AdminUI.load_default_shop_categories_regions
       admin.customers = Radiant::AdminUI.load_default_shop_customers_regions
+      admin.discounts = Radiant::AdminUI.load_default_shop_discounts_regions
       admin.orders    = Radiant::AdminUI.load_default_shop_orders_regions
       admin.packages  = Radiant::AdminUI.load_default_shop_packages_regions      
       admin.products  = Radiant::AdminUI.load_default_shop_products_regions
@@ -43,7 +46,9 @@ class ShopExtension < Radiant::Extension
     
     tab "Shop" do
       add_item "Products",      "/admin/shop"
+      add_item "Packages",      "/admin/shop/packages"
       add_item "Orders",        "/admin/shop/orders"
+      add_item "Discounts",     "/admin/shop/discounts"
       add_item "Customers",     "/admin/shop/customers"
     end
     

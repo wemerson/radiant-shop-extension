@@ -24,9 +24,8 @@ class Admin::Shop::VariantsController < Admin::ResourceController
     end
     
     def config_index
-      @buttons  << 'packages'
-      @buttons  << 'variants'
-      @buttons  << 'discounts'
+      @buttons  << 'add_variant'
+      @buttons  << 'categories'
     end
     
     def config_new

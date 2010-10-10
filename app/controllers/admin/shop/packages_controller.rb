@@ -25,9 +25,7 @@ private
   end
   
   def config_index
-    @buttons  << 'packages'
-    @buttons  << 'variants'
-    @buttons  << 'discounts'
+    @buttons  << 'new_package'
   end
   
   def config_new

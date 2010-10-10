@@ -5,9 +5,9 @@
       - body.name do
         %span.name.attribute= link_to discount.name, [:edit_admin, discount]
       - body.code do
-        %span.code.attribute= link_to discount.code, [:edit_admin, discount]
+        %span.code.attribute= discount.code
       - body.amount do
-        %span.amount.attribute= link_to discount.amount, [:edit_admin, discount]
+        %span.amount.attribute= discount.amount
       - body.modify do
         .modify
           %span.remove= link_to t('remove'), [:remove_admin, discount]

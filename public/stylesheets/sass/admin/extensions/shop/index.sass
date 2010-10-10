@@ -8,45 +8,6 @@
       height: 46px
       padding-right: 20px
       background-color: #7E7E7E
-  
-    .button
-      float: right
-      margin-left: 10px
-      margin-top: 10px
-      display: block
-      height: 16px
-      padding: 6px 8px
-      font:
-        size: 12px
-        weight: bold
-      background:
-        color: #eeeeee
-        image: url(/images/admin/buttons_background.png)
-        position: 0 0
-        repeat: repeat-x
-      color: #555555
-      text:
-        decoration: none
-        shadow: 1px 1px 1px #eeeeee
-      cursor: pointer
-      border:
-        radius: 5px
-      -moz:
-        border:
-          radius: 5px
-      -webkit:
-        border:
-          radius: 5px
-        
-      img
-        position: relative
-        top: -2px
-      
-      &:hover, &.active
-        background: #ebebeb
-        color: #000000
-        text:
-          shadow: 1px 1px 1px #FFFFFF
           
   .map
     background-color: #FFFFFF
@@ -113,3 +74,16 @@
               image: url(/images/admin/minus.png)
               repeat: no-repeat
               position: 0 50%
+  
+  #actions
+    
+    ul
+    
+      li
+        
+        a
+    
+          &.active
+            -moz-box-shadow: none
+            background: url("../../images/admin/shadow.png") repeat-x scroll 0 0 #FFFFFF
+            color: #000000
