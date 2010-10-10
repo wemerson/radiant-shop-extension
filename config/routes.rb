@@ -7,14 +7,18 @@ ActionController::Routing::Routes.draw do |map|
       end
       
       shop.resources :products, :except => :new, :collection => { :sort => :put } do |product|
-        product.resources :images,            :controller => 'products/images',   :collection => { :sort => :put }, :only => [:index, :create, :destroy]
-        product.resources :variants,          :controller => 'products/variants', :only => [ :create, :destroy]
-        product.resources :variant_templates, :controller => 'products/variant_templates', :only => [ :update ]
+        product.resources :images,            :controller => 'products/images',             :only => [:index, :create, :destroy],   :collection => { :sort => :put }
+        product.resources :variants,          :controller => 'products/variants',           :only => [ :create, :destroy]
+        product.resources :variant_templates, :controller => 'products/variant_templates',  :only => [ :update ]
+        product.resources :discounts,         :controller => 'products/discounts',          :only => [ :create, :destroy]
+        product.resources :discount_templates,:controller => 'products/discount_templates', :only => [ :update ]
       end
       
       shop.resources :packages, :member => { :remove => :get } do |packages|
-        packages.resources :packings,         :controller => 'packages/packings', :collection => { :sort => :put }, :only => [:create, :update, :destroy]
+        packages.resources :packings,         :controller => 'packages/packings',           :only => [:create, :update, :destroy],  :collection => { :sort => :put }
       end
+      
+      shop.resources :discounts
       
       shop.resources :variants
       

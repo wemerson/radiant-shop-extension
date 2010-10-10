@@ -1,0 +1,5 @@
+-#%ul.categories
+  - ShopCategory.each do |category|
+    %li
+      %h3= link_to category.name, [:edit_admin, category]
+      = check_box_tag "categories[][#{category.id}]", @shop_discount.categories.include? category

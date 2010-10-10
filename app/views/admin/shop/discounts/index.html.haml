@@ -1,0 +1,13 @@
+- @page_title = t('discounts') + ' - ' + default_page_title
+
+.outset
+
+  #head{ :class => "#{@buttons.empty? ? 'min' : 'full'}"}
+    = render :partial => '/admin/shop/discounts/index/head'
+
+  #discounts_map.map
+    %ul#discounts
+      = render :partial => '/admin/shop/discounts/index/variant', :collection => @shop_variants
+
+  #actions
+    = render :partial => '/admin/shop/discounts/index/foot'
