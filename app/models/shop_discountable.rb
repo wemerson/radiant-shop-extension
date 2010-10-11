@@ -26,10 +26,7 @@ class ShopDiscountable < ActiveRecord::Base
   # Adds discount from a category and its products
   def destroy_shop_products_if_shop_category
     if discounted_type === 'ShopCategory'
-      discounted.products.each do |product|
-        discountable = discount.discountables.first(:conditions => { :discounted_id => product.id, :discounted_type => product.class.name })
-        
-        # Remove discount of the child product
+      discount.discountables.for('ShopProduct').each do |discountable|
         discountable.destroy
       end
     end

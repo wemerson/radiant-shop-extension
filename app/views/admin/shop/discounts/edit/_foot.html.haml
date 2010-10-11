@@ -8,6 +8,9 @@
   - foot.timestamp do
     = updated_stamp @shop_discount
 
--# unless @shop_discount.new_record?
+- unless @shop_discount.new_record?
   :javascript
     if(typeof(ROUTES) === 'undefined') ROUTES = new Array();
+    
+    ROUTES['admin_shop_discount_discountables_path'] = "#{admin_shop_discount_discountables_path(@shop_discount)}";
+    ROUTES['admin_shop_discount_discountable_path']  = "#{admin_shop_discount_discountable_path(@shop_discount, ':id')}";

@@ -57,6 +57,36 @@ describe ShopDiscount do
         @discount.discountables.create(:discounted => @bread)
         @discount.categories.include?(@bread).should === true
       end
+      context '#for' do
+        before :each do
+          @discount.discountables.create(:discounted => shop_categories(:bread))
+          @discount.discountables.create(:discounted => shop_categories(:milk))
+          @discount.discountables.create(:discounted => shop_products(:crusty_bread))
+          @discount.discountables.create(:discounted => shop_products(:full_milk))
+        end
+        it 'should return result of only that type' do
+          discountables = @discount.discountables.for('ShopCategory')
+          discountables.each do |d|
+            d.discounted.is_a?(ShopCategory).should === true
+          end
+        end
+        it 'should return result of only that type regardless of string format' do
+          discountables = @discount.discountables.for('Shop_category')
+          discountables.each do |d|
+            d.discounted.is_a?(ShopCategory).should === true
+          end
+          
+          discountables = @discount.discountables.for('shop_category')
+          discountables.each do |d|
+            d.discounted.is_a?(ShopCategory).should === true
+          end
+          
+          discountables = @discount.discountables.for('ShopProduct')
+          discountables.each do |d|
+            d.discounted.is_a?(ShopProduct).should === true
+          end
+        end
+      end
     end
   end
   

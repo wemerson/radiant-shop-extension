@@ -57,6 +57,8 @@ class Admin::Shop::DiscountsController < Admin::ResourceController
     
     def assets_edit
       include_javascript 'admin/extensions/shop/edit'
+      include_javascript 'admin/extensions/shop/discounts/edit'
+      include_stylesheet 'admin/extensions/shop/discounts/edit'
     end
     
 end

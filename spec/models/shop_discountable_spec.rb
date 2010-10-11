@@ -64,7 +64,9 @@ describe ShopDiscountable do
         @discount.categories.include?(@category).should === false
       end
       it 'should remove the products of that category' do
-        @discount.products.should be_empty
+        @category.products.each do |p|
+          @discount.products.include?(p).should === false
+        end
       end
     end
   end

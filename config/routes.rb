@@ -18,7 +18,9 @@ ActionController::Routing::Routes.draw do |map|
         packages.resources :packings,         :controller => 'packages/packings',           :only => [:create, :update, :destroy],  :collection => { :sort => :put }
       end
       
-      shop.resources :discounts
+      shop.resources :discounts, :member => { :remove => :get } do |discounts|
+        discounts.resources :discountables,   :controller => 'discounts/discountables',     :only => [:create,:destroy]
+      end
       
       shop.resources :variants
       
