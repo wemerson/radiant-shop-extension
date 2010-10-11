@@ -1,7 +1,7 @@
 class Admin::Shop::VariantsController < Admin::ResourceController
   
   model_class ShopVariant
-
+  
   before_filter :config_global
   before_filter :config_index,  :only => [ :index ]
   before_filter :config_new,    :only => [ :new, :create ]

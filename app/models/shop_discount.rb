@@ -21,25 +21,4 @@ class ShopDiscount < ActiveRecord::Base
     ShopProduct.all - products
   end
   
-  # Adds discount to a category and its products
-  def add_category(category)
-    discountables.create(:discounted => category) # Attach discount to itself
-    
-    category.products.each do |product|
-      ShopDiscountable.create(:discount => self, :discounted => product) # Attach discount to the child product
-    end
-  end
-  
-  # Adds discount from a category and its products
-  def remove_category(category)
-    discount = discountables.first(:conditions => { :discounted_id => category.id, :discounted_type => category.class.name })
-    discount.destroy # Remove discount of category
-    
-    category.products.each do |product|
-      discount = discountables.first(:conditions => { :discounted_id => product.id, :discounted_type => product.class.name })
-      
-      discount.destroy # Remove discount of the child product
-    end    
-  end
-  
 end

@@ -15,7 +15,7 @@ describe Admin::Shop::DiscountsController do
         
         assigns(:inputs).should   === []
         assigns(:meta).should     === []
-        assigns(:buttons).should  === ['packages','variants','discounts']
+        assigns(:buttons).should  === ['new_discount']
         assigns(:parts).should    === []
         assigns(:popups).should   === []
       end
@@ -28,9 +28,9 @@ describe Admin::Shop::DiscountsController do
         get :new
         
         assigns(:inputs).should   === ['name','amount','code']
-        assigns(:meta).should     === ['start','end']
+        assigns(:meta).should     === ['start','finish']
         assigns(:buttons).should  === []
-        assigns(:parts).should    === ['categories']
+        assigns(:parts).should    === []
         assigns(:popups).should   === []
       end
     end
@@ -42,10 +42,10 @@ describe Admin::Shop::DiscountsController do
         get :edit, :id => shop_discounts(:ten_percent).id
         
         assigns(:inputs).should   === ['name','amount','code']
-        assigns(:meta).should     === ['start','end']
-        assigns(:buttons).should  === []
-        assigns(:parts).should    === ['categories']
-        assigns(:popups).should   === []
+        assigns(:meta).should     === ['start','finish']
+        assigns(:buttons).should  === ['browse_categories', 'browse_products']
+        assigns(:parts).should    === ['categories', 'products']
+        assigns(:popups).should   === ['browse_categories', 'browse_products']
       end
     end
   end
@@ -56,9 +56,9 @@ describe Admin::Shop::DiscountsController do
         post :create, :shop_variant => {}
         
         assigns(:inputs).should   === ['name','amount','code']
-        assigns(:meta).should     === ['start','end']
+        assigns(:meta).should     === ['start','finish']
         assigns(:buttons).should  === []
-        assigns(:parts).should    === ['categories']
+        assigns(:parts).should    === []
         assigns(:popups).should   === []
       end
     end
@@ -70,10 +70,10 @@ describe Admin::Shop::DiscountsController do
         put :update, :id => shop_discounts(:ten_percent).id, :shop_variant => {}
         
         assigns(:inputs).should   === ['name','amount','code']
-        assigns(:meta).should     === ['start','end']
-        assigns(:buttons).should  === []
-        assigns(:parts).should    === ['categories']
-        assigns(:popups).should   === []
+        assigns(:meta).should     === ['start','finish']
+        assigns(:buttons).should  === ['browse_categories', 'browse_products']
+        assigns(:parts).should    === ['categories', 'products']
+        assigns(:popups).should   === ['browse_categories', 'browse_products']
       end
     end
   end

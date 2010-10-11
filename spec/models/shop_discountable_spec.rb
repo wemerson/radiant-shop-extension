@@ -35,4 +35,38 @@ describe ShopDiscountable do
     end
   end
   
+  describe 'category and product hooks' do
+    describe '#add_category' do
+      before :each do
+        @discount = shop_discounts(:one_percent)
+        @category = shop_categories(:milk)
+        
+        discountable = @discount.discountables.create(:discounted => @category)      
+      end
+      it 'should assign the category to the discount' do
+        @discount.categories.include?(@category).should === true
+      end
+      it 'should assign the products to that category' do
+        @discount.products.should_not be_empty
+        @discount.products.should === @category.products
+      end
+    end
+  
+    describe '#remove_category' do
+      before :each do
+        @discount = shop_discounts(:one_percent)
+        @category = shop_categories(:milk)
+        
+        discountable = @discount.discountables.create(:discounted => @category)
+        discountable.destroy
+      end
+      it 'should remove the category to the discount' do
+        @discount.categories.include?(@category).should === false
+      end
+      it 'should remove the products of that category' do
+        @discount.products.should be_empty
+      end
+    end
+  end
+  
 end

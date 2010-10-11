@@ -78,36 +78,4 @@ describe ShopDiscount do
     end
   end
   
-  describe '#add_category' do
-    before :each do
-      @discount = shop_discounts(:one_percent)
-      @category = shop_categories(:milk)
-    end
-    it 'should assign the category to the discount' do
-      @discount.add_category(@category)
-      @discount.categories.include?(@category).should === true
-    end
-    it 'should assign the products to that category' do
-      @discount.add_category(@category)
-      @discount.products.should === @category.products
-    end
-  end
-  
-  describe '#remove_category' do
-    before :each do
-      @discount = shop_discounts(:one_percent)
-      @category = shop_categories(:milk)
-    end
-    it 'should remove the category to the discount' do
-      @discount.add_category(@category)
-      @discount.remove_category(@category)
-      @discount.categories.include?(@category).should === false
-    end
-    it 'should remove the products of that category' do
-      @discount.add_category(@category)
-      @discount.remove_category(@category)
-      @discount.products.should be_empty
-    end
-  end
-  
 end
