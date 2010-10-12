@@ -18,19 +18,21 @@ class ShopOrder < ActiveRecord::Base
   accepts_nested_attributes_for :shipping,    :reject_if => :all_blank
   
   def price
-    price = 0
-    self.line_items.map { |l| price += l.price }
+    price = 0; line_items.map { |l| price += l.price }
+    
+    price += tax if Radiant::Config['shop.tax_strategy'] === 'exclusive'
+    
     price
   end
   
   def weight
-    weight = 0
-    self.line_items.map { |l| weight += l.weight }
+    weight = 0; line_items.map { |l| weight += l.weight }
     weight
   end
   
   def tax
-    tax = 0.00
+    price      = 0; line_items.map { |l| price += l.price }
+    tax        = 0
     percentage = Radiant::Config['shop.tax_percentage'].to_f * 0.01
     
     case Radiant::Config['shop.tax_strategy']
@@ -39,6 +41,7 @@ class ShopOrder < ActiveRecord::Base
     when 'exclusive'
       tax = price * percentage
     end
+    
     BigDecimal.new(tax.to_s)
   end
   

@@ -3,94 +3,109 @@ require 'spec/spec_helper'
 describe ShopOrder do
 
   dataset :shop_orders, :shop_line_items, :shop_products, :shop_packages, :shop_payments
+  
+  describe '#quantity' do
+    it 'should return the total items' do
+      shop_orders(:empty).quantity.should         === shop_orders(:empty).line_items.sum(:quantity)
+      shop_orders(:several_items).quantity.should === shop_orders(:several_items).line_items.sum(:quantity)
+    end
+  end
+  
+  describe '#weight' do
+    it 'should calculate a total weight' do
+      shop_orders(:empty).weight.should           === lambda{ weight = 0; shop_orders(:empty).line_items.map { |l| weight += l.weight }; weight }.call
+      shop_orders(:several_items).weight.should   === lambda{ weight = 0; shop_orders(:several_items).line_items.map { |l| weight += l.weight }; weight }.call
+    end
+  end
 
-  context 'instance' do
-    describe 'accessors' do
-      it 'should return the total items' do
-        shop_orders(:empty).quantity.should         === shop_orders(:empty).line_items.sum(:quantity)
-        shop_orders(:one_item).quantity.should      === shop_orders(:one_item).line_items.sum(:quantity)
-        shop_orders(:several_items).quantity.should === shop_orders(:several_items).line_items.sum(:quantity)
-      end
-
-      it 'should calculate a total weight' do
-        shop_orders(:empty).weight.should           === lambda{ weight = 0; shop_orders(:empty).line_items.map { |l| weight += l.weight }; weight }.call
-        shop_orders(:one_item).weight.should        === lambda{ weight = 0; shop_orders(:one_item).line_items.map { |l| weight += l.weight }; weight }.call
-        shop_orders(:several_items).weight.should   === lambda{ weight = 0; shop_orders(:several_items).line_items.map { |l| weight += l.weight }; weight }.call
-      end
-
-      it 'should calculate the total price' do
+  describe '#price' do
+    context 'inclusive tax' do
+      it 'should calculate from the line items alone' do
+        Radiant::Config['shop.tax_strategy'] = 'inclusive'
+        
         shop_orders(:empty).price.should            === lambda{ price = 0; shop_orders(:empty).line_items.map { |l| price += l.price }; price }.call
-        shop_orders(:one_item).price.should         === lambda{ price = 0; shop_orders(:one_item).line_items.map { |l| price += l.price }; price }.call
         shop_orders(:several_items).price.should    === lambda{ price = 0; shop_orders(:several_items).line_items.map { |l| price += l.price }; price }.call
       end
-      
-      describe '#new?' do
-        context 'success' do
-          it 'should return true' do
-            shop_orders(:one_item).update_attribute(:status, 'new')
-            shop_orders(:one_item).new?.should === true
-          end
-        end
-        context 'failure' do
-          it 'should return false' do
-            shop_orders(:one_item).update_attribute(:status, 'paid')
-            shop_orders(:one_item).new?.should === false
+    end
+    context 'exclusive tax' do
+      it 'should calculate from the line items and tax' do
+        Radiant::Config['shop.tax_strategy']   = 'exclusive'
+        Radiant::Config['shop.tax_percentage'] = 10
+        
+        shop_orders(:empty).price.should            === lambda{ price = 0; shop_orders(:empty).line_items.map { |l| price += l.price }; price += shop_orders(:empty).tax }.call
+        shop_orders(:several_items).price.should    === lambda{ price = 0; shop_orders(:several_items).line_items.map { |l| price += l.price }; price += shop_orders(:several_items).tax }.call
+      end
+    end
+  end
+  
+  describe '#new?' do
+    context 'success' do
+      it 'should return true' do
+        shop_orders(:one_item).update_attribute(:status, 'new')
+        shop_orders(:one_item).new?.should === true
+      end
+    end
+    context 'failure' do
+      it 'should return false' do
+        shop_orders(:one_item).update_attribute(:status, 'paid')
+        shop_orders(:one_item).new?.should === false
 
-            shop_orders(:one_item).update_attribute(:status, 'shipped')
-            shop_orders(:one_item).new?.should === false
-          end
+        shop_orders(:one_item).update_attribute(:status, 'shipped')
+        shop_orders(:one_item).new?.should === false
+      end
+    end
+  end
+  describe '#shipped?' do
+    context 'success' do
+      it 'should return true' do
+        shop_orders(:one_item).update_attribute(:status, 'shipped')
+        shop_orders(:one_item).shipped?.should === true
+      end
+    end
+    context 'failure' do
+      it 'should return false' do
+        shop_orders(:one_item).update_attribute(:status, 'new')
+        shop_orders(:one_item).shipped?.should === false
+
+        shop_orders(:one_item).update_attribute(:status, 'paid')
+        shop_orders(:one_item).shipped?.should === false
+      end
+    end
+  end
+  describe '#paid?' do
+    context 'success' do
+      it 'should return true' do
+        shop_orders(:several_items).update_attribute(:status, 'paid')
+        
+        shop_orders(:several_items).payment.should  === shop_payments(:visa)
+        shop_orders(:several_items).paid?.should    === true
+      end
+    end
+    context 'failure' do
+      describe 'status is not paid' do
+        it 'should return false' do
+          shop_orders(:several_items).update_attribute(:status, 'new')
+          shop_orders(:several_items).paid?.should === false
         end
       end
-      describe '#shipped?' do
-        context 'success' do
-          it 'should return true' do
-            shop_orders(:one_item).update_attribute(:status, 'shipped')
-            shop_orders(:one_item).shipped?.should === true
-          end
-        end
-        context 'failure' do
-          it 'should return false' do
-            shop_orders(:one_item).update_attribute(:status, 'new')
-            shop_orders(:one_item).shipped?.should === false
-
-            shop_orders(:one_item).update_attribute(:status, 'paid')
-            shop_orders(:one_item).shipped?.should === false
-          end
+      describe 'payment is nil' do
+        it 'should return false' do
+          shop_orders(:several_items).update_attribute(:status, 'paid')
+          shop_orders(:several_items).payment = nil
+          shop_orders(:several_items).paid?.should === false
         end
       end
-      describe '#paid?' do
-        context 'success' do
-          it 'should return true' do
-            shop_orders(:several_items).update_attribute(:status, 'paid')
-            
-            shop_orders(:several_items).payment.should  === shop_payments(:visa)
-            shop_orders(:several_items).paid?.should    === true
-          end
-        end
-        context 'failure' do
-          describe 'status is not paid' do
-            it 'should return false' do
-              shop_orders(:several_items).update_attribute(:status, 'new')
-              shop_orders(:several_items).paid?.should === false
-            end
-          end
-          describe 'payment is nil' do
-            it 'should return false' do
-              shop_orders(:several_items).update_attribute(:status, 'paid')
-              shop_orders(:several_items).payment = nil
-              shop_orders(:several_items).paid?.should === false
-            end
-          end
-          describe 'payment amount doesnt match' do
-            it 'should return false' do
-              shop_orders(:several_items).update_attribute(:status, 'paid')
-              shop_orders(:several_items).payment.update_attribute(:amount, 11.00)
-              shop_orders(:several_items).paid?.should === false
-            end
-          end
+      describe 'payment amount doesnt match' do
+        it 'should return false' do
+          shop_orders(:several_items).update_attribute(:status, 'paid')
+          shop_orders(:several_items).payment.update_attribute(:amount, 11.00)
+          shop_orders(:several_items).paid?.should === false
         end
       end
     end
+  end
+    
+  context 'instance' do
   
     describe 'mutators' do
       describe '#add!' do   
