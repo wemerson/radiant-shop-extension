@@ -13,6 +13,24 @@ module Shop
         tag.expand
       end
       
+      # Expand if tax is configured
+      desc %{ Expand if tax is configured }
+      tag 'shop:cart:tax:if_tax' do |tag|
+         tag.expand if ['inclusive','exclusive'].include?(tag.locals.shop_tax[:strategy])
+      end
+      
+      # Expand unless tax is configured
+      desc %{ Expand unless tax is configured }
+      tag 'shop:cart:tax:unless_tax' do |tag|
+         tag.expand unless ['inclusive','exclusive'].include?(tag.locals.shop_tax[:strategy])
+      end
+      
+      # Return the strategy of the tax
+      desc %{ Return the name of the tax }
+      tag 'shop:cart:tax:strategy' do |tag|
+         tag.locals.shop_tax[:strategy]
+      end
+      
       # Return the strategy of the tax
       desc %{ Return the name of the tax }
       tag 'shop:cart:tax:strategy' do |tag|
@@ -34,7 +52,8 @@ module Shop
       # Return the cost of tax on the cart
       desc %{ Return the cost of tax on the cart }
       tag 'shop:cart:tax:cost' do |tag|
-         tag.locals.shop_order.tax
+        attr = tag.attr.symbolize_keys
+        Helpers.currency(tag.locals.shop_order.tax,attr)
       end
       
       # Expand if tax is inclusive

@@ -26,7 +26,7 @@ ActionController::Routing::Routes.draw do |map|
       
       shop.resources :customers
       
-      shop.resources :orders
+      shop.resources :orders, :except => [ :destroy ], :collection => { :export => :get }
     end
 
     admin.resources :shops, :as => 'shop', :only => [ :index ]

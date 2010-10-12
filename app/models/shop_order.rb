@@ -31,13 +31,13 @@ class ShopOrder < ActiveRecord::Base
   end
   
   def tax
-    price      = 0; line_items.map { |l| price += l.price }
+    price      = 0; line_items.map { |l| price += l.price; }
     tax        = 0
     percentage = Radiant::Config['shop.tax_percentage'].to_f * 0.01
     
     case Radiant::Config['shop.tax_strategy']
     when 'inclusive'
-      tax = price / (1 + percentage)
+      tax = price - (price / (1 + percentage))
     when 'exclusive'
       tax = price * percentage
     end
@@ -130,6 +130,19 @@ class ShopOrder < ActiveRecord::Base
   end
   
   class << self
+    
+    # Will scope the contained find calls to a specific status
+    def scope_by_status(status)
+      case status
+      when 'new', 'shipped', 'paid'
+        with_scope(:find => { :conditions => {:status => status}}) do
+          yield
+        end
+      else
+        yield
+      end
+    end
+    
     def params
       [ :id, :notes, :status ]
     end

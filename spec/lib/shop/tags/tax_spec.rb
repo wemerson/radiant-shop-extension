@@ -10,6 +10,8 @@ describe Shop::Tags::Tax do
   it 'should describe these tags' do
     Shop::Tags::Tax.tags.sort.should == [
       'shop:cart:tax',
+      'shop:cart:tax:if_tax',
+      'shop:cart:tax:unless_tax',
       'shop:cart:tax:name',
       'shop:cart:tax:percentage',
       'shop:cart:tax:strategy',
@@ -38,6 +40,82 @@ describe Shop::Tags::Tax do
         exp = %{success}
         
         @page.should render(tag).as(exp)
+      end
+    end
+    
+    describe '<r:shop:cart:tax:if_tax />' do
+      context 'tax configured correctly' do
+        context 'inclusive' do
+          before :each do
+            Radiant::Config['shop.tax_strategy'] = 'inclusive'
+          end
+          it 'should expand' do
+            tag = %{<r:shop:cart:tax:if_tax>success</r:shop:cart:tax:if_tax>}
+            exp = %{success}
+            
+            @page.should render(tag).as(exp)
+          end
+        end
+        context 'exclusive' do
+          before :each do
+            Radiant::Config['shop.tax_strategy'] = 'exclusive'
+          end
+          it 'should expand' do
+            tag = %{<r:shop:cart:tax:if_tax>success</r:shop:cart:tax:if_tax>}
+            exp = %{success}
+            
+            @page.should render(tag).as(exp)
+          end
+        end
+      end
+      context 'tax not configured correctly' do
+        before :each do
+          Radiant::Config['shop.tax_strategy'] = 'failure'
+        end
+        it 'should not expand' do
+          tag = %{<r:shop:cart:tax:if_tax>failure</r:shop:cart:tax:if_tax>}
+          exp = %{}
+          
+          @page.should render(tag).as(exp)
+        end
+      end
+    end
+    
+    describe '<r:shop:cart:tax:unless_tax />' do
+      context 'tax configured correctly' do
+        context 'inclusive' do
+          before :each do
+            Radiant::Config['shop.tax_strategy'] = 'inclusive'
+          end
+          it 'should not expand' do
+            tag = %{<r:shop:cart:tax:unless_tax>failure</r:shop:cart:tax:unless_tax>}
+            exp = %{}
+            
+            @page.should render(tag).as(exp)
+          end
+        end
+        context 'exclusive' do
+          before :each do
+            Radiant::Config['shop.tax_strategy'] = 'exclusive'
+          end
+          it 'should not expand' do
+            tag = %{<r:shop:cart:tax:unless_tax>failure</r:shop:cart:tax:unless_tax>}
+            exp = %{}
+            
+            @page.should render(tag).as(exp)
+          end
+        end
+      end
+      context 'tax not configured correctly' do
+        before :each do
+          Radiant::Config['shop.tax_strategy'] = 'failure'
+        end
+        it 'should expand' do
+          tag = %{<r:shop:cart:tax:unless_tax>success</r:shop:cart:tax:unless_tax>}
+          exp = %{success}
+          
+          @page.should render(tag).as(exp)
+        end
       end
     end
     
@@ -71,7 +149,7 @@ describe Shop::Tags::Tax do
     describe '<r:shop:cart:tax:cost/>' do
       it 'should return the cost of tax on the cart' do
         tag = %{<r:shop:cart:tax:cost/>}
-        exp = @order.tax.to_s
+        exp = ::Shop::Tags::Helpers.currency(@order.tax)
         
         @page.should render(tag).as(exp)
       end

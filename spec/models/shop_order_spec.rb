@@ -105,138 +105,191 @@ describe ShopOrder do
     end
   end
     
-  context 'instance' do
-  
-    describe 'mutators' do
-      describe '#add!' do   
-        context 'item not in cart' do
-          before :each do
-            @order = shop_orders(:empty)
-            @product = shop_products(:crusty_bread)
-          end
-          context 'no quantity or type passed' do
-            it 'should assign a default type and default quantity' do
-              @order.add!(@product.id)
-              
-              @order.line_items.count.should           === 1
-              @order.line_items.first.item_type.should === 'ShopProduct'
-              @order.line_items.first.quantity.should  === 1
-              @order.line_items.first.item.should      === @product
-            end
-          end
-          context 'quantity passed' do
-            it 'should assign the default type and new quantity' do
-              @order.add!(@product.id, 2)
-              
-              @order.line_items.count.should           === 1
-              @order.line_items.first.item_type.should === 'ShopProduct'
-              @order.line_items.first.quantity.should  === 2
-              @order.line_items.first.item.should      === @product              
-            end
-          end
-          context 'type and quantity passed' do
-            it 'should assign the new type and new quantity' do
-              @order.add!(shop_packages(:all_bread).id, 2, 'ShopPackage')
-              
-              @order.line_items.count.should           === 1
-              @order.quantity.should                   === 2
-              @order.line_items.first.item_type.should === 'ShopPackage'
-            end
-          end
-        end
-        context 'item in cart' do
-          before :each do
-            @order      = shop_orders(:one_item)
-            @line_item  = @order.line_items.first
-          end
-          context 'no quantity or type passed' do
-            it 'should assign a default type and default quantity' do
-              @order.add!(@line_item.id)
-              
-              @order.line_items.count.should === 1
-              @order.quantity.should         === 1
-            end
-          end
-          context 'quantity passed' do
-            it 'should assign the default type and new quantity' do
-              @order.add!(@line_item.id, 2)
-              
-              @order.line_items.count.should === 1
-              @order.quantity.should         === 3
-            end
-          end
-        end
+  describe '#add!' do   
+    context 'item not in cart' do
+      before :each do
+        @order = shop_orders(:empty)
+        @product = shop_products(:crusty_bread)
       end
-      describe '#modify!' do
-        context 'quantity not set' do
-          before :each do
-            @order = shop_orders(:one_item)
-            @line_item = @order.line_items.first
-          end
-          it 'should not update the item' do
-            @order.modify!(@line_item.id)
-            
-            @order.quantity.should === 1
-          end
-        end
-        context 'quantity set' do
-          before :each do
-            @order = shop_orders(:one_item)
-            @line_item = @order.line_items.first
-          end
-          context 'quantity > 0' do
-            it 'should assign that quantity' do
-              @order.modify!(@line_item.id, 1)
-              @order.quantity.should === 1
-              
-              @order.modify!(@line_item.id, 2)
-              @order.quantity.should === 2
-              
-              @order.modify!(@line_item.id, 100)
-              @order.quantity.should === 100
-            end
-          end
-          context 'quantity <= 0' do
-            it 'should remove that item for 0' do
-              @order.modify!(@line_item.id, 0)
-              @order.quantity.should === 0         
-            end
-            it 'should remove that item for -1' do
-              @order.modify!(@line_item.id, -1)
-              @order.quantity.should === 0
-            end
-            it 'should remove that item for -100' do
-              @order.modify!(@line_item.id, -100)
-              @order.quantity.should === 0
-            end
-          end
-        end
-      end
-      describe '#remove!' do
-        it 'should remove the item' do
-          @order = shop_orders(:several_items)
-          items = @order.line_items.count
+      context 'no quantity or type passed' do
+        it 'should assign a default type and default quantity' do
+          @order.add!(@product.id)
           
-          @order.remove!(@order.line_items.first.id)
-          @order.line_items.count.should === items - 1
+          @order.line_items.count.should           === 1
+          @order.line_items.first.item_type.should === 'ShopProduct'
+          @order.line_items.first.quantity.should  === 1
+          @order.line_items.first.item.should      === @product
         end
       end
-      describe '#clear!' do
-        it 'should remove all items' do
-          @order = shop_orders(:several_items)
-          @order.clear!
+      context 'quantity passed' do
+        it 'should assign the default type and new quantity' do
+          @order.add!(@product.id, 2)
+          
+          @order.line_items.count.should           === 1
+          @order.line_items.first.item_type.should === 'ShopProduct'
+          @order.line_items.first.quantity.should  === 2
+          @order.line_items.first.item.should      === @product              
+        end
+      end
+      context 'type and quantity passed' do
+        it 'should assign the new type and new quantity' do
+          @order.add!(shop_packages(:all_bread).id, 2, 'ShopPackage')
+          
+          @order.line_items.count.should           === 1
+          @order.quantity.should                   === 2
+          @order.line_items.first.item_type.should === 'ShopPackage'
+        end
+      end
+    end
+    context 'item in cart' do
+      before :each do
+        @order      = shop_orders(:one_item)
+        @line_item  = @order.line_items.first
+      end
+      context 'no quantity or type passed' do
+        it 'should assign a default type and default quantity' do
+          @order.add!(@line_item.id)
+          
+          @order.line_items.count.should === 1
+          @order.quantity.should         === 1
+        end
+      end
+      context 'quantity passed' do
+        it 'should assign the default type and new quantity' do
+          @order.add!(@line_item.id, 2)
+          
+          @order.line_items.count.should === 1
+          @order.quantity.should         === 3
+        end
+      end
+    end
+  end
+  describe '#modify!' do
+    context 'quantity not set' do
+      before :each do
+        @order = shop_orders(:one_item)
+        @line_item = @order.line_items.first
+      end
+      it 'should not update the item' do
+        @order.modify!(@line_item.id)
+        
+        @order.quantity.should === 1
+      end
+    end
+    context 'quantity set' do
+      before :each do
+        @order = shop_orders(:one_item)
+        @line_item = @order.line_items.first
+      end
+      context 'quantity > 0' do
+        it 'should assign that quantity' do
+          @order.modify!(@line_item.id, 1)
+          @order.quantity.should === 1
+          
+          @order.modify!(@line_item.id, 2)
+          @order.quantity.should === 2
+          
+          @order.modify!(@line_item.id, 100)
+          @order.quantity.should === 100
+        end
+      end
+      context 'quantity <= 0' do
+        it 'should remove that item for 0' do
+          @order.modify!(@line_item.id, 0)
+          @order.quantity.should === 0         
+        end
+        it 'should remove that item for -1' do
+          @order.modify!(@line_item.id, -1)
+          @order.quantity.should === 0
+        end
+        it 'should remove that item for -100' do
+          @order.modify!(@line_item.id, -100)
           @order.quantity.should === 0
         end
       end
     end
   end
+  describe '#remove!' do
+    it 'should remove the item' do
+      @order = shop_orders(:several_items)
+      items = @order.line_items.count
+      
+      @order.remove!(@order.line_items.first.id)
+      @order.line_items.count.should === items - 1
+    end
+  end
+  describe '#clear!' do
+    it 'should remove all items' do
+      @order = shop_orders(:several_items)
+      @order.clear!
+      @order.quantity.should === 0
+    end
+  end
   
-  context 'class methods' do
-    describe '#params' do
-      it 'should have a set of standard parameters' do
-        ShopOrder.params.should === [ :id, :notes, :status ]
+  describe '.scope_by_status' do
+    context 'no scoping' do
+      before :each do
+        @orders = ShopOrder.count
+      end
+      context 'nil' do
+        it 'should return all' do
+          ShopOrder.scope_by_status(nil) do
+            ShopOrder.count.should === @orders
+          end
+        end
+      end
+      context 'blank' do
+        it 'should return all' do
+          ShopOrder.scope_by_status('') do
+            ShopOrder.count.should === @orders
+          end
+        end
+      end
+      context 'missing' do
+        it 'should return all' do
+          ShopOrder.scope_by_status('this_status_shall_never_be_real') do
+            ShopOrder.count.should === @orders
+          end
+        end
+      end
+    end
+    context 'scoping' do
+      before :each do
+        ShopOrder.create(:status => 'new')
+        ShopOrder.create(:status => 'shipped')
+        ShopOrder.create(:status => 'paid')
+      end
+      context 'new' do
+        it 'should return matching count' do
+          @orders = ShopOrder.all(:conditions => { :status => 'new' }).count
+          ShopOrder.scope_by_status('new') do
+            ShopOrder.count.should === @orders
+          end
+        end
+      end
+      context 'shipped' do
+        it 'should return matching count' do
+          @orders = ShopOrder.all(:conditions => { :status => 'shipped' }).count
+          ShopOrder.scope_by_status('shipped') do
+            ShopOrder.count.should === @orders
+          end
+        end
+      end
+      context 'paid' do
+        it 'should return matching count' do
+          @orders = ShopOrder.all(:conditions => { :status => 'paid' }).count
+          ShopOrder.scope_by_status('paid') do
+            ShopOrder.count.should === @orders
+          end
+        end
       end
     end
   end
-
+  
+  describe '.params' do
+    it 'should have a set of standard parameters' do
+      ShopOrder.params.should === [ :id, :notes, :status ]
+    end
+  end
+  
 end

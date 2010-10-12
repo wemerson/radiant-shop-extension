@@ -244,7 +244,7 @@ module Shop
           result
         end
         
-        def currency(number,attr)
+        def currency(number,attr = {})
           number_to_currency(number.to_f, 
             :precision  =>(attr[:precision] || Radiant::Config['shop.price_precision']).to_i,
             :unit       => attr[:unit]      || Radiant::Config['shop.price_unit'],

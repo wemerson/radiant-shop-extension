@@ -5,6 +5,7 @@ class ShopExtension < Radiant::Extension
   
   extension_config do |config|
     config.gem 'activemerchant', :lib => 'active_merchant'
+    config.gem 'fastercsv',      :lib => 'fastercsv'
   end
   
   UserActionObserver.instance.send :add_observer!, ShopCategory

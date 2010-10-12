@@ -8,6 +8,36 @@ describe Admin::Shop::OrdersController do
     login_as  :admin
   end
   
+  describe '#index' do
+    context 'scoping' do
+      it 'should accept shipped parameter' do
+        get :index, :status => 'new'
+        
+        assigns(:shop_orders).should === ShopOrder.all(:conditions => { :status => 'new'})
+      end
+      
+      it 'should accept paid parameter' do
+        get :index, :status => 'paid'
+        
+        assigns(:shop_orders).should === ShopOrder.all(:conditions => { :status => 'paid'})
+      end
+      
+      it 'should accept shipped parameter' do
+        get :index, :status => 'shipped'
+        
+        assigns(:shop_orders).should === ShopOrder.all(:conditions => { :status => 'shipped'})
+      end
+    end
+  end
+  
+  describe '#export' do
+    it 'should be scoped by status parameter' do
+      get :export, :status => 'shipped'
+      
+      assigns(:shop_orders).should === ShopOrder.all(:conditions => { :status => 'shipped'})
+    end
+  end
+  
   describe '#edit' do
     context 'instance variables' do
       context 'order with no address or customer' do
@@ -80,6 +110,10 @@ describe Admin::Shop::OrdersController do
         assigns(:popups).should   === []
       end
     end
+  end
+  
+  describe '#export' do
+    
   end
   
 end
