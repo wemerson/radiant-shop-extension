@@ -2,7 +2,26 @@ require 'spec/spec_helper'
 
 describe ShopDiscount do
   
-  dataset :shop_discounts, :shop_products
+  dataset :shop_discounts, :shop_products, :shop_orders
+
+  describe 'scope' do
+    before :each do
+      @valid   = ShopDiscount.all_including_invalid(:conditions => { :code => '10pcoff'}).first
+      @invalid = ShopDiscount.all_including_invalid(:conditions => { :code => 'invalid'}).first
+    end
+    context 'all' do
+      it 'should not return invalid by default' do
+        ShopDiscount.all.include?(@valid).should   be_true
+        ShopDiscount.all.include?(@invalid).should be_false
+      end
+    end
+    context 'all_including_invalid' do
+      it 'should return all including invalid' do
+        ShopDiscount.all_including_invalid.include?(@valid).should   be_true
+        ShopDiscount.all_including_invalid.include?(@invalid).should be_true
+      end
+    end
+  end
 
   describe 'validations' do
     before :each do

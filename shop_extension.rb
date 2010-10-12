@@ -21,22 +21,23 @@ class ShopExtension < Radiant::Extension
     # View Hooks
     unless defined? admin.products
       Radiant::AdminUI.send :include, Shop::Interface::Categories, Shop::Interface::Customers, Shop::Interface::Discounts, Shop::Interface::Orders, Shop::Interface::Packages, Shop::Interface::Products, Shop::Interface::Variants
-
-      admin.categories= Radiant::AdminUI.load_default_shop_categories_regions
-      admin.customers = Radiant::AdminUI.load_default_shop_customers_regions
-      admin.discounts = Radiant::AdminUI.load_default_shop_discounts_regions
-      admin.orders    = Radiant::AdminUI.load_default_shop_orders_regions
-      admin.packages  = Radiant::AdminUI.load_default_shop_packages_regions      
-      admin.products  = Radiant::AdminUI.load_default_shop_products_regions
-      admin.variants  = Radiant::AdminUI.load_default_shop_variants_regions
+      
+      admin.categories = Radiant::AdminUI.load_default_shop_categories_regions
+      admin.customers  = Radiant::AdminUI.load_default_shop_customers_regions
+      admin.discounts  = Radiant::AdminUI.load_default_shop_discounts_regions
+      admin.orders     = Radiant::AdminUI.load_default_shop_orders_regions
+      admin.packages   = Radiant::AdminUI.load_default_shop_packages_regions      
+      admin.products   = Radiant::AdminUI.load_default_shop_products_regions
+      admin.variants   = Radiant::AdminUI.load_default_shop_variants_regions
     end
     
     # Tags
-    Page.send :include, Shop::Tags::Core, Shop::Tags::Address, Shop::Tags::Card, Shop::Tags::Cart, Shop::Tags::Category, Shop::Tags::Item, Shop::Tags::Package, Shop::Tags::Product, Shop::Tags::ProductVariant, Shop::Tags::Responses
+    Page.send :include, Shop::Tags::Core, Shop::Tags::Address, Shop::Tags::Card, Shop::Tags::Cart, Shop::Tags::Category, Shop::Tags::Item, Shop::Tags::Package, Shop::Tags::Product, Shop::Tags::ProductVariant, Shop::Tags::Responses, Shop::Tags::Tax
     
     # Model Includes
-    Page.send :include, Shop::Models::Page
+    Page.send :include,  Shop::Models::Page
     Image.send :include, Shop::Models::Image
+    User.send :include,  Shop::Models::User
     
     # Controller Includes
     ApplicationController.send :include, Shop::Controllers::ApplicationController
@@ -62,6 +63,10 @@ class ShopExtension < Radiant::Extension
     Radiant::Config['shop.price_precision'] ||= 2
     Radiant::Config['shop.price_separator'] ||= '.'
     Radiant::Config['shop.price_delimiter'] ||= ','
+    
+    Radiant::Config['shop.tax_strategy']    ||= 'inclusive' #exclusive
+    Radiant::Config['shop.tax_percentage']  ||= '10'
+    Radiant::Config['shop.tax_name']        ||= 'gst'
     
     # Scoped Customer Welcome Page
     Radiant::Config['scoped.customer.redirect'] = '/cart'

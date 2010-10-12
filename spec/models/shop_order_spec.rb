@@ -217,20 +217,6 @@ describe ShopOrder do
   end
   
   context 'class methods' do
-    describe '#search' do
-      context 'status' do
-        it 'should return valid subsets' do
-          count = ShopOrder.count
-          
-          old = ShopOrder.first
-          old.update_attribute(:status, 'paid')
-          
-          results = ShopOrder.search('new')
-          results.count.should === count - 1
-        end
-      end
-    end
-    
     describe '#params' do
       it 'should have a set of standard parameters' do
         ShopOrder.params.should === [ :id, :notes, :status ]

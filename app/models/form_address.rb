@@ -51,8 +51,9 @@ class FormAddress
   
   # Attaches a billing address to the order (and current customer)
   def create_order_billing_address
+    
     # Billing Address
-    if billing[:id]
+    if billing[:id] and current_customer.present?
       begin
         # Use an existing Address and update its values
         @billing = current_customer.billings.find(billing[:id])
@@ -63,6 +64,7 @@ class FormAddress
       end
       
     elsif @order.billing.present?
+      
       # Use the current billing and update its values
       @billing = @order.billing
       @billing.update_attributes(billing)
@@ -73,8 +75,8 @@ class FormAddress
       if @billing.save
         @order.update_attribute(:billing, @billing)
       end
-      
     end
+    
   end
   
   # Attaches a shipping address to the order (and current customer)

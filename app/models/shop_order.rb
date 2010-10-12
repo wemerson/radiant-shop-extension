@@ -2,8 +2,10 @@ class ShopOrder < ActiveRecord::Base
   
   default_scope :order => 'shop_orders.updated_at DESC'
   
-  has_one   :payment,     :class_name => 'ShopPayment',   :foreign_key => :order_id,  :dependent => :destroy
-  has_many  :line_items,  :class_name => 'ShopLineItem',  :foreign_key => :order_id,  :dependent => :destroy
+  has_one    :payment,     :class_name => 'ShopPayment',        :foreign_key => :order_id,  :dependent => :destroy
+  has_many   :line_items,  :class_name => 'ShopLineItem',       :foreign_key => :order_id,  :dependent => :destroy
+  has_many :discountables, :class_name => 'ShopDiscountable', :foreign_key  => :discounted_id
+  has_many   :discounts,   :class_name => 'ShopDiscount',     :through      => :discountables
   
   belongs_to :billing,    :class_name => 'ShopAddress'
   belongs_to :shipping,   :class_name => 'ShopAddress'
@@ -14,6 +16,31 @@ class ShopOrder < ActiveRecord::Base
   accepts_nested_attributes_for :line_items,  :reject_if => :all_blank
   accepts_nested_attributes_for :billing,     :reject_if => :all_blank
   accepts_nested_attributes_for :shipping,    :reject_if => :all_blank
+  
+  def price
+    price = 0
+    self.line_items.map { |l| price += l.price }
+    price
+  end
+  
+  def weight
+    weight = 0
+    self.line_items.map { |l| weight += l.weight }
+    weight
+  end
+  
+  def tax
+    tax = 0.00
+    percentage = Radiant::Config['shop.tax_percentage'].to_f * 0.01
+    
+    case Radiant::Config['shop.tax_strategy']
+    when 'inclusive'
+      tax = price / (1 + percentage)
+    when 'exclusive'
+      tax = price * percentage
+    end
+    BigDecimal.new(tax.to_s)
+  end
   
   def add!(id, quantity = nil, type = nil)
     result = true
@@ -86,18 +113,6 @@ class ShopOrder < ActiveRecord::Base
     self.line_items.sum(:quantity)
   end
   
-  def price
-    price = 0
-    self.line_items.map { |l| price += l.price }
-    price
-  end
-  
-  def weight
-    weight = 0
-    self.line_items.map { |l| weight += l.weight }
-    weight
-  end
-  
   def new?
     self.status === 'new'
   end
@@ -112,24 +127,6 @@ class ShopOrder < ActiveRecord::Base
   end
   
   class << self
-    def search(search = nil)
-      unless search.blank?
-        search = search.downcase
-        
-        queries = []
-        queries << 'LOWER(status) LIKE (:term)'
-        
-        sql = queries.join(' OR ')
-        
-        # This looks tricky, but not subject to sql injection :-)
-        conditions = [sql, {:term => "%#{search}%" }]
-      else
-        conditions = []
-      end
-      
-      all(:conditions => conditions)
-    end
-    
     def params
       [ :id, :notes, :status ]
     end

@@ -1,5 +1,6 @@
 class FormLineItem
   include Forms::Models::Extension
+  include Shop::Models::FormExtension
   
   # line_item:
   #   process: add|update|remove
@@ -21,17 +22,6 @@ class FormLineItem
   end
   
   protected
-    
-  # Uses the page session data to find the current order
-  def find_or_create_current_order
-    begin
-      @order = ShopOrder.find(@page.request.session[:shop_order])
-    rescue
-      @order = ShopOrder.create
-      @result[:session] = { :shop_order => @order.id }
-    end
-    @order.update_attribute(:customer_id, (current_customer.id rescue nil)) # either assign it to a user, or don't
-  end
   
   def process
     @config[:process]

@@ -1,16 +1,16 @@
 class FormsDataset < Dataset::Base
   
-  uses :pages, :shop_orders
+  uses :pages, :shop_orders, :shop_discounts
   
   def load
     create_record :form, :checkout, 
       :title    => 'Checkout',
-      :body     => body,
-      :content  => content,
-      :config   => config
+      :body     => checkout_body,
+      :config   => checkout_config,
+      :content  => ''
   end
   
-  def body
+  def checkout_body
 <<-BODY
 <r:shop:cart>
   <div class="addresses">
@@ -49,13 +49,7 @@ class FormsDataset < Dataset::Base
 BODY
   end
   
-  def content
-<<-CONTENT
-    
-CONTENT
-  end
-  
-  def config
+  def checkout_config
 <<-CONFIG
 checkout:
   test: true
@@ -157,6 +151,23 @@ CONFIG
 
       @request.session = { :shop_order => @order.id }
     end
+    
+    def mock_valid_form_discount_request
+      @form = forms(:checkout)
+      @form[:extensions] = {
+        :discount => {
+          :process => 'add'
+        }
+      }
+      @data = {
+       :discount => {
+         :code => shop_discounts(:ten_percent).code
+       } 
+      }
+
+      @request.session = { :shop_order => @order.id }
+    end
+    
   end
   
 end

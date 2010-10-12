@@ -59,11 +59,35 @@ module Shop
       end
       
       # Output the related elements attributes
-      [:name, :sku, :price, :weight].each do |symbol|
+      [:name, :sku].each do |symbol|
         desc %{ outputs the #{symbol} of the current cart item }
         tag "shop:cart:item:#{symbol}" do |tag|
           tag.locals.shop_line_item.item.send(symbol)
-        end        
+        end
+      end
+      
+      [:price, :value, :discounted].each do |symbol|
+        desc %{ outputs the #{symbol} of the current cart item }
+        tag "shop:cart:item:#{symbol}" do |tag|
+          attr = tag.attr.symbolize_keys
+          item = tag.locals.shop_line_item
+
+          Helpers.currency(item.send(symbol),attr)
+        end
+      end
+      
+      desc %{ expands if the item has a discount}
+      tag "shop:cart:item:if_discounted" do |tag|
+        item = tag.locals.shop_line_item
+        
+        tag.expand if item.price != item.value
+      end
+      
+      desc %{ expands if the item has a discount}
+      tag "shop:cart:item:unless_discounted" do |tag|
+        item = tag.locals.shop_line_item
+        
+        tag.expand if item.price == item.value
       end
       
       desc %{ generates a link to the items generated page }
@@ -76,15 +100,6 @@ module Shop
         text = tag.double? ? tag.expand : item.name
         
         %{<a href="#{item.slug}"#{attributes}>#{text}</a>}
-      end
-      
-      # Output the price of the line item
-      desc %{ outputs the total price of the current cart item }
-      tag 'shop:cart:item:price' do |tag|
-        attr = tag.attr.symbolize_keys
-        item = tag.locals.shop_line_item
-        
-        Helpers.currency(item.price,attr)
       end
       
     end

@@ -21,7 +21,10 @@ describe Shop::Tags::Item do
       'shop:cart:item:sku',
       'shop:cart:item:link',
       'shop:cart:item:price',
-      'shop:cart:item:weight'].sort
+      'shop:cart:item:value',
+      'shop:cart:item:discounted',
+      'shop:cart:item:if_discounted',
+      'shop:cart:item:unless_discounted'].sort
   end
   
   context 'within a cart' do
@@ -207,12 +210,6 @@ describe Shop::Tags::Item do
           it 'should render <r:sku />' do
             tag = %{<r:shop:cart:item:sku />}
             exp = @line_item.item.sku
-            
-            @page.should render(tag).as(exp)
-          end
-          it 'should render <r:weight />' do
-            tag = %{<r:shop:cart:item:weight />}
-            exp = @line_item.item.weight.to_s
             
             @page.should render(tag).as(exp)
           end
