@@ -6,12 +6,16 @@ require 'spec/helpers/nested_tag_helper'
 #
 describe Shop::Tags::Cart do
   
-  dataset :pages, :shop_orders
+  dataset :pages, :shop_orders, :shop_payments
   
   it 'should describe these tags' do
     Shop::Tags::Cart.tags.sort.should == [
       'shop:cart:if_cart',
       'shop:cart:unless_cart',
+      'shop:cart:payment',
+      'shop:cart:payment:if_paid',
+      'shop:cart:payment:unless_paid',
+      'shop:cart:payment:date',
       'shop:cart',
       'shop:cart:id',
       'shop:cart:status',
@@ -91,6 +95,76 @@ describe Shop::Tags::Cart do
           @page.should render(tag).as(expected)
         end
       end
+    end
+    
+    context 'payment' do
+      before :each do
+        mock(Shop::Tags::Helpers).current_order(anything) { @order }
+        @order.status = 'paid'
+      end
+      
+      describe '<r:shop:cart:payment />' do
+        context 'payment exists' do
+          it 'should expand' do
+            tag = %{<r:shop:cart:payment>success</r:shop:cart:payment>}
+            expected = %{success}
+            @page.should render(tag).as(expected)            
+          end
+        end
+        context 'payment doesnt exist' do
+          it 'should expand' do
+            stub(@order).paid? { false }
+            tag = %{<r:shop:cart:payment>success</r:shop:cart:payment>}
+            expected = %{success}
+            @page.should render(tag).as(expected)           
+          end
+        end
+      end
+      
+      describe '<r:shop:cart:payment:if_paid />' do
+        context 'payment exists' do
+          it 'should expand' do
+            tag = %{<r:shop:cart:payment:if_paid>success</r:shop:cart:payment:if_paid>}
+            expected = %{success}
+            @page.should render(tag).as(expected)            
+          end
+        end
+        context 'payment doesnt exist' do
+          it 'should expand' do
+            stub(@order).paid? { false }
+            tag = %{<r:shop:cart:payment:if_paid>failure</r:shop:cart:payment:if_paid>}
+            expected = %{}
+            @page.should render(tag).as(expected)           
+          end
+        end
+      end
+      
+      describe '<r:shop:cart:payment:unless_paid />' do
+        context 'payment exists' do
+          it 'should expand' do
+            stub(@order).paid? { false }
+            tag = %{<r:shop:cart:payment:unless_paid>success</r:shop:cart:payment:unless_paid>}
+            expected = %{success}
+            @page.should render(tag).as(expected)            
+          end
+        end
+        context 'payment doesnt exist' do
+          it 'should expand' do
+            tag = %{<r:shop:cart:payment:unless_paid>failure</r:shop:cart:payment:unless_paid>}
+            expected = %{}
+            @page.should render(tag).as(expected)           
+          end
+        end
+      end
+      
+      describe '<r:shop:cart:payment:date />' do
+        it 'should return the created_at date of the payment' do          
+          tag = %{<r:shop:cart:payment:date />}
+          expected = @order.payment.created_at.to_s(:long)
+          @page.should render(tag).as(expected)
+        end
+      end
+      
     end
     
     describe 'simple attributes' do

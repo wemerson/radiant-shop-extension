@@ -23,6 +23,30 @@ module Shop
         tag.expand unless tag.locals.shop_order.present?
       end
       
+      # Expand the payment context for the cart
+      desc %{ Expand the payment context for the cart }
+      tag 'shop:cart:payment' do |tag|
+        tag.expand
+      end
+      
+      # Expand if the user has paid for their cart
+      desc %{ Expand if the user has paid for their cart }
+      tag 'shop:cart:payment:if_paid' do |tag|
+        tag.expand if tag.locals.shop_order.payment.present? or tag.locals.shop_order.paid?
+      end
+      
+      # Expand unless the user has paid for their cart
+      desc %{ Expand unless the user has paid for their cart }
+      tag 'shop:cart:payment:unless_paid' do |tag|
+        tag.expand unless tag.locals.shop_order.payment.present? or tag.locals.shop_order.paid?
+      end
+      
+      # Returns the date of the payment
+      desc %{ Returns the date of the payment }
+      tag 'shop:cart:payment:date' do |tag|
+        tag.locals.shop_order.payment.created_at.to_s(:long)
+      end
+      
       # Display the cart id / status
       [:id, :status, :quantity, :weight].each do |symbol|
         desc %{ outputs the #{symbol} to the cart }
