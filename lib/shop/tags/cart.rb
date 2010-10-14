@@ -32,13 +32,13 @@ module Shop
       # Expand if the user has paid for their cart
       desc %{ Expand if the user has paid for their cart }
       tag 'shop:cart:payment:if_paid' do |tag|
-        tag.expand if tag.locals.shop_order.payment.present? or tag.locals.shop_order.paid?
+        tag.expand if tag.locals.shop_order.payment.present? and tag.locals.shop_order.paid?
       end
       
       # Expand unless the user has paid for their cart
       desc %{ Expand unless the user has paid for their cart }
       tag 'shop:cart:payment:unless_paid' do |tag|
-        tag.expand unless tag.locals.shop_order.payment.present? or tag.locals.shop_order.paid?
+        tag.expand unless tag.locals.shop_order.payment.present? and tag.locals.shop_order.paid?
       end
       
       # Returns the date of the payment
