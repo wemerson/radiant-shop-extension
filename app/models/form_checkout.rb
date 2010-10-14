@@ -20,11 +20,12 @@ class FormCheckout
           
           # We have a paid for order with a billing address
           if success?
-            finalize_cart
             # The form was configured to send a payment email
-            if mail.present?
-              configure_invoice_mail # Create some configuration variables for mailing
+            if extensions.present?
+              configure_success_extensions # Create some configuration variables for mailing
             end
+            
+            finalize_cart
           else
             @result[:payment] = false
             @form.redirect_to = :back
@@ -94,13 +95,15 @@ class FormCheckout
   end
   
   # Sets up mail to send an invoice to the billing email address
-  def configure_invoice_mail
-    @form[:extensions][:mail] ||= {}
-    @form[:extensions][:mail].merge!({
-      :recipient  => @order.billing.email,
-      :to         => @order.billing.email,
-    })
-    @form[:extensions][:mail].merge!(mail)
+  def configure_success_extensions
+    extensions.each do |name, config|
+      if config[:extension] == 'mail'
+        config[:to] = @order.billing.email unless config[:to].present?
+      end
+      
+      result = @form.call_extension(name,config)
+      @result.merge!({ name.to_sym => result })
+    end
   end
   
   # Uses the gateway and card objects to carry out an ActiveMerchant purchase
@@ -191,8 +194,8 @@ class FormCheckout
   end
   
   # Returns configured mail attributes
-  def mail
-    @config[:mail]
+  def extensions
+    @config[:extensions]
   end
   
   # Returns the amount to be charged, which is $10 on testing gateways

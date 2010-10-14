@@ -99,7 +99,7 @@ module Shop
         
         text = tag.double? ? tag.expand : item.name
         
-        %{<a href="#{item.slug}"#{attributes}>#{text}</a>}
+        %{<a href="#{item.url}"#{attributes}>#{text}</a>}
       end
       
     end

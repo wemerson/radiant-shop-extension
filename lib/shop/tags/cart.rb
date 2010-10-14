@@ -44,7 +44,7 @@ module Shop
       # Returns the date of the payment
       desc %{ Returns the date of the payment }
       tag 'shop:cart:payment:date' do |tag|
-        tag.locals.shop_order.payment.created_at.to_s(:long)
+        tag.locals.shop_order.payment.created_at.strftime('%d/%m/%Y')
       end
       
       # Display the cart id / status

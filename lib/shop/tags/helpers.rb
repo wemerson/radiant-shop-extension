@@ -136,7 +136,10 @@ module Shop
           elsif tag.locals.page.request.session[:shop_order].present?
             session = tag.locals.page.request.session[:shop_order]
             result  = ShopOrder.find(session)
-            
+          
+          elsif tag.locals.response.present? and tag.locals.response.result.checkout.present?
+            result  = ShopOrder.find(tag.locals.response.result.checkout.order)
+          
           end
           
           result
@@ -147,8 +150,6 @@ module Shop
           
           if tag.locals.shop_line_items.present?
             result = tag.locals.shop_line_items
-          elsif tag.attr['key'] and tag.attr['value']
-            result = tag.locals.shop_order.line_items.all(:conditions => { tag.attr['key'].downcase.to_sym => tag.attr['value'] })
           else
             result = tag.locals.shop_order.line_items
           end

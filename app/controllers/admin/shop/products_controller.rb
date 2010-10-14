@@ -157,6 +157,7 @@ private
     @meta     << 'sku'
     @meta     << 'page'
     @meta     << 'category'
+    @meta     << 'layout'
     
     @parts    << 'description'
     @parts    << 'variants'
