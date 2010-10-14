@@ -3,7 +3,7 @@ namespace :radiant do
     namespace :shop do
       
       desc "Runs the migration of the Shop extension"
-      task :migrate do
+      task :migrate => :environment do
         require 'radiant/extension_migrator'
         if ENV["VERSION"]
           ShopExtension.migrator.migrate(ENV["VERSION"].to_i)
