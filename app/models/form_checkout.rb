@@ -102,8 +102,10 @@ class FormCheckout
     extensions.each do |name, config|
       if config[:extension] == 'mail'
         config[:to] = @order.billing.email unless config[:to].present?
-        config[:shop_order] = @order.id # it's very likely the extension will need to know the order id
       end
+      
+      # it's very likely the extension will need to know the order id
+      config[:shop_order] = @order.id
       
       result = @form.call_extension(name,config)
       @result.merge!({ name.to_sym => result })
