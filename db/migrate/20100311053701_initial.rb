@@ -95,7 +95,7 @@ class Initial < ActiveRecord::Migration
     
     create_table :shop_orders do |t|
       t.text        :notes
-      t.text        :status, :default => 'new'
+      t.string      :status, :default => 'new'
       
       t.references  :shop_customer
       t.references  :billing
