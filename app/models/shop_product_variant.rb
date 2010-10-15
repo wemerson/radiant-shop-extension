@@ -11,6 +11,8 @@ class ShopProductVariant < ActiveRecord::Base
   
   has_many    :line_items,  :class_name => 'ShopLineItem',          :foreign_key  => :item_id,      :dependent => :destroy
   has_many    :orders,      :class_name => 'ShopOrder',             :through      => :line_items,   :uniq      => true
+  has_many  :discountables, :class_name => 'ShopDiscountable',      :foreign_key  => :discounted_id
+  has_many    :discounts,   :class_name => 'ShopDiscount',          :through      => :discountables
   
   # Returns the price of the variant plus the product price
   def price

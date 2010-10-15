@@ -137,8 +137,8 @@ module Shop
             session = tag.locals.page.request.session[:shop_order]
             result  = ShopOrder.find(session)
           
-          elsif tag.locals.response.present? and tag.locals.response.result.checkout.present?
-            result  = ShopOrder.find(tag.locals.response.result.checkout.order)
+          elsif tag.locals.response.present? and tag.locals.response.result[:checkout].present?
+            result  = ShopOrder.find(tag.locals.response.result[:checkout][:order])
           
           end
           

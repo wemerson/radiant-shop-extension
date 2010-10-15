@@ -7,6 +7,8 @@ class ShopPackage < ActiveRecord::Base
   has_many    :products,    :class_name => 'ShopProduct',   :foreign_key  => :product_id, :through => :packings
   has_many    :line_items,  :class_name => 'ShopLineItem',  :as => :item
   has_many    :orders,      :class_name => 'ShopOrder',     :through => :line_items
+  has_many  :discountables, :class_name => 'ShopDiscountable',      :foreign_key  => :discounted_id
+  has_many    :discounts,   :class_name => 'ShopDiscount',          :through      => :discountables
   
   before_validation         :assign_sku
   
@@ -24,6 +26,9 @@ class ShopPackage < ActiveRecord::Base
   
   # Returns the url of the first product
   def url; packings.first.product.url; end
+  
+  # Not a valid option, but useful incase a tag is called
+  def category; nil; end
 
   # Overloads the base to_json to return what we want
   def to_json(*attrs); super self.class.params; end

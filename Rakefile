@@ -6,7 +6,7 @@ begin
     gem.description = %Q{Radiant Shop is an attempt at a simple but complete store. It includes Products, Categories, Orders and Credit Card Payments}
     gem.email = "dk@dirkkelly.com"
     gem.homepage = "http://github.com/squaretalent/radiant-shop-extension"
-    gem.authors = ["Dirk Kelly", "John Barker"]
+    gem.authors = ["Dirk Kelly", "John Barker", "Darcy Laycock"]
     gem.add_dependency 'radiant',                     '>= 0.9.1'
     gem.add_dependency 'activemerchant',              '>= 1.8.0'
     gem.add_dependency 'fastercsv',                   '>= 1.5.3'

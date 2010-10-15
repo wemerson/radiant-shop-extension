@@ -11,6 +11,10 @@ module Shop
         tag.expand
       end
       
+      tag 'shop:cart:forget' do |tag|
+        tag.locals.page.request.session[:shop_order] = nil
+      end
+      
       # Expand if a user has started a cart
       desc %{ Expand if a user has started a cart }
       tag 'shop:cart:if_cart' do |tag|

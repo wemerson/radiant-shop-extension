@@ -5,16 +5,19 @@ class FormCheckout
   attr_accessor :config, :data, :result, :gateway, :card
   
   def create
+    redirect = @form.redirect_to
+    
+    @form.redirect_to = :back
     find_current_order # locate the @order object
     
     create_result_object # A default response object
-
+    
     # If the form was configured for gateway and we have a billing address
     if @order.billing.present?
       if gateway.present?
         prepare_gateway # Create the @gateway object
         prepare_credit_card if card.present?# Create the @card object
-      
+        
         if @result[:gateway] and @result[:card]
           purchase! # Use @card to pay through @gateway
           
@@ -26,9 +29,9 @@ class FormCheckout
             end
             
             finalize_cart
+            @form.redirect_to = redirect
           else
             @result[:payment] = false
-            @form.redirect_to = :back
           end
         end
       else
@@ -99,6 +102,7 @@ class FormCheckout
     extensions.each do |name, config|
       if config[:extension] == 'mail'
         config[:to] = @order.billing.email unless config[:to].present?
+        config[:shop_order] = @order.id # it's very likely the extension will need to know the order id
       end
       
       result = @form.call_extension(name,config)
@@ -118,7 +122,6 @@ class FormCheckout
   end
   
   def finalize_cart
-    @result[:session] = { :shop_order => nil }  # We no longer need to store the current shop_roder
     @order.update_attribute(:status, 'paid')    # The order is now considered paid 
   end
   

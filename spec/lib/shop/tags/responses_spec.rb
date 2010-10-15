@@ -13,7 +13,43 @@ describe Shop::Tags::Responses do
     ].sort
   end
   
-  context 'responses' do
+  context 'address' do
+    
+    before :each do
+      login_as :customer
+      @order = shop_orders(:several_items)
+      
+      mock_valid_form_address_request
+      @checkout = FormCheckout.new(@form, @page)
+    end
+    
+    describe '<r:response:address>' do
+      context 'address exists' do
+        before :each do
+          @response.result[:results][:address] = @checkout.create
+        end
+        it 'should expand' do
+          pending
+          tag = %{<r:response:checkout>success</r:response:checkout>}
+          exp = %{success}
+          
+          pages(:home).should render(tag).as(exp)
+        end
+      end
+      context 'checkout does not exist' do
+        it 'should not expand' do
+          pennding
+          tag = %{<r:response:checkout>failure</r:response:checkout>}
+          exp = %{}
+        
+          pages(:home).should render(tag).as(exp)
+        end
+      end
+    end
+    
+  end
+  
+  context 'checkout' do
     
     before :each do
       login_as :customer
