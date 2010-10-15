@@ -100,7 +100,7 @@ class FormCheckout
   # Sets up mail to send an invoice to the billing email address
   def configure_success_extensions
     extensions.each do |name, config|
-      if config[:extension] == 'mail'
+      if config[:extension].include?('mail')
         config[:to] = @order.billing.email unless config[:to].present?
       end
       
