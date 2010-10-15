@@ -12,8 +12,6 @@ class ChangeCreatedByToId < ActiveRecord::Migration
 
     add_column :shop_product_attachments,    :created_by_id, :integer
     add_column :shop_product_attachments,    :updated_by_id, :integer
-    remove_column :shop_product_attachments, :created_by
-    remove_column :shop_product_attachments, :updated_by
     
     add_column :shop_addresses, :created_by_id, :integer
     add_column :shop_addresses, :updated_by_id, :integer
