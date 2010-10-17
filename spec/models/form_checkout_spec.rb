@@ -139,24 +139,16 @@ describe FormCheckout do
           before :each do
             @checkout = FormCheckout.new(@form,@page,@form[:extensions][:bogus_checkout])
           end
-          it 'should configure order to be sent' do
-            pending 'assers called'
-            
-            @config = @form[:extensions][:bogus_checkout][:extensions][:order]
-            
-            mock(FormMail).new(@form,@page,@config) {  }
-            
-            @checkout.create
-          end
-          it 'should configure invoice to be sent with custom to' do
-            pending 'assers called'
-            
-            @config = @form[:extensions][:bogus_checkout][:extensions][:invoice]
-            @config[:extensions][:bogus_checkout][:extensions][:invoice].merge!({
+          it 'should configure order and invoice to be sent' do
+            @config = @form[:extensions][:bogus_checkout][:extensions]
+            @config[:invoice].merge!({
               :to => @order.billing.email
             })
             
-            mock(FormMail).new(@form,@page,@config) {  }
+            @form_mail = Object.new
+            mock(@form_mail).create.times(2) { true }
+            mock(FormMail).new(@form,@page,@config[:order]) { @form_mail }
+            mock(FormMail).new(@form,@page,@config[:invoice]) { @form_mail }
             
             @checkout.create
           end
