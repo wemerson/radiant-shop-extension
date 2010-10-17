@@ -17,7 +17,7 @@ describe FormCheckout do
         end
         
         it 'should return the standard response' do
-          @checkout = FormCheckout.new(@form, @page)
+          @checkout = FormCheckout.new(@form, @page, @form[:extensions][:bogus_checkout])
           result = @checkout.create
                     
           result[:gateway].should be_nil
@@ -36,7 +36,7 @@ describe FormCheckout do
         end
         
         it 'should assign ActiveMerchant to testing mode' do
-          @checkout = FormCheckout.new(@form, @page)
+          @checkout = FormCheckout.new(@form, @page, @form[:extensions][:bogus_checkout])
           @checkout.create
           
           ActiveMerchant::Billing::Base.mode.should === :test
@@ -44,7 +44,7 @@ describe FormCheckout do
         
         it 'should return true for payment results' do
           mock.instance_of(ActiveMerchant::Billing::CreditCard).valid? { true }
-          @checkout = FormCheckout.new(@form, @page)
+          @checkout = FormCheckout.new(@form, @page, @form[:extensions][:bogus_checkout])
           result = @checkout.create
           
           result[:gateway].should === true
@@ -54,7 +54,7 @@ describe FormCheckout do
         
         it 'should assign a payment object' do
           mock.instance_of(ActiveMerchant::Billing::CreditCard).valid? { true }
-          @checkout = FormCheckout.new(@form, @page)
+          @checkout = FormCheckout.new(@form, @page, @form[:extensions][:bogus_checkout])
           result = @checkout.create
           
           @order.payment.card_number.should === "XXXX-XXXX-XXXX-1"
@@ -64,10 +64,8 @@ describe FormCheckout do
         
         it 'should assign session shop_order to nil' do
           mock.instance_of(ActiveMerchant::Billing::CreditCard).valid? { true }
-          @checkout = FormCheckout.new(@form, @page)
+          @checkout = FormCheckout.new(@form, @page, @form[:extensions][:bogus_checkout])
           result = @checkout.create
-          
-          result[:session][:shop_order].should be_nil
         end
       end
       
@@ -80,9 +78,9 @@ describe FormCheckout do
         end
         context 'no gateway' do
           it 'should return gateway false' do
-            @form[:extensions][:checkout][:gateway] = nil
+            @form[:extensions][:bogus_checkout][:gateway] = nil
             
-            @checkout = FormCheckout.new(@form, @page)
+            @checkout = FormCheckout.new(@form, @page, @form[:extensions][:bogus_checkout])
             result = @checkout.create
             
             result[:gateway].should === false
@@ -97,7 +95,7 @@ describe FormCheckout do
           it 'should return card and payment false' do
             @data[:card] = nil
             
-            @checkout = FormCheckout.new(@form, @page)
+            @checkout = FormCheckout.new(@form, @page, @form[:extensions][:bogus_checkout])
             result = @checkout.create
             
             result[:gateway].should === true
@@ -112,7 +110,7 @@ describe FormCheckout do
           it 'should return card and payment false' do
             mock.instance_of(ActiveMerchant::Billing::CreditCard).valid? { false }
             
-            @checkout = FormCheckout.new(@form, @page)
+            @checkout = FormCheckout.new(@form, @page, @form[:extensions][:bogus_checkout])
             result = @checkout.create
             
             result[:gateway].should === true
@@ -138,20 +136,35 @@ describe FormCheckout do
           mock_valid_form_checkout_request
         end
         context 'payment successful' do
-          it 'should configure mail to be sent' do
-            @checkout = FormCheckout.new(@form, @page)
-            @checkout.create
+          before :each do
+            @checkout = FormCheckout.new(@form,@page,@form[:extensions][:bogus_checkout])
+          end
+          it 'should configure order to be sent' do
+            pending 'assers called'
             
-            @form[:extensions][:mail][:to].should         === shop_addresses(:billing).email
-            @form[:extensions][:mail][:recipient].should  === shop_addresses(:billing).email
-            @form[:extensions][:mail][:subject].should    === @form[:extensions][:checkout][:mail][:subject]
-            @form[:extensions][:mail][:bcc].should        === @form[:extensions][:checkout][:mail][:bcc]
+            @config = @form[:extensions][:bogus_checkout][:extensions][:order]
+            
+            mock(FormMail).new(@form,@page,@config) {  }
+            
+            @checkout.create
+          end
+          it 'should configure invoice to be sent with custom to' do
+            pending 'assers called'
+            
+            @config = @form[:extensions][:bogus_checkout][:extensions][:invoice]
+            @config[:extensions][:bogus_checkout][:extensions][:invoice].merge!({
+              :to => @order.billing.email
+            })
+            
+            mock(FormMail).new(@form,@page,@config) {  }
+            
+            @checkout.create
           end
         end
         
         context 'payment unsuccesful' do
           it 'should not configure mail to be sent' do
-            @checkout = FormCheckout.new(@form, @page)
+            @checkout = FormCheckout.new(@form, @page, @form[:extensions][:bogus_checkout])
             stub(@checkout).success? { false }
             @checkout.create
             
@@ -166,13 +179,13 @@ describe FormCheckout do
           @order = shop_orders(:several_items)
           
           mock_valid_form_checkout_request
-          @form[:extensions][:checkout][:mail] = nil
+          @form[:extensions][:bogus_checkout][:extensions] = nil
         end
         it 'should not configure mail to be sent' do
-          @checkout = FormCheckout.new(@form, @page)
+          @checkout = FormCheckout.new(@form, @page, @form[:extensions][:bogus_checkout])
           result = @checkout.create
           
-          @form[:extensions][:mail].should be_nil
+          do_not_allow(FormMail).new(@form,@page,anything)
         end
       end
     end

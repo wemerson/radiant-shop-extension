@@ -1,3 +1,5 @@
+class ShopProductAlternative < ShopProduct; end
+
 class ShopLineItemsDataset < Dataset::Base
   
   uses :shop_products, :shop_orders

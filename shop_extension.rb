@@ -50,7 +50,7 @@ class ShopExtension < Radiant::Extension
       add_item "Customers",     "/admin/shop/customers"
     end
     
-    Radiant::Config['shop.root_page_id']    ||= Page.first.id rescue nil
+    Radiant::Config['shop.root_page_id']    ||= nil
     
     Radiant::Config['shop.layout_product']  ||= 'Product'
     Radiant::Config['shop.layout_category'] ||= 'Products'

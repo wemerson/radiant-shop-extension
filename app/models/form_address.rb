@@ -41,7 +41,7 @@ class FormAddress
       create_order_shipping_address
     end
     
-    unless @billing.valid? and @shipping.valid?
+    unless (@billing.present? and @billing.valid?) and (@shipping.present? and @shipping.valid?)
       @form.redirect_to = :back
     end
     

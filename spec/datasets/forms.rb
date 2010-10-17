@@ -84,16 +84,27 @@ CONFIG
     
     def mock_valid_form_checkout_request
       @form = forms(:checkout)
+      @form.page = pages(:home)
       @form[:extensions] = {
-        :checkout   => {
-          :test     => true,
-          :gateway  => {
-            :name   => 'Bogus'
+        :bogus_checkout   => {
+          :extension => 'checkout',
+          :test      => true,
+          :gateway   => {
+            :name    => 'Bogus'
           },
-          :mail     => {
-            :subject=> 'new order',
-            :bcc    => 'orders@example.com'
-          },
+          :extensions => {
+            :order => {
+              :extension => 'mail',
+              :subject   => 'new order',
+              :from      => 'orders@bogus.com',
+              :to        => 'orders@bogus.com'
+            },
+            :invoice => {
+              :extension => 'mail',
+              :from      => 'orders@bogus.com',
+              :subject   => 'your invoice'
+            },
+          }
         }
       }
       
@@ -119,10 +130,12 @@ CONFIG
     
     def mock_valid_form_address_request
       @form = forms(:checkout)
+      @form.page = pages(:home)
       @form[:extensions] = {
-        :address    => {
-          :billing  => true,
-          :shipping => true
+        :addresses  => {
+          :extension => 'address',
+          :billing   => true,
+          :shipping  => true
         }
       }
       

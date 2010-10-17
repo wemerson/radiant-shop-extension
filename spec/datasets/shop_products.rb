@@ -3,6 +3,8 @@ class ShopProductsDataset < Dataset::Base
   uses :shop_categories
 
   def load
+    Radiant::Config['shop.root_page_id'] = pages(:home).id
+    
     categories = {
       :bread => [ :soft, :crusty, :warm ],
       :milk => [ :full, :hilo, :choc ]
