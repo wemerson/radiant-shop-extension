@@ -9,7 +9,6 @@ module Shop
           has_many  :shippings, :through    => :orders
           
           accepts_nested_attributes_for :orders, :allow_destroy => true
-          
         end
       end
       

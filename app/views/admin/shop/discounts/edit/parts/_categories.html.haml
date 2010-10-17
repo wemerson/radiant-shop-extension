@@ -1,3 +1,0 @@
-%ul#discount_categories.categories.discounteds
-  - @shop_discount.discountables.for('ShopCategory').each do |category|
-    = render :partial => 'admin/shop/discounts/edit/shared/category', :locals => { :category => category }

@@ -24,8 +24,7 @@ module Shop
           # Returns the current logged in ShopCustomer (if it exists)
           def current_customer
             return @shop_customer if @shop_customer.present?
-            return current_user if current_user.present?
-            @shop_customer = ShopCustomer.find(current_user.id) rescue nil
+            @shop_customer = current_user if current_user.present?
           end
         end
       end

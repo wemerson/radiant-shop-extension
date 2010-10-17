@@ -6,7 +6,6 @@ module Shop
         base.class_eval do
           has_one :shop_category, :dependent => :delete
           has_one :shop_product,  :dependent => :delete
-          
         end
       end
       

@@ -194,63 +194,13 @@ module Shop
           result
         end
         
-        def current_packages(tag)
-          result = nil
-          
-          if tag.locals.shop_product.present?
-            result = tag.locals.shop_product.packages
-          
-          elsif tag.attr['key'] and tag.attr['value']
-            result = ShopPackage.all(:conditions => { tag.attr['key'].downcase.to_sym => tag.attr['value']})
-            
-          else
-            result = ShopPackage.all
-            
-          end
-          
-          result
-        end
-        
-        def current_package(tag)
-          result = nil
-          
-          if tag.locals.shop_package.present?
-            result = tag.locals.shop_package
-            
-          elsif tag.attr['key'] and tag.attr['value']
-            result = ShopPackage.first(:conditions => { tag.attr['key'].downcase.to_sym => tag.attr['value']})
-          
-          end
-          
-          result
-        end
-        
-        def current_product_variants(tag)
-          result = nil
-          
-          if tag.locals.shop_product.present?
-            result = tag.locals.shop_product.variants
-          end
-          
-          result
-        end
-        
-        def current_product_variant(tag)
-          result = nil
-          
-          if tag.locals.shop_product_variant.present?
-            result = tag.locals.shop_product_variant
-          end
-          
-          result
-        end
-        
         def currency(number,attr = {})
           number_to_currency(number.to_f, 
-            :precision  =>(attr[:precision] || Radiant::Config['shop.price_precision']).to_i,
-            :unit       => attr[:unit]      || Radiant::Config['shop.price_unit'],
-            :separator  => attr[:separator] || Radiant::Config['shop.price_separator'],
-            :delimiter  => attr[:delimiter] || Radiant::Config['shop.price_delimiter'])
+            :precision  => (attr[:precision] || Radiant::Config['shop.price_precision']).to_i,
+            :unit       => (attr[:unit]      || Radiant::Config['shop.price_unit']),
+            :separator  => (attr[:separator] || Radiant::Config['shop.price_separator']),
+            :delimiter  => (attr[:delimiter] || Radiant::Config['shop.price_delimiter'])
+          )
         end
         
       end

@@ -18,13 +18,9 @@ describe Shop::Tags::Item do
       'shop:cart:item:id',
       'shop:cart:item:quantity',
       'shop:cart:item:name',
-      'shop:cart:item:sku',
-      'shop:cart:item:link',
       'shop:cart:item:price',
-      'shop:cart:item:value',
-      'shop:cart:item:discounted',
-      'shop:cart:item:if_discounted',
-      'shop:cart:item:unless_discounted'].sort
+      'shop:cart:item:sku',
+      'shop:cart:item:link'].sort
   end
   
   context 'within a cart' do
@@ -223,12 +219,12 @@ describe Shop::Tags::Item do
           context 'standalone' do
             it 'should render an anchor element' do
               tag = %{<r:shop:cart:item:link />}
-              exp = %{<a href="#{@line_item.item.slug}">#{@line_item.item.name}</a>}
+              exp = %{<a href="#{@line_item.item.url}">#{@line_item.item.name}</a>}
               pages(:home).should render(tag).as(exp)
             end
             it 'should assign attributes' do
               tag = %{<r:shop:cart:item:link title="title" data-title="data-title"/>}
-              exp = %{<a href="#{@line_item.item.slug}" data-title="data-title" title="title">#{@line_item.item.name}</a>}
+              exp = %{<a href="#{@line_item.item.url}" data-title="data-title" title="title">#{@line_item.item.name}</a>}
               pages(:home).should render(tag).as(exp)          
             end
           end
@@ -236,7 +232,7 @@ describe Shop::Tags::Item do
           context 'wrapped' do
             it 'should render an anchor element' do
               tag = %{<r:shop:cart:item:link>title</r:shop:cart:item:link>}
-              exp = %{<a href="#{@line_item.item.slug}">title</a>}
+              exp = %{<a href="#{@line_item.item.url}">title</a>}
               pages(:home).should render(tag).as(exp)
             end
           end

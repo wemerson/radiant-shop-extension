@@ -1,6 +1,6 @@
 class FormsDataset < Dataset::Base
   
-  uses :pages, :shop_orders, :shop_discounts
+  uses :pages, :shop_orders
   
   def load
     create_record :form, :checkout, 
@@ -147,22 +147,6 @@ CONFIG
           :country      => shop_addresses(:shipping).country,
           :postcode     => shop_addresses(:shipping).postcode
         }
-      }
-
-      @request.session = { :shop_order => @order.id }
-    end
-    
-    def mock_valid_form_discount_request
-      @form = forms(:checkout)
-      @form[:extensions] = {
-        :discount => {
-          :process => 'add'
-        }
-      }
-      @data = {
-       :discount => {
-         :code => shop_discounts(:ten_percent).code
-       } 
       }
 
       @request.session = { :shop_order => @order.id }

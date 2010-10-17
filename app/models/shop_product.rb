@@ -10,12 +10,7 @@ class ShopProduct < ActiveRecord::Base
   has_many    :orders,      :class_name => 'ShopOrder',             :through      => :line_items,   :uniq      => true
   has_many    :attachments, :class_name => 'ShopProductAttachment', :foreign_key  => :product_id
   has_many    :images,      :class_name => 'Image',                 :through      => :attachments,  :uniq      => true
-  has_many    :packings,    :class_name => 'ShopPacking',           :foreign_key  => :product_id
-  has_many    :packages,    :class_name => 'ShopPackage',           :foreign_key  => :package_id,   :through   => :packings, :source => :package
-  has_many    :related,     :class_name => 'ShopProduct',           :through      => :packings,     :source    => :product,  :uniq => true
   has_many    :variants,    :class_name => 'ShopProductVariant',    :foreign_key  => :product_id,   :dependent => :destroy
-  has_many  :discountables, :class_name => 'ShopDiscountable',      :foreign_key  => :discounted_id
-  has_many    :discounts,   :class_name => 'ShopDiscount',          :through      => :discountables
   
   before_validation             :assign_slug, :assign_breadcrumb
   validates_presence_of         :page
@@ -104,7 +99,7 @@ class ShopProduct < ActiveRecord::Base
     # Converts a url to a pretty sku and removes the shop prefix /shop/page/category/product page-category-product
     def to_sku(url)
       if url.present?
-        url.downcase.strip.gsub(/^\/#{Radiant::Config['shop.root_page_slug']}/,'').gsub(/^(\/*)(.*)(\/)$/,'\2').gsub(/[\s\.:;=+~]+/,'_').gsub(/\//,'-')
+        url.downcase.strip.gsub(/^\/#{Page.find(Radiant::Config['shop.root_page_id']).slug}/,'').gsub(/^(\/*)(.*)(\/)$/,'\2').gsub(/[\s\.:;=+~]+/,'_').gsub(/\//,'-')
       end
     end
     
