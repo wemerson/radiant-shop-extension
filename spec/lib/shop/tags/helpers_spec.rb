@@ -2,24 +2,14 @@ require 'spec/spec_helper'
 
 describe Shop::Tags::Helpers do
   
-  dataset :pages, :shop_products, :shop_orders, :shop_addresses, :shop_line_items
+  dataset :pages, :tags, :shop_products, :shop_orders, :shop_addresses, :shop_line_items
   
   before :all do
     @page = pages(:home)
   end
   
   before(:each) do
-    @tag = OpenStruct.new({
-      :attr   => {},
-      :locals => OpenStruct.new({
-        :page => OpenStruct.new({
-          :params   => {},
-          :request  => OpenStruct.new({
-            :session => {}
-          })
-        })
-      })
-    })
+    mock_valid_tag_for_helper
   end
   
   describe '#current_categories' do
@@ -316,16 +306,6 @@ describe Shop::Tags::Helpers do
         @tag.locals.shop_line_items = [@order.line_items.first]
       end
       it 'should return the order' do
-        result = Shop::Tags::Helpers.current_line_items(@tag)
-        result.should == [@order.line_items.first]
-      end
-    end
-    
-    context 'key and value sent' do
-      before :each do
-        @tag.attr = { 'key' => 'id', 'value' => @order.line_items.first.id }
-      end
-      it 'should return the matching order' do
         result = Shop::Tags::Helpers.current_line_items(@tag)
         result.should == [@order.line_items.first]
       end

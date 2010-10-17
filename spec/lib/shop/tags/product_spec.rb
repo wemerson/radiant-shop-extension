@@ -2,7 +2,7 @@ require 'spec/spec_helper'
 
 describe Shop::Tags::Product do
   
-  dataset :pages, :shop_products, :shop_product_attachments
+  dataset :pages, :shop_config, :shop_products, :shop_product_attachments
   
   it 'should describe these tags' do
     Shop::Tags::Product.tags.sort.should == [
@@ -258,7 +258,7 @@ describe Shop::Tags::Product do
       end
       
       it 'should render a custom format' do
-        tag = %{<r:shop:product:price unit="%" separator="-" delimiter="+" />}
+        tag = %{<r:shop:product:price unit="%" seperator="-" delimiter="+" />}
         exp = %{%1+234-35}
         @page.should render(tag).as(exp)
       end

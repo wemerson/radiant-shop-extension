@@ -3,58 +3,47 @@ module Shop
     module Responses
       include Radiant::Taggable
       
-      # Expand if there is a checkout response
-      desc %{ Expand if there is a checkout response }
-      tag 'response:address' do |tag|
-        tag.locals.response_address = tag.locals.response.result[:results][:address]
+      desc %{ Expand if there is a response to a specified for value }
+      tag 'response:if_results' do |tag|
+        extension = tag.attr['extension'].to_sym
+        tag.locals.response_extension = tag.locals.response.result[:results][extension]
         
-        tag.expand if tag.locals.response_address.present?
-      end
-      
-      # Expand if the billing address was correct
-      desc %{ Expand if the billing address was correct }
-      tag 'response:address:if_billing' do |tag|
-        tag.expand if tag.locals.response_address[:billing].present?
-      end
-      
-      # Expand if the billing address was incorrect
-      desc %{ Expand if the billing address was incorrect }
-      tag 'response:address:unless_billing' do |tag|
-        tag.expand unless tag.locals.response_address[:billing].present?
-      end
-      
-      # Expand if the shipping address was correct
-      desc %{ Expand if the shipping address was correct }
-      tag 'response:address:if_shipping' do |tag|
-        tag.expand if tag.locals.response_address[:shipping].present?
+        tag.expand if tag.locals.response_extension.present?
       end
       
       
-      # Expand if the shipping address was incorrect
-      desc %{ Expand if the shipping address was incorrect }
-      tag 'response:address:unless_shipping' do |tag|
-        tag.expand unless tag.locals.response_address[:shipping].present?
+      desc %{ Expand if there is a response to a specified for value }
+      tag 'response:unless_results' do |tag|
+        extension = tag.attr['extension'].to_sym
+        tag.locals.response_extension = tag.locals.response.result[:results][extension]
+        
+        tag.expand unless tag.locals.response_extension.present?
       end
       
-      # Expand if there is a checkout payment response
-      desc %{ Expand if there is a checkout payment response }
-      tag 'response:checkout' do |tag|
-        tag.locals.shop_order = Shop::Tags::Helpers.current_order(tag)
-        tag.locals.response_checkout = tag.locals.response.result[:results][:checkout]
-                
-        tag.expand if tag.locals.shop_order.present? and tag.locals.response_checkout.present?
-      end
-            
-      # Expand if there is a successful checkout payment response
-      desc %{ Expand if there is a successful checkout payment response }
-      tag 'response:checkout:if_success' do |tag|
-        tag.expand if tag.locals.shop_order.paid?
+      desc %{ Expand if there is a positive response to a specified for value of an extension
+        
+        <pre>
+          <r:response:if_get extension='bogus_gateway' value='checkout'>yay</r:response:if_get>
+        </pre>
+      }
+      tag 'response:if_get' do |tag|
+        query = tag.attr['name'].to_sym
+        result = tag.locals.response_extension[query]
+        
+        tag.expand if result.present? and result === true
       end
       
-      # Expand if there is a successful checkout payment response
-      desc %{ Expand if there is a successful checkout payment response }
-      tag 'response:checkout:unless_success' do |tag|
-        tag.expand unless tag.locals.shop_order.paid?
+      desc %{ Expand if there is a negative response to a specified for value of an extension
+        
+        <pre>
+          <r:response:unless_get extension='bogus_gateway' value='checkout'>no</r:response:unless_get>
+        </pre>
+      }
+      tag 'response:unless_get' do |tag|
+        query = tag.attr['name'].to_sym
+        result = tag.locals.response_extension[query]
+        
+        tag.expand if !result.present? or result != true
       end
       
     end

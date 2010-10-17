@@ -6,17 +6,18 @@ require 'spec/helpers/nested_tag_helper'
 #
 describe Shop::Tags::Cart do
   
-  dataset :pages, :shop_orders, :shop_payments
+  dataset :pages, :tags, :shop_config, :shop_orders, :shop_payments
   
   it 'should describe these tags' do
     Shop::Tags::Cart.tags.sort.should == [
+      'shop:cart',
+      'shop:cart:forget',
       'shop:cart:if_cart',
       'shop:cart:unless_cart',
       'shop:cart:payment',
       'shop:cart:payment:if_paid',
       'shop:cart:payment:unless_paid',
       'shop:cart:payment:date',
-      'shop:cart',
       'shop:cart:id',
       'shop:cart:status',
       'shop:cart:quantity',
@@ -24,15 +25,17 @@ describe Shop::Tags::Cart do
       'shop:cart:price'].sort
   end
   
-  before :all do
-    @page = pages(:home)
-  end
-  
-  before :each do
-    @order = shop_orders(:several_items)
-  end
-  
-  context 'cart tags' do    
+  context 'cart tags' do
+    
+    before :all do
+      @page = pages(:home)
+    end
+
+    before :each do
+      @order = shop_orders(:several_items)
+      mock_valid_tag_for_helper
+    end
+    
     describe '<r:shop:cart>' do
       context 'success' do
         it 'should render' do
@@ -42,6 +45,8 @@ describe Shop::Tags::Cart do
           expected = %{success}
           
           @page.should render(tag).as(expected)
+          
+          @tag.locals.page.request.session[:shop_order].should be_nil
         end
       end
       
@@ -52,6 +57,18 @@ describe Shop::Tags::Cart do
         
           @page.should render(tag).as(expected)
         end
+      end
+    end
+    
+    describe '<r:shop:cart:forget>' do
+      it 'should remove the cart from the session' do
+        pending 'dont know how to test this'
+        @tag.locals.page.request.session[:shop_order] = @order
+      
+        tag = %{<r:shop:cart />}
+        expected = %{}
+        
+        @page.should render(tag).as(expected)
       end
     end
     
@@ -160,7 +177,7 @@ describe Shop::Tags::Cart do
       describe '<r:shop:cart:payment:date />' do
         it 'should return the created_at date of the payment' do          
           tag = %{<r:shop:cart:payment:date />}
-          expected = @order.payment.created_at.to_s(:long)
+          expected = @order.payment.created_at.strftime(Radiant::Config['shop.date_format'])
           @page.should render(tag).as(expected)
         end
       end
@@ -220,7 +237,7 @@ describe Shop::Tags::Cart do
       end
       
       it 'should render a custom format' do
-        tag = %{<r:shop:cart:price unit="%" separator="-" delimiter="+" />}
+        tag = %{<r:shop:cart:price unit="%" seperator="-" delimiter="+" />}
         expected = %{%1+234-35}
         
         @page.should render(tag).as(expected)

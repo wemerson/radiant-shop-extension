@@ -42,8 +42,7 @@ class ShopExtension < Radiant::Extension
     ApplicationController.send :include, Shop::Controllers::ApplicationController
     SiteController.send :include, Shop::Controllers::SiteController
     
-    # Tabs3
-    
+    # Tabs    
     tab "Shop" do
       add_item "Products",      "/admin/shop"
       add_item "Orders",        "/admin/shop/orders"
@@ -63,6 +62,8 @@ class ShopExtension < Radiant::Extension
     Radiant::Config['shop.tax_strategy']    ||= 'inclusive'
     Radiant::Config['shop.tax_percentage']  ||= '10'
     Radiant::Config['shop.tax_name']        ||= 'gst'
+    
+    Radiant::Config['shop.date_format']     ||= '%d/%m/%Y'
     
     # Scoped Customer Welcome Page
     Radiant::Config['scoped.customer.redirect'] = '/cart'

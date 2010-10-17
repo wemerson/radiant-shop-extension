@@ -195,12 +195,18 @@ module Shop
         end
         
         def currency(number,attr = {})
-          number_to_currency(number.to_f, 
-            :precision  => (attr[:precision] || Radiant::Config['shop.price_precision']).to_i,
-            :unit       => (attr[:unit]      || Radiant::Config['shop.price_unit']),
-            :separator  => (attr[:separator] || Radiant::Config['shop.price_separator']),
-            :delimiter  => (attr[:delimiter] || Radiant::Config['shop.price_delimiter'])
-          )
+          
+          precision = attr[:precision].present? ? attr[:precision] : Radiant::Config['shop.price_precision']
+          unit      = attr[:unit].present?      ? attr[:unit]      : Radiant::Config['shop.price_unit']
+          seperator = attr[:seperator].present? ? attr[:seperator] : Radiant::Config['shop.price_separator']
+          delimiter = attr[:delimiter].present? ? attr[:delimiter] : Radiant::Config['shop.price_delimiter']
+          
+          number_to_currency(number.to_f, {
+            :precision  => precision.to_i,
+            :unit       => unit,
+            :separator  => seperator,
+            :delimiter  => delimiter
+          })
         end
         
       end

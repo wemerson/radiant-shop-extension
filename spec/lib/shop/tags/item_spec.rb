@@ -6,7 +6,7 @@ require 'spec/helpers/nested_tag_helper'
 #
 describe Shop::Tags::Item do
   
-  dataset :pages, :shop_orders, :shop_line_items
+  dataset :pages, :shop_config, :shop_orders, :shop_line_items
   
   it 'should describe these tags' do
     Shop::Tags::Item.tags.sort.should == [
@@ -260,7 +260,7 @@ describe Shop::Tags::Item do
           end
           
           it 'should render a custom format' do
-            tag = %{<r:shop:cart:item:price unit="%" separator="-" delimiter="+" />}
+            tag = %{<r:shop:cart:item:price unit="%" seperator="-" delimiter="+" />}
             exp = %{%1+234-35}
             
             @page.should render(tag).as(exp)

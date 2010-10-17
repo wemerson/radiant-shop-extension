@@ -36,19 +36,19 @@ module Shop
       # Expand if the user has paid for their cart
       desc %{ Expand if the user has paid for their cart }
       tag 'shop:cart:payment:if_paid' do |tag|
-        tag.expand if tag.locals.shop_order.payment.present? or tag.locals.shop_order.paid?
+        tag.expand if tag.locals.shop_order.payment.present? and tag.locals.shop_order.paid?
       end
       
       # Expand unless the user has paid for their cart
       desc %{ Expand unless the user has paid for their cart }
       tag 'shop:cart:payment:unless_paid' do |tag|
-        tag.expand unless tag.locals.shop_order.payment.present? or tag.locals.shop_order.paid?
+        tag.expand unless tag.locals.shop_order.payment.present? and tag.locals.shop_order.paid?
       end
       
       # Returns the date of the payment
       desc %{ Returns the date of the payment }
       tag 'shop:cart:payment:date' do |tag|
-        tag.locals.shop_order.payment.created_at.strftime('%d/%m/%Y')
+        tag.locals.shop_order.payment.created_at.strftime(Radiant::Config['shop.date_format'])
       end
       
       # Display the cart id / status
