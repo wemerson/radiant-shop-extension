@@ -160,12 +160,10 @@ private
     @meta     << 'layout'
     
     @parts    << 'description'
-    @parts    << 'variants'
   end
   
   def config_index
     @buttons  << 'add_category'
-    @buttons  << 'variants'
   end
   
   def config_new
@@ -177,13 +175,9 @@ private
     
     @buttons  << 'browse_images'
     @buttons  << 'new_image'
-    @buttons  << 'browse_templates'
-    @buttons  << 'new_variant'
     
     @popups   << 'browse_images'
     @popups   << 'new_image'
-    @popups   << 'browse_templates'
-    @popups   << 'new_variant'
   end
   
   def assets_global
@@ -215,6 +209,5 @@ private
       :parts      => [PagePart.new]
     )
   end
-  
   
 end
