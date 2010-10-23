@@ -47,6 +47,7 @@ Create a Radiant project
 
 Edit your Gemfile
 
+    source :gemcutter
     gem 'radiant',                '0.9.1'
     gem 'radiant-shop-extension', :require => false
     
