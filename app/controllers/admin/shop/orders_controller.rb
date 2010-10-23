@@ -38,7 +38,7 @@ class Admin::Shop::OrdersController < Admin::ResourceController
     def config_index
       @buttons  << 'all'
       @buttons  << 'new'
-      @buttons  << 'shipped'
+      #@buttons  << 'shipped'
       @buttons  << 'paid'
     end
     
