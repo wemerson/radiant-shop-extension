@@ -23,7 +23,7 @@ _**An online store is just a website**_
 
 ## Need Help?
 
-The [Wiki](wiki.github.com/squaretalent/radiant-shop-extension "Github Wiki Page") is the best source of information
+The [Wiki](http://wiki.github.com/squaretalent/radiant-shop-extension "Github Wiki Page") is the best source of information
 about the entire project.
 
 It's in its infancy, and your help is greatly appreciated. You can reach me via
