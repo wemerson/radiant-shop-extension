@@ -10,7 +10,6 @@ class ShopProduct < ActiveRecord::Base
   has_many    :orders,      :class_name => 'ShopOrder',             :through      => :line_items,   :uniq      => true
   has_many    :attachments, :class_name => 'ShopProductAttachment', :foreign_key  => :product_id
   has_many    :images,      :class_name => 'Image',                 :through      => :attachments,  :uniq      => true
-  has_many    :variants,    :class_name => 'ShopProductVariant',    :foreign_key  => :product_id,   :dependent => :destroy
   
   before_validation             :assign_slug, :assign_breadcrumb, :assign_page_class_name
   validates_presence_of         :page
@@ -18,7 +17,6 @@ class ShopProduct < ActiveRecord::Base
   validates_numericality_of     :price,   :greater_than => 0.00,    :allow_nil => true,     :precisions => 2
   
   accepts_nested_attributes_for :page
-  accepts_nested_attributes_for :variants
   
   # Returns the title of the product's page
   def name; page.title; end
@@ -127,7 +125,9 @@ class ShopProduct < ActiveRecord::Base
   
   # Assigns a page class if its nil
   def assign_page_class_name
-    self.page.class_name = page.class_name || 'ShopProductPage'
+    if page.present?
+      self.page.class_name = page.class_name || 'ShopProductPage'
+    end
   end
   
 end

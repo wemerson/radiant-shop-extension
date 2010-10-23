@@ -8,9 +8,6 @@ class ShopCategory < ActiveRecord::Base
   belongs_to  :updated_by,      :class_name => 'User'
   belongs_to  :product_layout,  :class_name => 'Layout'
   
-  has_many  :discountables, :class_name => 'ShopDiscountable',      :foreign_key  => :discounted_id
-  has_many    :discounts,   :class_name => 'ShopDiscount',          :through      => :discountables
-  
   before_validation             :assign_slug, :assign_breadcrumb, :assign_page_class_name
   
   accepts_nested_attributes_for :page
@@ -90,7 +87,9 @@ class ShopCategory < ActiveRecord::Base
 
   # Assigns a page class if its nil
   def assign_page_class_name
-    self.page.class_name = page.class_name || 'ShopCategoryPage'
+    if page.present?
+      self.page.class_name = page.class_name || 'ShopCategoryPage'
+    end
   end
   
 end

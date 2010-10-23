@@ -2,7 +2,7 @@ module Shop
   module Tags
     module Card
       
-      TYPES = {
+      CARD_TYPES = {
         'visa'        => 'Visa',
         'mastercard'  => 'Master Card',
         'diners'      => 'Diners Club',
@@ -19,10 +19,11 @@ module Shop
       desc %{ Outputs a list of credit card types }
       tag 'form:card:type' do |tag|
         content = %{<select name="card[type]" id="card_type">\n}
-        cards = TYPES
+        cards = {}
+        cards.merge! CARD_TYPES
         
         cards.reject! { |k,v| tag.attr['except'].split(',').include? k } if tag.attr['except'].present?
-        cards.reject! { |k,v| !tag.attr['only'].split(',').include? k } if tag.attr['only'].present?
+        cards.reject! { |k,v| !tag.attr['only'].split(',').include? k  }if tag.attr['only'].present?
         
         cards.sort.each do |k, v|
           content << %{<option value="#{k}">#{v}</option>\n}

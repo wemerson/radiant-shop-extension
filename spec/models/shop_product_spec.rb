@@ -38,22 +38,6 @@ describe ShopProduct do
       @product.images.is_a?(Array).should be_true
     end
     
-    it 'should have many related' do
-      @product.related.is_a?(Array).should be_true
-    end
-    
-    it 'should have many variants' do
-      @product.variants.is_a?(Array).should be_true
-    end
-    
-    it 'should have many discountables' do
-      @product.discountables.is_a?(Array).should be_true
-    end
-    
-    it 'should have many discounts' do
-      @product.discounts.is_a?(Array).should be_true
-    end
-    
   end
   
   describe 'validations' do
