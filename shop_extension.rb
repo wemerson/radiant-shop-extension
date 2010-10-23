@@ -10,6 +10,7 @@ class ShopExtension < Radiant::Extension
     config.gem 'radiant-scoped-extension',    :lib => false
     config.gem 'radiant-images-extension',    :lib => false
     config.gem 'radiant-forms-extension',     :lib => false
+    config.gem 'radiant-drag-extension',      :lib => false
   end
   
   UserActionObserver.instance.send :add_observer!, ShopCategory
