@@ -158,6 +158,7 @@ private
     @meta     << 'page'
     @meta     << 'category'
     @meta     << 'layout'
+    @meta     << 'status'
     
     @parts    << 'description'
   end

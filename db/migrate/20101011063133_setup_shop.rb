@@ -13,18 +13,6 @@ class SetupShop < ActiveRecord::Migration
       t.integer  "page_id"
     end
     
-    create_table "shop_product_attachments", :force => true do |t|
-      t.integer "position",      :default => 1
-      t.integer "image_id"
-      t.integer "product_id"
-      t.integer "created_by_id"
-      t.integer "updated_by_id"
-    end
-
-    add_index "shop_product_attachments", ["image_id"],   :name => "index_shop_product_attachments_on_image_id"
-    add_index "shop_product_attachments", ["position"],   :name => "index_shop_product_attachments_on_position"
-    add_index "shop_product_attachments", ["product_id"], :name => "index_shop_product_attachments_on_product_id"
-
     create_table "shop_categories", :force => true do |t|
       t.integer  "product_layout_id"
       t.datetime "created_at"
@@ -34,6 +22,17 @@ class SetupShop < ActiveRecord::Migration
       t.integer  "page_id"
     end
     
+    create_table "shop_product_attachments", :force => true do |t|
+      t.integer "position",      :default => 1
+      t.integer "image_id"
+      t.integer "product_id"
+      t.integer "created_by_id"
+      t.integer "updated_by_id"
+    end
+    add_index "shop_product_attachments", ["image_id"],   :name => "index_shop_product_attachments_on_image_id"
+    add_index "shop_product_attachments", ["position"],   :name => "index_shop_product_attachments_on_position"
+    add_index "shop_product_attachments", ["product_id"], :name => "index_shop_product_attachments_on_product_id"
+
     create_table "shop_orders", :force => true do |t|
       t.text     "notes"
       t.string   "status",      :default => "new"
@@ -45,7 +44,6 @@ class SetupShop < ActiveRecord::Migration
       t.integer  "created_by_id"
       t.integer  "updated_by_id"
     end
-
     add_index "shop_orders", ["customer_id"], :name => "index_shop_orders_on_customer_id"
     add_index "shop_orders", ["status"], :name => "index_shop_orders_on_status"
     
@@ -59,7 +57,6 @@ class SetupShop < ActiveRecord::Migration
       t.integer  "created_by_id"
       t.integer  "updated_by_id"
     end
-    
     add_index "shop_line_items", ["item_id"], :name => "index_shop_line_items_on_item_id"
     add_index "shop_line_items", ["order_id"], :name => "index_shop_line_items_on_order_id"
     

@@ -9,11 +9,9 @@ class ShopExtension < Radiant::Extension
   end
   
   UserActionObserver.instance.send :add_observer!, ShopCategory
-  UserActionObserver.instance.send :add_observer!, ShopDiscount
   UserActionObserver.instance.send :add_observer!, ShopOrder
   UserActionObserver.instance.send :add_observer!, ShopProduct
   UserActionObserver.instance.send :add_observer!, ShopProductAttachment
-  UserActionObserver.instance.send :add_observer!, ShopDiscountable
   
   def activate    
     # View Hooks

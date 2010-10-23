@@ -147,6 +147,7 @@ private
     @meta     << 'handle'
     @meta     << 'layouts'
     @meta     << 'page'
+    @meta     << 'status'
     
     @parts    << 'description'
   end

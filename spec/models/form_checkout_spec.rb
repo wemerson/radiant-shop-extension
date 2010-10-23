@@ -7,6 +7,7 @@ describe FormCheckout do
   before :each do
     mock_page_with_request_and_data
   end
+  
   describe '#create' do
     context 'gateway' do
       context 'order has no billing' do

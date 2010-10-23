@@ -12,15 +12,13 @@ class ShopProduct < ActiveRecord::Base
   has_many    :images,      :class_name => 'Image',                 :through      => :attachments,  :uniq      => true
   has_many    :variants,    :class_name => 'ShopProductVariant',    :foreign_key  => :product_id,   :dependent => :destroy
   
-  before_validation             :assign_slug, :assign_breadcrumb
+  before_validation             :assign_slug, :assign_breadcrumb, :assign_page_class_name
   validates_presence_of         :page
   
   validates_numericality_of     :price,   :greater_than => 0.00,    :allow_nil => true,     :precisions => 2
   
   accepts_nested_attributes_for :page
   accepts_nested_attributes_for :variants
-  
-  after_create                  :assign_discounts
   
   # Returns the title of the product's page
   def name; page.title; end
@@ -35,7 +33,13 @@ class ShopProduct < ActiveRecord::Base
   def category_id; category.id; end
   
   # Returns the content of the product's page's description part
-  def description; page.parts.find_by_name('description').content rescue ''; end
+  def description
+    begin
+      page.parts.find_by_name('description').content
+    rescue 
+      ''
+    end
+  end
   
   # Returns the url of the page
   def url; page.url; end
@@ -121,11 +125,9 @@ class ShopProduct < ActiveRecord::Base
     end
   end
   
-  # Assigns discounts based off categories discounts
-  def assign_discounts
-    category.discounts.each do |discount|      
-      ShopDiscountable.create(:discount => discount, :discounted => self)
-    end
+  # Assigns a page class if its nil
+  def assign_page_class_name
+    self.page.class_name = page.class_name || 'ShopProductPage'
   end
   
 end

@@ -1,111 +1,81 @@
-Layout.create({
-  :name       => 'Application',
-  :content    => <<-CONTENT
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
-  <head>
-    <title><r:title /></title>
-  </head>
-  <body>
-    <r:snippet name='CartOverview' />
-    <r:content_for_layout />
-  </body>
+#---------------------------------------------------#
+# Product Layout
+#---------------------------------------------------#
+product = Layout.new
+product.name = Radiant::Config['shop.layout_product']
+product.content = <<-CONTENT
+<!DOCTYPE html>
+<html>
+  <r:shop:product>
+    <head>
+      <title>Product - <r:name /></title>
+    </head>
+    <body>  
+      <div id="product_<r:slug />" class="product" data-id="<r:id />">
+        <h2><r:title /></h2>
+        <h3><r:price /></h3>
+        <dl id="product_details">
+          <dt class="description">Description</dt>
+          <dd class="description"><r:description /></dd>
+          <dt class="add_product">Add To Cart</dt>
+          <dd class="add_product"><r:form name="CartAddProduct" /></dd>
+        </dl>
+        <r:images:if_images>
+          <ul id="product_images">
+            <r:each:image style='preview'>
+              <li class="product_image" id="product_image_<r:position />">
+                <img src="<r:url />" alt="<r:title />" />
+              </li>
+            </r:each:image>
+          </ul>
+        </r:images:if_images>
+      </div>
+    </body>
+  </r:shop:product>
 </html>
 CONTENT
-})
+product.save
 
-Layout.create({
-  :name       => Radiant::Config['shop.product_layout'],
-  :content    => <<-CONTENT
-<r:inside_layout name='Application'>
-  <r:shop:product>
-    <div id="shop_product_<r:sku />" class="shop_product">
-      <h2><r:title /></h2>
-      <h3><r:price /></h3>
-      <dl id="shop_product_details">
-        <dd>Description</dt>
-        <dd class="body"><r:description /></dd>
-        <dd>Add To Cart</dt>
-        <dd class="add"><r:form name="AddCartItem" /></dd>
-      </dl>
-      <r:if_images>
-        <ul id="shop_product_images">
-          <r:images:each>
-            <li class="shop_product_image" id="shop_product_image_<r:sku />">
-              <a href="<r:image style='normal' />" title="<r:title />"">  
-                <img id="shop_product_image_<r:position />" class="shop_product_image" src="<r:image style='thumbnail'/>" alt="<r:title />" />
-              </a>
-            </li>
-          </r:images:each>
-        </ul>
-      </r:if_images>
-      <r:unless_images>
-        <p class="error" id="shop_no_product_images_error">We don't have any images for this product yet.</p>
-      </r:unless_images>
-    </div>
-  </r:shop:product>
-</r:inside_layout>
-CONTENT
-})
-
-Layout.create({
-  :name => Radiant::Config['shop.category_layout'],
-  :content => <<-CONTENT
-<r:inside_layout name='Application'>
+#---------------------------------------------------#
+# Category Layout
+#---------------------------------------------------#
+category = Layout.new
+category.name = Radiant::Config['shop.layout_category']
+category.content = <<-CONTENT
+<!DOCTYPE html>
+<html>
   <r:shop:category>
-    <div id="shop_category_<r:handle />" class="shop_category">
-      <h2 class="shop_category_title"><r:title /></h2>
-      <div id="shop_category_description">
-        <h3>Description</h3>
-        <div class="body"><r:description /></div>
+    <head>
+      <title>Product - <r:name /></title>
+    </head>
+    <body>
+      <div id="category_<r:slug />" class="category" data-id="<r:id />">
+        <h2><r:title /></h2>
+        <dl id="description_details">
+          <dt class="description">Description</dt>
+          <dd class="description"><r:description /></dd>
+        </div>
+        <r:products>
+          <r:if_products>
+            <ul class="category_products">
+              <r:each:product>
+                <li class="product" id="product_<r:sku />" data-id="<r:id />">
+                  <r:image position='1'>
+                    <img src="<r:url />" alt="<r:title />" />
+                  </r:image>
+                  <h3><r:link /></h3>
+                  <h4><r:price /></h4>
+                </li>
+              </r:each:product>
+            </ul>
+          </r:if_products>
+          <r:unless_products>
+            <p class="error" id="shop_no_products_error">We don't have any products available here yet.</p>
+          </r:unless_products>
+        </r:products>
       </div>
-      <r:if_products>
-        <ul class="shop_products" id="shop_products_<r:handle/>" >
-          <r:products:each:product>
-            <li class="shop_product" id="shop_product_<r:sku />">
-              <r:image position='1'>
-                <r:link><img src="<r:url style='preview' />" alt="<r:handle />" class="shop_product_image" /></r:link>
-              </r:image>
-              <h3 class="shop_product_name"><r:link><r:name /> <small><r:price /></small></r:link></h3>
-              <div class="shop_product_description"><r:description /></div>
-            </li>
-          </r:products:each:product>
-        </ul>
-      </r:if_products>
-      <r:unless_products>
-        <p class="error" id="shop_no_products_error">We don't have any products available here yet.</p>
-      </r:unless_products>
-    </div>
+    </body>
   </r:shop:category>
-</r:inside_layout>
+</html>
 CONTENT
-})
-
-Layout.create({
-  :name => Radiant::Config['shop.order_layout'],
-  :content => <<-CONTENT
-<r:inside_layout name='Application'>
-  <r:shop:cart>
-    <r:if_items>
-      <ol class="items">
-        <r:items:each>
-          <r:item>
-            <li class="item" id="item_<r:id />">
-              <span class="quantity"><r:quantity /></span>
-              <span class="name"><r:link><r:name /></r:link></name></span>
-              <span class="update"><r:form name="UpdateCartItem" /></span>
-              <span class="price"><r:price /></span>
-              <span class="remove"><r:remove /></span>
-            </li>
-          </r:item>
-        </r:items:each>
-      </ol>
-      <span class="total"><r:price /></span>
-    </r:if_items>
-    <r:unless_items>
-      <p>Your cart is currently empty</p>
-    </r:unless_items>
-  </r:shop:cart>
-</r:inside_layout>
-CONTENT
-})
+category.save
