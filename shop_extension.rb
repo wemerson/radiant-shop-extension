@@ -4,8 +4,12 @@ class ShopExtension < Radiant::Extension
   url "http://github.com/squaretalent/radiant-shop-extension"
   
   extension_config do |config|
-    config.gem 'activemerchant', :lib => 'active_merchant'
-    config.gem 'fastercsv',      :lib => 'fastercsv'
+    config.gem 'activemerchant',              :lib => 'active_merchant'
+    config.gem 'fastercsv',                   :lib => 'fastercsv'
+    config.gem 'radiant-settings-extension',  :lib => false
+    config.gem 'radiant-scoped-extension',    :lib => false
+    config.gem 'radiant-images-extension',    :lib => false
+    config.gem 'radiant-forms-extension',     :lib => false
   end
   
   UserActionObserver.instance.send :add_observer!, ShopCategory
