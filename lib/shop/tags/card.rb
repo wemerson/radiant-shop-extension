@@ -19,7 +19,12 @@ module Shop
       desc %{ Outputs a list of credit card types }
       tag 'form:card:type' do |tag|
         content = %{<select name="card[type]" id="card_type">\n}
-        TYPES.sort.each do |k, v|
+        cards = TYPES
+        
+        cards.reject! { |k,v| tag.attr['except'].split(',').include? k } if tag.attr['except'].present?
+        cards.reject! { |k,v| !tag.attr['only'].split(',').include? k } if tag.attr['only'].present?
+        
+        cards.sort.each do |k, v|
           content << %{<option value="#{k}">#{v}</option>\n}
         end
         content << %{</select>}

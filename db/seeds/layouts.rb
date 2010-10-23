@@ -10,7 +10,10 @@ product.content = <<-CONTENT
     <head>
       <title>Product - <r:name /></title>
     </head>
-    <body>  
+    <body>
+      
+      <r:snippet name='CartOverview' />
+      
       <div id="product_<r:slug />" class="product" data-id="<r:id />">
         <h2><r:title /></h2>
         <h3><r:price /></h3>
@@ -49,6 +52,9 @@ category.content = <<-CONTENT
       <title>Product - <r:name /></title>
     </head>
     <body>
+      
+      <r:snippet name='CartOverview' />
+      
       <div id="category_<r:slug />" class="category" data-id="<r:id />">
         <h2><r:title /></h2>
         <dl id="description_details">

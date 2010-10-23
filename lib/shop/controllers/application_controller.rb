@@ -6,14 +6,16 @@ module Shop
         base.class_eval do
           def current_shop_order
             return @current_shop_order if defined?(@current_shop_order)
-            @current_shop_order = find_shop_order
+            @current_shop_order = find_or_create_shop_order if request.session[:shop_order]
           end
           
           def find_shop_order
             shop_order = nil
             
-            if request.session[:shop_order]
+            begin
               shop_order = ShopOrder.find(request.session[:shop_order])
+            rescue
+              shop_order = nil
             end
                         
             shop_order

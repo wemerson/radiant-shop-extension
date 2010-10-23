@@ -45,85 +45,99 @@ CONFIG
 update.save
 
 #---------------------------------------------------#
-# Checkout Addresses
+# Cart Address
 #---------------------------------------------------#
-addresses = Form.new
-addresses.title = 'CheckoutAddresses'
-addresses.redirect_to = '/shop/checkout/payment'
-addresses.body  = <<-BODY
-<r:shop:cart>
-  <div class="addresses">
-    <div id="billing" class="address">
-      <h4>Billing</h4>
+address = Form.new
+address.title = 'CartAddress'
+address.redirect_to = '/cart/payment'
+address.body  = <<-BODY
+<r:shop:cart:items:if_items>
+  <div id="billing" class="address">
+    <r:address type='billing'>
+      <h4>Address</h4>
+      
+      <r:if_address><input type="hidden" name="billing[id]" value="<r:id />" /></r:if_address>
+      
       <ol class="address">
-        <r:address type='billing'>
-          <r:if_address><input type="hidden" name="billing[id]" value="<r:id />" /></r:if_address>
-          <li class="billing_name_input">
-            <r:label for='billing[name]'>Full Name</r:label>
-            <input type="text" name="billing[name]" value="<r:name/>" />
-          </li>
-          <li class="billing_email_input">
-            <r:label for='billing[email]'>Email</r:label>
-            <input type="text" name="billing[email]" value="<r:email/>" />
-          </li>
-          <li class="billing_street_input">
-            <r:label for='billing[street]'>Street</r:label>
-            <input type="text" name="billing[street]" value="<r:street/>" />
-          </li>
-          <li class="billing_city_input">
-            <r:label for='billing[city]'>Suburb and Postcode</r:label>
-            <input type="text" name="billing[city]" value="<r:city/>" />
-            <input type="text" name="billing[postcode]" value="<r:postcode/>" />
-          </li>
-          <li class="billing_state_input">
-            <r:label for='billing[state]'>State and Country</r:label>
-            <input type="text" name="billing[state]" value="<r:state/>" />
-            <input type="text" name="billing[country]" value="<r:country/>" />
-          </li>
-        </r:address>
+        <li id="billing_name_input" class="input required">
+          <r:label for='billing[name]'>Full Name</r:label>
+          <input type="text" name="billing[name]" value="<r:name/>" />
+        </li>
+        <li id="billing_email_input" class="input required">
+          <r:label for='billing[email]'>Email</r:label>
+          <input type="text" name="billing[email]" value="<r:email/>" />
+        </li>
+        <li id="billing_street_input" class="input required">
+          <r:label for='billing[street]'>Street</r:label>
+          <input type="text" name="billing[street]" value="<r:street/>" />
+        </li>
+        <li id="billing_city_input" class="input required">
+          <r:label for='billing[city]'>Suburb and Postcode</r:label>
+          <input type="text" name="billing[city]" value="<r:city/>" />
+          <input type="text" name="billing[postcode]" value="<r:postcode/>" />
+        </li>
+        <li id="billing_state_input" class="input required">
+          <r:label for='billing[state]'>State and Country</r:label>
+          <input type="text" name="billing[state]" value="<r:state/>" />
+          <input type="text" name="billing[country]" value="<r:country/>" />
+        </li>
       </ol>
-    </div>
-
-    <div id="shipping" class="address">
-      <h4>Shipping</h4>
-      <ol class="address">
-        <r:address type='shipping'>
-          <r:if_address><input type="hidden" name="shipping[id]" value="<r:id />" /></r:if_address>
-          <li class="shipping_name_input">
-            <r:label for='shipping[name]'>Full Name</r:label>
-            <input type="text" name="shipping[name]" value="<r:name/>" />
-          </li>
-          <li class="shipping_email_input">
-            <r:label for='shipping[email]'>Email</r:label>
-            <input type="text" name="shipping[email]" value="<r:email/>" />
-          </li>
-          <li class="shipping_street_input">
-            <r:label for='shipping[street]'>Street</r:label>
-            <input type="text" name="shipping[street]" value="<r:street/>" />
-          </li>
-          <li class="shipping_city_input">
-            <r:label for='shipping[city]'>Suburb and Postcode</r:label>
-            <input type="text" name="shipping[city]" value="<r:city/>" />
-            <input type="text" name="shipping[postcode]" value="<r:postcode/>" />
-          </li>
-          <li class="shipping_state_input">
-            <r:label for='shipping[state]'>State and Country</r:label>
-            <input type="text" name="shipping[state]" value="<r:state/>" />
-            <input type="text" name="shipping[country]" value="<r:country/>" />
-          </li>
-        </r:address>
-      </ol>
-    </div>
+    </r:address>      
   </div>
-</r:shop:cart>
+</r:shop:cart:items:if_items>
 
-<r:submit value="Save Addresses" />
+<r:submit value="On To Payment" />
 BODY
-addresses.config = <<-CONFIG
+address.config = <<-CONFIG
 checkout_addresses:
   extension: address
   billing: true
-  shipping: true
 CONFIG
+address.save
 
-addresses.save
+
+#---------------------------------------------------#
+# Cart Payment
+#---------------------------------------------------#
+payment = Form.new
+payment.title = 'CartPayment'
+payment.redirect_to = '/cart/thanks'
+payment.body  = <<-BODY
+<r:shop:cart:items:if_items>
+  <input type="hidden" name="options[order_number]" value="<r:id />" />
+  <ol class="card">
+    <li id="card_type_select" class="select required">
+      <r:label for='card[type]'>Type of Card</r:label>
+      <r:form:card:type />
+    </li>
+    <li id="card_name_input" class="input required">
+      <r:label for='card[name]'>Name on Card</r:label>
+      <r:text name='card[name]' value="" />
+    </li>
+    <li id="card_number_input" class="input required">
+      <r:label for='card[number]'>Card Number</r:label>
+      <r:text name='card[number]' value="4111111111111111" />
+    </li>
+    <li id="card_verification_input" class="input required">
+      <r:label for='card[verification]'>Security Code</r:label>
+      <r:text name='card[verification]' length='4' value="111" />
+    </li>
+    <li id="card_month_select" class="select required">
+      <r:label for='card[month]'>Expiry</r:label>
+      <r:form:card:month /><r:form:card:year />
+    </li>
+    <li id="card_submit" class="submit">
+      <r:submit value='Place Order' />
+    </li>
+  </ol>
+  
+</r:shop:cart:items:if_items>
+BODY
+payment.config = <<-CONFIG
+bogus_checkout:
+  extension: checkout
+  test: true
+  gateway:
+    name: bogus
+CONFIG
+payment.save
