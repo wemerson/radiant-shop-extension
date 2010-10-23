@@ -82,7 +82,7 @@ payment.parts      = [
     :name      => 'body',
     :filter_id => 'Textile',
     :content   => <<-CONTENT
-<r:shop:cart:payment:if_paid>
+<r:shop:cart:if_cart:payment:if_paid>
 
 h2. Thank You
 
@@ -94,7 +94,7 @@ If you have any queries please contact us and quote order number **#<r:cart:id /
 
 "home":/
 
-</r:shop:cart:payment:if_paid>
+</r:shop:cart:if_cart:payment:if_paid>
 CONTENT
   })
 ]
