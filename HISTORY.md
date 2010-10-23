@@ -1,5 +1,22 @@
 ## History
 
+### 0.11+ (October 2010) @dirkkelly | sponsored by @frontiergroup
+
+* Products and Categories are now pages
+* Orders are shown in the admin system
+* Seed data allows you to easily bootstrap
+* All actions now utilize the form extension
+* Core has remained minimal and been built to be extended, look out for
+** radiant-shop_discounts-extension
+** radiant-shop_variants-extension
+** radiant-shop_packages-extension
+* Wiki work is under way, we're ready for the world to start playing
+
+### 0.10+ (September 2010) @dirkkelly | sponsored by @frontiergroup
+
+* Started releasing as a Gem
+* Customers are a model that extend users, they have no admin access
+
 ### 0.9+ (September 2010) @dirkkelly | sponsored by @frontiergroup
 
 * SPECS! Yes, lots of them.
@@ -16,10 +33,11 @@
 
 * Started pulling apart the database, removing overkill columns and tidying up codebase
 * Making it easier to understand, and less feature bloated
+* @sbmsuite no longer involved in the project
 
 ### 0.7 (11 Mar 2010)
 
-* @dirkkelly and CR decide to make this the core for an entire shop extension
+* @dirkkelly and @sbmsuite decide to make this the core for an entire shop extension
 
 ### 0.6 (26 Sep 2009)
 
@@ -72,6 +90,6 @@ Thanks to John Reilly, Justin Grammens who did most of the work to get the origi
 
 Huge thanks to Ingvi Gudmundsson (http://www.ingvithor.net/) for sponsoring and helping test v0.4 to v0.6.
 
-### Licensing
+----
 
-Copyright (C) 2009-2010 Square Talent (http://www.squaretalent.com) released under the MIT license
+Thanks to Jason Stirk for the original code base, it was a great starting point for seeing how an extension like this could be built.
