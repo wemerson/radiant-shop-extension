@@ -57,9 +57,6 @@ category.content = <<-CONTENT
             <ul class="category_products">
               <r:each:product>
                 <li class="product" id="product_<r:sku />" data-id="<r:id />">
-                  <r:image position='1'>
-                    <img src="<r:url />" alt="<r:title />" />
-                  </r:image>
                   <h3><r:link /></h3>
                   <h4><r:price /></h4>
                 </li>
