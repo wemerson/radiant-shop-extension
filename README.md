@@ -1,6 +1,37 @@
 # Radiant Shop
 
-## [Wiki]([wiki.github.com/squaretalent/radiant-shop-extension] "Github Wiki Page")
+## Why Another Shop?
+
+Radiant isn't a standard blogging CMS, it's incredibly simple and lightweight, 
+incredibly customisable and extendable and leverages the database for all design 
+and content needs.
+
+There isn't any store software out there which allows you to manage both the content 
+and the design of products in a similar way that you would a page or blog post.
+
+I believe this is a problem, most simple online Stores should try to be a website
+before they try to be an advanced application.
+
+Radiant Shop doesn't require you to write server side code to build a store.
+
+Instead you will use Radius tags, html, and css to build a custom store experience.
+
+You're not limited to one design per category, or even per product. Nor are you forced
+into following a specific checkout process, or to use a certain Gateway.
+
+_**An online store is just a website**_
+
+## Need Help?
+
+The [Wiki](wiki.github.com/squaretalent/radiant-shop-extension "Github Wiki Page") is the best source of information
+about the entire project.
+
+It's in its infancy, and your help is greatly appreciated. You can reach me via
+
+* [Github Issues](http://github.com/squaretalent/radiant-shop-extension/issues)
+* [Twitter](http://twitter.com/dirkkelly)
+
+I don't use email to manage my extension development work.
 
 ## Quickstart
 
@@ -45,8 +76,8 @@ Seed shop (optional, will help you get on your way)
 This extension started as a fork of aurora-soft's simple product manager
 and has since undergone a rewrite.
 
-http://github.com/squaretalent/radiant-shop-extension/compare/master
+[Comparison of Extensions](http://github.com/squaretalent/radiant-shop-extension/compare/master)
 
-Copyright 2010 Dirk Kelly (dk@dirkkelly.com) and licenced under MIT.
+Copyright 2010 Dirk Kelly [dk@dirkkelly.com](dk@dirkkelly.com) [@dirkkelly](http://twitter.com/dirkkelly) and licenced under MIT.
 
 See LICENCE for further information.
