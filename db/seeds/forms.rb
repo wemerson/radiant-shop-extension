@@ -103,24 +103,30 @@ payment = Form.new
 payment.title = 'CartPayment'
 payment.redirect_to = '/cart/thanks'
 payment.body  = <<-BODY
+<r:response:if_results extension='bogus_checkout'>
+  <r:response:get name='results[bogus_checkout][message]' />
+</r:response:if_results>
+
 <r:shop:cart:items:if_items>
   <input type="hidden" name="options[order_number]" value="<r:id />" />
   <ol class="card">
     <li id="card_type_select" class="select required">
       <r:label for='card[type]'>Type of Card</r:label>
       <r:form:card:type />
+      <r:hidden name='card[type]' value='bogus' /> <!-- delete me -->
     </li>
     <li id="card_name_input" class="input required">
       <r:label for='card[name]'>Name on Card</r:label>
-      <r:text name='card[name]' value="" />
+      <r:text name='card[name]' />
     </li>
     <li id="card_number_input" class="input required">
       <r:label for='card[number]'>Card Number</r:label>
-      <r:text name='card[number]' value="4111111111111111" />
+      <r:text name='card[number]' />
+      <r:hidden name='card[number]' value='1' /> <!-- delete me -->
     </li>
     <li id="card_verification_input" class="input required">
       <r:label for='card[verification]'>Security Code</r:label>
-      <r:text name='card[verification]' length='4' value="111" />
+      <r:text name='card[verification]' length='4' />
     </li>
     <li id="card_month_select" class="select required">
       <r:label for='card[month]'>Expiry</r:label>

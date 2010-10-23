@@ -24,7 +24,7 @@ module Shop
           def find_or_create_shop_order
             shop_order = nil
             
-            if find_shop_order and find_shop_order.status != 'paid'
+            if find_shop_order
               shop_order = find_shop_order
             else
               shop_order = ShopOrder.create({ :customer_id => (current_user.id rescue nil) })

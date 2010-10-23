@@ -23,15 +23,6 @@ product.content = <<-CONTENT
           <dt class="add_product">Add To Cart</dt>
           <dd class="add_product"><r:form name="CartAddProduct" /></dd>
         </dl>
-        <r:images:if_images>
-          <ul id="product_images">
-            <r:each:image style='preview'>
-              <li class="product_image" id="product_image_<r:position />">
-                <img src="<r:url />" alt="<r:title />" />
-              </li>
-            </r:each:image>
-          </ul>
-        </r:images:if_images>
       </div>
     </body>
   </r:shop:product>

@@ -41,7 +41,7 @@ cart.parts      = [
 cart.save
 
 address = Page.new
-address.title      = 'Cart Address'
+address.title      = 'Address'
 address.slug       = 'address'
 address.breadcrumb = 'address'
 address.parent     = cart
@@ -56,7 +56,7 @@ address.parts      = [
 address.save
 
 payment = Page.new
-payment.title      = 'Cart Payment'
+payment.title      = 'Payment'
 payment.slug       = 'payment'
 payment.breadcrumb = 'payment'
 payment.parent     = cart
@@ -71,7 +71,7 @@ payment.parts      = [
 payment.save
 
 payment = Page.new
-payment.title      = 'Cart Thanks'
+payment.title      = 'Thanks'
 payment.slug       = 'thanks'
 payment.breadcrumb = 'thanks'
 payment.parent     = cart
@@ -83,9 +83,17 @@ payment.parts      = [
     :filter_id => 'Textile',
     :content   => <<-CONTENT
 <r:shop:cart:payment:if_paid>
-Thank You
 
-<r:shop:cart:forget />
+h2. Thank You
+
+Your payment for <r:shop:cart:price /> has been received from your **<r:response:get name="card[type]" /> card**.
+
+If you have any queries please contact us and quote order number **#<r:cart:id />**.
+
+<r:forget />
+
+"home":/
+
 </r:shop:cart:payment:if_paid>
 CONTENT
   })
