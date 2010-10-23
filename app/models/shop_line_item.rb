@@ -4,15 +4,20 @@ class ShopLineItem < ActiveRecord::Base
   has_one     :customer,    :class_name   => 'ShopCustomer', :through => :order, :source => :customer
   belongs_to  :item,        :polymorphic  => true
   
-  before_validation       :adjust_quantity
-  validates_uniqueness_of :item_id, :scope => [ :order_id, :item_type ]
-  validates_presence_of   :item
+  before_validation         :adjust_quantity, :copy_price
+  
+  validates_presence_of     :item, :item_price
+  
+  validates_uniqueness_of   :item_id, :scope => [ :order_id, :item_type ]
+  
+  validates_numericality_of :item_price, :greater_than => 0.00,    :allow_nil => true,     :precisions => 2
   
   def price
-    (item.price.to_f * self.quantity).to_f
+    (item_price.to_f * self.quantity).to_f
   end
   
   def weight
+    warn 'Not yet fully implemented'
     (item.weight.to_f * self.quantity.to_f).to_f
   end
   
@@ -38,10 +43,14 @@ class ShopLineItem < ActiveRecord::Base
     
   end
   
-private
+protected
   
   def adjust_quantity
     self.quantity = [1,self.quantity].max
+  end
+  
+  def copy_price
+    self.item_price = item.price unless item_price.present?
   end
   
 end

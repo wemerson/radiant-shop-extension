@@ -15,8 +15,13 @@ describe ShopLineItem do
   
     describe '#price' do
       it 'should multiple price by quantity' do
-        shop_line_items(:one).price.should === (shop_line_items(:one).item.price * shop_line_items(:one).quantity).to_f
-        shop_line_items(:two).price.should === (shop_line_items(:two).item.price * shop_line_items(:two).quantity).to_f
+        shop_line_items(:one).price.should === (shop_line_items(:one).item_price * shop_line_items(:one).quantity).to_f
+        shop_line_items(:two).price.should === (shop_line_items(:two).item_price * shop_line_items(:two).quantity).to_f
+      end
+      it 'should not inherit the changes of a items base price' do
+        shop_line_items(:one).price.to_f.should === shop_line_items(:one).item.price.to_f
+        shop_line_items(:one).item.update_attribute(:price, 100.00)
+        shop_line_items(:one).price.to_f.should_not === shop_line_items(:one).item.price.to_f
       end
     end
   
@@ -49,6 +54,16 @@ describe ShopLineItem do
         s.quantity.should === 100
       end
     end
+    
+    describe '#set_price' do
+      it 'should assign the items price to item_price before validations' do
+        s = ShopLineItem.new({ :item => shop_products(:crusty_bread), :quantity => 1 })
+        s.item_price.should be_nil
+        s.valid?
+        s.item_price.should === shop_products(:crusty_bread).price
+      end
+    end
+    
   end
   
   describe '#attrs' do

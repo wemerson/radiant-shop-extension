@@ -51,6 +51,7 @@ class SetupShop < ActiveRecord::Migration
       t.integer  "quantity",      :default => 1
       t.integer  "item_id"
       t.string   "item_type"
+      t.decimal  "item_price"
       t.datetime "created_at"
       t.datetime "updated_at"
       t.integer  "order_id"
