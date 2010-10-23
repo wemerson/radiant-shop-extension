@@ -1,7 +1,7 @@
 require 'spec/spec_helper'
 
 #
-# Tests for shop order page model extensions
+# Tests for Page extensions
 #
 describe Shop::Models::Page do
   

@@ -5,29 +5,33 @@ class FormCheckout
   attr_accessor :config, :data, :result, :gateway, :card
   
   def create
+    redirect = @form.redirect_to
+    
+    @form.redirect_to = :back
     find_current_order # locate the @order object
     
     create_result_object # A default response object
-
+    
     # If the form was configured for gateway and we have a billing address
     if @order.billing.present?
       if gateway.present?
         prepare_gateway # Create the @gateway object
         prepare_credit_card if card.present?# Create the @card object
-      
+        
         if @result[:gateway] and @result[:card]
           purchase! # Use @card to pay through @gateway
           
           # We have a paid for order with a billing address
           if success?
-            finalize_cart
             # The form was configured to send a payment email
-            if mail.present?
-              configure_invoice_mail # Create some configuration variables for mailing
+            if extensions.present?
+              configure_success_extensions # Create some configuration variables for mailing
             end
+            
+            finalize_cart
+            @form.redirect_to = redirect
           else
             @result[:payment] = false
-            @form.redirect_to = :back
           end
         end
       else
@@ -94,13 +98,18 @@ class FormCheckout
   end
   
   # Sets up mail to send an invoice to the billing email address
-  def configure_invoice_mail
-    @form[:extensions][:mail] ||= {}
-    @form[:extensions][:mail].merge!({
-      :recipient  => @order.billing.email,
-      :to         => @order.billing.email,
-    })
-    @form[:extensions][:mail].merge!(mail)
+  def configure_success_extensions
+    extensions.each do |name, config|
+      if config[:extension].include?('mail')
+        config[:to] = @order.billing.email unless config[:to].present?
+      end
+      
+      # it's very likely the extension will need to know the order id
+      config[:shop_order] = @order.id
+      
+      result = @form.call_extension(name,config)
+      @result.merge!({ name.to_sym => result })
+    end
   end
   
   # Uses the gateway and card objects to carry out an ActiveMerchant purchase
@@ -115,7 +124,6 @@ class FormCheckout
   end
   
   def finalize_cart
-    @result[:session] = { :shop_order => nil }  # We no longer need to store the current shop_roder
     @order.update_attribute(:status, 'paid')    # The order is now considered paid 
   end
   
@@ -126,7 +134,7 @@ class FormCheckout
   
   # Returns the name of the gateway (Eway)
   def gateway_name
-    gateway[:name]
+    gateway[:name].capitalize
   end
   
   # Returns Gateway username and password etc
@@ -191,8 +199,8 @@ class FormCheckout
   end
   
   # Returns configured mail attributes
-  def mail
-    @config[:mail]
+  def extensions
+    @config[:extensions]
   end
   
   # Returns the amount to be charged, which is $10 on testing gateways

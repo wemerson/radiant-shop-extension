@@ -3,30 +3,47 @@ module Shop
     module Responses
       include Radiant::Taggable
       
-      # Expand if there is a checkout response
-      desc %{ Expand if there is a checkout response }
-      tag 'response:checkout' do |tag|
-        tag.locals.response_checkout = tag.locals.response.result[:results][:checkout]
+      desc %{ Expand if there is a response to a specified for value }
+      tag 'response:if_results' do |tag|
+        extension = tag.attr['extension'].to_sym
+        tag.locals.response_extension = tag.locals.response.result[:results][extension]
         
-        tag.expand if tag.locals.response_checkout.present?
+        tag.expand if tag.locals.response_extension.present?
       end
       
-      # Expand if there is a checkout payment response
-      desc %{ Expand if there is a checkout payment response }
-      tag 'response:checkout:payment' do |tag|
-        tag.expand
+      
+      desc %{ Expand if there is a response to a specified for value }
+      tag 'response:unless_results' do |tag|
+        extension = tag.attr['extension'].to_sym
+        tag.locals.response_extension = tag.locals.response.result[:results][extension]
+        
+        tag.expand unless tag.locals.response_extension.present?
       end
       
-      # Expand if the payment was successful
-      desc %{ Expand if the payment was successful }
-      tag 'response:checkout:payment:if_success' do |tag|
-        tag.expand if tag.locals.response_checkout[:payment] === true
+      desc %{ Expand if there is a positive response to a specified for value of an extension
+        
+        <pre>
+          <r:response:if_get extension='bogus_gateway' value='checkout'>yay</r:response:if_get>
+        </pre>
+      }
+      tag 'response:if_get' do |tag|
+        query = tag.attr['name'].to_sym
+        result = tag.locals.response_extension[query]
+        
+        tag.expand if result.present? and result === true
       end
       
-      # Expand if the payment was not successful
-      desc %{ Expand if the payment was not successful }
-      tag 'response:checkout:payment:unless_success' do |tag|
-        tag.expand if tag.locals.response_checkout[:payment] === false
+      desc %{ Expand if there is a negative response to a specified for value of an extension
+        
+        <pre>
+          <r:response:unless_get extension='bogus_gateway' value='checkout'>no</r:response:unless_get>
+        </pre>
+      }
+      tag 'response:unless_get' do |tag|
+        query = tag.attr['name'].to_sym
+        result = tag.locals.response_extension[query]
+        
+        tag.expand if !result.present? or result != true
       end
       
     end

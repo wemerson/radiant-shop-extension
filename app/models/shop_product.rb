@@ -10,22 +10,13 @@ class ShopProduct < ActiveRecord::Base
   has_many    :orders,      :class_name => 'ShopOrder',             :through      => :line_items,   :uniq      => true
   has_many    :attachments, :class_name => 'ShopProductAttachment', :foreign_key  => :product_id
   has_many    :images,      :class_name => 'Image',                 :through      => :attachments,  :uniq      => true
-  has_many    :packings,    :class_name => 'ShopPacking',           :foreign_key  => :product_id
-  has_many    :packages,    :class_name => 'ShopPackage',           :foreign_key  => :package_id,   :through   => :packings, :source => :package
-  has_many    :related,     :class_name => 'ShopProduct',           :through      => :packings,     :source    => :product,  :uniq => true
-  has_many    :variants,    :class_name => 'ShopProductVariant',    :foreign_key  => :product_id,   :dependent => :destroy
-  has_many  :discountables, :class_name => 'ShopDiscountable',      :foreign_key  => :discounted_id
-  has_many    :discounts,   :class_name => 'ShopDiscount',          :through      => :discountables
   
-  before_validation             :assign_slug, :assign_breadcrumb
+  before_validation             :assign_slug, :assign_breadcrumb, :assign_page_class_name
   validates_presence_of         :page
   
   validates_numericality_of     :price,   :greater_than => 0.00,    :allow_nil => true,     :precisions => 2
   
   accepts_nested_attributes_for :page
-  accepts_nested_attributes_for :variants
-  
-  after_create                  :assign_discounts
   
   # Returns the title of the product's page
   def name; page.title; end
@@ -40,7 +31,13 @@ class ShopProduct < ActiveRecord::Base
   def category_id; category.id; end
   
   # Returns the content of the product's page's description part
-  def description; page.parts.find_by_name('description').content rescue ''; end
+  def description
+    begin
+      page.parts.find_by_name('description').content
+    rescue 
+      ''
+    end
+  end
   
   # Returns the url of the page
   def url; page.url; end
@@ -104,7 +101,7 @@ class ShopProduct < ActiveRecord::Base
     # Converts a url to a pretty sku and removes the shop prefix /shop/page/category/product page-category-product
     def to_sku(url)
       if url.present?
-        url.downcase.strip.gsub(/^\/#{Radiant::Config['shop.root_page_slug']}/,'').gsub(/^(\/*)(.*)(\/)$/,'\2').gsub(/[\s\.:;=+~]+/,'_').gsub(/\//,'-')
+        url.downcase.strip.gsub(/^\/#{Page.find(Radiant::Config['shop.root_page_id']).slug}/,'').gsub(/^(\/*)(.*)(\/)$/,'\2').gsub(/[\s\.:;=+~]+/,'_').gsub(/\//,'-')
       end
     end
     
@@ -126,10 +123,10 @@ class ShopProduct < ActiveRecord::Base
     end
   end
   
-  # Assigns discounts based off categories discounts
-  def assign_discounts
-    category.discounts.each do |discount|      
-      ShopDiscountable.create(:discount => discount, :discounted => self)
+  # Assigns a page class if its nil
+  def assign_page_class_name
+    if page.present?
+      self.page.class_name = page.class_name || 'ShopProductPage'
     end
   end
   

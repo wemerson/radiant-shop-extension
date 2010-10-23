@@ -41,12 +41,12 @@ class FormAddress
       create_order_shipping_address
     end
     
-    if @billing.nil? or !@billing.id
+    unless (@billing.present? and @billing.valid?) and (@shipping.present? and @shipping.valid?)
       @form.redirect_to = :back
     end
     
-    @result[:billing]  = @billing.present?  ? @billing.id  : false
-    @result[:shipping] = @shipping.present? ? @shipping.id : false
+    @result[:billing]  = (@billing.valid?  ? @billing.id  : false) rescue false
+    @result[:shipping] = (@shipping.valid? ? @shipping.id : false) rescue false
   end
   
   # Attaches a billing address to the order (and current customer)
@@ -99,7 +99,7 @@ class FormAddress
         elsif @shipping == @billing and shipping != billing
           # We have conflicting data so create a new address
           # the id is rejected so we'll get a new address
-          @order.update_attributes!({ :shipping_attributes => shipping })
+          @order.update_attributes({ :shipping_attributes => shipping })
           @shipping = @order.shipping
         end
       rescue
@@ -118,7 +118,7 @@ class FormAddress
       
     else
       # Create a new address with these attributes
-      @order.update_attributes!({ :shipping_attributes => shipping })
+      @order.update_attributes({ :shipping_attributes => shipping })
       @shipping = @order.shipping
     end
   end

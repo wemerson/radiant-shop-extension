@@ -8,10 +8,7 @@ class ShopCategory < ActiveRecord::Base
   belongs_to  :updated_by,      :class_name => 'User'
   belongs_to  :product_layout,  :class_name => 'Layout'
   
-  has_many  :discountables, :class_name => 'ShopDiscountable',      :foreign_key  => :discounted_id
-  has_many    :discounts,   :class_name => 'ShopDiscount',          :through      => :discountables
-  
-  before_validation             :assign_slug, :assign_breadcrumb
+  before_validation             :assign_slug, :assign_breadcrumb, :assign_page_class_name
   
   accepts_nested_attributes_for :page
   
@@ -24,7 +21,13 @@ class ShopCategory < ActiveRecord::Base
   def handle; ShopProduct.to_sku(page.url); end
   
   # Returns the content of the product's page's description part
-  def description; page.parts.find_by_name('description').content; rescue ''; end
+  def description
+    begin
+      page.parts.find_by_name('description').content
+    rescue 
+      ''
+    end
+  end
   
   # Returns products through the pages children
   def products; page.children.map(&:shop_product); end
@@ -79,6 +82,13 @@ class ShopCategory < ActiveRecord::Base
   def assign_breadcrumb
     if page.present?
       self.page.breadcrumb = ShopProduct.to_sku(page.breadcrumb.present? ? page.breadcrumb : page.slug)
+    end
+  end
+
+  # Assigns a page class if its nil
+  def assign_page_class_name
+    if page.present?
+      self.page.class_name = page.class_name || 'ShopCategoryPage'
     end
   end
   

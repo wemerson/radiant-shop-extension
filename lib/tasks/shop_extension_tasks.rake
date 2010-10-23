@@ -5,11 +5,16 @@ namespace :radiant do
       desc "Runs the migration of the Shop extension"
       task :migrate => :environment do
         require 'radiant/extension_migrator'
-        if ENV["VERSION"]
-          ShopExtension.migrator.migrate(ENV["VERSION"].to_i)
-        else
-          ShopExtension.migrator.migrate
+        
+        # Migrate required extensions first
+        ['Settings','Images','Forms','Scoped','Drag'].each do |name|
+          extension = "#{name}Extension".pluralize.classify.constantize
+          extension.migrator.migrate
         end
+        
+        version = ENV["VERSION"] ? ENV["VERSION"].to_i : nil
+        ShopExtension.migrator.migrate(version)
+        
         Rake::Task['db:schema:dump'].invoke
       end
       

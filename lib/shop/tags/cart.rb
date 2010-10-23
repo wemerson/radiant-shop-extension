@@ -11,6 +11,10 @@ module Shop
         tag.expand
       end
       
+      tag 'shop:cart:forget' do |tag|
+        tag.locals.page.request.session[:shop_order] = nil
+      end
+      
       # Expand if a user has started a cart
       desc %{ Expand if a user has started a cart }
       tag 'shop:cart:if_cart' do |tag|
@@ -44,7 +48,7 @@ module Shop
       # Returns the date of the payment
       desc %{ Returns the date of the payment }
       tag 'shop:cart:payment:date' do |tag|
-        tag.locals.shop_order.payment.created_at.to_s(:long)
+        tag.locals.shop_order.payment.created_at.strftime(Radiant::Config['shop.date_format'])
       end
       
       # Display the cart id / status

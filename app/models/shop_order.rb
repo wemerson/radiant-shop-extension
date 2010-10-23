@@ -4,8 +4,6 @@ class ShopOrder < ActiveRecord::Base
   
   has_one    :payment,     :class_name => 'ShopPayment',        :foreign_key => :order_id,  :dependent => :destroy
   has_many   :line_items,  :class_name => 'ShopLineItem',       :foreign_key => :order_id,  :dependent => :destroy
-  has_many :discountables, :class_name => 'ShopDiscountable', :foreign_key  => :discounted_id
-  has_many   :discounts,   :class_name => 'ShopDiscount',     :through      => :discountables
   
   belongs_to :billing,    :class_name => 'ShopAddress'
   belongs_to :shipping,   :class_name => 'ShopAddress'

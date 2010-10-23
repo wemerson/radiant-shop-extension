@@ -1,7 +1,7 @@
 require 'spec/spec_helper'
 
 describe ShopProduct do
-  dataset :shop_products, :shop_line_items, :shop_discountables
+  dataset :shop_products, :shop_line_items
   
   describe 'relationships' do
     before :each do
@@ -36,30 +36,6 @@ describe ShopProduct do
     
     it 'should have many images' do
       @product.images.is_a?(Array).should be_true
-    end
-    
-    it 'should have many packings' do
-      @product.packings.is_a?(Array).should be_true
-    end
-    
-    it 'should have many packages' do
-      @product.packages.is_a?(Array).should be_true
-    end
-    
-    it 'should have many related' do
-      @product.related.is_a?(Array).should be_true
-    end
-    
-    it 'should have many variants' do
-      @product.variants.is_a?(Array).should be_true
-    end
-    
-    it 'should have many discountables' do
-      @product.discountables.is_a?(Array).should be_true
-    end
-    
-    it 'should have many discounts' do
-      @product.discounts.is_a?(Array).should be_true
     end
     
   end
@@ -198,25 +174,6 @@ describe ShopProduct do
             @product.valid?
             @product.page.breadcrumb.should === 'delicious_______________bread'
           end        
-        end
-      end
-    end
-    
-    context 'discounts' do
-      context 'after_create' do
-        it 'should assign its categories discounts to itself' do
-          @product = ShopProduct.new(
-            :price => 11.11,
-            :page_attributes => {
-              :title => 'New Page With Discounts',
-              :slug  => 'new_page_with_discounts',
-              :parent_id => shop_categories(:bread).id
-            } 
-          )
-          @product.discounts.empty?.should === true
-          @product.save
-          
-          ShopProduct.find(@product).discounts.should === shop_categories(:bread).discounts
         end
       end
     end

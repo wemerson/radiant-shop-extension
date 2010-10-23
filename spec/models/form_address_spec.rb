@@ -21,7 +21,7 @@ describe FormAddress do
             @data[:billing]   = { :id => shop_orders(:several_items).billing.id }
             @data[:shipping]  = { :id => shop_orders(:several_items).shipping.id }
             
-            @address = FormAddress.new(@form, @page)
+            @address = FormAddress.new(@form, @page, @form[:extensions][:addresses])
             result = @address.create
             
             shop_orders(:one_item).billing.should  === shop_addresses(:billing)
@@ -38,7 +38,7 @@ describe FormAddress do
             @data[:shipping] = {}
             @form[:extensions][:address] = { :billing => true }
             
-            @address = FormAddress.new(@form, @page)
+            @address = FormAddress.new(@form, @page, @form[:extensions][:addresses])
             result = @address.create
             
             shop_orders(:one_item).billing.should  === shop_addresses(:billing)
@@ -57,7 +57,7 @@ describe FormAddress do
         end
         context 'both billing and shipping' do
           it 'it should not assign those addresses' do
-            @address = FormAddress.new(@form, @page)
+            @address = FormAddress.new(@form, @page, @form[:extensions][:addresses])
             result = @address.create
             
             shop_orders(:one_item).billing.should  be_nil
@@ -72,11 +72,12 @@ describe FormAddress do
       context 'sending ids as a bad customer' do
         before :each do
           login_as :bad_customer
+          
           @order = shop_orders(:one_item)
           mock_valid_form_address_request
         end
         it 'should not assign those addresses' do
-          @address = FormAddress.new(@form, @page)
+          @address = FormAddress.new(@form, @page, @form[:extensions][:addresses])
           result = @address.create
           
           shop_orders(:one_item).billing.should  be_nil
@@ -97,7 +98,7 @@ describe FormAddress do
           @data[:billing]   = { :name => 'new billing' }
           @data[:shipping]  = { :name => 'new shipping' }
           
-          @address = FormAddress.new(@form, @page)
+          @address = FormAddress.new(@form, @page, @form[:extensions][:addresses])
           result = @address.create
           
           shop_addresses(:billing).name.should  === 'new billing'
@@ -120,7 +121,7 @@ describe FormAddress do
         
         context 'both billing and shipping sent' do
           it 'should create new addresses' do            
-            @address = FormAddress.new(@form, @page)
+            @address = FormAddress.new(@form, @page, @form[:extensions][:addresses])
             result = @address.create
             
             shop_orders(:one_item).billing.name.should  === @data[:billing][:name]
@@ -135,7 +136,7 @@ describe FormAddress do
           it 'should copy billing to shipping' do
             @data[:shipping] = {}
             
-            @address = FormAddress.new(@form, @page)
+            @address = FormAddress.new(@form, @page, @form[:extensions][:addresses])
             result = @address.create
             
             shop_orders(:one_item).billing.name.should  === @data[:billing][:name]
@@ -150,7 +151,7 @@ describe FormAddress do
           it 'should copy billing to shipping' do
             @data[:shipping] = @data[:billing]
             
-            @address = FormAddress.new(@form, @page)
+            @address = FormAddress.new(@form, @page, @form[:extensions][:addresses])
             result = @address.create
             
             shop_orders(:one_item).shipping.should      === shop_orders(:one_item).billing

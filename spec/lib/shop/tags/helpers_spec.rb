@@ -2,24 +2,14 @@ require 'spec/spec_helper'
 
 describe Shop::Tags::Helpers do
   
-  dataset :pages, :shop_products, :shop_product_variants, :shop_orders, :shop_addresses, :shop_line_items
+  dataset :pages, :tags, :shop_products, :shop_orders, :shop_addresses, :shop_line_items
   
   before :all do
     @page = pages(:home)
   end
   
   before(:each) do
-    @tag = OpenStruct.new({
-      :attr   => {},
-      :locals => OpenStruct.new({
-        :page => OpenStruct.new({
-          :params   => {},
-          :request  => OpenStruct.new({
-            :session => {}
-          })
-        })
-      })
-    })
+    mock_valid_tag_for_helper
   end
   
   describe '#current_categories' do
@@ -321,16 +311,6 @@ describe Shop::Tags::Helpers do
       end
     end
     
-    context 'key and value sent' do
-      before :each do
-        @tag.attr = { 'key' => 'id', 'value' => @order.line_items.first.id }
-      end
-      it 'should return the matching order' do
-        result = Shop::Tags::Helpers.current_line_items(@tag)
-        result.should == [@order.line_items.first]
-      end
-    end
-    
     context 'nothing available to find the items' do
       it 'should return the current orders items' do
         result = Shop::Tags::Helpers.current_line_items(@tag)
@@ -409,50 +389,6 @@ describe Shop::Tags::Helpers do
     context 'no order exists' do
       it 'should return nil' do
         result = Shop::Tags::Helpers.current_address(@tag)
-        result.should be_nil
-      end
-    end
-  end
-  
-  describe '#current_product_variants' do
-    before :each do
-      @product = shop_products(:crusty_bread)
-    end
-    
-    context 'existing product variant' do
-      it 'should return that existing line item' do
-        @tag.locals.shop_product = @product
-        
-        result = Shop::Tags::Helpers.current_product_variants(@tag)
-        result.should == @product.variants
-      end
-    end
-    
-    context 'nothing sent or available' do
-      it 'should return nil' do
-        result = Shop::Tags::Helpers.current_product_variants(@tag)
-        result.should be_nil
-      end
-    end
-  end
-  
-  describe '#current_product_variant' do
-    before :each do
-      @variant = shop_product_variants(:mouldy_crusty_bread)
-    end
-    
-    context 'existing product variant' do
-      it 'should return that existing variant' do
-        @tag.locals.shop_product_variant = @variant
-        
-        result = Shop::Tags::Helpers.current_product_variant(@tag)
-        result.should == @variant
-      end
-    end
-    
-    context 'nothing sent or available' do
-      it 'should return nil' do
-        result = Shop::Tags::Helpers.current_product_variant(@tag)
         result.should be_nil
       end
     end

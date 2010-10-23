@@ -4,122 +4,102 @@ describe Shop::Tags::Responses do
   
   dataset :forms, :pages
   
-  it 'should describe these tags' do
-    Shop::Tags::Responses.tags.sort.should == [
-      'response:checkout',
-      'response:checkout:payment',
-      'response:checkout:payment:if_success',
-      'response:checkout:payment:unless_success'
-    ].sort
+  context 'contained tags' do
+  
+    it 'should describe these tags' do
+      Shop::Tags::Responses.tags.sort.should == [
+        'response:if_results', 
+        'response:unless_results',
+        'response:if_get', 
+        'response:unless_get',      
+      ].sort
+    end
+    
   end
   
-  context 'responses' do
+  context 'conditionals' do
     
     before :each do
-      login_as :customer
-      @order = shop_orders(:several_items)
-      
-      mock_page_with_request_and_data
+      @page = pages(:home)
       mock_response
-      
-      mock.instance_of(ActiveMerchant::Billing::CreditCard).valid? { true }
-      mock_valid_form_checkout_request
-      @checkout = FormCheckout.new(@form, @page)
     end
     
-    describe '<r:response:checkout>' do
-      context 'checkout exists' do
-        before :each do
-          @response.result[:results][:checkout] = @checkout.create
-        end
-        it 'should expand' do
-          tag = %{<r:response:checkout>success</r:response:checkout>}
-          exp = %{success}
+    describe 'if_results' do
+      context 'extension sent results' do
+        it 'should render' do
+          @response.result[:results] = { :bogus => { :payment => true } }
           
-          pages(:home).should render(tag).as(exp)
+          tag = %{<r:response:if_results extension='bogus'>success</r:response:if_results>}
+          exp = %{success}
+          @page.should render(tag).as(exp)
         end
       end
-      context 'checkout does not exist' do
-        it 'should not expand' do
-          tag = %{<r:response:checkout>failure</r:response:checkout>}
+      context 'extension did not send results' do
+        it 'should not render' do
+          tag = %{<r:response:if_results extension='bogus'>failure</r:response:if_results>}
           exp = %{}
-        
-          pages(:home).should render(tag).as(exp)
+          @page.should render(tag).as(exp)
         end
       end
     end
     
-    describe '<r:response:payment>' do
-      before :each do
-        @response.result[:results][:checkout] = @checkout.create
-      end
-      context 'payment success' do
-        it 'should expand' do
-          tag = %{<r:response:checkout:payment>success</r:response:checkout:payment>}
+    describe 'unless_results' do
+      context 'extension did not send results' do
+        it 'should render' do
+          tag = %{<r:response:unless_results extension='bogus'>success</r:response:unless_results>}
           exp = %{success}
-        
-          pages(:home).should render(tag).as(exp)
+          @page.should render(tag).as(exp)
         end
       end
-      context 'payment failure' do
-        before :each do
-          @response.result[:results][:checkout][:payment] = false
-        end
-        it 'should expand' do
-          tag = %{<r:response:checkout:payment>success</r:response:checkout:payment>}
-          exp = %{success}
+      context 'extension sent results' do
+        it 'should not render' do
+          @response.result[:results] = { :bogus => { :payment => true } }
           
-          pages(:home).should render(tag).as(exp)
-        end
-      end
-    end
-    
-    describe '<r:response:payment:if_success>' do
-      before :each do
-        @response.result[:results][:checkout] = @checkout.create
-      end
-      context 'payment success' do
-        it 'should expand' do
-          tag = %{<r:response:checkout:payment:if_success>success</r:response:checkout:payment:if_success>}
-          exp = %{success}
-          
-          pages(:home).should render(tag).as(exp)
-        end
-      end
-      context 'payment failure' do
-        before :each do
-          @response.result[:results][:checkout][:payment] = false
-        end
-        it 'should not expand' do
-          tag = %{<r:response:checkout:payment:if_success>failure</r:response:checkout:payment:if_success>}
+          tag = %{<r:response:unless_results extension='bogus'>failure</r:response:unless_results>}
           exp = %{}
-          
-          pages(:home).should render(tag).as(exp)
+          @page.should render(tag).as(exp)
         end
       end
     end
     
-    describe '<r:response:payment:unless_success>' do
-      before :each do
-        @response.result[:results][:checkout] = @checkout.create
-      end
-      context 'payment failure' do
-        before :each do
-          @response.result[:results][:checkout][:payment] = false
-        end
-        it 'should expand' do
-          tag = %{<r:response:checkout:payment:unless_success>success</r:response:checkout:payment:unless_success>}
+    describe 'if_get' do
+      context 'extension sent positive results' do
+        it 'should render' do
+          @response.result[:results] = { :bogus => { :payment => true } }
+          
+          tag = %{<r:response:if_results extension='bogus'><r:if_get name='payment'>success</r:if_get></r:response:if_results>}
           exp = %{success}
-          
-          pages(:home).should render(tag).as(exp)
+          @page.should render(tag).as(exp)
         end
       end
-      context 'payment success' do
-        it 'should not expand' do
-          tag = %{<r:response:checkout:payment:unless_success>failure</r:response:checkout:payment:unless_success>}
-          exp = %{}
+      context 'extension sent negative results' do
+        it 'should not render' do
+          @response.result[:results] = { :bogus => { :payment => false } }
           
-          pages(:home).should render(tag).as(exp)
+          tag = %{<r:response:if_results extension='bogus'><r:if_get name='payment'>failure</r:if_get></r:response:if_results>}
+          exp = %{}
+          @page.should render(tag).as(exp)
+        end
+      end
+    end
+    
+    describe 'unless_get' do
+      context 'extension sent positive results' do
+        it 'should render' do
+          @response.result[:results] = { :bogus => { :payment => false } }
+          
+          tag = %{<r:response:if_results extension='bogus'><r:unless_get name='payment'>success</r:unless_get></r:response:if_results>}
+          exp = %{success}
+          @page.should render(tag).as(exp)
+        end
+      end
+      context 'extension sent negative results' do
+        it 'should not render' do
+          @response.result[:results] = { :bogus => { :payment => true } }
+          
+          tag = %{<r:response:if_results extension='bogus'><r:unless_get name='payment'>failure</r:unless_get></r:response:if_results>}
+          exp = %{}
+          @page.should render(tag).as(exp)
         end
       end
     end

@@ -1,8 +1,8 @@
 require 'spec/spec_helper'
-
+  
 describe ShopOrder do
-
-  dataset :shop_orders, :shop_line_items, :shop_products, :shop_packages, :shop_payments
+  
+  dataset :shop_orders, :shop_line_items, :shop_products, :shop_payments
   
   describe '#quantity' do
     it 'should return the total items' do
@@ -133,11 +133,11 @@ describe ShopOrder do
       end
       context 'type and quantity passed' do
         it 'should assign the new type and new quantity' do
-          @order.add!(shop_packages(:all_bread).id, 2, 'ShopPackage')
+          @order.add!(@product.id, 2, 'ShopProductAlternative')
           
           @order.line_items.count.should           === 1
           @order.quantity.should                   === 2
-          @order.line_items.first.item_type.should === 'ShopPackage'
+          @order.line_items.first.item_type.should === 'ShopProductAlternative'
         end
       end
     end

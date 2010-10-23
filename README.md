@@ -1,36 +1,52 @@
 # Radiant Shop
 
-ps: [wiki](http://github.com/squaretalent/radiant-shop-extension/wiki)
+## [Wiki]([wiki.github.com/squaretalent/radiant-shop-extension] "Github Wiki Page")
 
-pps: heavily under development means "it might not work out of the box after every commit"
+## Quickstart
 
-ppps: I am working on the wiki as quickly as I can, but specs are more important at this point in time
+Install RadiantShop Gem
 
-pppps: love heart
-
-## Checkout
-
-### Form Configuration
-
-    checkout:
-      gateway:
-        name: Eway
-        username: 123456
-        password: abcdef
-        
-# Development
-
-    unless ENV["RAILS_ENV"] == "production"
-      config.gem 'rspec',             :version => '1.3.0'
-      config.gem 'rspec-rails',       :version => '1.3.2'
-      config.gem 'cucumber',          :verison => '0.8.5'
-      config.gem 'cucumber-rails',    :version => '0.3.2'
-      config.gem 'database_cleaner',  :version => '0.4.3'
-      config.gem 'ruby-debug',        :version => '0.10.3'
-      config.gem 'webrat',            :version => '0.7.1'
-      config.gem 'rr',                :version => '0.10.11'
-    end        
+    gem install radiant-shop-extension
+    # This will install Radiant and the Gems RadiantShop requires
     
-# Migrating in Development
+Create a Radiant project
+    
+    radiant myshop --database sqlite3
+    cd myshop
 
-    rm db/development.sqlite3.db; rake db:migrate; rake radiant:extensions:scoped:migrate; rake radiant:extensions:settings:migrate; rake radiant:extensions:drag:migrate; rake radiant:extensions:forms:migrate; rake radiant:extensions:images:migrate; rake radiant:extensions:shop:migrate; rake radiant:extensions:export:load;
+Edit your Gemfile
+
+    gem 'radiant',                '0.9.1'
+    gem 'radiant-shop-extension', :require => false
+    
+Add to your config/environment.rb
+
+    config.gem 'radiant-settings-extension',  :lib => false
+    config.gem 'radiant-scoped-extension',    :lib => false
+    config.gem 'radiant-images-extension',    :lib => false
+    config.gem 'radiant-forms-extension',     :lib => false
+    config.gem 'radiant-shop-extension',      :lib => false
+    
+Bootstrap Radiant (answer questions, I suggest an empty template)
+
+    rake db:bootstrap
+    
+Migrate shop
+
+    rake radiant:extensions:update_all
+    rake radiant:extensions:shop:migrate
+    
+Seed shop (optional, will help you get on your way)
+
+    rake radiant:extensions:shop:seed
+    
+## Licence
+
+This extension started as a fork of aurora-soft's simple product manager
+and has since undergone a rewrite.
+
+http://github.com/squaretalent/radiant-shop-extension/compare/master
+
+Copyright 2010 Dirk Kelly (dk@dirkkelly.com) and licenced under MIT.
+
+See LICENCE for further information.

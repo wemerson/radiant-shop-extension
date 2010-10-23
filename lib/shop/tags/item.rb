@@ -66,7 +66,7 @@ module Shop
         end
       end
       
-      [:price, :value, :discounted].each do |symbol|
+      [:price].each do |symbol|
         desc %{ outputs the #{symbol} of the current cart item }
         tag "shop:cart:item:#{symbol}" do |tag|
           attr = tag.attr.symbolize_keys
@@ -74,20 +74,6 @@ module Shop
 
           Helpers.currency(item.send(symbol),attr)
         end
-      end
-      
-      desc %{ expands if the item has a discount}
-      tag "shop:cart:item:if_discounted" do |tag|
-        item = tag.locals.shop_line_item
-        
-        tag.expand if item.price != item.value
-      end
-      
-      desc %{ expands if the item has a discount}
-      tag "shop:cart:item:unless_discounted" do |tag|
-        item = tag.locals.shop_line_item
-        
-        tag.expand if item.price == item.value
       end
       
       desc %{ generates a link to the items generated page }
@@ -99,7 +85,7 @@ module Shop
         
         text = tag.double? ? tag.expand : item.name
         
-        %{<a href="#{item.slug}"#{attributes}>#{text}</a>}
+        %{<a href="#{item.url}"#{attributes}>#{text}</a>}
       end
       
     end

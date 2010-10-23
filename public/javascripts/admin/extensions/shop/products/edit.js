@@ -6,8 +6,6 @@ document.observe("dom:loaded", function() {
     '#image_form:submit'                  : function(e) { shop_product_edit.imageSubmit() },
     '#browse_images_popup .image:click'   : function(e) { shop_product_edit.imageAttach($(this)) },
     '#product_attachments .delete:click'  : function(e) { shop_product_edit.imageRemove($(this).up('.image')) },
-    
-    '#variants .delete:click'             : function(e) { shop_product_edit.variantRemove($(this).up('.variant')) }
   });
 });
 
@@ -82,29 +80,6 @@ var ShopProductEdit = Class.create({
         hideStatus();        
       }
     });
-  },
-  
-  variantRemove: function(element) {
-    var variant_id  = element.readAttribute('data-variant_id');
-    var route       = shop.getRoute('admin_shop_product_variant_path', 'js', variant_id);
-    
-    if(confirm('Are you Sure?')) {
-      showStatus('Removing Variant...');
-      element.hide();
-      
-      new Ajax.Request(route, { 
-        method: 'delete',
-        onSuccess: function(data) {
-          element.remove();
-        }.bind(element),
-        onFailure: function(data) {
-          element.show();
-        }.bind(element),
-        onComplete: function() {
-          hideStatus();        
-        }
-      });
-    }
   },
   
   imageSubmit: function() {

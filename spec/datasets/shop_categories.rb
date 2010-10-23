@@ -1,8 +1,8 @@
 class ShopCategoriesDataset < Dataset::Base
   
-  uses :shop_variants, :pages
+  uses :pages
   
-  def load
+  def load    
     categories = [:bread, :milk, :salad]
     
     create_record :layout, :category,
