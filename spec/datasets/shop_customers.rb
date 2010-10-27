@@ -1,4 +1,5 @@
 class ShopCustomersDataset < Dataset::Base
+  
   def load
     create_model :shop_customer, :customer,
       :name     => 'customer',
