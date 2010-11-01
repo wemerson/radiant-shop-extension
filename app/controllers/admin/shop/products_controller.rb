@@ -200,6 +200,22 @@ private
     include_javascript 'admin/dragdrop'
     include_javascript 'admin/extensions/shop/edit'
     include_javascript 'admin/extensions/shop/products/edit'
+    
+    
+    @routes = [
+      {
+        :name => 'admin_shop_product_images_path',
+        :path => admin_shop_product_images_path(@shop_product)
+      },
+      {
+        :name => 'sort_admin_shop_product_images_path',
+        :path => sort_admin_shop_product_images_path(@shop_product)
+      },
+      {
+        :name => 'admin_shop_product_image_path',
+        :path => admin_shop_product_image_path(@shop_product, ':id')
+      }
+    ]
   end
   
   def set_layout_and_page

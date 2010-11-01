@@ -54,7 +54,8 @@ en:
   shipped: "shipped"
   paid: "paid"
   order: "Order"
-  orders: "Order"
+  orders: "Orders"
+  export: Export
   new_customer: "New Customer"
   text:
     remove_customer:
