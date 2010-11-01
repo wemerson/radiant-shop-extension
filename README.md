@@ -23,12 +23,12 @@ _**An online store is just a website**_
 
 ## Need Help?
 
-The [Wiki](http://wiki.github.com/squaretalent/radiant-shop-extension "Github Wiki Page") is the best source of information
+The [Wiki](http://wiki.github.com/dirkkelly/radiant-shop-extension "Github Wiki Page") is the best source of information
 about the entire project.
 
 It's in its infancy, and your help is greatly appreciated. You can reach me via
 
-* [Github Issues](http://github.com/squaretalent/radiant-shop-extension/issues)
+* [Github Issues](http://github.com/dirkkelly/radiant-shop-extension/issues)
 * [Twitter](http://twitter.com/dirkkelly)
 
 I don't use email to manage my extension development work.
@@ -74,10 +74,9 @@ Seed shop (optional, will help you get on your way)
     
 ## Licence
 
-This extension started as a fork of aurora-soft's simple product manager
-and has since undergone a rewrite.
+This extension started as a fork of aurorasoft's simple product manager and has since undergone a rewrite.
 
-[Comparison of Extensions](http://github.com/squaretalent/radiant-shop-extension/compare/master)
+[Comparison of Extensions](http://github.com/dirkkelly/radiant-shop-extension/compare/aurorasoft:master...dirkkelly:master)
 
 Copyright 2010 Dirk Kelly [dk@dirkkelly.com](dk@dirkkelly.com) [@dirkkelly](http://twitter.com/dirkkelly) and licenced under MIT.
 
