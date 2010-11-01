@@ -41,6 +41,7 @@ describe ShopProductAttachment do
     
     describe '#url' do
       it 'should return its assets url' do
+        stub(@product_image).image.stub!.url { 'url' }
         @product_image.url.should === @product_image.image.url
       end
     end

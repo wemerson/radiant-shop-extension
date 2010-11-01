@@ -237,7 +237,7 @@ describe Shop::Tags::Cart do
       end
       
       it 'should render a custom format' do
-        tag = %{<r:shop:cart:price unit="%" seperator="-" delimiter="+" />}
+        tag = %{<r:shop:cart:price unit="%" separator="-" delimiter="+" />}
         expected = %{%1+234-35}
         
         @page.should render(tag).as(expected)

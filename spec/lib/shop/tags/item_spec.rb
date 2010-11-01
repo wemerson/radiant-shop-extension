@@ -260,7 +260,7 @@ describe Shop::Tags::Item do
           end
           
           it 'should render a custom format' do
-            tag = %{<r:shop:cart:item:price unit="%" seperator="-" delimiter="+" />}
+            tag = %{<r:shop:cart:item:price unit="%" separator="-" delimiter="+" />}
             exp = %{%1+234-35}
             
             @page.should render(tag).as(exp)
