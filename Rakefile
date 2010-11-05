@@ -11,7 +11,7 @@ begin
     gem.add_dependency 'activemerchant',              '>= 1.8.0'
     gem.add_dependency 'fastercsv',                   '>= 1.5.3'
     gem.add_dependency 'radiant-settings-extension',  '>= 1.1.1'
-    gem.add_dependency 'radiant-images-extension',    '>= 0.3.3'
+    gem.add_dependency 'radiant-images-extension',    '>= 0.4.0'
     gem.add_dependency 'radiant-forms-extension',     '>= 3.2.1'
     gem.add_dependency 'radiant-scoped-extension',    '>= 0.2.2'
     gem.add_dependency 'radiant-drag-extension',      '>= 0.1.0'
