@@ -5,11 +5,11 @@
 
 Gem::Specification.new do |s|
   s.name = %q{radiant-shop-extension}
-  s.version = "0.11.7"
+  s.version = "0.11.8"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Dirk Kelly", "John Barker", "Darcy Laycock"]
-  s.date = %q{2010-10-23}
+  s.date = %q{2010-11-05}
   s.description = %q{Radiant Shop is an attempt at a simple but complete store. It includes Products, Categories, Orders and Credit Card Payments}
   s.email = %q{dk@dirkkelly.com}
   s.extra_rdoc_files = [
@@ -165,7 +165,6 @@ Gem::Specification.new do |s|
      "lib/shop/tags/helpers.rb",
      "lib/shop/tags/item.rb",
      "lib/shop/tags/product.rb",
-     "lib/shop/tags/responses.rb",
      "lib/shop/tags/tax.rb",
      "lib/tasks/shop_extension_tasks.rake",
      "public/images/admin/extensions/shop/products/sort.png",
@@ -206,7 +205,6 @@ Gem::Specification.new do |s|
      "spec/lib/shop/tags/helpers_spec.rb",
      "spec/lib/shop/tags/item_spec.rb",
      "spec/lib/shop/tags/product_spec.rb",
-     "spec/lib/shop/tags/responses_spec.rb",
      "spec/lib/shop/tags/tax_spec.rb",
      "spec/matchers/comparison.rb",
      "spec/matchers/render_matcher.rb",
@@ -263,7 +261,6 @@ Gem::Specification.new do |s|
      "spec/lib/shop/tags/helpers_spec.rb",
      "spec/lib/shop/tags/item_spec.rb",
      "spec/lib/shop/tags/product_spec.rb",
-     "spec/lib/shop/tags/responses_spec.rb",
      "spec/lib/shop/tags/tax_spec.rb",
      "spec/matchers/comparison.rb",
      "spec/matchers/render_matcher.rb",
@@ -291,7 +288,7 @@ Gem::Specification.new do |s|
       s.add_runtime_dependency(%q<activemerchant>, [">= 1.8.0"])
       s.add_runtime_dependency(%q<fastercsv>, [">= 1.5.3"])
       s.add_runtime_dependency(%q<radiant-settings-extension>, [">= 1.1.1"])
-      s.add_runtime_dependency(%q<radiant-images-extension>, [">= 0.3.3"])
+      s.add_runtime_dependency(%q<radiant-images-extension>, [">= 0.4.0"])
       s.add_runtime_dependency(%q<radiant-forms-extension>, [">= 3.2.1"])
       s.add_runtime_dependency(%q<radiant-scoped-extension>, [">= 0.2.2"])
       s.add_runtime_dependency(%q<radiant-drag-extension>, [">= 0.1.0"])
@@ -300,7 +297,7 @@ Gem::Specification.new do |s|
       s.add_dependency(%q<activemerchant>, [">= 1.8.0"])
       s.add_dependency(%q<fastercsv>, [">= 1.5.3"])
       s.add_dependency(%q<radiant-settings-extension>, [">= 1.1.1"])
-      s.add_dependency(%q<radiant-images-extension>, [">= 0.3.3"])
+      s.add_dependency(%q<radiant-images-extension>, [">= 0.4.0"])
       s.add_dependency(%q<radiant-forms-extension>, [">= 3.2.1"])
       s.add_dependency(%q<radiant-scoped-extension>, [">= 0.2.2"])
       s.add_dependency(%q<radiant-drag-extension>, [">= 0.1.0"])
@@ -310,7 +307,7 @@ Gem::Specification.new do |s|
     s.add_dependency(%q<activemerchant>, [">= 1.8.0"])
     s.add_dependency(%q<fastercsv>, [">= 1.5.3"])
     s.add_dependency(%q<radiant-settings-extension>, [">= 1.1.1"])
-    s.add_dependency(%q<radiant-images-extension>, [">= 0.3.3"])
+    s.add_dependency(%q<radiant-images-extension>, [">= 0.4.0"])
     s.add_dependency(%q<radiant-forms-extension>, [">= 3.2.1"])
     s.add_dependency(%q<radiant-scoped-extension>, [">= 0.2.2"])
     s.add_dependency(%q<radiant-drag-extension>, [">= 0.1.0"])
