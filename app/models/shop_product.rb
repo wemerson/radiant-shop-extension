@@ -101,7 +101,7 @@ class ShopProduct < ActiveRecord::Base
     # Converts a url to a pretty sku and removes the shop prefix /shop/page/category/product page-category-product
     def to_sku(url)
       if url.present?
-        url.downcase.strip.gsub(/^\/#{Page.find(Radiant::Config['shop.root_page_id']).slug}/,'').gsub(/^(\/*)(.*)(\/)$/,'\2').gsub(/[\s\.:;=+~]+/,'_').gsub(/\//,'-')
+        url.downcase.strip.gsub(/^(\/*)(.*)(\/)$/,'\2').gsub(/[\s\.:;=+~]+/,'_').gsub(/\//,'-')
       end
     end
     
