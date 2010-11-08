@@ -217,6 +217,17 @@ describe Shop::Tags::Helpers do
       end
     end
     
+    context 'position sent' do
+      before :each do
+        @tag.locals.page.shop_products = shop_categories(:bread).products
+        @tag.attr = { 'position' => 0 }
+      end
+      it 'should return the matching product' do
+        result = Shop::Tags::Helpers.current_product(@tag)
+        result.should == Shop::Tags::Helpers.current_products(@tag)[0]
+      end
+    end
+    
     context 'line item previously set' do
       context 'for product' do
         before :each do

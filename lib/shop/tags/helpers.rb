@@ -112,6 +112,9 @@ module Shop
                        :joins      => :page,
                        :conditions => [ "pages.slug = ?", tag.attr['sku'] ]
                      )
+                     
+          elsif tag.attr['position']
+            result = current_products(tag)[tag.attr['position'].to_i]
           
           elsif tag.locals.shop_line_item.present? and tag.locals.shop_line_item.item_type === 'ShopProduct'
             result = tag.locals.shop_line_item.item
