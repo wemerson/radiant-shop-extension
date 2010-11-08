@@ -15,7 +15,7 @@ class FormLineItem
     when 'modify'
       @result[:modify] = @order.modify(line_item_id,line_item_quantity)
     when 'remove'
-      @result[:remove] = @order.remove(line_item_id,line_item_quantity)
+      @result[:remove] = @order.remove(line_item_id)
     end
     
     @result
