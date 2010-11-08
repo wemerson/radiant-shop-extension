@@ -30,7 +30,7 @@ class ShopCategory < ActiveRecord::Base
   end
   
   # Returns products through the pages children
-  def products; page.children.map(&:shop_product); end
+  def products; page.children.all(:conditions => { :class_name => 'ShopProductPage' }).map(&:shop_product); end
   
   # Returns the url of the page
   def url; page.url;  end
