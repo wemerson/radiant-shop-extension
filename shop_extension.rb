@@ -7,7 +7,7 @@ class ShopExtension < Radiant::Extension
     config.gem 'activemerchant',              :lib => 'active_merchant'
     config.gem 'fastercsv',                   :lib => 'fastercsv'
     config.gem 'radiant-settings-extension',  :lib => false
-    config.gem 'radiant-scoped-extension',    :lib => false
+    config.gem 'radiant-users-extension',     :lib => false
     config.gem 'radiant-images-extension',    :lib => false
     config.gem 'radiant-forms-extension',     :lib => false
     config.gem 'radiant-drag-extension',      :lib => false

@@ -1,6 +1,6 @@
 class ShopCustomer < User
   
-  include Scoped::Models::User::Scoped
+  include Users::Models::User::Scoped
   
   def first_name
     name = ''
