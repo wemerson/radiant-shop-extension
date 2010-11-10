@@ -18,7 +18,8 @@ class ShopProductsDataset < Dataset::Base
           :breadcrumb => "#{product.to_s}_#{category.to_s}",
           :parent     => shop_categories(category).page,
           :class_name => 'ShopProductPage',
-          :layout     => layouts(:product)
+          :layout     => layouts(:product),
+          :position   => i + 1
 
         create_record :shop_product, "#{product.to_s}_#{category.to_s}".to_sym,
           :price      => i + 1 * 10,

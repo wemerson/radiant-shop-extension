@@ -100,6 +100,13 @@ module Shop
         content
       end
       
+      desc %{ iterates through each of the products images }
+      tag 'shop:product:images:image' do |tag|
+        tag.locals.image = Helpers.current_image(tag)
+        
+        tag.expand
+      end
+      
     end
   end
 end

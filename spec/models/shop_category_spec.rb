@@ -97,14 +97,14 @@ describe ShopCategory do
             @category.page.slug = 'delicious_ _:_;_=_+_._~_bread'
             @category.page.breadcrumb = nil
             @category.valid?
-            @category.page.breadcrumb.should === 'delicious_______________bread'          
+            @category.page.breadcrumb.should === @category.page.title
           end
         end
         context 'has been set' do
           it 'should generate on validation' do
             @category.page.breadcrumb = 'delicious_ _:_;_=_+_._~_bread'
             @category.valid?
-            @category.page.breadcrumb.should === 'delicious_______________bread'
+            @category.page.breadcrumb.should === 'delicious_ _:_;_=_+_._~_bread'
           end        
         end
       end

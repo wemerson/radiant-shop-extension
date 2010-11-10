@@ -2,7 +2,7 @@ require 'spec/spec_helper'
 
 describe Shop::Tags::Helpers do
   
-  dataset :pages, :tags, :shop_products, :shop_orders, :shop_addresses, :shop_line_items
+  dataset :pages, :tags, :shop_products, :shop_orders, :shop_addresses, :shop_line_items, :shop_product_attachments
   
   before :all do
     @page = pages(:home)
@@ -219,12 +219,17 @@ describe Shop::Tags::Helpers do
     
     context 'position sent' do
       before :each do
-        @tag.locals.page.shop_products = shop_categories(:bread).products
-        @tag.attr = { 'position' => 0 }
+        @tag.locals.shop_category = shop_categories(:bread)
       end
-      it 'should return the matching product' do
+      it 'should return the matching product at that position' do
+        @tag.attr = { 'position' => 1 }
         result = Shop::Tags::Helpers.current_product(@tag)
-        result.should == Shop::Tags::Helpers.current_products(@tag)[0]
+        result.should == shop_categories(:bread).products[0]
+      end
+      it 'should return the matching product at that position or the first' do
+        @tag.attr = { 'position' => 0 }
+        result = Shop::Tags::Helpers.current_product(@tag)
+        result.should == shop_categories(:bread).products[0]
       end
     end
     
@@ -260,6 +265,33 @@ describe Shop::Tags::Helpers do
       end
     end
     
+  end
+  
+  describe '#current_image' do
+    before :each do 
+      @attachment = shop_products(:crusty_bread).attachments.first
+    end
+    
+    context 'image previously set' do
+      before :each do
+        @tag.locals.image = @attachment
+      end
+      it 'should return the image' do
+        result = Shop::Tags::Helpers.current_image(@tag)
+        result.should == @attachment.image
+      end
+    end
+    
+    context 'position set' do
+      before :each do
+        @tag.locals.images = shop_products(:crusty_bread).attachments
+        @tag.attr = { 'position' => 1 }
+      end
+      it 'should return the image at that position' do
+        result = Shop::Tags::Helpers.current_image(@tag)
+        result.should == shop_products(:crusty_bread).attachments[0]
+      end
+    end
   end
   
   describe '#current_order' do

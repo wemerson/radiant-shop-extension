@@ -165,14 +165,14 @@ describe ShopProduct do
             @product.page.slug = 'delicious_ _:_;_=_+_._~_bread'
             @product.page.breadcrumb = nil
             @product.valid?
-            @product.page.breadcrumb.should === 'delicious_______________bread'          
+            @product.page.breadcrumb.should === @product.page.title          
           end
         end
         context 'has been set' do
-          it 'should generate on validation' do
+          it 'should be left as is' do
             @product.page.breadcrumb = 'delicious_ _:_;_=_+_._~_bread'
             @product.valid?
-            @product.page.breadcrumb.should === 'delicious_______________bread'
+            @product.page.breadcrumb.should === 'delicious_ _:_;_=_+_._~_bread'
           end        
         end
       end

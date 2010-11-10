@@ -119,7 +119,7 @@ class ShopProduct < ActiveRecord::Base
   # Assigns a breadcrumb to the page if its not set
   def assign_breadcrumb
     if page.present?
-      self.page.breadcrumb = ShopProduct.to_sku(page.breadcrumb.present? ? page.breadcrumb : page.title)
+      self.page.breadcrumb ||= page.title
     end
   end
   

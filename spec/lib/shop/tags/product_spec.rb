@@ -21,7 +21,8 @@ describe Shop::Tags::Product do
       'shop:product:images',
       'shop:product:images:if_images',
       'shop:product:images:unless_images',
-      'shop:product:images:each'].sort
+      'shop:product:images:each',
+      'shop:product:images:image'].sort
   end
   
   before :all do
@@ -341,6 +342,30 @@ describe Shop::Tags::Product do
           
           tag = %{<r:shop:product:images:each>failure</r:shop:product:images:each>}
           exp = %{}
+          @page.should render(tag).as(exp)
+        end
+      end
+    end
+    
+    describe '<r:shop:product:images:image>' do
+      before :each do
+        mock(Shop::Tags::Helpers).current_product(anything) { @product }
+      end
+      context 'image exists' do
+        it 'should expand' do
+          mock(Shop::Tags::Helpers).current_image(anything) { @product.images.first }
+          
+          tag = %{<r:shop:product:images:image>success</r:shop:product:images:image>}
+          exp = %{success}
+          @page.should render(tag).as(exp)
+        end
+      end
+      context 'image does not exist' do
+        it 'should expand' do
+          mock(Shop::Tags::Helpers).current_image(anything) { nil }
+          
+          tag = %{<r:shop:product:images:image>success</r:shop:product:images:image>}
+          exp = %{success}
           @page.should render(tag).as(exp)
         end
       end

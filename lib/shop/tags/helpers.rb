@@ -114,13 +114,29 @@ module Shop
                      )
                      
           elsif tag.attr['position']
-            result = current_products(tag)[tag.attr['position'].to_i]
-          
+            children = tag.locals.shop_category.page.children
+            result = children.first(:conditions => { :class_name => 'ShopProductPage', :position => tag.attr['position'].to_i }) || children.first(:conditions => {:class_name => 'ShopProductPage'})
+            result = result.shop_product
+            
           elsif tag.locals.shop_line_item.present? and tag.locals.shop_line_item.item_type === 'ShopProduct'
             result = tag.locals.shop_line_item.item
 
           elsif tag.locals.page.shop_product.present?
             result = tag.locals.page.shop_product
+            
+          end
+          
+          result
+        end
+        
+        def current_image(tag)
+          result = nil
+          
+          if tag.locals.image.present?
+            result = tag.locals.image.image rescue tag.locals.image
+            
+          elsif tag.attr['position']
+            result = tag.locals.images.find_by_position(tag.attr['position'].to_i)
             
           end
           

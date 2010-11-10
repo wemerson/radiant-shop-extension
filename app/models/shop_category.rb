@@ -30,7 +30,12 @@ class ShopCategory < ActiveRecord::Base
   end
   
   # Returns products through the pages children
-  def products; page.children.all(:conditions => { :class_name => 'ShopProductPage' }).map(&:shop_product); end
+  def products
+    pages = page.children.all(
+      :conditions => { :class_name => 'ShopProductPage' },
+      :order      => 'pages.position ASC'
+    ).map(&:shop_product)
+  end
   
   # Returns the url of the page
   def url; page.url;  end
@@ -81,7 +86,7 @@ class ShopCategory < ActiveRecord::Base
   # Assigns a breadcrumb to the page if its not set
   def assign_breadcrumb
     if page.present?
-      self.page.breadcrumb = ShopProduct.to_sku(page.breadcrumb.present? ? page.breadcrumb : page.slug)
+      self.page.breadcrumb ||= page.title
     end
   end
 

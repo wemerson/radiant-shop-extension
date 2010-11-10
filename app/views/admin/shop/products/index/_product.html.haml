@@ -6,7 +6,7 @@
       - body.icon do
         - link_to [:edit_admin, product], :class => 'icon' do
           - unless product.attachments.empty?
-            = image_tag product.attachments.first.image.url(:preview)
+            = image_tag product.attachments.first.image.url(:icon)
       - body.name do
         %span.name.attribute
           - link_to [:edit_admin, product] do
