@@ -1,5 +1,4 @@
-require 'spec/spec_helper'
-require 'spec/helpers/nested_tag_helper'
+require File.dirname(__FILE__) + "/../../../spec_helper"
 
 #
 # Test for Shop Line Item Tags

@@ -1,5 +1,4 @@
-require 'spec/spec_helper'
-require 'spec/helpers/nested_tag_helper'
+require File.dirname(__FILE__) + "/../../../spec_helper"
 
 #
 # Tests for shop order tags module
