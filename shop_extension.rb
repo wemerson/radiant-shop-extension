@@ -35,11 +35,34 @@ class ShopExtension < Radiant::Extension
       admin.orders     = Radiant::AdminUI.load_default_shop_orders_regions 
       admin.products   = Radiant::AdminUI.load_default_shop_products_regions
     end
+    
+    Page.send :include,  Shop::Models::Page
+    Image.send :include, Shop::Models::Image
+    User.send :include,  Shop::Models::User
+    
+    ApplicationController.send :include, Shop::Controllers::ApplicationController
+    SiteController.send :include, Shop::Controllers::SiteController
+    
+    Page.send :include, Shop::Tags::Core,     Shop::Tags::Address, Shop::Tags::Card,    Shop::Tags::Cart
+    Page.send :include, Shop::Tags::Category, Shop::Tags::Item,    Shop::Tags::Product
+    Page.send :include, Shop::Tags::Tax
+    
+    Radiant::Config['shop.layout_product']  ||= 'Product'
+    Radiant::Config['shop.layout_category'] ||= 'Products'
+    
+    Radiant::Config['shop.price_unit']      ||= '$'
+    Radiant::Config['shop.price_precision'] ||= 2
+    Radiant::Config['shop.price_separator'] ||= '.'
+    Radiant::Config['shop.price_delimiter'] ||= ','
+    
+    Radiant::Config['shop.tax_strategy']    ||= 'inclusive'
+    Radiant::Config['shop.tax_percentage']  ||= '10'
+    Radiant::Config['shop.tax_name']        ||= 'gst'
+    
+    Radiant::Config['shop.date_format']     ||= '%d/%m/%Y'
+    
+    Radiant::Config['users.customer.redirect'] = '/cart'
+
   end
-  
-  require 'shop/activate/config'
-  require 'shop/activate/tags'
-  require 'shop/activate/models'
-  require 'shop/activate/controllers'
   
 end
