@@ -164,11 +164,11 @@ private
   
   def set_layouts_and_page
     @shop_category.page = Page.new(
-      :layout_id  => Layout.find_by_name(Radiant::Config['shop.layout_category']).id,
-      :parent_id  => Radiant::Config['shop.root_page_id'],
+      :layout_id  => (Layout.find_by_name(Radiant::Config['shop.layout_category']).id rescue nil),
+      :parent_id  => (Radiant::Config['shop.root_page_id'] rescue 1),
       :parts      => [PagePart.new]
     )
-    @shop_category.product_layout = Layout.find_by_name(Radiant::Config['shop.product_layout'])
+    @shop_category.product_layout = (Layout.find_by_name(Radiant::Config['shop.layout_product']) rescue nil)
   end
   
 end
