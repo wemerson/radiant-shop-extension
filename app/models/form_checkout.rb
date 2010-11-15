@@ -134,7 +134,7 @@ class FormCheckout
   
   # Returns the name of the gateway (Eway)
   def gateway_name
-    gateway[:name].capitalize
+    gateway[:name]
   end
   
   # Returns Gateway username and password etc
