@@ -3,10 +3,10 @@ module Shop
     module Card
       
       CARD_TYPES = {
-        'visa'        => 'Visa',
-        'mastercard'  => 'Master Card',
-        'diners'      => 'Diners Club',
-        'amex'        => 'American Express'
+        'visa'    => 'Visa',
+        'master'  => 'Master Card',
+        'diners'  => 'Diners Club',
+        'amex'    => 'American Express'
       }
       
       include Radiant::Taggable
@@ -46,7 +46,7 @@ module Shop
       desc %{ Ouputs a list of years for credit cards }
       tag 'form:card:year' do |tag|
         content = %{<select name="card[year]" id="card_year">\n}
-          (Time.new.year ... Time.new.year + 10).each do |year|
+          (Time.new.year ... Time.new.year + 15).each do |year|
             content << %{<option value="#{year}">#{year}</option>\n}
           end
         content << %{</select>}
