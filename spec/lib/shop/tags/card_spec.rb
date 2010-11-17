@@ -26,7 +26,7 @@ describe Shop::Tags::Card do
         exp = %{<select name="card[type]" id="card_type">
 <option value="amex">American Express</option>
 <option value="diners">Diners Club</option>
-<option value="mastercard">Master Card</option>
+<option value="master">Master Card</option>
 <option value="visa">Visa</option>
 </select>}
 
@@ -38,7 +38,7 @@ describe Shop::Tags::Card do
       it 'should output all except amex and diners' do
         tag = %{<r:form:card:type except="amex,diners" />}
         exp = %{<select name="card[type]" id="card_type">
-<option value="mastercard">Master Card</option>
+<option value="master">Master Card</option>
 <option value="visa">Visa</option>
 </select>}
 
@@ -85,7 +85,7 @@ describe Shop::Tags::Card do
     it 'should output the card years' do
       tag = %{<r:form:card:year />}
       exp = %{<select name="card[year]" id="card_year">\n}
-      (Time.new.year ... Time.new.year + 10).each do |year|
+      (Time.new.year ... Time.new.year + 15).each do |year|
         exp << %{<option value="#{year}">#{year}</option>\n}
       end
       exp << %{</select>}
