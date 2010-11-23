@@ -2,6 +2,7 @@ require 'fastercsv'
 
 class Admin::Shop::OrdersController < Admin::ResourceController
   model_class ShopOrder
+  paginate_models :per_page => 15
 
   before_filter :config_global
   before_filter :config_index,  :only => [ :index ]

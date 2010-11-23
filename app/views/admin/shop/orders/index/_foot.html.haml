@@ -1,5 +1,7 @@
-%ul
-  - render_region :foot do |foot|
-    - foot.buttons do
+- render_region :foot do |foot|
+  - foot.buttons do
+    %ul.buttons
       - @buttons.each do |button|
         %li= render :partial => "admin/shop/orders/index/buttons/#{button}"
+  - foot.pagination do
+    = pagination_for(@shop_orders)
