@@ -1,3 +1,5 @@
+require 'acts_as_list'
+
 class ShopProductAttachment < ActiveRecord::Base
   
   default_scope :order => 'shop_product_attachments.position ASC'
