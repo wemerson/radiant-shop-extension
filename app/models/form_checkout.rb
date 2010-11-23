@@ -5,39 +5,12 @@ class FormCheckout
   attr_accessor :config, :data, :result, :gateway, :card
   
   def create
-    redirect = @form.redirect_to
-    
-    @form.redirect_to = :back
     find_current_order # locate the @order object
     
     create_result_object # A default response object
     
-    # If the form was configured for gateway and we have a billing address
-    if @order.billing.present?
-      if gateway.present?
-        prepare_gateway # Create the @gateway object
-        prepare_credit_card if card.present?# Create the @card object
-        
-        if @result[:gateway] and @result[:card]
-          purchase! # Use @card to pay through @gateway
-          
-          # We have a paid for order with a billing address
-          if success?
-            # The form was configured to send a payment email
-            if extensions.present?
-              configure_success_extensions # Create some configuration variables for mailing
-            end
-            
-            finalize_cart
-            @form.redirect_to = redirect
-          else
-            @result[:payment] = false
-          end
-        end
-      else
-        @result[:gateway] = false
-      end
-    end
+    create_order_payments
+    
     @result
   end
   
@@ -51,6 +24,46 @@ class FormCheckout
       :gateway  => nil,
       :message  => nil,
     }
+  end
+  
+  def create_order_payments
+    if @order.billing.present?
+      if gateway.present?
+        
+        prepare_gateway # Create the @gateway object
+        
+        if @result[:gateway]
+          
+          if card.present?
+            
+            prepare_credit_card # Create the @card object
+            
+            if @result[:card]
+              
+              if purchase.success?            
+                finalize_checkout # We have a paid for order with a billing address
+                @result[:message] = "Order successfully processed"
+              end
+              
+            else
+              @result[:message] = @card.errors.full_messages.to_sentence
+            end
+            
+          else
+            @result[:message] = "Credit card details were not sent"
+          end
+        else
+          @result[:message] = "The Payment Gateway '#{gateway_name}' doesn't exist to ActiveMerchant"
+        end
+      else
+        @result[:message] = "Payment gateway has not been configured"
+      end
+    else
+      @result[:message] = "Billing Address has not been set"
+    end
+    
+    # If the payment wasn't successful redirect back
+    @form.redirect_to = @result[:payment] ? @form.redirect_to : :back 
   end
   
   # Creates a gateway instance variable based off the form configuration
@@ -90,15 +103,33 @@ class FormCheckout
     })
     
     if @card.valid?
-      @result[:card]    = true
+      @result[:card] = true
     else
-      @result[:card]    = false
-      @result[:message] = "Credit Card Invalid: #{@card.errors.full_messages.join('. ')}"
+      @result[:card] = false
     end
   end
   
+  # Uses the gateway and card objects to carry out an ActiveMerchant purchase
+  def purchase
+    result = @gateway.purchase(amount, @card, options)
+    
+    if result.success?
+      create_payment
+    end
+    
+    result
+  end
+  
+  def finalize_checkout
+    if extensions.present?
+      finalize_extensions # Create some configuration variables for mailing
+    end
+    
+    finalize_cart
+  end
+  
   # Sets up mail to send an invoice to the billing email address
-  def configure_success_extensions
+  def finalize_extensions
     extensions.each do |name, config|
       if config[:extension].include?('mail')
         config[:to] = @order.billing.email unless config[:to].present?
@@ -109,17 +140,6 @@ class FormCheckout
       
       result = @form.call_extension(name,config)
       @result.merge!({ name.to_sym => result })
-    end
-  end
-  
-  # Uses the gateway and card objects to carry out an ActiveMerchant purchase
-  def purchase!
-    result = @gateway.purchase(amount, @card, options)
-    
-    @result[:message] = result.message
-    
-    if result.success?
-      create_payment
     end
   end
   

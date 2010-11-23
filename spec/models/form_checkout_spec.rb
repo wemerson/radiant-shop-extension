@@ -9,25 +9,7 @@ describe FormCheckout do
   end
   
   describe '#create' do
-    context 'gateway' do
-      context 'order has no billing' do
-        before :each do
-          login_as :customer
-          @order = shop_orders(:empty)
-          mock_valid_form_checkout_request
-        end
-        
-        it 'should return the standard response' do
-          @checkout = FormCheckout.new(@form, @page, @form[:extensions][:bogus_checkout])
-          result = @checkout.create
-                    
-          result[:gateway].should be_nil
-          result[:payment].should be_nil
-          result[:card].should    be_nil
-          result[:message].should be_nil
-        end
-      end
-      
+    context 'gateway' do      
       context 'configured correctly' do
         before :each do
           login_as :customer
@@ -48,9 +30,10 @@ describe FormCheckout do
           @checkout = FormCheckout.new(@form, @page, @form[:extensions][:bogus_checkout])
           result = @checkout.create
           
-          result[:gateway].should === true
-          result[:card].should    === true
-          result[:payment].should === true
+          result[:gateway].should be_true
+          result[:card].should    be_true
+          result[:payment].should be_true
+          result[:message].should === "Order successfully processed"
         end
         
         it 'should assign a payment object' do
@@ -70,6 +53,24 @@ describe FormCheckout do
         end
       end
       
+      context 'no billing address sent' do
+        before :each do
+          login_as :customer
+          @order = shop_orders(:empty)
+          mock_valid_form_checkout_request
+        end
+        
+        it 'should return the standard response' do
+          @checkout = FormCheckout.new(@form, @page, @form[:extensions][:bogus_checkout])
+          result = @checkout.create
+                    
+          result[:gateway].should be_nil
+          result[:payment].should be_nil
+          result[:card].should    be_nil
+          result[:message].should === "Billing Address has not been set"
+        end
+      end
+      
       context 'configured incorrectly' do
         before :each do
           login_as :customer
@@ -84,11 +85,12 @@ describe FormCheckout do
             @checkout = FormCheckout.new(@form, @page, @form[:extensions][:bogus_checkout])
             result = @checkout.create
             
-            result[:gateway].should === false
+            result[:gateway].should be_false
             result[:card].should    be_nil
             result[:payment].should be_nil
+            result[:message].should === "Payment gateway has not been configured"
             
-            @order.payment.should be_nil
+            @order.payment.should   be_nil
           end
         end
         
@@ -99,32 +101,37 @@ describe FormCheckout do
             @checkout = FormCheckout.new(@form, @page, @form[:extensions][:bogus_checkout])
             result = @checkout.create
             
-            result[:gateway].should === true
+            result[:gateway].should be_true
             result[:card].should    be_nil
             result[:payment].should be_nil
+            result[:message].should === "Credit card details were not sent"
             
-            @order.payment.should be_nil
+            @order.payment.should   be_nil
           end
         end
         
         context 'invalid card' do
           it 'should return card and payment false' do
-            mock.instance_of(ActiveMerchant::Billing::CreditCard).valid? { false }
+            @card = ActiveMerchant::Billing::CreditCard.new
+            stub(@card).valid? { false }
+            
+            mock.instance_of(ActiveMerchant::Billing::CreditCard) { @card }
             
             @checkout = FormCheckout.new(@form, @page, @form[:extensions][:bogus_checkout])
             result = @checkout.create
             
-            result[:gateway].should === true
-            result[:card].should    === false
+            result[:gateway].should be_true
+            result[:card].should    be_false
             result[:payment].should be_nil
+            result[:message].should === "Type is not the correct card type"
             
-            @order.payment.should be_nil
+            @order.payment.should   be_nil
           end
         end
       end
     end
     
-    context 'mail' do
+    context 'result_extension' do
       before :each do
         mock.instance_of(ActiveMerchant::Billing::CreditCard).valid? { true }
       end
