@@ -1,6 +1,7 @@
 class Admin::Shop::CustomersController < Admin::ResourceController
   model_class ShopCustomer
-  
+  paginate_models :per_page => 15
+    
   before_filter :config_global
   before_filter :config_new,    :only => [ :new, :create ]
   before_filter :config_edit,   :only => [ :edit, :update ]
