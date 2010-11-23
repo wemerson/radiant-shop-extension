@@ -10,12 +10,12 @@ begin
     gem.add_dependency 'radiant',                     '>= 0.9.1'
     gem.add_dependency 'activemerchant',              '>= 1.8.0'
     gem.add_dependency 'fastercsv',                   '>= 1.5.3'
+    gem.add_dependency 'acts_as_list',                '>= 0.1.2'
     gem.add_dependency 'radiant-settings-extension',  '>= 1.1.1'
-    gem.add_dependency 'radiant-images-extension',    '>= 0.4.0'
-    gem.add_dependency 'radiant-forms-extension',     '>= 3.2.1'
+    gem.add_dependency 'radiant-images-extension',    '>= 0.4.1'
+    gem.add_dependency 'radiant-forms-extension',     '>= 3.2.6'
     gem.add_dependency 'radiant-users-extension',     '>= 0.0.1'
-    gem.add_dependency 'radiant-drag-extension',      '>= 0.1.0'
-    # gem is a Gem::Specification... see http://www.rubygems.org/read/chapter/20 for additional settings
+    gem.add_dependence 'radiant-drag_order-extension','>= 0.3.8'
   end
   Jeweler::GemcutterTasks.new
 rescue LoadError
@@ -69,7 +69,7 @@ namespace :spec do
   desc "Run all specs in spec directory with RCov"
   Spec::Rake::SpecTask.new(:rcov) do |t|
     t.spec_opts = ['--options', "\"#{extension_root}/spec/spec.opts\""]
-    t.spec_files = FileList['spec/**/*_spec.rb']
+    t.spec_files = FileList["#{extension_root}/spec/**/*_spec.rb"]
     t.rcov = true
     t.rcov_opts = ['--exclude', 'spec', '--rails']
   end
