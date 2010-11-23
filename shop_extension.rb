@@ -7,10 +7,10 @@ class ShopExtension < Radiant::Extension
     config.gem 'activemerchant',              :lib => 'active_merchant'
     config.gem 'fastercsv',                   :lib => 'fastercsv'
     config.gem 'radiant-settings-extension',  :lib => false
-    config.gem 'radiant-users-extension',     :lib => false
-    config.gem 'radiant-images-extension',    :lib => false
-    config.gem 'radiant-forms-extension',     :lib => false
-    config.gem 'radiant-drag-extension',      :lib => false
+    config.gem 'radiant-users-extension'
+    config.gem 'radiant-images-extension'
+    config.gem 'radiant-forms-extension'
+    config.gem 'radiant-drag_order-extension'
   end
   
   UserActionObserver.instance.send :add_observer!, ShopCategory
