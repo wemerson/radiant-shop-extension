@@ -14,8 +14,8 @@ begin
     gem.add_dependency 'radiant-settings-extension',  '>= 1.1.1'
     gem.add_dependency 'radiant-images-extension',    '>= 0.4.1'
     gem.add_dependency 'radiant-forms-extension',     '>= 3.2.6'
-    gem.add_dependency 'radiant-users-extension',     '>= 0.0.1'
-    gem.add_dependence 'radiant-drag_order-extension','>= 0.3.8'
+    gem.add_dependency 'radiant-users-extension',     '>= 0.0.2'
+    gem.add_dependency 'radiant-drag_order-extension','>= 0.3.8'
   end
   Jeweler::GemcutterTasks.new
 rescue LoadError
