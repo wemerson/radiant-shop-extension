@@ -286,7 +286,7 @@ Gem::Specification.new do |s|
       s.add_runtime_dependency(%q<radiant-images-extension>, [">= 0.4.1"])
       s.add_runtime_dependency(%q<radiant-forms-extension>, [">= 3.2.6"])
       s.add_runtime_dependency(%q<radiant-users-extension>, [">= 0.0.2"])
-      s.add_runtime_dependency(%q<radiant-drag_order-extension>, [">= 0.3.8"])
+      s.add_runtime_dependency(%q<radiant-drag_order-extension>, [">= 0.3.9"])
     else
       s.add_dependency(%q<radiant>, [">= 0.9.1"])
       s.add_dependency(%q<activemerchant>, [">= 1.8.0"])
@@ -296,7 +296,7 @@ Gem::Specification.new do |s|
       s.add_dependency(%q<radiant-images-extension>, [">= 0.4.1"])
       s.add_dependency(%q<radiant-forms-extension>, [">= 3.2.6"])
       s.add_dependency(%q<radiant-users-extension>, [">= 0.0.2"])
-      s.add_dependency(%q<radiant-drag_order-extension>, [">= 0.3.8"])
+      s.add_dependency(%q<radiant-drag_order-extension>, [">= 0.3.9"])
     end
   else
     s.add_dependency(%q<radiant>, [">= 0.9.1"])
@@ -307,7 +307,7 @@ Gem::Specification.new do |s|
     s.add_dependency(%q<radiant-images-extension>, [">= 0.4.1"])
     s.add_dependency(%q<radiant-forms-extension>, [">= 3.2.6"])
     s.add_dependency(%q<radiant-users-extension>, [">= 0.0.2"])
-    s.add_dependency(%q<radiant-drag_order-extension>, [">= 0.3.8"])
+    s.add_dependency(%q<radiant-drag_order-extension>, [">= 0.3.9"])
   end
 end
 
