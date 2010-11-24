@@ -1,3 +1,7 @@
 - f.fields_for :page do |pf|
-  = pf.hidden_field :parent_id
+  %tr
+    %th.label
+      = pf.label :parent
+    %td.field
+      = pf.collection_select :parent_id, Page.all, :id, :title
   = pf.hidden_field :class_name, :value => 'ShopCategoryPage'
