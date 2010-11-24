@@ -7,7 +7,7 @@ namespace :radiant do
         require 'radiant/extension_migrator'
         
         # Migrate required extensions first
-        ['Settings','Images','Forms','Scoped','Drag'].each do |name|
+        ['Settings','Images','Forms','Users','DragOrder'].each do |name|
           extension = "#{name}Extension".pluralize.classify.constantize
           extension.migrator.migrate
         end

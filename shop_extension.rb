@@ -3,7 +3,7 @@ class ShopExtension < Radiant::Extension
   description "Radiant Shop provides"
   url "http://github.com/dirkkelly/radiant-shop-extension"
   
-  extension_config do |config|
+  extension_config do |config|    
     config.gem 'activemerchant',              :lib => 'active_merchant'
     config.gem 'fastercsv',                   :lib => 'fastercsv'
     config.gem 'radiant-settings-extension',  :lib => false
