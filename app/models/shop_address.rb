@@ -1,7 +1,6 @@
 class ShopAddress < ActiveRecord::Base
   
-  has_many :billings,   :class_name => 'ShopOrder', :foreign_key => :billing_id
-  has_many :shippings,  :class_name => 'ShopOrder', :foreign_key => :shipping_id
+  belongs_to :addressable, :polymorphic => true
   
   validates_presence_of :name
   validates_presence_of :street

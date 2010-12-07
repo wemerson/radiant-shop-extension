@@ -3,36 +3,10 @@ require File.dirname(__FILE__) + "/../spec_helper"
 describe ShopAddress do
   
   dataset :shop_addresses, :shop_orders
-
-  describe 'relationships' do
-    before :each do
-      @address = shop_addresses(:billing)
-    end
-    
-    context 'billing orders' do
-      before :each do
-        @order = shop_orders(:empty)
-      end
-      it 'should have many' do
-        @address.billings << @order
-        @address.billings.include?(@order).should === true
-      end
-    end
-    
-    context 'shipping orders' do
-      before :each do
-        @order = shop_orders(:empty)
-      end
-      it 'should have many' do
-        @address.shippings << @order
-        @address.shippings.include?(@order).should === true
-      end
-    end
-  end
   
   describe 'validations' do
     before :each do
-      @address = shop_addresses(:billing)
+      @address = shop_billings(:order_billing)
     end
     context 'unit' do
       it 'should not require' do
