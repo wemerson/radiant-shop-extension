@@ -18,28 +18,18 @@ class FormAddress
   
   def create_result_object
     @result = {
-      :order    => @order.id, # We return the order id so the thank you screen has access to it
+      :order    => @order.id,
       :billing  => nil,
       :shipping => nil
     }
   end
   
-  # Assigns a shipping and billing address to the @order
   def create_order_addresses
     if billing?
-      # We're going to create a billing object
       create_order_billing_address
-      
-      # We're going to assign shipping to billing because they didn't send shipping
-      if !shipping.present? and @billing.id
-        @shipping = @billing
-        @order.update_attribute(:shipping, @shipping)
-      end
     end
     
-    if shipping?
-      create_order_shipping_address
-    end
+    create_order_shipping_address
     
     unless (@billing.present? and @billing.valid?) and (@shipping.present? and @shipping.valid?)
       @form.redirect_to = :back
@@ -49,77 +39,41 @@ class FormAddress
     @result[:shipping] = (@shipping.valid? ? @shipping.id : false) rescue false
   end
   
-  # Attaches a billing address to the order (and current customer)
   def create_order_billing_address
-    
-    # Billing Address
-    if billing[:id] and current_customer.present?
-      begin
-        # Use an existing Address and update its values
-        @billing = current_customer.billings.find(billing[:id])
-        @billing.update_attributes(billing)
-        @order.update_attribute(:billing, @billing)
-      rescue
-        # We cant find that address for that user
-      end
-      
-    elsif @order.billing.present?
-      
-      # Use the current billing and update its values
+    if @order.billing.present?
       @billing = @order.billing
       @billing.update_attributes(billing)
     
     else
-      # Create a new address with these attributes
-      @billing = ShopAddress.new(billing)
+      @billing = ShopBilling.new(billing)
       if @billing.save
         @order.update_attribute(:billing, @billing)
       end
+      
     end
-    
   end
   
-  # Attaches a shipping address to the order (and current customer)
   def create_order_shipping_address
-    # Shipping Address
-    
-    if shipping[:id]
-      # Use an existing Address and update its values
-      begin
-        @shipping = current_customer.shippings.find(shipping[:id])
-        if @shipping == @billing and shipping == billing
-          # We have exactly the same shipping and billing data
-          @shipping = @billing
-          @order.update_attribute(:shipping, @billing)
-          
-        elsif (shipping.reject!{|k,v| k == :id }).values.all?(&:blank?)
-          # We have just passed the id and not the data
+    if shipping?
+      if @order.shipping.present?
+        @shipping = @order.shipping
+        @shipping.update_attributes(shipping)
+        
+      else
+        @shipping = ShopShipping.new(shipping)
+        if @shipping.save
           @order.update_attribute(:shipping, @shipping)
-          
-        elsif @shipping == @billing and shipping != billing
-          # We have conflicting data so create a new address
-          # the id is rejected so we'll get a new address
-          @order.update_attributes({ :shipping_attributes => shipping })
-          @shipping = @order.shipping
         end
-      rescue
-        # We cant find that address for that customer
+        
+      end
+    else
+      if @order.shipping.nil?
+        @shipping = ShopShipping.new(@billing.attributes) 
+        if @shipping.save
+          @order.update_attribute(:shipping, @shipping)
+        end
       end
       
-    elsif @order.shipping.present?
-      # Use the current shipping and update its values
-      @shipping = @order.shipping
-      @shipping.update_attributes(shipping)
-      
-    elsif shipping.values.all?(&:blank?) or shipping == billing
-      # We haven't set a shipping, or we have copied billing, so use billing
-      @shipping = @billing
-      @order.update_attribute(:shipping, @billing)
-      
-    else
-      # Create a new address with these attributes
-      @order.update_attributes({ :shipping_attributes => shipping })
-      @shipping = @order.shipping
     end
   end
   

@@ -18,17 +18,17 @@ describe FormAddress do
         
         context 'both billing and shipping' do
           it 'should assign that address to the order billing and shipping' do
-            @data[:billing]   = { :id => shop_orders(:several_items).billing.id }
-            @data[:shipping]  = { :id => shop_orders(:several_items).shipping.id }
+            @data[:billing]   = shop_orders(:several_items).billing.attributes.reject{ |k,v| k == 'id' }
+            @data[:shipping]  = shop_orders(:several_items).shipping.attributes.reject{ |k,v| k == 'id' }
             
             @address = FormAddress.new(@form, @page, @form[:extensions][:addresses])
             result = @address.create
             
-            shop_orders(:one_item).billing.should  === shop_addresses(:billing)
-            shop_orders(:one_item).shipping.should === shop_addresses(:shipping)
+            shop_orders(:one_item).billing.attributes.reject{ |k,v| k == 'id' || k = 'addressable_id' }.should  == shop_billings(:order_billing).attributes.reject{ |k,v| k == 'id' || k = 'addressable_id' }
+            shop_orders(:one_item).shipping.attributes.reject{ |k,v| k == 'id' || k = 'addressable_id' }.should == shop_shippings(:order_shipping).attributes.reject{ |k,v| k == 'id' || k = 'addressable_id' }
             
-            result[:billing].should  === shop_addresses(:billing).id
-            result[:shipping].should === shop_addresses(:shipping).id
+            result[:billing].should  === shop_orders(:one_item).billing.id
+            result[:shipping].should === shop_orders(:one_item).shipping.id
           end
         end
         
@@ -41,50 +41,9 @@ describe FormAddress do
             @address = FormAddress.new(@form, @page, @form[:extensions][:addresses])
             result = @address.create
             
-            shop_orders(:one_item).billing.should  === shop_addresses(:billing)
-            shop_orders(:one_item).shipping.should === shop_addresses(:billing)
-            
-            result[:billing].should  === shop_addresses(:billing).id
-            result[:shipping].should === shop_addresses(:billing).id
+            shop_orders(:one_item).billing.attributes.reject{ |k,v| k == 'id' || k = 'addressable_id' }.should  === shop_billings(:order_billing).attributes.reject{ |k,v| k == 'id' || k = 'addressable_id' }
+            shop_orders(:one_item).shipping.attributes.reject{ |k,v| k == 'id' || k = 'addressable_id' }.should === shop_shippings(:order_shipping).attributes.reject{ |k,v| k == 'id' || k = 'addressable_id' }
           end
-        end
-      end
-      
-      context 'sending ids without customer logged in' do
-        before :each do
-          @order = shop_orders(:one_item)
-          mock_valid_form_address_request
-        end
-        context 'both billing and shipping' do
-          it 'it should not assign those addresses' do
-            @address = FormAddress.new(@form, @page, @form[:extensions][:addresses])
-            result = @address.create
-            
-            shop_orders(:one_item).billing.should  be_nil
-            shop_orders(:one_item).shipping.should be_nil
-            
-            result[:billing].should  === false
-            result[:shipping].should === false
-          end
-        end
-      end
-      
-      context 'sending ids as a bad customer' do
-        before :each do
-          login_as :bad_customer
-          
-          @order = shop_orders(:one_item)
-          mock_valid_form_address_request
-        end
-        it 'should not assign those addresses' do
-          @address = FormAddress.new(@form, @page, @form[:extensions][:addresses])
-          result = @address.create
-          
-          shop_orders(:one_item).billing.should  be_nil
-          shop_orders(:one_item).shipping.should be_nil
-          
-          result[:billing].should  === false
-          result[:shipping].should === false
         end
       end
       
@@ -101,11 +60,8 @@ describe FormAddress do
           @address = FormAddress.new(@form, @page, @form[:extensions][:addresses])
           result = @address.create
           
-          shop_addresses(:billing).name.should  === 'new billing'
-          shop_addresses(:shipping).name.should === 'new shipping'
-          
-          result[:billing].should  === shop_addresses(:billing).id
-          result[:shipping].should === shop_addresses(:shipping).id
+          shop_billings(:order_billing).name.should  === 'new billing'
+          shop_shippings(:order_shipping).name.should === 'new shipping'
         end
       end
           
@@ -154,7 +110,7 @@ describe FormAddress do
             @address = FormAddress.new(@form, @page, @form[:extensions][:addresses])
             result = @address.create
             
-            shop_orders(:one_item).shipping.should      === shop_orders(:one_item).billing
+            shop_orders(:one_item).shipping.attributes.reject{ |k,v| k == 'id' || k = 'addressable_id' }.should === shop_orders(:one_item).billing.attributes.reject{ |k,v| k == 'id' || k = 'addressable_id' }
             
             result[:billing].should  === shop_orders(:one_item).billing.id
             result[:shipping].should === shop_orders(:one_item).shipping.id
