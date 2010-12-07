@@ -4,6 +4,8 @@ module Shop
       
       def self.included(base)
         base.class_eval do
+          filter_parameter_logging :password, :password_confirmation, :credit
+          
           def current_shop_order
             return @current_shop_order if defined?(@current_shop_order)
             @current_shop_order = find_or_create_shop_order if request.session[:shop_order]
