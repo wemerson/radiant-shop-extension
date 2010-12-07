@@ -23,7 +23,7 @@ describe Shop::Tags::Card do
     context 'all cards' do
       it 'should output the card types' do
         tag = %{<r:form:card:type />}
-        exp = %{<select name="card[type]" id="card_type">
+        exp = %{<select name="credit_card[type]" id="credit_card_type">
 <option value="amex">American Express</option>
 <option value="diners">Diners Club</option>
 <option value="master">Master Card</option>
@@ -37,7 +37,7 @@ describe Shop::Tags::Card do
     context 'except amex and diners' do
       it 'should output all except amex and diners' do
         tag = %{<r:form:card:type except="amex,diners" />}
-        exp = %{<select name="card[type]" id="card_type">
+        exp = %{<select name="credit_card[type]" id="credit_card_type">
 <option value="master">Master Card</option>
 <option value="visa">Visa</option>
 </select>}
@@ -49,7 +49,7 @@ describe Shop::Tags::Card do
     context 'only amex and diners' do
       it 'should output all except amex' do
         tag = %{<r:form:card:type only="amex,diners" />}
-        exp = %{<select name="card[type]" id="card_type">
+        exp = %{<select name="credit_card[type]" id="credit_card_type">
 <option value="amex">American Express</option>
 <option value="diners">Diners Club</option>
 </select>}
@@ -62,7 +62,7 @@ describe Shop::Tags::Card do
   describe 'form:card:month' do
     it 'should output the card months' do
       tag = %{<r:form:card:month />}
-      exp = %{<select name="card[month]" id="card_month">
+      exp = %{<select name="credit_card[month]" id="credit_card_month">
 <option value="01">01 - January</option>
 <option value="02">02 - February</option>
 <option value="03">03 - March</option>
@@ -84,7 +84,7 @@ describe Shop::Tags::Card do
   describe 'form:card:year' do
     it 'should output the card years' do
       tag = %{<r:form:card:year />}
-      exp = %{<select name="card[year]" id="card_year">\n}
+      exp = %{<select name="credit_card[year]" id="credit_card_year">\n}
       (Time.new.year ... Time.new.year + 15).each do |year|
         exp << %{<option value="#{year}">#{year}</option>\n}
       end

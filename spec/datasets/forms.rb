@@ -33,14 +33,14 @@ class FormsDataset < Dataset::Base
       </li>
     </ol>
   </div>
-  <ol class="card">
+  <ol class="credit_card">
     <li>
-      <r:label for='card[name]'>Name on Card</r:label>
-      <r:text name='card[name]' />
+      <r:label for='credit_card[name]'>Name on Card</r:label>
+      <r:text name='credit_card[name]' />
     </li>
     <li>
-      <r:label for='card[number]'>Card</r:label>
-      <r:card:type /> <r:text name='card[number]' /> <r:text name='card[verification]' length='4' />
+      <r:label for='credit_card[number]'>Card</r:label>
+      <r:card:type /> <r:text name='credit_card[number]' /> <r:text name='credit_card[verification]' length='4' />
       <r:card:month /> <r:card:year />
     </li>
   </ol>
@@ -109,7 +109,7 @@ CONFIG
       }
       
       @data = {
-        :card => { 
+        :credit_card => { 
           :number       => '1',
           :name         => 'Mr. Joe Bloggs',
           :verification => '123',
