@@ -18,7 +18,7 @@ module Shop
       # Outputs a list of credit card types
       desc %{ Outputs a list of credit card types }
       tag 'form:card:type' do |tag|
-        content = %{<select name="card[type]" id="card_type">\n}
+        content = %{<select name="credit_card[type]" id="credit_card_type">\n}
         cards = {}
         cards.merge! CARD_TYPES
         
@@ -34,7 +34,7 @@ module Shop
       # Outputs a list of months for credit cards
       desc %{ Outputs a list of months for credit cards }
       tag 'form:card:month' do |tag|
-        content = %{<select name="card[month]" id="card_month">\n}
+        content = %{<select name="credit_card[month]" id="credit_card_month">\n}
           Date::MONTHNAMES[1,12].each_with_index do |name,index|
             month = sprintf('%02d', index+1)
             content << %{<option value="#{month}">#{month} - #{name}</option>\n}
@@ -45,7 +45,7 @@ module Shop
       # Ouputs a list of years for credit cards
       desc %{ Ouputs a list of years for credit cards }
       tag 'form:card:year' do |tag|
-        content = %{<select name="card[year]" id="card_year">\n}
+        content = %{<select name="credit_card[year]" id="credit_card_year">\n}
           (Time.new.year ... Time.new.year + 15).each do |year|
             content << %{<option value="#{year}">#{year}</option>\n}
           end
