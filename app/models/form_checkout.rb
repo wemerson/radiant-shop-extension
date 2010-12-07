@@ -4,7 +4,7 @@ class FormCheckout
   
   attr_accessor :config, :data, :result, :gateway, :card
   
-  def create
+  def create    
     find_current_order # locate the @order object
     
     create_result_object # A default response object
@@ -27,43 +27,39 @@ class FormCheckout
   end
   
   def create_order_payments
-    if @order.billing.present?
-      if gateway.present?
-        
-        prepare_gateway # Create the @gateway object
-        
-        if @result[:gateway]
-          
-          if card.present?
-            
-            prepare_credit_card # Create the @card object
-            
-            if @result[:card]
-              
-              if purchase.success?            
-                finalize_checkout # We have a paid for order with a billing address
-                @result[:message] = "Order successfully processed"
-              end
-              
-            else
-              @result[:message] = @card.errors.full_messages.to_sentence
-            end
-            
-          else
-            @result[:message] = "Credit card details were not sent"
-          end
-        else
-          @result[:message] = "The Payment Gateway '#{gateway_name}' doesn't exist to ActiveMerchant"
-        end
-      else
-        @result[:message] = "Payment gateway has not been configured"
-      end
-    else
+    success_redirect = @form.redirect_to
+    @form.redirect_to = :back
+    
+    unless @order.billing.present?
       @result[:message] = "Billing Address has not been set"
+      return false
     end
     
-    # If the payment wasn't successful redirect back
-    @form.redirect_to = @result[:payment] ? @form.redirect_to : :back 
+    unless gateway.present?
+      @result[:message] = "Payment gateway has not been configured" 
+      return false
+    end
+        
+    unless prepare_gateway # Create the @gateway object
+      @result[:message] = "The Payment Gateway '#{gateway_name}' doesn't exist to ActiveMerchant"
+      return false
+    end
+    
+    unless card.present?
+      @result[:message] = "Credit card details were not sent"
+      return false
+    end
+        
+    unless prepare_credit_card # Create the @card object
+      @result[:message] = @card.errors.full_messages.to_sentence
+      return false
+    end
+    
+    if purchase
+      create_payment    
+      finalize_checkout
+      @form.redirect_to = success_redirect
+    end
   end
   
   # Creates a gateway instance variable based off the form configuration
@@ -73,6 +69,7 @@ class FormCheckout
       @gateway = ActiveMerchant::Billing.const_get("#{gateway_name}Gateway").new(gateway_credentials)
       @result[:gateway] = true
     end
+    @result[:gateway]
   end
   
   # Creates a payment object attached to the order
@@ -107,17 +104,14 @@ class FormCheckout
     else
       @result[:card] = false
     end
+    @result[:card]
   end
   
   # Uses the gateway and card objects to carry out an ActiveMerchant purchase
   def purchase
-    result = @gateway.purchase(amount, @card, options)
-    
-    if result.success?
-      create_payment
-    end
-    
-    result
+    purchase = @gateway.purchase(amount, @card, options)
+    @result[:message] = purchase.message
+    purchase.success?
   end
   
   def finalize_checkout
@@ -169,7 +163,7 @@ class FormCheckout
   
   # Returns the submitted card attributes
   def card
-    @data[:card]
+    @data[:credit_card]
   end
   
   # Returns card number (1234123412341234)
@@ -205,7 +199,7 @@ class FormCheckout
   # Splits the card names into an array we can inspect
   def card_names
     return @card_names if @card_names.present?
-    @card_names = @data[:card][:name].split(' ')
+    @card_names = @data[:credit_card][:name].split(' ')
   end
   
   # Return all the strings bar the last on the card

@@ -33,7 +33,7 @@ describe FormCheckout do
           result[:gateway].should be_true
           result[:card].should    be_true
           result[:payment].should be_true
-          result[:message].should === "Order successfully processed"
+          result[:message].should === "Bogus Gateway: Forced success"
         end
         
         it 'should assign a payment object' do
@@ -42,7 +42,7 @@ describe FormCheckout do
           result = @checkout.create
           
           @order.payment.card_number.should === "XXXX-XXXX-XXXX-1"
-          @order.payment.card_type.should   === @data[:card][:type]
+          @order.payment.card_type.should   === @data[:credit_card][:type]
           @order.payment.amount.should      === @order.price
         end
         
@@ -96,7 +96,7 @@ describe FormCheckout do
         
         context 'no card' do
           it 'should return card and payment false' do
-            @data[:card] = nil
+            @data[:credit_card] = nil
             
             @checkout = FormCheckout.new(@form, @page, @form[:extensions][:bogus_checkout])
             result = @checkout.create
