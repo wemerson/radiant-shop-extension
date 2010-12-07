@@ -7,7 +7,7 @@ class ShopOrder < ActiveRecord::Base
   
   belongs_to :created_by,   :class_name => 'User'
   belongs_to :updated_by,   :class_name => 'User'
-  belongs_to :user
+  belongs_to :customer,     :class_name => 'User',          :foreign_key => :customer_id
   
   has_one    :billing,      :class_name => 'ShopBilling',   :as => :addressable
   has_one    :shipping,     :class_name => 'ShopShipping',  :as => :addressable

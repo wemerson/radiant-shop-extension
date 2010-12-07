@@ -1,7 +1,7 @@
 class ShopLineItem < ActiveRecord::Base
   
   belongs_to  :order,       :class_name   => 'ShopOrder'
-  has_one     :customer,    :class_name   => 'ShopCustomer', :through => :order, :source => :customer
+  has_one     :customer,    :class_name   => 'User', :through => :order, :source => :customer
   belongs_to  :item,        :polymorphic  => true
   
   before_validation         :adjust_quantity, :copy_price
