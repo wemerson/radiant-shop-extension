@@ -31,7 +31,7 @@ describe Shop::Tags::Address do
     
     before :each do
       @order = shop_orders(:several_items)
-      @billing = shop_addresses(:billing)
+      @billing = shop_billings(:order_billing)
       mock(Shop::Tags::Helpers).current_order(anything) { @order }
     end
   

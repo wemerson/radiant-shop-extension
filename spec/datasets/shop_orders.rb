@@ -6,9 +6,9 @@ class ShopOrdersDataset < Dataset::Base
     create_record :shop_order, :empty
     
     create_record :shop_order, :one_item,
-      :user => shop_customers(:customer)
+      :customer => shop_customers(:customer)
           
     create_record :shop_order, :several_items,
-      :user => shop_customers(:customer)
+      :customer => shop_customers(:customer)
   end
 end

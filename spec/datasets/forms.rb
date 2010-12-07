@@ -141,24 +141,24 @@ CONFIG
       
       @data = {
         :billing => {
-          :id           => shop_addresses(:billing).id,
-          :name         => shop_addresses(:billing).name,
-          :email        => shop_addresses(:billing).email,
-          :street       => shop_addresses(:billing).street,
-          :city         => shop_addresses(:billing).city,
-          :state        => shop_addresses(:billing).state,
-          :country      => shop_addresses(:billing).country,
-          :postcode     => shop_addresses(:billing).postcode
+          :id           => shop_billings(:order_billing).id,
+          :name         => shop_billings(:order_billing).name,
+          :email        => shop_billings(:order_billing).email,
+          :street       => shop_billings(:order_billing).street,
+          :city         => shop_billings(:order_billing).city,
+          :state        => shop_billings(:order_billing).state,
+          :country      => shop_billings(:order_billing).country,
+          :postcode     => shop_billings(:order_billing).postcode
         },
         :shipping => {
-          :id           => shop_addresses(:shipping).id,
-          :name         => shop_addresses(:shipping).name,
-          :email        => shop_addresses(:shipping).email,
-          :street       => shop_addresses(:shipping).street,
-          :city         => shop_addresses(:shipping).city,
-          :state        => shop_addresses(:shipping).state,
-          :country      => shop_addresses(:shipping).country,
-          :postcode     => shop_addresses(:shipping).postcode
+          :id           => shop_shippings(:order_shipping).id,
+          :name         => shop_shippings(:order_shipping).name,
+          :email        => shop_shippings(:order_shipping).email,
+          :street       => shop_shippings(:order_shipping).street,
+          :city         => shop_shippings(:order_shipping).city,
+          :state        => shop_shippings(:order_shipping).state,
+          :country      => shop_shippings(:order_shipping).country,
+          :postcode     => shop_shippings(:order_shipping).postcode
         }
       }
 

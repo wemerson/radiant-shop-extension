@@ -392,7 +392,7 @@ describe Shop::Tags::Helpers do
   
   describe '#current_address' do
     before :each do
-      @address  = shop_addresses(:billing)
+      @address  = shop_billings(:order_billing)
       @tag.attr = { 'type' => 'billing' }
     end
     

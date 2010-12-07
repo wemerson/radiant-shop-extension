@@ -2,7 +2,7 @@ require File.dirname(__FILE__) + "/../../../spec_helper"
 
 describe Admin::Shop::OrdersController do
   
-  dataset :shop_orders, :users
+  dataset :shop_orders, :shop_addresses, :users
   
   before(:each) do
     login_as  :admin
