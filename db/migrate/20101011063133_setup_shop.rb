@@ -36,14 +36,16 @@ class SetupShop < ActiveRecord::Migration
     create_table "shop_orders", :force => true do |t|
       t.text     "notes"
       t.string   "status",      :default => "new"
+      t.integer  "billing_id"
+      t.integer  "shipping_id"
       t.datetime "created_at"
       t.datetime "updated_at"
-      t.integer  "user_id"
+      t.integer  "customer_id"
       t.integer  "created_by_id"
       t.integer  "updated_by_id"
     end
-    add_index "shop_orders", ["user_id"], :name => "index_shop_orders_on_user_id"
-    add_index "shop_orders", ["status"],  :name => "index_shop_orders_on_status"
+    add_index "shop_orders", ["customer_id"], :name => "index_shop_orders_on_customer_id"
+    add_index "shop_orders", ["status"], :name => "index_shop_orders_on_status"
     
     create_table "shop_line_items", :force => true do |t|
       t.integer  "quantity",      :default => 1
@@ -60,11 +62,10 @@ class SetupShop < ActiveRecord::Migration
     add_index "shop_line_items", ["order_id"], :name => "index_shop_line_items_on_order_id"
     
     create_table "shop_addresses", :force => true do |t|
-      t.string   "contact"
+      t.string   "email"
       t.string   "name"
       t.string   "unit"
-      t.string   "street_1"
-      t.string   "street_2"
+      t.string   "street"
       t.string   "city"
       t.string   "state"
       t.string   "postcode"
@@ -73,9 +74,6 @@ class SetupShop < ActiveRecord::Migration
       t.integer  "updated_by_id"
       t.datetime "created_at"
       t.datetime "updated_at"
-      t.string   "of_type"      
-      t.integer  "shop_addressable_id"
-      t.string   "shop_addressable_type"
     end
 
     create_table "shop_payments", :force => true do |t|
