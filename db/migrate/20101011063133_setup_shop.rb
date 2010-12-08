@@ -60,7 +60,7 @@ class SetupShop < ActiveRecord::Migration
     add_index "shop_line_items", ["order_id"], :name => "index_shop_line_items_on_order_id"
     
     create_table "shop_addresses", :force => true do |t|
-      t.string   "email"
+      t.string   "contact"
       t.string   "name"
       t.string   "unit"
       t.string   "street_1"

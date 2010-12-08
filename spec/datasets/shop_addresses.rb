@@ -5,7 +5,8 @@ class ShopAddressesDataset < Dataset::Base
   def load
     create_record :shop_billing, :order_billing,
       :name             => 'Billing Address',
-      :email            => 'billing@address.com',
+      :phone            => '1800 000 000',
+      :email            => 'billing@billing.com',
       :unit             => 'a',
       :street_1         => '1 Bill Street',
       :street_2         => 'Street Bill 1',
@@ -19,7 +20,8 @@ class ShopAddressesDataset < Dataset::Base
       
     create_record :shop_shipping, :order_shipping,
       :name             => 'Shipping Address',
-      :email            => 'shipping@address.com',
+      :phone            => '1800 000 000',
+      :email            => 'shipping@shipping.com',
       :unit             => 'b',
       :street_1         => '2 Ship Street',
       :street_2         => 'Street Ship 2',

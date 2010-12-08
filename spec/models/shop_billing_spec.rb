@@ -2,7 +2,7 @@ require File.dirname(__FILE__) + "/../spec_helper"
 
 describe ShopBilling do
   
-  dataset :shop_addresses
+  dataset :shop_addresses, :shop_orders
   
   describe 'scope' do
     before :each do
@@ -13,6 +13,18 @@ describe ShopBilling do
       @address.of_type.should == 'billing'
     end
     
+  end
+  
+  describe 'validations' do
+    before :each do
+      @address = shop_billings(:order_billing)
+    end
+    context 'email' do
+      it 'should require' do
+        @address.email = nil
+        @address.valid?.should be_false
+      end
+    end
   end
   
 end

@@ -143,6 +143,7 @@ CONFIG
         :billing => {
           :id           => shop_billings(:order_billing).id,
           :name         => shop_billings(:order_billing).name,
+          :phone        => shop_billings(:order_billing).phone,
           :email        => shop_billings(:order_billing).email,
           :street_1     => shop_billings(:order_billing).street_1,
           :city         => shop_billings(:order_billing).city,
@@ -153,6 +154,7 @@ CONFIG
         :shipping => {
           :id           => shop_shippings(:order_shipping).id,
           :name         => shop_shippings(:order_shipping).name,
+          :phone        => shop_shippings(:order_shipping).phone,
           :email        => shop_shippings(:order_shipping).email,
           :street_1     => shop_shippings(:order_shipping).street_1,
           :city         => shop_shippings(:order_shipping).city,
