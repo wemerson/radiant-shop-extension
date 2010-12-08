@@ -5,11 +5,11 @@
 
 Gem::Specification.new do |s|
   s.name = %q{radiant-shop-extension}
-  s.version = "0.91.0"
+  s.version = "0.91.1"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Dirk Kelly", "John Barker", "Darcy Laycock"]
-  s.date = %q{2010-12-07}
+  s.date = %q{2010-12-08}
   s.description = %q{Radiant Shop is an attempt at a simple but complete store. It includes Products, Categories, Orders and Credit Card Payments}
   s.email = %q{dk@dirkkelly.com}
   s.extra_rdoc_files = [
@@ -34,6 +34,7 @@ Gem::Specification.new do |s|
     "app/models/form_checkout.rb",
     "app/models/form_line_item.rb",
     "app/models/shop_address.rb",
+    "app/models/shop_billing.rb",
     "app/models/shop_category.rb",
     "app/models/shop_category_page.rb",
     "app/models/shop_customer.rb",
@@ -44,6 +45,7 @@ Gem::Specification.new do |s|
     "app/models/shop_product.rb",
     "app/models/shop_product_attachment.rb",
     "app/models/shop_product_page.rb",
+    "app/models/shop_shipping.rb",
     "app/views/.DS_Store",
     "app/views/admin/.DS_Store",
     "app/views/admin/shop/categories/edit.html.haml",
@@ -138,6 +140,7 @@ Gem::Specification.new do |s|
     "config/locales/en.yml",
     "config/routes.rb",
     "db/migrate/20101011063133_setup_shop.rb",
+    "db/migrate/20101208045754_address_changes.rb",
     "db/seed.rb",
     "db/seeds/forms.rb",
     "db/seeds/layouts.rb",
@@ -210,6 +213,7 @@ Gem::Specification.new do |s|
     "spec/models/form_address_spec.rb",
     "spec/models/form_checkout_spec.rb",
     "spec/models/shop_address_spec.rb",
+    "spec/models/shop_billing_spec.rb",
     "spec/models/shop_category_page_spec.rb",
     "spec/models/shop_category_spec.rb",
     "spec/models/shop_customer_spec.rb",
@@ -219,6 +223,7 @@ Gem::Specification.new do |s|
     "spec/models/shop_product_attachment_spec.rb",
     "spec/models/shop_product_page_spec.rb",
     "spec/models/shop_product_spec.rb",
+    "spec/models/shop_shipping_spec.rb",
     "spec/spec.opts",
     "spec/spec_helper.rb"
   ]
@@ -261,6 +266,7 @@ Gem::Specification.new do |s|
     "spec/models/form_address_spec.rb",
     "spec/models/form_checkout_spec.rb",
     "spec/models/shop_address_spec.rb",
+    "spec/models/shop_billing_spec.rb",
     "spec/models/shop_category_page_spec.rb",
     "spec/models/shop_category_spec.rb",
     "spec/models/shop_customer_spec.rb",
@@ -270,6 +276,7 @@ Gem::Specification.new do |s|
     "spec/models/shop_product_attachment_spec.rb",
     "spec/models/shop_product_page_spec.rb",
     "spec/models/shop_product_spec.rb",
+    "spec/models/shop_shipping_spec.rb",
     "spec/spec_helper.rb"
   ]
 
