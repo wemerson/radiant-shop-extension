@@ -7,7 +7,8 @@ class ShopAddressesDataset < Dataset::Base
       :name             => 'Billing Address',
       :email            => 'billing@address.com',
       :unit             => 'a',
-      :street           => '1 Bill Street',
+      :street_1         => '1 Bill Street',
+      :street_2         => 'Street Bill 1',
       :city             => 'Billvilles',
       :state            => 'BI',
       :country          => 'Billington',
@@ -15,13 +16,13 @@ class ShopAddressesDataset < Dataset::Base
       :postcode         => '1234',
       :addressable_id   => shop_orders(:several_items).id,
       :addressable_type => 'ShopOrder'
-
       
     create_record :shop_shipping, :order_shipping,
       :name             => 'Shipping Address',
       :email            => 'shipping@address.com',
       :unit             => 'b',
-      :street           => '2 Ship Street',
+      :street_1         => '2 Ship Street',
+      :street_2         => 'Street Ship 2',
       :city             => 'Shipvilles',
       :state            => 'SH',
       :country          => 'Shippington',

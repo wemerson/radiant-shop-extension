@@ -9,30 +9,29 @@ module Shop
         
         @type@ = (billing)|(shipping)
       }
-      tag 'shop:cart:address' do |tag|
-        Forms::Tags::Helpers.require!(tag,'shop:cart:address','type')
+      [:billing,:shipping].each do |of_type|
+        tag "shop:cart:#{of_type}" do |tag|
+          tag.locals.send(of_type, Shop::Tags::Helpers.current_address(tag,of_type))
+          
+          tag.expand
+        end
         
-        tag.locals.address = Shop::Tags::Helpers.current_address(tag)
-        tag.locals.address_type = tag.attr['type']
+        # Expand if an address has been assigned to the order
+        desc %{ Expand if an address has been assigned to the order }
+        tag "shop:cart:#{of_type}:if_#{of_type}" do |tag|
+          tag.expand if tag.locals.send(of_type).present?
+        end
         
-        tag.expand
-      end
+        # Expand if an address has not been assigned to the order
+        desc %{ Expand if an address has not been assigned to the order }
+        tag "shop:cart:#{of_type}:unless_#{of_type}" do |tag|
+          tag.expand unless tag.locals.send(of_type).present?
+        end
       
-      # Expand if an address has been assigned to the order
-      desc %{ Expand if an address has been assigned to the order }
-      tag 'shop:cart:address:if_address' do |tag|
-        tag.expand if tag.locals.address.name.present? rescue nil
-      end
-      
-      # Expand if an address has not been assigned to the order
-      desc %{ Expand if an address has not been assigned to the order }
-      tag 'shop:cart:address:unless_address' do |tag|
-        tag.expand unless tag.locals.address.name.present? rescue nil
-      end
-      
-      [:id, :name, :email, :unit, :street, :city, :state, :country, :postcode].each do |method|
-        tag "shop:cart:address:#{method}" do |tag|
-          tag.locals.address.send(method) rescue nil
+        [:id, :name, :email, :unit, :street_1, :street_2, :city, :state, :country, :postcode].each do |method|
+          tag "shop:cart:#{of_type}:#{method}" do |tag|
+            tag.locals.send(of_type).send(method)
+          end
         end
       end
       

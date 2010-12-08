@@ -21,7 +21,7 @@ class FormsDataset < Dataset::Base
       </li>
       <li>
         <r:label for='billing[unit]'>Address</r:label>
-        <r:text name='billing[unit]' /> <r:text name='billing[street]' /> <r:text name='billing[suburb]' />
+        <r:text name='billing[unit]' /> <r:text name='billing[street_1]' /> <r:text name='billing[suburb]' />
       </li>
       <li>
         <r:label for='billing[state]'>State and Country</r:label>
@@ -144,7 +144,7 @@ CONFIG
           :id           => shop_billings(:order_billing).id,
           :name         => shop_billings(:order_billing).name,
           :email        => shop_billings(:order_billing).email,
-          :street       => shop_billings(:order_billing).street,
+          :street_1     => shop_billings(:order_billing).street_1,
           :city         => shop_billings(:order_billing).city,
           :state        => shop_billings(:order_billing).state,
           :country      => shop_billings(:order_billing).country,
@@ -154,7 +154,7 @@ CONFIG
           :id           => shop_shippings(:order_shipping).id,
           :name         => shop_shippings(:order_shipping).name,
           :email        => shop_shippings(:order_shipping).email,
-          :street       => shop_shippings(:order_shipping).street,
+          :street_1     => shop_shippings(:order_shipping).street_1,
           :city         => shop_shippings(:order_shipping).city,
           :state        => shop_shippings(:order_shipping).state,
           :country      => shop_shippings(:order_shipping).country,

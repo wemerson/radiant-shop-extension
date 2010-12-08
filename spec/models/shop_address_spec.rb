@@ -11,43 +11,49 @@ describe ShopAddress do
     context 'unit' do
       it 'should not require' do
         @address.unit = nil
-        @address.valid?.should === true
+        @address.valid?.should be_true
       end
     end
     context 'name' do
       it 'should require' do
         @address.name = nil
-        @address.valid?.should === false
+        @address.valid?.should be_false
       end
     end
-    context 'street' do
+    context 'street_1' do
       it 'should require' do
-        @address.street = nil
-        @address.valid?.should === false        
+        @address.street_1 = nil
+        @address.valid?.should be_false
+      end
+    end
+    context 'street_2' do
+      it 'should not require' do
+        @address.street_2 = nil
+        @address.valid?.should be_true
       end
     end
     context 'city' do
       it 'should require' do
         @address.city = nil
-        @address.valid?.should === false        
+        @address.valid?.should be_false
       end
     end
     context 'postcode' do
       it 'should require' do
         @address.postcode = nil
-        @address.valid?.should === false        
+        @address.valid?.should be_false
       end
     end
     context 'state' do
       it 'should require' do
         @address.state = nil
-        @address.valid?.should === false        
+        @address.valid?.should be_false
       end
     end
     context 'country' do
       it 'should require' do
         @address.country = nil
-        @address.valid?.should === false        
+        @address.valid?.should be_false
       end
     end
   end

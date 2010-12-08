@@ -396,13 +396,26 @@ describe Shop::Tags::Helpers do
       @tag.attr = { 'type' => 'billing' }
     end
     
-    context 'billing address already exists and billing type was requested' do
+    context 'billing address already exists' do
       before :each do
-        @tag.locals.address = @address
-        @tag.locals.address_type = 'billing'
+        @tag.locals.billing = @address
+      end
+      it 'should return the existing billing' do
+        result = Shop::Tags::Helpers.current_address(@tag,'billing')
+        result.should == @address
+      end
+      it 'should return the existing billing if no type is sent' do
+        result = Shop::Tags::Helpers.current_address(@tag)
+        result.should == @address
+      end
+    end
+    
+    context 'shipping address already exists' do
+      before :each do
+        @tag.locals.shipping = @address
       end
       it 'should return the existing address' do
-        result = Shop::Tags::Helpers.current_address(@tag)
+        result = Shop::Tags::Helpers.current_address(@tag,'shipping')
         result.should == @address
       end
     end
@@ -414,7 +427,7 @@ describe Shop::Tags::Helpers do
         @tag.locals.shop_order = @order
       end
       it 'should return the order billing address' do
-        result = Shop::Tags::Helpers.current_address(@tag)
+        result = Shop::Tags::Helpers.current_address(@tag,'billing')
         result.should == @address
       end
     end
@@ -424,14 +437,14 @@ describe Shop::Tags::Helpers do
         @order = shop_orders(:one_item)
       end
       it 'should return nil' do
-        result = Shop::Tags::Helpers.current_address(@tag)
+        result = Shop::Tags::Helpers.current_address(@tag,'billing')
         result.should be_nil
       end
     end
     
     context 'no order exists' do
       it 'should return nil' do
-        result = Shop::Tags::Helpers.current_address(@tag)
+        result = Shop::Tags::Helpers.current_address(@tag,'billing')
         result.should be_nil
       end
     end

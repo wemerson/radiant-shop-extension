@@ -191,26 +191,32 @@ module Shop
         end
         
         # Return the current address for the current order
-        # @tag['attr]['type'] = the address type (billing|shippin)
-        def current_address(tag)
-          result = nil
-          
-          if tag.locals.address.present? and tag.locals.address_type == tag.attr['type']
-            result = tag.locals.address
+        # of_type = the address type (billing|shipping)
+        def current_address(tag,of_type = 'billing')
+          if tag.locals.send(of_type).present?
+            return tag.locals.send(of_type)
+          end
             
-          elsif tag.locals.shop_order.present?
+          if tag.locals.shop_order.present?
             begin
-              address = tag.locals.shop_order.send(tag.attr['type']) # Get the address type (order.billing)
-              if address.present? # If that address exists
-                result = address # The result is that address
-              end
+              # Get the address type (order.billing)
+              address = tag.locals.shop_order.send(of_type)
+              return address unless address.nil?
             rescue
-              result = nil # Will catch an incorrect address type being send
+              nil
             end
-            
           end
           
-          result
+          if tag.locals.user.present?
+            begin
+              address = tag.locals.user.send(of_type)
+              return address unless address.nil?
+            rescue
+              nil
+            end
+          end
+          
+          nil
         end
         
         def currency(number,attr = {})
