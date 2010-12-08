@@ -8,7 +8,7 @@ module Shop
           has_one    :shipping, :class_name => 'ShopShipping',  :as => :addressable
           has_many   :orders,   :class_name => 'ShopOrder',     :foreign_key => :customer_id
           
-          accepts_nested_attributes_for :orders, :allow_destroy => true
+          accepts_nested_attributes_for :orders, :shipping, :billing
         end
       end
       
