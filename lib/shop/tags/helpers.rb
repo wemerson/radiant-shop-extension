@@ -207,9 +207,9 @@ module Shop
             end
           end
           
-          if tag.locals.user.present?
+          if user = Users::Tags::Helpers.current_user(tag)
             begin
-              address = tag.locals.user.send(of_type)
+              address = user.send(of_type)
               return address unless address.nil?
             rescue
               nil

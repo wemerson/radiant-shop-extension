@@ -448,6 +448,18 @@ describe Shop::Tags::Helpers do
         result.should be_nil
       end
     end
+    
+    context 'no order exists but user does' do
+      before :each do
+        @user = User.new
+        stub(@user).billing { @address }
+        mock(Users::Tags::Helpers).current_user(anything) { @user }
+      end
+      it 'should return nil' do
+        result = Shop::Tags::Helpers.current_address(@tag,'billing')
+        result.should == @address
+      end
+    end
   end
   
 end
