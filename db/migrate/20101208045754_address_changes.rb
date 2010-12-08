@@ -1,4 +1,4 @@
-class SetupShop < ActiveRecord::Migration
+class AddressChanges < ActiveRecord::Migration
   def self.up
     add_column :shop_addresses, :phone, :string
     add_column :shop_addresses, :street_1, :string
@@ -11,7 +11,7 @@ class SetupShop < ActiveRecord::Migration
       a.update_attribute(:street_1, a.street)
     end
     
-    remove_column :shop_addresses, :street
+    # remove_column :shop_addresses, :street
   end
   
   def self.down
@@ -21,12 +21,12 @@ class SetupShop < ActiveRecord::Migration
       a.update_attribute(:street, a.street_1)
     end
     
-    remove_column :shop_addresses, :phone
-    remove_column :shop_addresses, :street_1
-    remove_column :shop_addresses, :street_2
-    remove_column :shop_addresses, :of_type
-    remove_column :shop_addresses, :shop_addressable_id
-    remove_column :shop_addresses, :shop_addressable_type
+    # remove_column :shop_addresses, :phone
+    # remove_column :shop_addresses, :street_1
+    # remove_column :shop_addresses, :street_2
+    # remove_column :shop_addresses, :of_type
+    # remove_column :shop_addresses, :shop_addressable_id
+    # remove_column :shop_addresses, :shop_addressable_type
   end
   
 end
