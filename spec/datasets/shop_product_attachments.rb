@@ -12,9 +12,9 @@ class ShopProductAttachmentsDataset < Dataset::Base
         :asset_content_type => "image/png",
         :asset_file_size    => i+1*1000
         
-      create_record :shop_product_attachment, image,
+      create_record :attachment, image,
         :image    => images(image.to_sym),
-        :product  => shop_products(image.to_s.split('_')[0,2].join('_').to_sym),
+        :page     => shop_products(image.to_s.split('_')[0,2].join('_').to_sym).page,
         :position => i + 1
     end
   end
