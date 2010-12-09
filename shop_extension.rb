@@ -16,7 +16,6 @@ class ShopExtension < Radiant::Extension
   UserActionObserver.instance.send :add_observer!, ShopCategory
   UserActionObserver.instance.send :add_observer!, ShopOrder
   UserActionObserver.instance.send :add_observer!, ShopProduct
-  UserActionObserver.instance.send :add_observer!, ShopProductAttachment
   
   def activate
     tab "Shop" do
