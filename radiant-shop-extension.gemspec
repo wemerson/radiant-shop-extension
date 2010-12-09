@@ -5,11 +5,11 @@
 
 Gem::Specification.new do |s|
   s.name = %q{radiant-shop-extension}
-  s.version = "0.91.4"
+  s.version = "0.91.5"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Dirk Kelly", "John Barker", "Darcy Laycock"]
-  s.date = %q{2010-12-08}
+  s.date = %q{2010-12-09}
   s.description = %q{Radiant Shop is an attempt at a simple but complete store. It includes Products, Categories, Orders and Credit Card Payments}
   s.email = %q{dk@dirkkelly.com}
   s.extra_rdoc_files = [
@@ -43,7 +43,6 @@ Gem::Specification.new do |s|
     "app/models/shop_page.rb",
     "app/models/shop_payment.rb",
     "app/models/shop_product.rb",
-    "app/models/shop_product_attachment.rb",
     "app/models/shop_product_page.rb",
     "app/models/shop_shipping.rb",
     "app/views/.DS_Store",
@@ -141,6 +140,7 @@ Gem::Specification.new do |s|
     "config/routes.rb",
     "db/migrate/20101011063133_setup_shop.rb",
     "db/migrate/20101208045754_address_changes.rb",
+    "db/migrate/20101208121105_move_to_page_attachments.rb",
     "db/seed.rb",
     "db/seeds/forms.rb",
     "db/seeds/layouts.rb",
@@ -197,7 +197,6 @@ Gem::Specification.new do |s|
     "spec/datasets/shop_products.rb",
     "spec/datasets/tags.rb",
     "spec/helpers/nested_tag_helper.rb",
-    "spec/lib/shop/models/image_spec.rb",
     "spec/lib/shop/models/page_spec.rb",
     "spec/lib/shop/tags/address_spec.rb",
     "spec/lib/shop/tags/card_spec.rb",
@@ -220,7 +219,6 @@ Gem::Specification.new do |s|
     "spec/models/shop_line_item_spec.rb",
     "spec/models/shop_order_spec.rb",
     "spec/models/shop_payment_spec.rb",
-    "spec/models/shop_product_attachment_spec.rb",
     "spec/models/shop_product_page_spec.rb",
     "spec/models/shop_product_spec.rb",
     "spec/models/shop_shipping_spec.rb",
@@ -250,7 +248,6 @@ Gem::Specification.new do |s|
     "spec/datasets/shop_products.rb",
     "spec/datasets/tags.rb",
     "spec/helpers/nested_tag_helper.rb",
-    "spec/lib/shop/models/image_spec.rb",
     "spec/lib/shop/models/page_spec.rb",
     "spec/lib/shop/tags/address_spec.rb",
     "spec/lib/shop/tags/card_spec.rb",
@@ -273,7 +270,6 @@ Gem::Specification.new do |s|
     "spec/models/shop_line_item_spec.rb",
     "spec/models/shop_order_spec.rb",
     "spec/models/shop_payment_spec.rb",
-    "spec/models/shop_product_attachment_spec.rb",
     "spec/models/shop_product_page_spec.rb",
     "spec/models/shop_product_spec.rb",
     "spec/models/shop_shipping_spec.rb",
