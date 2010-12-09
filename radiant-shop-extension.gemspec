@@ -5,7 +5,7 @@
 
 Gem::Specification.new do |s|
   s.name = %q{radiant-shop-extension}
-  s.version = "0.91.5"
+  s.version = "0.91.6"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Dirk Kelly", "John Barker", "Darcy Laycock"]
@@ -286,7 +286,7 @@ Gem::Specification.new do |s|
       s.add_runtime_dependency(%q<fastercsv>, [">= 1.5.3"])
       s.add_runtime_dependency(%q<acts_as_list>, [">= 0.1.2"])
       s.add_runtime_dependency(%q<radiant-settings-extension>, [">= 1.1.1"])
-      s.add_runtime_dependency(%q<radiant-images-extension>, [">= 0.4.1"])
+      s.add_runtime_dependency(%q<radiant-images-extension>, [">= 0.5.0"])
       s.add_runtime_dependency(%q<radiant-forms-extension>, [">= 3.2.6"])
       s.add_runtime_dependency(%q<radiant-users-extension>, [">= 0.0.2"])
       s.add_runtime_dependency(%q<radiant-drag_order-extension>, [">= 0.3.9"])
@@ -296,7 +296,7 @@ Gem::Specification.new do |s|
       s.add_dependency(%q<fastercsv>, [">= 1.5.3"])
       s.add_dependency(%q<acts_as_list>, [">= 0.1.2"])
       s.add_dependency(%q<radiant-settings-extension>, [">= 1.1.1"])
-      s.add_dependency(%q<radiant-images-extension>, [">= 0.4.1"])
+      s.add_dependency(%q<radiant-images-extension>, [">= 0.5.0"])
       s.add_dependency(%q<radiant-forms-extension>, [">= 3.2.6"])
       s.add_dependency(%q<radiant-users-extension>, [">= 0.0.2"])
       s.add_dependency(%q<radiant-drag_order-extension>, [">= 0.3.9"])
@@ -307,7 +307,7 @@ Gem::Specification.new do |s|
     s.add_dependency(%q<fastercsv>, [">= 1.5.3"])
     s.add_dependency(%q<acts_as_list>, [">= 0.1.2"])
     s.add_dependency(%q<radiant-settings-extension>, [">= 1.1.1"])
-    s.add_dependency(%q<radiant-images-extension>, [">= 0.4.1"])
+    s.add_dependency(%q<radiant-images-extension>, [">= 0.5.0"])
     s.add_dependency(%q<radiant-forms-extension>, [">= 3.2.6"])
     s.add_dependency(%q<radiant-users-extension>, [">= 0.0.2"])
     s.add_dependency(%q<radiant-drag_order-extension>, [">= 0.3.9"])

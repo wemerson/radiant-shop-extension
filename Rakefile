@@ -12,7 +12,7 @@ begin
     gem.add_dependency 'fastercsv',                   '>= 1.5.3'
     gem.add_dependency 'acts_as_list',                '>= 0.1.2'
     gem.add_dependency 'radiant-settings-extension',  '>= 1.1.1'
-    gem.add_dependency 'radiant-images-extension',    '>= 0.4.1'
+    gem.add_dependency 'radiant-images-extension',    '>= 0.5.0'
     gem.add_dependency 'radiant-forms-extension',     '>= 3.2.6'
     gem.add_dependency 'radiant-users-extension',     '>= 0.0.2'
     gem.add_dependency 'radiant-drag_order-extension','>= 0.3.9'
