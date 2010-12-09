@@ -1,23 +1,21 @@
 class Admin::Shop::Products::ImagesController < Admin::ResourceController
   
-  model_class ShopProductAttachment
+  model_class Attachment
   
   # GET /admin/shop/products/1/images
   # GET /admin/shop/products/1/images.js
   # GET /admin/shop/products/1/images.json                        AJAX and HTML
   #----------------------------------------------------------------------------
   def index
-    error     = 'This Product has no Images.'
-    attr_hash =  ShopProductAttachment.params
+    error = 'This Product has no Images.'
     
     @shop_product = ShopProduct.find(params[:product_id])
-    @shop_product_images = @shop_product.images
     
-    unless @shop_product_images.empty?
+    unless @shop_product.images.empty?
       respond_to do |format|
         format.html { redirect_to edit_admin_shop_product_path(@shop_product) }
-        format.js   { render :partial => '/admin/shop/products/edit/shared/image', :collection => @shop_product_images }
-        format.json { render :json    => @shop_product_images.to_json(attr_hash) }
+        format.js   { render :partial => '/admin/shop/products/edit/shared/image', :collection => @shop_product.images }
+        format.json { render :json    => @shop_product.images.to_json }
       end
     else
       respond_to do |format|
@@ -38,14 +36,12 @@ class Admin::Shop::Products::ImagesController < Admin::ResourceController
   def sort
     notice = 'Successfully sorted Images.'
     error  = 'Could not sort Images.'
-    attr_hash =  ShopProductAttachment.params
-        
     begin
       @shop_product = ShopProduct.find(params[:product_id])
       
       @images = CGI::parse(params[:attachments])['product_attachments[]']
       @images.each_with_index do |id, index|
-        ShopProductAttachment.find(id).update_attributes!({ :position => index+1 })
+        Attachment.find(id).update_attributes!({ :position => index+1 })
       end
       
       respond_to do |format|
@@ -53,7 +49,7 @@ class Admin::Shop::Products::ImagesController < Admin::ResourceController
           redirect_to edit_admin_shop_product_path(@shop_product)
         }
         format.js   { render :partial => '/admin/shop/products/edit/shared/image', :collection => @shop_product.images }
-        format.json { render :json    => @shop_product.images.to_json(attr_hash) }
+        format.json { render :json    => @shop_product.images.to_json }
       end
     rescue
       respond_to do |format|
@@ -72,9 +68,8 @@ class Admin::Shop::Products::ImagesController < Admin::ResourceController
   # POST /admin/shop/products/1/images.json                       AJAX and HTML
   #----------------------------------------------------------------------------
   def create
-    notice   = 'Successfully created Image.'
-    error    = 'Unable to create Image.'
-    attr_hash = ShopProductAttachment.params
+    notice = 'Successfully created Image.'
+    error  = 'Unable to create Image.'
     
     begin
       @shop_product = ShopProduct.find(params[:product_id])
@@ -85,14 +80,14 @@ class Admin::Shop::Products::ImagesController < Admin::ResourceController
         @image = Image.find(params[:attachment][:image_id])
       end
       
-      @shop_product_attachment = @shop_product.attachments.create!({ :image => @image })
+      @attachment = Attachment.create!(:image => @image, :page => @shop_product.page)
       
       respond_to do |format|
         format.html {
           redirect_to edit_admin_shop_product_path(@shop_product)
         }
-        format.js   { render :partial => '/admin/shop/products/edit/shared/image', :locals => { :image => @shop_product_attachment } }
-        format.json { render :json    => @shop_product_attachment.to_json(attr_hash)  }
+        format.js   { render :partial => '/admin/shop/products/edit/shared/image', :locals => { :image => @attachment } }
+        format.json { render :json    => @attachment.to_json  }
       end
     rescue
       respond_to do |format|
@@ -113,11 +108,10 @@ class Admin::Shop::Products::ImagesController < Admin::ResourceController
   def destroy
     notice = 'Image deleted successfully.'
     error  = 'Unable to delete Image.'
-    
     begin
       @shop_product = ShopProduct.find(params[:product_id])
-      @image = @shop_product_attachment.image
-      @shop_product_attachment.destroy
+      @image = @attachment.image
+      @attachment.destroy
       
       respond_to do |format|
         format.html {

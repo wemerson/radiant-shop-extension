@@ -2,17 +2,15 @@ require File.dirname(__FILE__) + "/../../../../spec_helper"
 
 describe Admin::Shop::Products::ImagesController do
   
-  dataset :users
+  dataset :users, :shop_products
     
   before(:each) do
     login_as  :admin
     
-    @shop_product = Object.new
-    stub(@shop_product).id { 1 }
-    mock(ShopProduct).find('1') { @shop_product }
+    @shop_product = shop_products(:soft_bread)
+    @images = @shop_product.images
     
-    @image = Object.new
-    @images = [ @image ]
+    mock(ShopProduct).find(@shop_product.id.to_s) { @shop_product }
   end
   
   describe '#index' do
@@ -60,10 +58,6 @@ describe Admin::Shop::Products::ImagesController do
           response.should redirect_to(edit_admin_shop_product_path(@shop_product))
           flash.now[:error].should be_nil
         end
-        
-        it 'should assign the shop_product_images instance variable' do
-          assigns(:shop_product_images).should === @images
-        end
       end
       
       context 'js' do
@@ -75,10 +69,6 @@ describe Admin::Shop::Products::ImagesController do
           response.should be_success
           response.should render_template('/admin/shop/products/edit/shared/_image')
         end
-        
-        it 'should assign the shop_product_images instance variable' do
-          assigns(:shop_product_images).should === @images
-        end
       end
       
       context 'json' do
@@ -88,11 +78,7 @@ describe Admin::Shop::Products::ImagesController do
         
         it 'should return a json object of the array and success status' do
           response.should be_success
-          response.body.should === @images.to_json(ShopProductAttachment.params)
-        end
-        
-        it 'should assign the shop_product_images instance variable' do
-          assigns(:shop_product_images).should === @images
+          response.body.should === @images.to_json
         end
       end
     end
@@ -141,8 +127,8 @@ describe Admin::Shop::Products::ImagesController do
     
     context 'successfully sorted' do 
       before :each do        
-        mock(ShopProductAttachment).find('2').stub!.update_attributes!({:position => 1}) { true }
-        mock(ShopProductAttachment).find('1').stub!.update_attributes!({:position => 2}) { true }
+        mock(Attachment).find('2').stub!.update_attributes!({:position => 1}) { true }
+        mock(Attachment).find('1').stub!.update_attributes!({:position => 2}) { true }
         
         stub(@shop_product).images { @images }
       end
@@ -185,7 +171,7 @@ describe Admin::Shop::Products::ImagesController do
         
         it 'should return a json object of the array and success status' do
           response.should be_success
-          response.body.should == @images.to_json(ShopProductAttachment.params)
+          response.body.should == @images.to_json
         end
         
         it 'should have ordered the images based on input' do
@@ -236,7 +222,7 @@ describe Admin::Shop::Products::ImagesController do
         
         context 'could not create attachment' do
           before :each do
-            stub(@shop_product).attachments.stub!.create!({ :image => @image }) { raise ActiveRecord::RecordNotSaved }
+            stub(Attachment).create!(anything) { raise ActiveRecord::RecordNotSaved }
           end
           
           context 'html' do
@@ -267,7 +253,7 @@ describe Admin::Shop::Products::ImagesController do
         context 'successfully created attachment' do
           before :each do
             @attachment = Object.new
-            stub(@shop_product).attachments.stub!.create!({ :image => @image }) { @attachment }
+            mock(Attachment).create!(anything) { @attachment }
           end
           
           context 'html' do
@@ -281,7 +267,6 @@ describe Admin::Shop::Products::ImagesController do
             it 'should render the collection partial and success status' do
               post :create, :product_id => @shop_product.id, :image => 'FileObject', :format => 'js'
               response.should be_success
-              assigns(:shop_product_attachment).should == @attachment
               response.should render_template('/admin/shop/products/edit/shared/_image')
             end
           end
@@ -290,7 +275,7 @@ describe Admin::Shop::Products::ImagesController do
             it 'should return a json object of the array and success status' do
               post :create, :product_id => @shop_product.id, :image => 'FileObject', :format => 'json'
               response.should be_success
-              response.body.should == @attachment.to_json(ShopProductAttachment.params)
+              response.body.should == @attachment.to_json
             end
           end
         end
@@ -335,7 +320,7 @@ describe Admin::Shop::Products::ImagesController do
         
         context 'could not create attachment' do
           before :each do
-            stub(@shop_product).attachments.stub!.create!({ :image => @image }) { raise ActiveRecord::RecordNotSaved }
+            stub(Attachment).create!(anything) { raise ActiveRecord::RecordNotSaved }
           end
           
           context 'html' do
@@ -366,7 +351,7 @@ describe Admin::Shop::Products::ImagesController do
         context 'successfully created attachment' do
           before :each do
             @attachment = Object.new
-            stub(@shop_product).attachments.stub!.create!({ :image => @image }) { @attachment }
+            stub(Attachment).create!(anything) { @attachment }
           end
           
           context 'html' do
@@ -380,7 +365,6 @@ describe Admin::Shop::Products::ImagesController do
             it 'should render the collection partial and success status' do
               post :create, :product_id => @shop_product.id, :attachment => { :image_id => '1' }, :format => 'js'
               response.should be_success
-              assigns(:shop_product_attachment).should === @attachment
               response.should render_template('/admin/shop/products/edit/shared/_image')
             end
           end
@@ -389,7 +373,7 @@ describe Admin::Shop::Products::ImagesController do
             it 'should return a json object of the array and success status' do
               post :create, :product_id => @shop_product.id, :attachment => { :image_id => '1' }, :format => 'json'
               response.should be_success
-              response.body.should == @attachment.to_json(ShopProductAttachment.params)
+              response.body.should == @attachment.to_json
             end
           end
         end
@@ -403,7 +387,7 @@ describe Admin::Shop::Products::ImagesController do
     end
     context 'Attachment exists' do
       before :each do 
-        mock(ShopProductAttachment).find('1') { @image }
+        mock(Attachment).find('1') { @image }
         stub(@image).id { 1 }
       end
       context 'could not destroy attachment' do
@@ -453,7 +437,6 @@ describe Admin::Shop::Products::ImagesController do
           it 'should render the collection partial and success status' do
             delete :destroy, :id => @image.id, :product_id => @shop_product.id, :format => 'js'
             response.should be_success
-            assigns(:shop_product_attachment).should == @image
             response.should render_template('/admin/shop/products/edit/shared/_image')
           end
         end
