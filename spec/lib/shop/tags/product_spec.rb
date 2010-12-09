@@ -279,7 +279,7 @@ describe Shop::Tags::Product do
       end
       context 'failure' do
         it 'should not render' do
-          @product.images.delete_all
+          @product.page.images.delete_all
           
           tag = %{<r:shop:product:images:if_images>failure</r:shop:product:images:if_images>}
           exp = %{}
@@ -295,7 +295,7 @@ describe Shop::Tags::Product do
       
       context 'success' do
         it 'should render' do
-          @product.images.delete_all
+          @product.page.images.delete_all
           
           tag = %{<r:shop:product:images:unless_images>success</r:shop:product:images:unless_images>}
           exp = %{success}
@@ -338,7 +338,7 @@ describe Shop::Tags::Product do
       end
       context 'failure' do
         it 'should not render' do
-          @product.images.delete_all
+          @product.page.images.delete_all
           
           tag = %{<r:shop:product:images:each>failure</r:shop:product:images:each>}
           exp = %{}

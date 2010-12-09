@@ -8,6 +8,8 @@ class ShopCategory < ActiveRecord::Base
   belongs_to  :updated_by,      :class_name => 'User'
   belongs_to  :product_layout,  :class_name => 'Layout'
   
+  has_many    :attachments, :through => :page
+  
   before_validation             :assign_slug, :assign_breadcrumb, :assign_page_class_name
   
   accepts_nested_attributes_for :page
@@ -40,6 +42,15 @@ class ShopCategory < ActiveRecord::Base
   # Returns the url of the page
   def url; page.url;  end
   
+  # Return an array of the pages images
+  def images; page.images; end
+  
+  # Returns an array of image ids
+  def image_ids; images.map(&:id); end
+  
+  # Returns images not attached to category
+  def available_images; Image.all - images; end
+    
   # Returns the page slug
   def slug; page.slug; end
   

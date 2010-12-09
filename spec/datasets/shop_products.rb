@@ -37,9 +37,9 @@ class ShopProductsDataset < Dataset::Base
           :asset_content_type => 'image/png',
           :asset_file_size    => i + 1 * 10
         
-        create_record :shop_product_attachment, product,
+        create_record :attachment, product,
           :image      => images(product),
-          :product    => shop_products("#{product.to_s}_#{category.to_s}".to_sym),
+          :page       => shop_products("#{product.to_s}_#{category.to_s}".to_sym).page,
           :position   => 1
       end
     end

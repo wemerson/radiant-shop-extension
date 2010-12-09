@@ -6,15 +6,15 @@ class ShopProduct < ActiveRecord::Base
   belongs_to  :created_by,  :class_name => 'User'
   belongs_to  :updated_by,  :class_name => 'User'
   
-  has_many    :line_items,  :class_name => 'ShopLineItem',          :foreign_key  => :item_id,      :dependent => :destroy
-  has_many    :orders,      :class_name => 'ShopOrder',             :through      => :line_items,   :uniq      => true
-  has_many    :attachments, :class_name => 'ShopProductAttachment', :foreign_key  => :product_id
-  has_many    :images,      :class_name => 'Image',                 :through      => :attachments,  :uniq      => true
+  has_many    :line_items,  :class_name => 'ShopLineItem',  :foreign_key  => :item_id,      :dependent => :destroy
+  has_many    :orders,      :class_name => 'ShopOrder',     :through      => :line_items,   :uniq      => true
+
+  has_many    :attachments, :through => :page
   
   before_validation             :assign_slug, :assign_breadcrumb, :assign_page_class_name
   validates_presence_of         :page
   
-  validates_numericality_of     :price,   :greater_than => 0.00,    :allow_nil => true,     :precisions => 2
+  validates_numericality_of     :price, :greater_than => 0.00, :allow_nil => true, :precisions => 2
   
   accepts_nested_attributes_for :page
   
@@ -47,6 +47,9 @@ class ShopProduct < ActiveRecord::Base
   
   # Returns an array of customer ids
   def customer_ids; customers.map(&:id); end
+  
+  # Return an array of the pages images
+  def images; page.images; end
   
   # Returns an array of image ids
   def image_ids; images.map(&:id); end
