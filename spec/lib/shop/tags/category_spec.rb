@@ -2,7 +2,7 @@ require File.dirname(__FILE__) + "/../../../spec_helper"
 
 describe Shop::Tags::Category do
   
-  dataset :pages, :shop_categories, :shop_products
+  dataset :pages, :shop_categories, :shop_products, :shop_attachments
 
   it 'should describe these tags' do
     Shop::Tags::Category.tags.sort.should == [
@@ -17,7 +17,8 @@ describe Shop::Tags::Category do
       'shop:category:if_current',
       'shop:category:link',
       'shop:category:name',
-      'shop:category:slug'].sort
+      'shop:category:slug',
+      'shop:category:images'].sort
   end
 
   before :each do
@@ -185,5 +186,39 @@ describe Shop::Tags::Category do
       end
     end
   end
+  
+  describe '<r:shop:category:images>' do
+    before :each do
+      mock(Shop::Tags::Helpers).current_category(anything) { @category }
+    end
+    
+    context 'success' do
+      it 'should open if images exist' do
+        tag = %{<r:shop:category:images>success</r:shop:category:images>}
+        exp = %{success}
+        @page.should render(tag).as(exp)
+      end
+      it 'should assign images for default tags' do
+        tag = %{<r:shop:category:images:each:image>success</r:shop:category:images:each:image>}
+        exp = @category.images.map{'success'}.join('')
+        @page.should render(tag).as(exp)
+      end
+    end
+    context 'failure' do
+      before :each do
+        @category.page.attachments.destroy_all { [] }
+      end
+      it 'should render' do          
+        tag = %{<r:shop:category:images>success</r:shop:category:images>}
+        exp = %{success}
+        @page.should render(tag).as(exp)
+      end
+      it 'should not assign images for default tags' do
+        tag = %{<r:shop:category:images:each:image>failure</r:shop:category:images:each:image>}
+        exp = %{}
+        @page.should render(tag).as(exp)
+      end
+    end
+  end  
   
 end

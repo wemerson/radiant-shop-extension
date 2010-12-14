@@ -2,7 +2,7 @@ require File.dirname(__FILE__) + "/../../../spec_helper"
 
 describe Shop::Tags::Helpers do
   
-  dataset :pages, :tags, :shop_products, :shop_orders, :shop_addresses, :shop_line_items, :shop_product_attachments
+  dataset :pages, :tags, :shop_products, :shop_orders, :shop_addresses, :shop_line_items, :shop_attachments
   
   before :all do
     @page = pages(:home)
@@ -44,6 +44,8 @@ describe Shop::Tags::Helpers do
       end
     end
   end
+  
+  it 'should test nested categories'
   
   describe '#current_category' do
     before :each do

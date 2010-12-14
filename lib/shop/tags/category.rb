@@ -33,6 +33,8 @@ module Shop
       
       tag 'shop:category' do |tag|
         tag.locals.shop_category = Helpers.current_category(tag)
+        tag.locals.shop_categories = tag.locals.shop_category.categories
+        
         tag.expand unless tag.locals.shop_category.nil?
       end
       
@@ -74,6 +76,12 @@ module Shop
         text = tag.double? ? tag.expand : category.name
         
         %{<a href="#{category.url}"#{attributes}>#{text}</a>}
+      end
+      
+      tag 'shop:category:images' do |tag|
+        tag.locals.images = tag.locals.shop_category.attachments
+        
+        tag.expand
       end
       
     end
