@@ -5,7 +5,7 @@
 
 Gem::Specification.new do |s|
   s.name = %q{radiant-shop-extension}
-  s.version = "0.92.0"
+  s.version = "0.92.1"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Dirk Kelly", "John Barker", "Darcy Laycock"]
@@ -141,6 +141,7 @@ Gem::Specification.new do |s|
     "db/migrate/20101011063133_setup_shop.rb",
     "db/migrate/20101208045754_address_changes.rb",
     "db/migrate/20101208121105_move_to_page_attachments.rb",
+    "db/migrate/20101214023052_fix_addressable_column_type.rb",
     "db/seed.rb",
     "db/seeds/forms.rb",
     "db/seeds/layouts.rb",
