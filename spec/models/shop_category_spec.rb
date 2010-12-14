@@ -51,6 +51,10 @@ describe ShopCategory do
       end
     end
     
+    it 'should test #products'
+    
+    it 'should test #categories'
+    
     context '#handle' do
       it 'should return a handle formatted url' do
         @category.handle.should === ShopProduct.to_sku(@category.page.url)
