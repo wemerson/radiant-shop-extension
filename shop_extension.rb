@@ -36,7 +36,6 @@ class ShopExtension < Radiant::Extension
     end
     
     Page.send :include,  Shop::Models::Page
-    Image.send :include, Shop::Models::Image
     User.send :include,  Shop::Models::User
     
     ApplicationController.send :include, Shop::Controllers::ApplicationController
