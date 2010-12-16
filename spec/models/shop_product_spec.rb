@@ -1,7 +1,7 @@
 require File.dirname(__FILE__) + "/../spec_helper"
 
 describe ShopProduct do
-  dataset :shop_products, :shop_line_items
+  dataset :shop_products, :shop_line_items, :shop_customers
   
   describe 'relationships' do
     before :each do
@@ -13,12 +13,12 @@ describe ShopProduct do
     end
     
     it 'should have a created_by User' do
-      @product.created_by = users(:customer)
+      @product.created_by = shop_customers(:customer)
       @product.created_by.is_a?(User).should be_true
     end
     
     it 'should have a updated_by User' do
-      @product.updated_by = users(:customer)
+      @product.updated_by = shop_customers(:customer)
       @product.updated_by.is_a?(User).should be_true
     end
     
