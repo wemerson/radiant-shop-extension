@@ -11,6 +11,7 @@ module Shop
         tag.expand
       end
       
+      desc %{ Clears the cart from the memory of the application}
       tag 'shop:cart:forget' do |tag|
         tag.locals.page.request.session[:shop_order] = nil
       end
