@@ -13,11 +13,11 @@ describe Admin::Shop::CustomersController do
       it 'should be assigned' do
         get :new
         
-        assigns(:inputs).should   === ['name','email']
-        assigns(:meta).should     === ['login','password','password_confirmation']
-        assigns(:buttons).should  === []
-        assigns(:parts).should    === []
-        assigns(:popups).should   === []
+        assigns(:inputs).should   include('name','email')
+        assigns(:meta).should     include('login','password','password_confirmation')
+        assigns(:buttons).should  include()
+        assigns(:parts).should    include()
+        assigns(:popups).should   include()
       end
     end
   end
@@ -27,11 +27,11 @@ describe Admin::Shop::CustomersController do
       it 'should be assigned' do
         get :edit, :id => shop_customers(:customer).id
         
-        assigns(:inputs).should   === ['name','email']
-        assigns(:meta).should     === ['login','password','password_confirmation']
-        assigns(:buttons).should  === []
-        assigns(:parts).should    === ['orders','addresses']
-        assigns(:popups).should   === []
+        assigns(:inputs).should   include('name','email')
+        assigns(:meta).should     include('login','password','password_confirmation')
+        assigns(:buttons).should  include()
+        assigns(:parts).should    include('orders','addresses')
+        assigns(:popups).should   include()
       end
     end
   end
@@ -41,11 +41,11 @@ describe Admin::Shop::CustomersController do
       it 'should be assigned' do
         post :create, :shop_customer => {}
         
-        assigns(:inputs).should   === ['name','email']
-        assigns(:meta).should     === ['login','password','password_confirmation']
-        assigns(:buttons).should  === []
-        assigns(:parts).should    === []
-        assigns(:popups).should   === []
+        assigns(:inputs).should   include('name','email')
+        assigns(:meta).should     include('login','password','password_confirmation')
+        assigns(:buttons).should  include()
+        assigns(:parts).should    include()
+        assigns(:popups).should   include()
       end
     end
   end
@@ -55,11 +55,11 @@ describe Admin::Shop::CustomersController do
       it 'should be assigned' do
         put :update, :id => shop_customers(:customer).id, :shop_customer => {}
         
-        assigns(:inputs).should   === ['name','email']
-        assigns(:meta).should     === ['login','password','password_confirmation']
-        assigns(:buttons).should  === []
-        assigns(:parts).should    === ['orders','addresses']
-        assigns(:popups).should   === []
+        assigns(:inputs).should   include('name','email')
+        assigns(:meta).should     include('login','password','password_confirmation')
+        assigns(:buttons).should  include()
+        assigns(:parts).should    include('orders','addresses')
+        assigns(:popups).should   include()
       end
     end
   end
