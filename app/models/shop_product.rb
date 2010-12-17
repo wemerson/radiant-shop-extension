@@ -14,7 +14,7 @@ class ShopProduct < ActiveRecord::Base
   before_validation             :assign_slug, :assign_breadcrumb, :assign_page_class_name
   validates_presence_of         :page
   
-  validates_numericality_of     :price, :greater_than => 0.00, :allow_nil => true, :precisions => 2
+  validates_numericality_of     :price, :greater_than_or_equal_to => 0.00, :allow_nil => false, :precisions => 2
   
   accepts_nested_attributes_for :page
   
