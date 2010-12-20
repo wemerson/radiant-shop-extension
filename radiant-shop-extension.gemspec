@@ -5,11 +5,11 @@
 
 Gem::Specification.new do |s|
   s.name = %q{radiant-shop-extension}
-  s.version = "0.91.7"
+  s.version = "0.92.2"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Dirk Kelly", "John Barker", "Darcy Laycock"]
-  s.date = %q{2010-12-09}
+  s.date = %q{2010-12-17}
   s.description = %q{Radiant Shop is an attempt at a simple but complete store. It includes Products, Categories, Orders and Credit Card Payments}
   s.email = %q{dk@dirkkelly.com}
   s.extra_rdoc_files = [
@@ -141,6 +141,7 @@ Gem::Specification.new do |s|
     "db/migrate/20101011063133_setup_shop.rb",
     "db/migrate/20101208045754_address_changes.rb",
     "db/migrate/20101208121105_move_to_page_attachments.rb",
+    "db/migrate/20101214023052_fix_addressable_column_type.rb",
     "db/seed.rb",
     "db/seeds/forms.rb",
     "db/seeds/layouts.rb",
@@ -156,7 +157,6 @@ Gem::Specification.new do |s|
     "lib/shop/interface/orders.rb",
     "lib/shop/interface/products.rb",
     "lib/shop/models/form_extension.rb",
-    "lib/shop/models/image.rb",
     "lib/shop/models/page.rb",
     "lib/shop/models/user.rb",
     "lib/shop/tags/address.rb",
@@ -187,13 +187,13 @@ Gem::Specification.new do |s|
     "spec/controllers/admin/shops_controller_spec.rb",
     "spec/datasets/forms.rb",
     "spec/datasets/shop_addresses.rb",
+    "spec/datasets/shop_attachments.rb",
     "spec/datasets/shop_categories.rb",
     "spec/datasets/shop_config.rb",
     "spec/datasets/shop_customers.rb",
     "spec/datasets/shop_line_items.rb",
     "spec/datasets/shop_orders.rb",
     "spec/datasets/shop_payments.rb",
-    "spec/datasets/shop_product_attachments.rb",
     "spec/datasets/shop_products.rb",
     "spec/datasets/tags.rb",
     "spec/helpers/nested_tag_helper.rb",
@@ -238,13 +238,13 @@ Gem::Specification.new do |s|
     "spec/controllers/admin/shops_controller_spec.rb",
     "spec/datasets/forms.rb",
     "spec/datasets/shop_addresses.rb",
+    "spec/datasets/shop_attachments.rb",
     "spec/datasets/shop_categories.rb",
     "spec/datasets/shop_config.rb",
     "spec/datasets/shop_customers.rb",
     "spec/datasets/shop_line_items.rb",
     "spec/datasets/shop_orders.rb",
     "spec/datasets/shop_payments.rb",
-    "spec/datasets/shop_product_attachments.rb",
     "spec/datasets/shop_products.rb",
     "spec/datasets/tags.rb",
     "spec/helpers/nested_tag_helper.rb",

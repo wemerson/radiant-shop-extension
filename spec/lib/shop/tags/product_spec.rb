@@ -2,7 +2,7 @@ require File.dirname(__FILE__) + "/../../../spec_helper"
 
 describe Shop::Tags::Product do
   
-  dataset :pages, :shop_config, :shop_products, :shop_product_attachments
+  dataset :pages, :shop_config, :shop_products, :shop_attachments
   
   it 'should describe these tags' do
     Shop::Tags::Product.tags.sort.should == [
@@ -19,11 +19,7 @@ describe Shop::Tags::Product do
       'shop:product:slug',
       'shop:product:description',
       'shop:product:link',
-      'shop:product:images',
-      'shop:product:images:if_images',
-      'shop:product:images:unless_images',
-      'shop:product:images:each',
-      'shop:product:images:image'].sort
+      'shop:product:images'].sort
   end
   
   before :all do
@@ -278,107 +274,35 @@ describe Shop::Tags::Product do
       end
     end
     
-    describe '<r:shop:product:images:if_images>' do
-      before :each do
-        mock(Shop::Tags::Helpers).current_product(anything) { @product }
-      end
-      
-      context 'success' do
-        it 'should render' do
-          tag = %{<r:shop:product:images:if_images>success</r:shop:product:images:if_images>}
-          exp = %{success}
-          @page.should render(tag).as(exp)
-        end
-      end
-      context 'failure' do
-        it 'should not render' do
-          @product.page.images.delete_all
-          
-          tag = %{<r:shop:product:images:if_images>failure</r:shop:product:images:if_images>}
-          exp = %{}
-          @page.should render(tag).as(exp)
-        end
-      end
-    end
-
-    describe '<r:shop:product:images:unless_images>' do
-      before :each do
-        mock(Shop::Tags::Helpers).current_product(anything) { @product }
-      end
-      
-      context 'success' do
-        it 'should render' do
-          @product.page.images.delete_all
-          
-          tag = %{<r:shop:product:images:unless_images>success</r:shop:product:images:unless_images>}
-          exp = %{success}
-          @page.should render(tag).as(exp)
-        end
-      end
-      
-      context 'failure' do
-        it 'should not render' do
-          tag = %{<r:shop:product:images:unless_images>failure</r:shop:product:images:unless_images>}
-          exp = %{}
-          @page.should render(tag).as(exp)
-        end
-      end
-    end
-    
     describe '<r:shop:product:images>' do
       before :each do
         mock(Shop::Tags::Helpers).current_product(anything) { @product }
       end
       
-      it 'should render' do
-        tag = %{<r:shop:product:images>success</r:shop:product:images>}
-        exp = %{success}
-        @page.should render(tag).as(exp)
-      end
-    end
-    
-    describe '<r:shop:product:images:each>' do
-      before :each do
-        mock(Shop::Tags::Helpers).current_product(anything) { @product }
-      end
-      
       context 'success' do
-        it 'should assign the local image for each' do
-          tag = %{<r:shop:product:images:each><r:image:id /></r:shop:product:images:each>}
-          exp =  @product.attachments.map{ |i| i.id }.join('')
+        it 'should open if images exist' do
+          tag = %{<r:shop:product:images>success</r:shop:product:images>}
+          exp = %{success}
           @page.should render(tag).as(exp)
-        end    
+        end
+        it 'should assign images for default tags' do
+          tag = %{<r:shop:product:images:each:image>success</r:shop:product:images:each:image>}
+          exp = @product.images.map{'success'}.join('')
+          @page.should render(tag).as(exp)
+        end
       end
       context 'failure' do
-        it 'should not render' do
-          @product.page.images.delete_all
-          
-          tag = %{<r:shop:product:images:each>failure</r:shop:product:images:each>}
+        before :each do
+          @product.page.attachments.destroy_all
+        end
+        it 'should render' do          
+          tag = %{<r:shop:product:images>success</r:shop:product:images>}
+          exp = %{success}
+          @page.should render(tag).as(exp)
+        end
+        it 'should not assign images for default tags' do
+          tag = %{<r:shop:product:images:each:image>failure</r:shop:product:images:each:image>}
           exp = %{}
-          @page.should render(tag).as(exp)
-        end
-      end
-    end
-    
-    describe '<r:shop:product:images:image>' do
-      before :each do
-        mock(Shop::Tags::Helpers).current_product(anything) { @product }
-      end
-      context 'image exists' do
-        it 'should expand' do
-          mock(Shop::Tags::Helpers).current_image(anything) { @product.images.first }
-          
-          tag = %{<r:shop:product:images:image>success</r:shop:product:images:image>}
-          exp = %{success}
-          @page.should render(tag).as(exp)
-        end
-      end
-      context 'image does not exist' do
-        it 'should expand' do
-          mock(Shop::Tags::Helpers).current_image(anything) { nil }
-          
-          tag = %{<r:shop:product:images:image>success</r:shop:product:images:image>}
-          exp = %{success}
           @page.should render(tag).as(exp)
         end
       end

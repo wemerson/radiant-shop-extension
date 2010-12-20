@@ -23,7 +23,7 @@ module Shop
               index.head.concat     %w{}
               index.category.concat %w{move name handle modify}
               index.products.concat %w{body}
-              index.product.concat  %w{move icon name sku modify}
+              index.product.concat  %w{move icon name sku price modify}
               index.foot.concat     %w{buttons}
             end
             products.remove = products.index

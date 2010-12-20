@@ -39,6 +39,14 @@ class ShopCategory < ActiveRecord::Base
     ).map(&:shop_product)
   end
   
+  # Returns the categories nested directly beneath this
+  def categories
+    pages = page.children.all(
+      :conditions => { :class_name => 'ShopCategoryPage' },
+      :order      => 'pages.position ASC'
+    ).map(&:shop_category)
+  end
+  
   # Returns the url of the page
   def url; page.url;  end
   

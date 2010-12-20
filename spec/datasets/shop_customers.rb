@@ -18,7 +18,7 @@ class ShopCustomersDataset < Dataset::Base
   
   helpers do
     def login_as(user)
-      login_user = user.is_a?(User) ? user : users(user)
+      login_user = users(user)
       flunk "Can't login as non-existing user #{user.to_s}." unless login_user
       UserActionObserver.current_user = login_user
       login_user

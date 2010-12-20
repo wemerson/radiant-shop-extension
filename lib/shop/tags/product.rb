@@ -84,35 +84,6 @@ module Shop
         tag.expand
       end
       
-      desc %{ expands if the product has a valid image }
-      tag 'shop:product:images:if_images' do |tag|
-        tag.expand if tag.locals.images.present?
-      end
-      
-      desc %{ expands if the product does not have a valid image }
-      tag 'shop:product:images:unless_images' do |tag|
-        tag.expand unless tag.locals.images.present?
-      end
-      
-      desc %{ iterates through each of the products images }
-      tag 'shop:product:images:each' do |tag|
-        content = ''
-        
-        tag.locals.images.each do |image|
-          tag.locals.image = image
-          content << tag.expand
-        end
-        
-        content
-      end
-      
-      desc %{ iterates through each of the products images }
-      tag 'shop:product:images:image' do |tag|
-        tag.locals.image = Helpers.current_image(tag)
-        
-        tag.expand
-      end
-      
     end
   end
 end

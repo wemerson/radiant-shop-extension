@@ -45,33 +45,33 @@ describe Admin::Shop::OrdersController do
         it 'should assign the following' do
           get :edit, :id => shop_orders(:empty).id
           
-          assigns(:inputs).should   === []
-          assigns(:meta).should     === []
-          assigns(:buttons).should  === []
-          assigns(:parts).should    === ['items']
-          assigns(:popups).should   === []
+          assigns(:inputs).should   include()
+          assigns(:meta).should     include()
+          assigns(:buttons).should  include()
+          assigns(:parts).should    include('items')
+          assigns(:popups).should   include()
         end
       end
       context 'order with no address and customer' do
         it 'should assign the following' do
           get :edit, :id => shop_orders(:one_item).id
           
-          assigns(:inputs).should   === []
-          assigns(:meta).should     === []
-          assigns(:buttons).should  === []
-          assigns(:parts).should    === ['items','customer']
-          assigns(:popups).should   === []
+          assigns(:inputs).should   include()
+          assigns(:meta).should     include()
+          assigns(:buttons).should  include()
+          assigns(:parts).should    include('items','customer')
+          assigns(:popups).should   include()
         end
       end
       context 'order with no address and customer' do
         it 'should assign the following' do
           get :edit, :id => shop_orders(:several_items).id
           
-          assigns(:inputs).should   === []
-          assigns(:meta).should     === []
-          assigns(:buttons).should  === []
-          assigns(:parts).should    === ['items','addresses','customer']
-          assigns(:popups).should   === []
+          assigns(:inputs).should   include()
+          assigns(:meta).should     include()
+          assigns(:buttons).should  include()
+          assigns(:parts).should    include('items','addresses','customer')
+          assigns(:popups).should   include()
         end
       end
     end
@@ -82,33 +82,33 @@ describe Admin::Shop::OrdersController do
       it 'should assign the following' do
         put :update, :id => shop_orders(:empty).id, :shop_order => {}
         
-        assigns(:inputs).should   === []
-        assigns(:meta).should     === []
-        assigns(:buttons).should  === []
-        assigns(:parts).should    === ['items']
-        assigns(:popups).should   === []
+        assigns(:inputs).should   include()
+        assigns(:meta).should     include()
+        assigns(:buttons).should  include()
+        assigns(:parts).should    include('items')
+        assigns(:popups).should   include()
       end
     end
     context 'order with no address and customer' do
       it 'should assign the following' do
         put :update, :id => shop_orders(:one_item).id, :shop_order => {}
         
-        assigns(:inputs).should   === []
-        assigns(:meta).should     === []
-        assigns(:buttons).should  === []
-        assigns(:parts).should    === ['items','customer']
-        assigns(:popups).should   === []
+        assigns(:inputs).should   include()
+        assigns(:meta).should     include()
+        assigns(:buttons).should  include()
+        assigns(:parts).should    include('items','customer')
+        assigns(:popups).should   include()
       end
     end
     context 'order with no address and customer' do
       it 'should assign the following' do
         put :update, :id => shop_orders(:several_items).id, :shop_order => {}
         
-        assigns(:inputs).should   === []
-        assigns(:meta).should     === []
-        assigns(:buttons).should  === []
-        assigns(:parts).should    === ['items','addresses','customer']
-        assigns(:popups).should   === []
+        assigns(:inputs).should   include()
+        assigns(:meta).should     include()
+        assigns(:buttons).should  include()
+        assigns(:parts).should    include('items','addresses','customer')
+        assigns(:popups).should   include()
       end
     end
   end

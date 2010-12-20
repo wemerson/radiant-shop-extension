@@ -2,7 +2,7 @@ require File.dirname(__FILE__) + "/../spec_helper"
 
 describe FormCheckout do
 
-  dataset :shop_orders, :pages, :forms, :shop_addresses
+  dataset :shop_orders, :pages, :forms, :shop_addresses, :shop_customers
   
   before :each do
     mock_page_with_request_and_data

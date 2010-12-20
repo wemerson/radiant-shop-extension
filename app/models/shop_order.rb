@@ -130,6 +130,11 @@ class ShopOrder < ActiveRecord::Base
   
   class << self
     
+    # A hookable method used by the site controller 
+    def find_by_session(session)
+      find(session)
+    end
+    
     # Will scope the contained find calls to a specific status
     def scope_by_status(status)
       case status
