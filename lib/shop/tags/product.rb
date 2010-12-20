@@ -37,6 +37,12 @@ module Shop
         tag.expand if tag.locals.shop_product.present?
       end
       
+      tag 'shop:product:page' do |tag|
+        tag.locals.page = tag.locals.shop_product.page
+        
+        tag.expand
+      end
+      
       [:id, :name, :sku, :slug].each do |symbol|
         desc %{ outputs the #{symbol} of the current shop product }
         tag "shop:product:#{symbol}" do |tag|

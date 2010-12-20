@@ -52,7 +52,7 @@ module Shop
         
       end
       
-      [:id, :name, :handle, :slug].each do |symbol|
+      [:id, :name, :handle, :slug, :url].each do |symbol|
         desc %{ outputs the #{symbol} of the current shop category }
         tag "shop:category:#{symbol}" do |tag|
           tag.locals.shop_category.send(symbol)

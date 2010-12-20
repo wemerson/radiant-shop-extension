@@ -16,6 +16,7 @@ describe Shop::Tags::Category do
       'shop:category:id',
       'shop:category:if_current',
       'shop:category:link',
+      'shop:category:url',
       'shop:category:name',
       'shop:category:slug'].sort
   end
@@ -143,6 +144,12 @@ describe Shop::Tags::Category do
     it 'should render <r:slug />' do
       tag = %{<r:shop:category:slug />}
       exp = @category.slug
+      
+      @page.should render(tag).as(exp)
+    end
+    it 'should render <r:url />' do
+      tag = %{<r:shop:category:url />}
+      exp = @category.url
       
       @page.should render(tag).as(exp)
     end

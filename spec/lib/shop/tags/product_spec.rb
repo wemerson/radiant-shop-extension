@@ -11,6 +11,7 @@ describe Shop::Tags::Product do
       'shop:products:unless_products',      
       'shop:products:each',
       'shop:product',
+      'shop:product:page',
       'shop:product:id',
       'shop:product:name',
       'shop:product:price',
@@ -165,6 +166,18 @@ describe Shop::Tags::Product do
         tag = %{<r:shop:product>failure</r:shop:product>}
         exp = %{}
         @page.should render(tag).as(exp)
+      end
+    end
+    
+    context '<r:shop:product:page>' do
+      before :each do
+        mock(Shop::Tags::Helpers).current_product(anything) { @product }
+      end
+      
+      it 'should set the page context from the product' do
+        tag = %{<r:shop:product:page><r:title/></r:shop:product:page>}
+        exp = @product.page.title.to_s
+        @page.should render(tag).as(exp)        
       end
     end
     
