@@ -11,6 +11,8 @@ describe Shop::Tags::Product do
       'shop:products:unless_products',      
       'shop:products:each',
       'shop:product',
+      'shop:product:if_current',
+      'shop:product:unless_current',
       'shop:product:page',
       'shop:product:id',
       'shop:product:name',
@@ -174,6 +176,42 @@ describe Shop::Tags::Product do
         tag = %{<r:shop:product:page><r:title/></r:shop:product:page>}
         exp = @product.page.title.to_s
         @page.should render(tag).as(exp)        
+      end
+    end
+    
+    context '<r:shop:product:if_current>' do
+      before :each do
+        mock(Shop::Tags::Helpers).current_product(anything) { @product }
+      end
+      
+      it 'should render if the page belongs to the product' do
+        tag = %{<r:shop:product:if_current>success</r:shop:product:if_current>}
+        exp = %{success}
+        @product.page.should render(tag).as(exp)        
+      end
+      
+      it 'should not render if the page does not belong to the product' do
+        tag = %{<r:shop:product:if_current>failure</r:shop:product:if_current>}
+        exp = %{}
+        @page.should render(tag).as(exp)        
+      end
+    end
+    
+    context '<r:shop:product:unless_current>' do
+      before :each do
+        mock(Shop::Tags::Helpers).current_product(anything) { @product }
+      end
+      
+      it 'should render if the page does not belong to the product' do
+        tag = %{<r:shop:product:unless_current>success</r:shop:product:unless_current>}
+        exp = %{success}
+        @page.should render(tag).as(exp)        
+      end
+      
+      it 'should not render if the page belongs to the product' do
+        tag = %{<r:shop:product:unless_current>failure</r:shop:product:unless_current>}
+        exp = %{}
+        @product.page.should render(tag).as(exp)        
       end
     end
     

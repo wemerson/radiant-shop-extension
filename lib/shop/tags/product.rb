@@ -43,6 +43,18 @@ module Shop
         tag.expand
       end
       
+      tag 'shop:product:if_current' do |tag|
+        if tag.locals.page.shop_product == tag.locals.shop_product
+          tag.expand
+        end
+      end
+      
+      tag 'shop:product:unless_current' do |tag|
+        if tag.locals.page.shop_product != tag.locals.shop_product
+          tag.expand
+        end
+      end
+      
       [:id, :name, :sku, :slug].each do |symbol|
         desc %{ outputs the #{symbol} of the current shop product }
         tag "shop:product:#{symbol}" do |tag|

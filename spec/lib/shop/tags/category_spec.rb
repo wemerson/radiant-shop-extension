@@ -15,6 +15,7 @@ describe Shop::Tags::Category do
       'shop:category:handle',
       'shop:category:id',
       'shop:category:if_current',
+      'shop:category:unless_current',
       'shop:category:link',
       'shop:category:url',
       'shop:category:name',
@@ -114,6 +115,36 @@ describe Shop::Tags::Category do
       it 'should not expand' do
         tag = %{<r:shop:category:if_current>failure</r:shop:category:if_current>}
         exp =  %{}
+        
+        @page.should render(tag).as(exp)
+      end
+    end
+  end
+  
+  describe '<r:shop:category:unless_current>' do
+    before :each do
+      mock(Shop::Tags::Helpers).current_category(anything) { @category }
+    end
+    context 'this categories page' do
+      it 'should not expand' do
+        tag = %{<r:shop:category:unless_current>failure</r:shop:category:unless_current>}
+        exp =  %{}
+        
+        @category.page.should render(tag).as(exp)
+      end
+    end
+    context 'categories product page' do
+      it 'should not expand' do
+        tag = %{<r:shop:category:unless_current>failure</r:shop:category:unless_current>}
+        exp =  %{}
+        
+        @category.products.first.page.should render(tag).as(exp)
+      end
+    end
+    context 'failure' do
+      it 'should expand' do
+        tag = %{<r:shop:category:unless_current>success</r:shop:category:unless_current>}
+        exp =  %{success}
         
         @page.should render(tag).as(exp)
       end
