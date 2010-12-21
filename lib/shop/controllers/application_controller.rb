@@ -11,25 +11,22 @@ module Shop
           end
           
           def find_shop_order
-            begin
-              ShopOrder.find_by_session(request.session[:shop_order])
-            rescue
-              nil
-            end
+            ShopOrder.find_by_session(request.session[:shop_order])
           end
           
           def find_or_create_shop_order
-            if find_shop_order
-              return find_shop_order
-            else
-              if current_customer
-                shop_order = ShopOrder.create(:customer_id => (current_user.id))
-              else
-                shop_order = ShopOrder.create
-              end
+            begin
+              @order = find_shop_order
+            rescue
+              @order = shop_order = ShopOrder.create
               request.session[:shop_order] = shop_order.id
-              return shop_order
             end
+            
+            if current_user
+              @order.update_attribute(:customer_id, (current_user.id))
+            end
+            
+            @order
           end
         end
       end
