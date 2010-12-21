@@ -18,8 +18,8 @@ module Shop
             begin
               @order = find_shop_order
             rescue
-              @order = shop_order = ShopOrder.create
-              request.session[:shop_order] = shop_order.id
+              @order = ShopOrder.create
+              request.session[:shop_order] = @order.id
             end
             
             if current_user
