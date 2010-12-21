@@ -22,7 +22,11 @@ module Shop
             if find_shop_order
               return find_shop_order
             else
-              shop_order = ShopOrder.create(:customer_id => (current_user.id rescue nil))
+              if current_customer
+                shop_order = ShopOrder.create(:customer_id => (current_user.id))
+              else
+                shop_order = ShopOrder.create
+              end
               request.session[:shop_order] = shop_order.id
               return shop_order
             end
