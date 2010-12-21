@@ -67,10 +67,15 @@ class FormAddress
         
       end
     else
-      if @order.shipping.nil?
-        @shipping = ShopShipping.new(@billing.attributes) 
-        if @shipping.save
-          @order.update_attribute(:shipping, @shipping)
+      if @order.shipping.present?
+        @shipping = @order.shipping
+        
+      else
+        if @order.shipping.nil?
+          @shipping = ShopShipping.new(@billing.attributes) 
+          if @shipping.save
+            @order.update_attribute(:shipping, @shipping)
+          end
         end
       end
       
