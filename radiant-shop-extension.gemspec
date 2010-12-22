@@ -5,7 +5,7 @@
 
 Gem::Specification.new do |s|
   s.name = %q{radiant-shop-extension}
-  s.version = "0.92.8"
+  s.version = "0.92.9"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Dirk Kelly", "John Barker", "Darcy Laycock"]
