@@ -6,7 +6,7 @@ module Shop
         base.class_eval do
           # Uses the page session data to find the current order
           def find_current_order
-            ShopOrder.find_by_session(@page.request.session[:shop_order])
+            @order = ShopOrder.find_by_session(@page.request.session[:shop_order])
           end
           
           # Uses the page session data to find or create the current order
