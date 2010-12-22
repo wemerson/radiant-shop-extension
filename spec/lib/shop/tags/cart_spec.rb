@@ -21,6 +21,7 @@ describe Shop::Tags::Cart do
       'shop:cart:status',
       'shop:cart:quantity',
       'shop:cart:weight',
+      'shop:cart:notes',
       'shop:cart:price'].sort
   end
   
@@ -210,6 +211,12 @@ describe Shop::Tags::Cart do
       it 'should render <r:weight />' do
         tag = %{<r:shop:cart:weight />}
         expected = @order.weight.to_s
+        
+        @page.should render(tag).as(expected)
+      end
+      it 'should render <r:notes />' do
+        tag = %{<r:shop:cart:notes />}
+        expected = @order.notes.to_s
         
         @page.should render(tag).as(expected)
       end

@@ -56,6 +56,7 @@ class FormCheckout
     end
     
     if purchase
+      assign_notes
       create_payment    
       finalize_checkout
       @form.redirect_to = success_redirect
@@ -70,6 +71,10 @@ class FormCheckout
       @result[:gateway] = true
     end
     @result[:gateway]
+  end
+  
+  def assign_notes
+    @order.update_attribute(:notes, notes) if notes.present?
   end
   
   # Creates a payment object attached to the order
@@ -160,6 +165,11 @@ class FormCheckout
   def gateway_mode
     @config[:test].present? ? :test : :production
   end
+  
+  # Returns the notes on the order
+  def notes
+    @data[:notes]
+  end 
   
   # Returns the submitted card attributes
   def card

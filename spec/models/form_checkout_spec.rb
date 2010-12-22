@@ -41,9 +41,17 @@ describe FormCheckout do
           @checkout = FormCheckout.new(@form, @page, @form[:extensions][:bogus_checkout])
           result = @checkout.create
           
-          @order.payment.card_number.should === "XXXX-XXXX-XXXX-1"
-          @order.payment.card_type.should   === @data[:credit_card][:type]
-          @order.payment.amount.should      === @order.price
+          @order.payment.card_number.should   === "XXXX-XXXX-XXXX-1"
+          @order.payment.card_type.should     === @data[:credit_card][:type]
+          @order.payment.amount.should        === @order.price
+        end
+        
+        it 'should assign the note' do
+          mock.instance_of(ActiveMerchant::Billing::CreditCard).valid? { true }
+          @checkout = FormCheckout.new(@form, @page, @form[:extensions][:bogus_checkout])
+          result = @checkout.create
+          
+          shop_orders(:several_items).notes.should === 'some note'
         end
         
         it 'should assign session shop_order to nil' do

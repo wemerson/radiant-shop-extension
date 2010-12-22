@@ -33,6 +33,7 @@ class FormsDataset < Dataset::Base
       </li>
     </ol>
   </div>
+  <r:text name='notes' value="some note"/>
   <ol class="credit_card">
     <li>
       <r:label for='credit_card[name]'>Name on Card</r:label>
@@ -117,8 +118,9 @@ CONFIG
           :year         => 2012,
           :type         => 'visa'
         },
+        :notes          => 'some note',
         :options => {
-          :address => {
+          :address      => {
             :address1   => 'address',
             :zip        => 'zip'
           }

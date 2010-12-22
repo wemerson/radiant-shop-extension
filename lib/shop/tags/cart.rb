@@ -53,7 +53,7 @@ module Shop
       end
       
       # Display the cart id / status
-      [:id, :status, :quantity, :weight].each do |symbol|
+      [:id, :status, :quantity, :weight, :notes].each do |symbol|
         desc %{ outputs the #{symbol} to the cart }
         tag "shop:cart:#{symbol}" do |tag|
           tag.locals.shop_order.send(symbol)
