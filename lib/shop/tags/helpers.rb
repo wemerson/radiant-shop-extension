@@ -7,17 +7,17 @@ module Shop
         def current_categories(tag)
           result = []
           
-          # Returns the current categories if they exist
-          if tag.locals.shop_categories.present?
-            result = tag.locals.shop_categories
-            
           # Returns categories based on the slug of their categories parent page
-          elsif tag.attr['parent']
+          if tag.attr['parent']
             result = ShopCategory.all(
                        :joins      => 'JOIN pages AS page ON page.id = shop_categories.page_id JOIN pages AS parent ON page.parent_id = parent.id',
                        :conditions => [ 'parent.slug = ?', tag.attr['parent'] ]
                      )
-                  
+          
+          # Returns the current categories if they exist
+          elsif tag.locals.shop_categories.present?
+            result = tag.locals.shop_categories
+          
           # Page params are protected, send is used to overcome this  
           # elsif tag.locals.page.send(:params).has_key? 'query'
           #   result = ShopCategory.search(tag.locals.page.send(:params)['query'])
@@ -34,12 +34,8 @@ module Shop
         def current_category(tag)
           result = nil
           
-          # Returns the current shop_category    
-          if tag.locals.shop_category.present?
-            result = tag.locals.shop_category
-           
           # Returns a category based on its name (page title)  
-          elsif tag.attr['name']
+          if tag.attr['name']
             result = ShopCategory.first(
                        :joins      => :page,
                        :conditions => [ "pages.title = ?", tag.attr['name'] ]
@@ -51,6 +47,10 @@ module Shop
                        :joins      => :page,
                        :conditions => [ "pages.slug = ?", tag.attr['handle'] ]
                      )
+          
+          # Returns the current shop_category    
+          elsif tag.locals.shop_category.present?
+            result = tag.locals.shop_category
            
           # Returns the category of the current shop_product
           elsif tag.locals.shop_product.present?
@@ -70,14 +70,14 @@ module Shop
         def current_products(tag)
           result = nil
           
-          if tag.locals.shop_products.present?
-            result = tag.locals.shop_products
-          
-          elsif tag.attr['category']
+          if tag.attr['category']
             result = ShopCategory.first(
                        :joins      => :page,
                        :conditions => [ 'page.slug = ?', tag.attr['category'] ]
                      ).products
+          
+          elsif tag.locals.shop_products.present?
+            result = tag.locals.shop_products
             
           elsif tag.locals.shop_category.present?
             result = tag.locals.shop_category.products
@@ -96,11 +96,8 @@ module Shop
         def current_product(tag)
           result = nil
           
-          if tag.locals.shop_product.present?
-            result = tag.locals.shop_product
-          
           # Returns a product based on its name (page title)  
-          elsif tag.attr['name']
+          if tag.attr['name']
             result = ShopProduct.first(
                        :joins      => :page,
                        :conditions => [ "pages.title = ?", tag.attr['name'] ]
@@ -112,6 +109,9 @@ module Shop
                        :joins      => :page,
                        :conditions => [ "pages.slug = ?", tag.attr['sku'] ]
                      )
+          
+          elsif tag.locals.shop_product.present?
+            result = tag.locals.shop_product
                      
           elsif tag.attr['position']
             children = tag.locals.shop_category.page.children
@@ -132,11 +132,11 @@ module Shop
         def current_image(tag)
           result = nil
           
-          if tag.locals.image.present?
-            result = tag.locals.image.image rescue tag.locals.image
-            
-          elsif tag.attr['position']
+          if tag.attr['position']
             result = tag.locals.images.find_by_position(tag.attr['position'].to_i)
+          
+          elsif tag.locals.image.present?
+            result = tag.locals.image.image rescue tag.locals.image
             
           end
           
@@ -146,11 +146,11 @@ module Shop
         def current_order(tag)
           result = nil
           
-          if tag.locals.shop_order.present?
-            result  = tag.locals.shop_order
-            
-          elsif tag.attr['key'] and tag.attr['value']
+          if tag.attr['key'] and tag.attr['value']
             result  = ShopOrder.first(:conditions => { tag.attr['key'].downcase.to_sym => tag.attr['value'] })
+          
+          elsif tag.locals.shop_order.present?
+            result  = tag.locals.shop_order
             
           elsif tag.locals.page.request.session[:shop_order].present?
             session = tag.locals.page.request.session[:shop_order]
