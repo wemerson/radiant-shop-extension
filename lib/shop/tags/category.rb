@@ -42,13 +42,13 @@ module Shop
       
       tag 'shop:category:if_current' do |tag|
         
-        if tag.locals.page.shop_category == tag.locals.shop_category
+        if tag.globals.page.shop_category == tag.locals.shop_category
           # Looking at the shop_category generated page
           tag.expand
           
-        elsif tag.locals.page.shop_product.present?
+        elsif tag.globals.page.shop_product.present?
           # A product page
-          if tag.locals.page.shop_product.category == tag.locals.shop_category
+          if tag.globals.page.shop_product.category == tag.locals.shop_category
             # Where the products category is this category
             tag.expand
           end
@@ -58,14 +58,14 @@ module Shop
       
       tag 'shop:category:unless_current' do |tag|
         
-        if tag.locals.page.shop_product.present?
+        if tag.globals.page.shop_product.present?
           # A product page
-          if tag.locals.page.shop_product.category != tag.locals.shop_category
+          if tag.globals.page.shop_product.category != tag.locals.shop_category
             # Where the products category is this category
             tag.expand
           end
           
-        elsif tag.locals.page.shop_category != tag.locals.shop_category
+        elsif tag.globals.page.shop_category != tag.locals.shop_category
           # Looking at the shop_category generated page
           tag.expand
           

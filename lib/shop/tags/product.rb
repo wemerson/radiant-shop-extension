@@ -44,13 +44,13 @@ module Shop
       end
       
       tag 'shop:product:if_current' do |tag|
-        if tag.locals.page.shop_product == tag.locals.shop_product
+        if tag.globals.page.shop_product == tag.locals.shop_product
           tag.expand
         end
       end
       
       tag 'shop:product:unless_current' do |tag|
-        if tag.locals.page.shop_product != tag.locals.shop_product
+        if tag.globals.page.shop_product != tag.locals.shop_product
           tag.expand
         end
       end
