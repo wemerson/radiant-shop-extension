@@ -24,6 +24,9 @@ class ShopProduct < ActiveRecord::Base
   # Returns the url of the page formatted as an sku
   def sku; self.class.to_sku(url) end
   
+  # Returns the url of the product's page
+  def url; page.url; end
+  
   # Returns category through the pages parent
   def category; page.parent.shop_category; end
   

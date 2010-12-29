@@ -16,8 +16,11 @@ class ShopCategory < ActiveRecord::Base
   
   validates_presence_of         :page
   
-  # Returns the title of the product's page
+  # Returns the title of the categories' page
   def name; page.title; end
+  
+  # Returns the url of the categories' page
+  def url; page.url; end
   
   # Returns the url of the page formatted as an sku
   def handle; ShopProduct.to_sku(page.url); end
