@@ -166,7 +166,7 @@ private
     @shop_category.page = Page.new(
       :layout_id  => (Layout.find_by_name(Radiant::Config['shop.layout_category']).id rescue nil),
       :parent_id  => (Radiant::Config['shop.root_page_id'] rescue 1),
-      :parts      => [PagePart.new(:name => 'description')]
+      :parts      => [PagePart.new(:name => 'description', :filter_id => Radiant::Config['default.page.filter'])]
     )
     @shop_category.product_layout = (Layout.find_by_name(Radiant::Config['shop.layout_product']) rescue nil)
   end

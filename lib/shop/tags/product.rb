@@ -64,7 +64,7 @@ module Shop
       
       desc %{ outputs the description of the current shop product}
       tag "shop:product:description" do |tag|
-        parse(TextileFilter.filter(tag.locals.shop_product.description))
+        tag.locals.shop_product.page.parts('description').render rescue nil
       end
       
       desc %{ generates a link to the products generated page }

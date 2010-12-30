@@ -223,7 +223,7 @@ private
     @shop_product.page = Page.new(
       :parent_id  => @shop_category.page_id,
       :layout_id  => @shop_category.product_layout_id,
-      :parts      => [PagePart.new(:name => 'description')]
+      :parts      => [PagePart.new(:name => 'description', :filter_id => Radiant::Config['default.page.filter'])]
     )
   end
   

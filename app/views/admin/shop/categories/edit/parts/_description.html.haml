@@ -2,4 +2,5 @@
   - pf.fields_for :parts do |pfp|
     - if pfp.object.name == 'description'
       = pfp.hidden_field :name, :value => pfp.object.name
+      = pfp.hidden_field :filter_id, :value => pfp.object.filter_id
       ~ pfp.text_area :content, :class => "textarea large", :style => "width: 100%"
