@@ -46,7 +46,7 @@ module Shop
       desc %{ Ouputs a list of years for credit cards }
       tag 'form:card:year' do |tag|
         content = %{<select name="credit_card[year]" id="credit_card_year">\n}
-          (Time.new.year ... Time.new.year + 15).each do |year|
+          (Time.zone.now.year ... Time.zone.now.year + 15).each do |year|
             content << %{<option value="#{year}">#{year}</option>\n}
           end
         content << %{</select>}
