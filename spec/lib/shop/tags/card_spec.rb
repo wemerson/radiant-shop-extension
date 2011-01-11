@@ -23,12 +23,16 @@ describe Shop::Tags::Card do
     context 'all cards' do
       it 'should output the card types' do
         tag = %{<r:form:card:type />}
-        exp = %{<select name="credit_card[type]" id="credit_card_type">
-<option value="amex">American Express</option>
-<option value="diners">Diners Club</option>
-<option value="master">Master Card</option>
-<option value="visa">Visa</option>
-</select>}
+        exp = %{<div id="credit_card_type">
+<input name="credit_card[type]" id="credit_card_visa" type="radio" value="visa"/>
+<label for="credit_card_visa" class="visa credit_card" id="credit_card_visa_label">Visa</label>
+<input name="credit_card[type]" id="credit_card_master" type="radio" value="master"/>
+<label for="credit_card_master" class="master credit_card" id="credit_card_master_label">Master Card</label>
+<input name="credit_card[type]" id="credit_card_diners" type="radio" value="diners"/>
+<label for="credit_card_diners" class="diners credit_card" id="credit_card_diners_label">Diners Club</label>
+<input name="credit_card[type]" id="credit_card_amex" type="radio" value="amex"/>
+<label for="credit_card_amex" class="amex credit_card" id="credit_card_amex_label">American Express</label>
+</div>}
 
         @page.should render(tag).as(exp)
       end
@@ -37,10 +41,12 @@ describe Shop::Tags::Card do
     context 'except amex and diners' do
       it 'should output all except amex and diners' do
         tag = %{<r:form:card:type except="amex,diners" />}
-        exp = %{<select name="credit_card[type]" id="credit_card_type">
-<option value="master">Master Card</option>
-<option value="visa">Visa</option>
-</select>}
+        exp = %{<div id="credit_card_type">
+<input name="credit_card[type]" id="credit_card_visa" type="radio" value="visa"/>
+<label for="credit_card_visa" class="visa credit_card" id="credit_card_visa_label">Visa</label>
+<input name="credit_card[type]" id="credit_card_master" type="radio" value="master"/>
+<label for="credit_card_master" class="master credit_card" id="credit_card_master_label">Master Card</label>
+</div>}
 
         @page.should render(tag).as(exp)
       end
@@ -49,10 +55,12 @@ describe Shop::Tags::Card do
     context 'only amex and diners' do
       it 'should output all except amex' do
         tag = %{<r:form:card:type only="amex,diners" />}
-        exp = %{<select name="credit_card[type]" id="credit_card_type">
-<option value="amex">American Express</option>
-<option value="diners">Diners Club</option>
-</select>}
+        exp = %{<div id="credit_card_type">
+<input name="credit_card[type]" id="credit_card_diners" type="radio" value="diners"/>
+<label for="credit_card_diners" class="diners credit_card" id="credit_card_diners_label">Diners Club</label>
+<input name="credit_card[type]" id="credit_card_amex" type="radio" value="amex"/>
+<label for="credit_card_amex" class="amex credit_card" id="credit_card_amex_label">American Express</label>
+</div>}
 
         @page.should render(tag).as(exp)
       end

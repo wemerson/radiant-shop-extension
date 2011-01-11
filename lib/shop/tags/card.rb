@@ -18,17 +18,19 @@ module Shop
       # Outputs a list of credit card types
       desc %{ Outputs a list of credit card types }
       tag 'form:card:type' do |tag|
-        content = %{<select name="credit_card[type]" id="credit_card_type">\n}
+        content = %{<div id="credit_card_type">\n}
         cards = {}
         cards.merge! CARD_TYPES
         
         cards.reject! { |k,v| tag.attr['except'].split(',').include? k } if tag.attr['except'].present?
         cards.reject! { |k,v| !tag.attr['only'].split(',').include? k  }if tag.attr['only'].present?
         
-        cards.sort.each do |k, v|
-          content << %{<option value="#{k}">#{v}</option>\n}
+        cards.sort.reverse.each do |k, v|
+          content << %{<input name="credit_card[type]" id="credit_card_#{k}" type="radio" value="#{k}"/>\n}
+          content << %{<label for="credit_card_#{k}" class="#{k} credit_card" id="credit_card_#{k}_label">#{v}</label>\n}
         end
-        content << %{</select>}
+        
+        content << %{</div>}
       end
       
       # Outputs a list of months for credit cards
