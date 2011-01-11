@@ -145,20 +145,23 @@ module Shop
         
         def current_order(tag)
           result = nil
+          begin
+            if tag.attr['key'] and tag.attr['value']
+              result  = ShopOrder.first(:conditions => { tag.attr['key'].downcase.to_sym => tag.attr['value'] })
           
-          if tag.attr['key'] and tag.attr['value']
-            result  = ShopOrder.first(:conditions => { tag.attr['key'].downcase.to_sym => tag.attr['value'] })
-          
-          elsif tag.locals.shop_order.present?
-            result  = tag.locals.shop_order
+            elsif tag.locals.shop_order.present?
+              result  = tag.locals.shop_order
             
-          elsif tag.locals.page.request.session[:shop_order].present?
-            session = tag.locals.page.request.session[:shop_order]
-            result  = ShopOrder.find(session)
+            elsif tag.locals.page.request.session[:shop_order].present?
+              session = tag.locals.page.request.session[:shop_order]
+              result  = ShopOrder.find(session)
           
-          elsif tag.locals.response.present? and tag.locals.response.result[:checkout].present?
-            result  = ShopOrder.find(tag.locals.response.result[:checkout][:order])
+            elsif tag.locals.response.present? and tag.locals.response.result[:checkout].present?
+              result  = ShopOrder.find(tag.locals.response.result[:checkout][:order])
           
+            end
+          rescue
+            result = nil
           end
           
           result
