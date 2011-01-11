@@ -64,7 +64,7 @@ module Shop
       
       desc %{ outputs the description of the current shop product}
       tag "shop:product:description" do |tag|
-        tag.locals.shop_product.page.parts('description').render rescue nil
+        tag.locals.shop_product.description
       end
       
       desc %{ generates a link to the products generated page }

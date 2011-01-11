@@ -72,7 +72,7 @@ class Admin::Shop::CategoriesController < Admin::ResourceController
         format.js   { render :partial => '/admin/shop/categories/index/category', :locals => { :product => @shop_category } }
         format.json { render :json    => @shop_category.to_json }
       end
-    rescue
+    rescue Exception => error
       respond_to do |format|
         format.html { 
           flash[:error] = error
@@ -103,7 +103,7 @@ class Admin::Shop::CategoriesController < Admin::ResourceController
         format.js   { render :partial => '/admin/shop/categories/index/category', :locals => { :product => @shop_category } }
         format.json { render :json    => @shop_category.to_json }
       end
-    rescue
+    rescue Exception => error
       respond_to do |format|
         format.html { 
           flash[:error] = error

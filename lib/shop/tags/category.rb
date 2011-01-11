@@ -82,7 +82,7 @@ module Shop
       
       desc %{ outputs the description of the current shop category }
       tag "shop:category:description" do |tag|
-        tag.locals.shop_category.page.parts('description').render rescue nil
+        tag.locals.shop_category.description
       end
       
       desc %{ returns a link to the current category }

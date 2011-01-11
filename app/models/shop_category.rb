@@ -27,11 +27,7 @@ class ShopCategory < ActiveRecord::Base
   
   # Returns the content of the product's page's description part
   def description
-    begin
-      page.parts.find_by_name('description').content
-    rescue 
-      ''
-    end
+    page.render_part('description')
   end
   
   # Returns products through the pages children
