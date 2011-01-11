@@ -23,7 +23,7 @@ class ShopCategory < ActiveRecord::Base
   def url; page.url; end
   
   # Returns the url of the page formatted as an sku
-  def handle; ShopProduct.to_sku(page.url); end
+  def handle; ShopProduct.to_sku(slug); end
   
   # Returns the content of the product's page's description part
   def description

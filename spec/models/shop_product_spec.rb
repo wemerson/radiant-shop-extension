@@ -78,7 +78,7 @@ describe ShopProduct do
     
     context '#sku' do
       it 'should return a handle formatted url' do
-        @product.sku.should === ShopProduct.to_sku(@product.page.url)
+        @product.sku.should === ShopProduct.to_sku(@product.page.slug)
       end
     end
     

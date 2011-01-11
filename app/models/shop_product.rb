@@ -22,7 +22,7 @@ class ShopProduct < ActiveRecord::Base
   def name; page.title; end
   
   # Returns the url of the page formatted as an sku
-  def sku; self.class.to_sku(url) end
+  def sku; ShopProduct.to_sku(slug); end
   
   # Returns the url of the product's page
   def url; page.url; end
