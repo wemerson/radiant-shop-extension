@@ -93,6 +93,8 @@ module Shop
       tag 'shop:product:images' do |tag|
         tag.locals.images = tag.locals.shop_product.attachments
         
+        tag.locals.images = Images::Tags::Helpers.current_images(tag)
+        
         tag.expand
       end
       
