@@ -142,6 +142,7 @@ Gem::Specification.new do |s|
     "db/migrate/20101208045754_address_changes.rb",
     "db/migrate/20101208121105_move_to_page_attachments.rb",
     "db/migrate/20101214023052_fix_addressable_column_type.rb",
+    "db/migrate/20110119095350_add_position_to_shop_category.rb",
     "db/seed.rb",
     "db/seeds/forms.rb",
     "db/seeds/layouts.rb",
