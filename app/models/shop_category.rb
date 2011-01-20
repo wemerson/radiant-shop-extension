@@ -1,7 +1,6 @@
 class ShopCategory < ActiveRecord::Base
   
-  default_scope :joins => 'JOIN pages AS page ON page.id = shop_categories.page_id JOIN pages AS parent ON page.parent_id = parent.id',
-    :order => 'parent.position, page.position ASC'
+  default_scope :order => 'shop_categories.position ASC'
   
   belongs_to  :page,            :dependent => :destroy
   belongs_to  :created_by,      :class_name => 'User'
@@ -68,9 +67,9 @@ class ShopCategory < ActiveRecord::Base
     
     # Sorts a group of categories based on their ID and position in an array
     def sort(category_ids)
-      category_ids.each_with_index do |id, index|
-        ShopCategory.find(id).page.update_attributes!(
-          :position  => index+1
+      category_ids.each_with_index do |id,index|
+        ShopCategory.find(id).update_attributes!(
+          :position  => index
         )
       end
     end
