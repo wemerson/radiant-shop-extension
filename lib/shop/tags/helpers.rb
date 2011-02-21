@@ -48,12 +48,6 @@ module Shop
                        :conditions => [ "pages.slug = ?", tag.attr['handle'] ]
                      )
           
-           elsif tag.locals.page.shop_category.present?
-             result = tag.locals.page.shop_category
-
-           elsif tag.locals.page.shop_product.present?
-             result = tag.locals.page.shop_product.category
-          
           # Returns the current shop_category    
           elsif tag.locals.shop_category.present?
             result = tag.locals.shop_category
@@ -61,6 +55,12 @@ module Shop
           # Returns the category of the current shop_product
           elsif tag.locals.shop_product.present?
              result = tag.locals.shop_product.category
+                     
+          elsif tag.locals.page.shop_category.present?
+            result = tag.locals.page.shop_category
+            
+          elsif tag.locals.page.shop_product.present?
+            result = tag.locals.page.shop_product.category
             
           end
           
@@ -109,9 +109,6 @@ module Shop
                        :joins      => :page,
                        :conditions => [ "pages.slug = ?", tag.attr['sku'] ]
                      )
-                     
-          elsif tag.locals.page.shop_product.present?
-            result = tag.locals.page.shop_product
           
           elsif tag.locals.shop_product.present?
             result = tag.locals.shop_product
@@ -123,6 +120,9 @@ module Shop
             
           elsif tag.locals.shop_line_item.present? and tag.locals.shop_line_item.item_type === 'ShopProduct'
             result = tag.locals.shop_line_item.item
+
+          elsif tag.locals.page.shop_product.present?
+            result = tag.locals.page.shop_product
             
           end
           
