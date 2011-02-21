@@ -235,7 +235,7 @@ class FormCheckout
     else
       result = (@order.price * 100)
     end
-    result
+    result.to_i
   end
   
   # Options for the gateway are created at config and runtime level
