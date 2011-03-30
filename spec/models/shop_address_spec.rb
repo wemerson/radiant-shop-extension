@@ -62,6 +62,12 @@ describe ShopAddress do
         @address.valid?.should be_true
       end
     end
+    context 'company' do
+      it 'should not require' do
+        @address.company = nil
+        @address.valid?.should be_true
+      end
+    end
   end
   
 end

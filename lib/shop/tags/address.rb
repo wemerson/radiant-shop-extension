@@ -28,7 +28,7 @@ module Shop
           tag.expand unless tag.locals.send(of_type).present?
         end
       
-        [:id, :name, :phone, :email, :unit, :street_1, :street_2, :city, :state, :country, :postcode].each do |method|
+        [:id, :name, :phone, :business, :email, :unit, :street_1, :street_2, :city, :state, :country, :postcode].each do |method|
           tag "shop:cart:#{of_type}:#{method}" do |tag|
             # Rescue is so we can have null inputs if no address exists
             result = (tag.locals.send(of_type).send(method) rescue nil)

@@ -16,6 +16,7 @@ describe Shop::Tags::Address do
       'shop:cart:billing:name',
       'shop:cart:billing:phone',
       'shop:cart:billing:email',
+      'shop:cart:billing:business',
       'shop:cart:billing:unit',
       'shop:cart:billing:street_1',
       'shop:cart:billing:street_2',
@@ -29,6 +30,7 @@ describe Shop::Tags::Address do
       'shop:cart:shipping:id',
       'shop:cart:shipping:name',
       'shop:cart:shipping:phone',
+      'shop:cart:shipping:business',
       'shop:cart:shipping:email',
       'shop:cart:shipping:unit',
       'shop:cart:shipping:street_1',
@@ -186,6 +188,15 @@ describe Shop::Tags::Address do
           @page.should render(tag).as(exp)
         end
       end
+      context 'shop:cart:billing:business' do
+        it 'should return the email' do
+          tag = %{<r:shop:cart:billing><r:business /></r:shop:cart:billing>}
+          exp = @billing.business
+        
+          @page.should render(tag).as(exp)
+        end
+      end
+
       context 'shop:cart:billing:email' do
         it 'should return the email' do
           tag = %{<r:shop:cart:billing><r:email /></r:shop:cart:billing>}
