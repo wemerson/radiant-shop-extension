@@ -5,11 +5,11 @@
 
 Gem::Specification.new do |s|
   s.name = %q{radiant-shop-extension}
-  s.version = "0.94.7"
+  s.version = "0.94.8"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Dirk Kelly", "John Barker", "Darcy Laycock"]
-  s.date = %q{2011-02-21}
+  s.date = %q{2011-03-30}
   s.description = %q{Radiant Shop is an attempt at a simple but complete store. It includes Products, Categories, Orders and Credit Card Payments}
   s.email = %q{dk@dirkkelly.com}
   s.extra_rdoc_files = [
@@ -143,6 +143,7 @@ Gem::Specification.new do |s|
     "db/migrate/20101208121105_move_to_page_attachments.rb",
     "db/migrate/20101214023052_fix_addressable_column_type.rb",
     "db/migrate/20110119095350_add_position_to_shop_category.rb",
+    "db/migrate/20110330042956_add_company_to_address.rb",
     "db/seed.rb",
     "db/seeds/forms.rb",
     "db/seeds/layouts.rb",
@@ -228,7 +229,7 @@ Gem::Specification.new do |s|
   ]
   s.homepage = %q{http://github.com/squaretalent/radiant-shop-extension}
   s.require_paths = ["lib"]
-  s.rubygems_version = %q{1.4.2}
+  s.rubygems_version = %q{1.5.3}
   s.summary = %q{Shop Extension for Radiant CMS}
   s.test_files = [
     "spec/controllers/admin/shop/categories_controller_spec.rb",
