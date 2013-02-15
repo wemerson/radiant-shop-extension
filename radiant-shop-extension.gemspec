@@ -282,7 +282,7 @@ Gem::Specification.new do |s|
     s.specification_version = 3
 
     if Gem::Version.new(Gem::VERSION) >= Gem::Version.new('1.2.0') then
-      s.add_runtime_dependency(%q<radiant>, ["= 1.1.2"])
+      s.add_runtime_dependency(%q<radiant>, ["= 1.1.3"])
       s.add_runtime_dependency(%q<activemerchant>, [">= 1.8.0"])
       s.add_runtime_dependency(%q<fastercsv>, [">= 1.5.3"])
       s.add_runtime_dependency(%q<acts_as_list>, [">= 0.1.2"])
@@ -292,7 +292,7 @@ Gem::Specification.new do |s|
       s.add_runtime_dependency(%q<radiant-users-extension>, [">= 0.0.2"])
       s.add_runtime_dependency(%q<radiant-drag_order-extension>, [">= 0.3.9"])
     else
-      s.add_dependency(%q<radiant>, ["= 1.1.2"])
+      s.add_dependency(%q<radiant>, ["= 1.1.3"])
       s.add_dependency(%q<activemerchant>, [">= 1.8.0"])
       s.add_dependency(%q<fastercsv>, [">= 1.5.3"])
       s.add_dependency(%q<acts_as_list>, [">= 0.1.2"])
@@ -303,7 +303,7 @@ Gem::Specification.new do |s|
       s.add_dependency(%q<radiant-drag_order-extension>, [">= 0.3.9"])
     end
   else
-    s.add_dependency(%q<radiant>, ["= 1.1.2"])
+    s.add_dependency(%q<radiant>, ["= 1.1.3"])
     s.add_dependency(%q<activemerchant>, [">= 1.8.0"])
     s.add_dependency(%q<fastercsv>, [">= 1.5.3"])
     s.add_dependency(%q<acts_as_list>, [">= 0.1.2"])
